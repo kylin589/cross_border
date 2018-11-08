@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.DataDictionaryDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.DataDictionaryEntity" id="dataDictionaryMap">
+        <result property="dataId" column="data_id"/>
+        <result property="dataType" column="data_type"/>
+        <result property="dataNumber" column="data_number"/>
+        <result property="dataContent" column="data_content"/>
+        <result property="dataSort" column="data_sort"/>
+    </resultMap>
+
+
+</mapper>
