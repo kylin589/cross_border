@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.UploadDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.UploadEntity" id="uploadMap">
+        <result property="uploadId" column="upload_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="authorizeShop" column="authorize_shop"/>
+        <result property="operateType" column="operate_type"/>
+        <result property="operateItem" column="operate_item"/>
+        <result property="amazonCategoryOneId" column="amazon_category_one_id"/>
+        <result property="amazonCategoryTwoId" column="amazon_category_two_id"/>
+        <result property="amazonCategoryThreeId" column="amazon_category_three_id"/>
+        <result property="amazonCategoryFourId" column="amazon_category_four_id"/>
+        <result property="amazonCategoryFiveId" column="amazon_category_five_id"/>
+        <result property="amazonTemplateId" column="amazon_template_id"/>
+        <result property="isAttribute" column="is_attribute"/>
+        <result property="attributeId" column="attribute_id"/>
+        <result property="uploadState" column="upload_state"/>
+        <result property="returnCode" column="return_code"/>
+        <result property="returnError" column="return_error"/>
+        <result property="createTime" column="create_time"/>
+        <result property="uploadTime" column="upload_time"/>
+    </resultMap>
+
+
+</mapper>

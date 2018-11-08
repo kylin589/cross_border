@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>产品上传</title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<#if shiro.hasPermission("product:upload:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("product:upload:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("product:upload:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.productId" placeholder="产品id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">店铺id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.authorizeShop" placeholder="店铺id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">操作类型（默认0：上传   1：修改）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.operateType" placeholder="操作类型（默认0：上传   1：修改）"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">操作项（0:产品基本信息1:关系 2:图片3:库存4:价格）以逗号隔开</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.operateItem" placeholder="操作项（0:产品基本信息1:关系 2:图片3:库存4:价格）以逗号隔开"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">亚马逊分类一级id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.amazonCategoryOneId" placeholder="亚马逊分类一级id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">亚马逊分类二级id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.amazonCategoryTwoId" placeholder="亚马逊分类二级id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">亚马逊分类三级id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.amazonCategoryThreeId" placeholder="亚马逊分类三级id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">亚马逊分类四级id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.amazonCategoryFourId" placeholder="亚马逊分类四级id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">亚马逊分类五级id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.amazonCategoryFiveId" placeholder="亚马逊分类五级id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">亚马逊模板id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.amazonTemplateId" placeholder="亚马逊模板id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">是否有分类属性（默认0：没有  1：有）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.isAttribute" placeholder="是否有分类属性（默认0：没有  1：有）"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">分类属性id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.attributeId" placeholder="分类属性id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">(默认0：正在上传1：上传成功2：上传失败)</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.uploadState" placeholder="(默认0：正在上传1：上传成功2：上传失败)"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">返回错误代码（上传失败）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.returnCode" placeholder="返回错误代码（上传失败）"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">返回错误（上传失败）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.returnError" placeholder="返回错误（上传失败）"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">创建时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.createTime" placeholder="创建时间"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="upload.uploadTime" placeholder=""/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/product/upload.js?_${.now?long}"></script>
+</body>
+</html>

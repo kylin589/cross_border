@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>产品</title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<#if shiro.hasPermission("product:products:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("product:products:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("product:products:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">一级分类id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.categoryOneId" placeholder="一级分类id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">二级分类id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.categoryTwoId" placeholder="二级分类id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">三级分类id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.categoryThreeId" placeholder="三级分类id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品内部分类</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productCategory" placeholder="产品内部分类"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">审核状态标识</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.auditStatus" placeholder="审核状态标识"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">上架状态标识</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.shelveStatus" placeholder="上架状态标识"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品类型标识</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productType" placeholder="产品类型标识"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">主图片id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.mainImageId" placeholder="主图片id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">厂商名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.producerName" placeholder="厂商名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">品牌名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.brandName" placeholder="品牌名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">厂商编号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.manufacturerNumber" placeholder="厂商编号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">内部sku</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productSku" placeholder="内部sku"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品来源</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productSource" placeholder="产品来源"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">来源地址</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.sellerLink" placeholder="来源地址"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">附加备注</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productRemark" placeholder="附加备注"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">ean码</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.eanCode" placeholder="ean码"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">upc码</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.upcCode" placeholder="upc码"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">采购价格</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.purchasePrice" placeholder="采购价格"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品重量</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productWeight" placeholder="产品重量"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品长度</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productLength" placeholder="产品长度"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品宽度</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productWide" placeholder="产品宽度"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品高度</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productHeight" placeholder="产品高度"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">国内运费</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.domesticFreight" placeholder="国内运费"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">折扣系数</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.discount" placeholder="折扣系数"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">美国运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.americanFreight" placeholder="美国运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">加拿大运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.canadaFreight" placeholder="加拿大运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">墨西哥运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.mexicoFreight" placeholder="墨西哥运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">英国运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.britainFreight" placeholder="英国运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">法国运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.franceFreight" placeholder="法国运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">德国运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.germanyFreight" placeholder="德国运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">意大利运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.italyFreight" placeholder="意大利运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">西班牙运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.spainFreight" placeholder="西班牙运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">日本运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.japanFreight" placeholder="日本运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">澳大利亚运费id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.australiaFreight" placeholder="澳大利亚运费id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">库存</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.stock" placeholder="库存"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">预处理时间(天)</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.pretreatmentDate" placeholder="预处理时间(天)"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品简称（英文）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productAbbreviations" placeholder="产品简称（英文）"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品标题</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.productTitle" placeholder="产品标题"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">中文介绍</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.chineseIntroduction" placeholder="中文介绍"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">英语介绍</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.britainIntroduction" placeholder="英语介绍"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">法语介绍</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.franceIntroduction" placeholder="法语介绍"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">德语介绍</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.germanyIntroduction" placeholder="德语介绍"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">意大利语介绍</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.italyIntroduction" placeholder="意大利语介绍"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">西班牙语介绍</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.spainIntroduction" placeholder="西班牙语介绍"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">日语介绍</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.japanIntroduction" placeholder="日语介绍"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">（变体参数）颜色的id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.colorId" placeholder="（变体参数）颜色的id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">（变体参数）尺寸id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.sizeId" placeholder="（变体参数）尺寸id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">软删（1：删除）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.isDeleted" placeholder="软删（1：删除）"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">创建时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.createTime" placeholder="创建时间"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">创建用户id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.createUserId" placeholder="创建用户id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">最后操作时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.lastOperationTime" placeholder="最后操作时间"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">最后操作人id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="products.lastOperationUserId" placeholder="最后操作人id"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/product/products.js?_${.now?long}"></script>
+</body>
+</html>
