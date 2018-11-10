@@ -41,3 +41,5 @@ nbdist/
 /renren-common/src/main/resources/rebel.xml
 *.gz
 *.log
+/logs/
+/renren-admin/logs/

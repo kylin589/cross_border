@@ -1,12 +1,8 @@
-package io.renren.service;
+package io.renren;
 
 import io.renren.modules.product.entity.CategoryEntity;
-import io.renren.modules.product.entity.CategoryEntity;
-import io.renren.modules.product.service.CategoryService;
 import io.renren.modules.product.service.CategoryService;
 import io.renren.modules.product.service.ProductsService;
-import io.renren.modules.product.service.ProductsService;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

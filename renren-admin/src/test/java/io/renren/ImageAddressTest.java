@@ -1,13 +1,11 @@
-package io.renren.service;
+package io.renren;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.exception.RRException;
-import io.renren.common.utils.R;
 import io.renren.modules.product.entity.ImageAddressEntity;
 import io.renren.modules.product.service.ImageAddressService;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.http.entity.ContentType;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
