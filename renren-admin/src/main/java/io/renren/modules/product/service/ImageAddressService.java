@@ -9,9 +9,9 @@ import java.util.Map;
 /**
  * 产品图片表
  *
- * @author zjr
- * @email zhang-jiarui@baizesoft.com
- * @date 2018-11-07 14:54:47
+ * @author jhy
+ * @email 617493711@qq.com
+ * @date 2018-11-08 09:59:28
  */
 public interface ImageAddressService extends IService<ImageAddressEntity> {
 

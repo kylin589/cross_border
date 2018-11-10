@@ -217,4 +217,48 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         return product.getProductId();
     }
 
+    /**
+     * 审核类型分类总和
+     */
+    public int auditCount(String number) {
+        int auditCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("audit_status", number).eq("is_deleted", 0));
+        return auditCount;
+    }
+
+
+    /**
+     * 上架类型分类总和
+     */
+    public int putawayCount(String number) {
+        int putawayCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("shelve_status", number).eq("is_deleted", 0));
+        return putawayCount;
+    }
+
+
+    /**
+     * 产品类型分类总和
+     */
+    public int productCount(String number) {
+        int productCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("product_type", number).eq("is_deleted", 0));
+        return productCount;
+    }
+
+    /**
+     * 一级分类商品总数
+     *
+     * @param id
+     * @return
+     */
+    public int count(Long id) {
+        int c = this.selectCount(new EntityWrapper<ProductsEntity>().eq("category_one_id", id).eq("is_deleted", 0));
+        return c;
+    }
+
+    /**
+     * 父类查子类
+     */
+    public int counts(Long id) {
+        int c = this.selectCount(new EntityWrapper<ProductsEntity>().eq("category_two_id", id).or().eq("category_three_id", id).eq("is_deleted", 0));
+        return c;
+    }
 }

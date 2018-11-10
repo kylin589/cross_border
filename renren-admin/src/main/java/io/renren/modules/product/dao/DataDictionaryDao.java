@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 /**
  * 数据字典
  * 
- * @author zjr
- * @email zhang-jiarui@baizesoft.com
- * @date 2018-11-07 14:54:46
+ * @author jhy
+ * @email 617493711@qq.com
+ * @date 2018-11-08 09:59:28
  */
 public interface DataDictionaryDao extends BaseMapper<DataDictionaryEntity> {
 	

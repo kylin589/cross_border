@@ -140,7 +140,7 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/save")
     @RequiresPermissions("product:products:save")
     public R save(@RequestBody ProductsEntity products) {
-        // TODO: 2018/11/10  
+        // TODO: 2018/11/10
         return R.ok();
     }
 

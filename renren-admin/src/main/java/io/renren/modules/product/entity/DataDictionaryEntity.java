@@ -1,5 +1,6 @@
 package io.renren.modules.product.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
@@ -9,9 +10,9 @@ import java.util.Date;
 /**
  * 数据字典
  * 
- * @author zjr
- * @email zhang-jiarui@baizesoft.com
- * @date 2018-11-07 14:54:46
+ * @author jhy
+ * @email 617493711@qq.com
+ * @date 2018-11-08 09:59:28
  */
 @TableName("product_data_dictionary")
 public class DataDictionaryEntity implements Serializable {
@@ -38,6 +39,17 @@ public class DataDictionaryEntity implements Serializable {
 	 * 数据排序
 	 */
 	private Integer dataSort;
+	/**
+	 * 总记录数
+	 */
+	@TableField(exist=false)
+	private Integer count;
+	public Integer getCount() {
+		return count;
+	}
+	public void setCount(Integer count) {
+		this.count = count;
+	}
 
 	/**
 	 * 设置：

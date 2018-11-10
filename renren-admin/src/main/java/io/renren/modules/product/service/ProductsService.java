@@ -27,4 +27,14 @@ public interface ProductsService extends IService<ProductsEntity> {
     int getWariantsCount(EntityWrapper<ProductsEntity> wrapper);
 
     Long getNewProductId(Long userId);
+
+    int auditCount(String number);
+
+    int putawayCount(String number);
+
+    int productCount(String number);
+
+    int count(Long id);
+
+    int counts(Long id);
 }
