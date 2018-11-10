@@ -31,7 +31,6 @@ nbdist/
 /renren-admin/src/main/resources/logback-spring.xml
 /renren-generator/src/main/resources/application.yml
 /renren-generator/src/main/resources/generator.properties
-/logs/
 /renren-generator/src/main/resources/rebel.xml
 /renren-generator/src/main/resources/rebel-remote.xml
 /renren-api/src/main/resources/rebel.xml
@@ -40,3 +39,5 @@ nbdist/
 /renren-admin/src/main/resources/rebel.xml
 /renren-common/src/main/resources/rebel-remote.xml
 /renren-common/src/main/resources/rebel.xml
+*.gz
+*.log

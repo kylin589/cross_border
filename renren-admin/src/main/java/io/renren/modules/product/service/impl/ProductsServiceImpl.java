@@ -15,10 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zjr
@@ -208,6 +205,16 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         EntityWrapper<VariantsInfoEntity> variantsCountWrapper = new EntityWrapper<>();
         variantsCountWrapper.in("product_id", proIds);
         return variantsInfoService.selectCount(variantsCountWrapper);
+    }
+
+    @Override
+    public Long getNewProductId(Long userId) {
+        ProductsEntity product = new ProductsEntity();
+        product.setCreateTime(new Date());
+        product.setCreateUserId(userId);
+        product.setIsDeleted(0);
+        this.insert(product);
+        return product.getProductId();
     }
 
 }

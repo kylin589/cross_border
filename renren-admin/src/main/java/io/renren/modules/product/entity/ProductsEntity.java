@@ -1,11 +1,13 @@
 package io.renren.modules.product.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
-import java.math.BigDecimal;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 产品
@@ -231,6 +233,300 @@ public class ProductsEntity implements Serializable {
 	 * 最后操作人id
 	 */
 	private Long lastOperationUserId;
+
+	/**
+	 * 美国运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity americanFC;
+
+	/**
+	 * 加拿大运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity canadaFC;
+
+	/**
+	 * 墨西哥运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity mexicoFC;
+
+	/**
+	 * 英国运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity britainFC;
+
+	/**
+	 * 法国运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity franceFC;
+
+	/**
+	 * 德国运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity germanyFC;
+
+	/**
+	 * 意大利运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity italyFC;
+
+	/**
+	 * 西班牙运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity spainFC;
+
+	/**
+	 * 日本运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity japanFC;
+
+	/**
+	 * 澳大利亚运费
+	 */
+	@TableField(exist = false)
+	private FreightCostEntity australiaFC;
+
+	/**
+	 * 中文介绍
+	 */
+	@TableField(exist = false)
+	private IntroductionEntity chinesePRE;
+
+	/**
+	 * 英文介绍
+	 */
+	@TableField(exist = false)
+	private IntroductionEntity britainPRE;
+
+	/**
+	 * 法语介绍
+	 */
+	@TableField(exist = false)
+	private IntroductionEntity francePRE;
+
+	/**
+	 * 德语介绍
+	 */
+	@TableField(exist = false)
+	private IntroductionEntity germanyPRE;
+
+	/**
+	 * 意大利语介绍
+	 */
+	@TableField(exist = false)
+	private IntroductionEntity italyPRE;
+
+	/**
+	 * 西班牙语介绍
+	 */
+	@TableField(exist = false)
+	private IntroductionEntity spainPRE;
+
+	/**
+	 * 日语介绍
+	 */
+	@TableField(exist = false)
+	private IntroductionEntity japanPRE;
+
+	/**
+	 * 颜色变体参数
+	 */
+	@TableField(exist = false)
+	private VariantParameterEntity colorVP;
+
+	/**
+	 * 尺寸变体参数
+	 */
+	@TableField(exist = false)
+	private VariantParameterEntity sizeVP;
+
+	/**
+	 * 图片信息
+	 */
+	@TableField(exist = false)
+	private List<ImageAddressEntity> images;
+
+	/**
+	 * 变体信息
+	 */
+	@TableField(exist = false)
+	private List<VariantsInfoEntity> variantsInfos;
+
+	public List<ImageAddressEntity> getImages() {
+		return images;
+	}
+
+	public void setImages(List<ImageAddressEntity> images) {
+		this.images = images;
+	}
+
+	public List<VariantsInfoEntity> getVariantsInfos() {
+		return variantsInfos;
+	}
+
+	public void setVariantsInfos(List<VariantsInfoEntity> variantsInfos) {
+		this.variantsInfos = variantsInfos;
+	}
+
+	public FreightCostEntity getAmericanFC() {
+		return americanFC;
+	}
+
+	public void setAmericanFC(FreightCostEntity americanFC) {
+		this.americanFC = americanFC;
+	}
+
+	public FreightCostEntity getCanadaFC() {
+		return canadaFC;
+	}
+
+	public void setCanadaFC(FreightCostEntity canadaFC) {
+		this.canadaFC = canadaFC;
+	}
+
+	public FreightCostEntity getMexicoFC() {
+		return mexicoFC;
+	}
+
+	public void setMexicoFC(FreightCostEntity mexicoFC) {
+		this.mexicoFC = mexicoFC;
+	}
+
+	public FreightCostEntity getBritainFC() {
+		return britainFC;
+	}
+
+	public void setBritainFC(FreightCostEntity britainFC) {
+		this.britainFC = britainFC;
+	}
+
+	public FreightCostEntity getFranceFC() {
+		return franceFC;
+	}
+
+	public void setFranceFC(FreightCostEntity franceFC) {
+		this.franceFC = franceFC;
+	}
+
+	public FreightCostEntity getGermanyFC() {
+		return germanyFC;
+	}
+
+	public void setGermanyFC(FreightCostEntity germanyFC) {
+		this.germanyFC = germanyFC;
+	}
+
+	public FreightCostEntity getItalyFC() {
+		return italyFC;
+	}
+
+	public void setItalyFC(FreightCostEntity italyFC) {
+		this.italyFC = italyFC;
+	}
+
+	public FreightCostEntity getSpainFC() {
+		return spainFC;
+	}
+
+	public void setSpainFC(FreightCostEntity spainFC) {
+		this.spainFC = spainFC;
+	}
+
+	public FreightCostEntity getJapanFC() {
+		return japanFC;
+	}
+
+	public void setJapanFC(FreightCostEntity japanFC) {
+		this.japanFC = japanFC;
+	}
+
+	public FreightCostEntity getAustraliaFC() {
+		return australiaFC;
+	}
+
+	public void setAustraliaFC(FreightCostEntity australiaFC) {
+		this.australiaFC = australiaFC;
+	}
+
+	public IntroductionEntity getChinesePRE() {
+		return chinesePRE;
+	}
+
+	public void setChinesePRE(IntroductionEntity chinesePRE) {
+		this.chinesePRE = chinesePRE;
+	}
+
+	public IntroductionEntity getBritainPRE() {
+		return britainPRE;
+	}
+
+	public void setBritainPRE(IntroductionEntity britainPRE) {
+		this.britainPRE = britainPRE;
+	}
+
+	public IntroductionEntity getFrancePRE() {
+		return francePRE;
+	}
+
+	public void setFrancePRE(IntroductionEntity francePRE) {
+		this.francePRE = francePRE;
+	}
+
+	public IntroductionEntity getGermanyPRE() {
+		return germanyPRE;
+	}
+
+	public void setGermanyPRE(IntroductionEntity germanyPRE) {
+		this.germanyPRE = germanyPRE;
+	}
+
+	public IntroductionEntity getItalyPRE() {
+		return italyPRE;
+	}
+
+	public void setItalyPRE(IntroductionEntity italyPRE) {
+		this.italyPRE = italyPRE;
+	}
+
+	public IntroductionEntity getSpainPRE() {
+		return spainPRE;
+	}
+
+	public void setSpainPRE(IntroductionEntity spainPRE) {
+		this.spainPRE = spainPRE;
+	}
+
+	public IntroductionEntity getJapanPRE() {
+		return japanPRE;
+	}
+
+	public void setJapanPRE(IntroductionEntity japanPRE) {
+		this.japanPRE = japanPRE;
+	}
+
+	public VariantParameterEntity getColorVP() {
+		return colorVP;
+	}
+
+	public void setColorVP(VariantParameterEntity colorVP) {
+		this.colorVP = colorVP;
+	}
+
+	public VariantParameterEntity getSizeVP() {
+		return sizeVP;
+	}
+
+	public void setSizeVP(VariantParameterEntity sizeVP) {
+		this.sizeVP = sizeVP;
+	}
 
 	/**
 	 * 设置：产品id
