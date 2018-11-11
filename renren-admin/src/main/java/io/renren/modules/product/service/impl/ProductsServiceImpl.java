@@ -32,6 +32,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     public Map<String, Object> queryPage(Map<String, Object> params, Long userId) {
 
         // 分类传过来的是三级分类的id
+        // TODO: 2018/11/11 缺少所选择的员工id 
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
@@ -218,28 +219,31 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     /**
-     * 审核类型分类总和
+     * 审核类型分类统计
      */
-    public int auditCount(String number) {
-        int auditCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("audit_status", number).eq("is_deleted", 0));
+    @Override
+    public int auditCount(String number, String del) {
+        int auditCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("audit_status", number).eq("is_deleted", del));
         return auditCount;
     }
 
 
     /**
-     * 上架类型分类总和
+     * 上架类型分类统计
      */
-    public int putawayCount(String number) {
-        int putawayCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("shelve_status", number).eq("is_deleted", 0));
+    @Override
+    public int putawayCount(String number, String del) {
+        int putawayCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("shelve_status", number).eq("is_deleted", del));
         return putawayCount;
     }
 
 
     /**
-     * 产品类型分类总和
+     * 产品类型分类统计
      */
-    public int productCount(String number) {
-        int productCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("product_type", number).eq("is_deleted", 0));
+    @Override
+    public int productCount(String number, String del) {
+        int productCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("product_type", number).eq("is_deleted", del));
         return productCount;
     }
 
@@ -249,16 +253,18 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      * @param id
      * @return
      */
-    public int count(Long id) {
-        int c = this.selectCount(new EntityWrapper<ProductsEntity>().eq("category_one_id", id).eq("is_deleted", 0));
+    @Override
+    public int count(Long id, String del) {
+        int c = this.selectCount(new EntityWrapper<ProductsEntity>().eq("category_one_id", id).eq("is_deleted", del));
         return c;
     }
 
     /**
      * 父类查子类
      */
-    public int counts(Long id) {
-        int c = this.selectCount(new EntityWrapper<ProductsEntity>().eq("category_two_id", id).or().eq("category_three_id", id).eq("is_deleted", 0));
+    @Override
+    public int counts(Long id, String del) {
+        int c = this.selectCount(new EntityWrapper<ProductsEntity>().eq("category_two_id", id).or().eq("category_three_id", id).eq("is_deleted", del));
         return c;
     }
 }

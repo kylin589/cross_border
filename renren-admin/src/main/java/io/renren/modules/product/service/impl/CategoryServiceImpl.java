@@ -33,8 +33,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     /**
      * 一级分类
      */
-    public List<CategoryEntity> parent() {
-        Map<String, Object> map = new HashMap<String, Object>();
+    @Override
+    public List<CategoryEntity> queryCategoryOne() {
+        Map<String, Object> map = new HashMap<>();
         map.put("parent_id", 0);
         List<CategoryEntity> parentList = this.selectByMap(map);
         return parentList;
@@ -43,9 +44,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     /**
      * 父类查子类
      */
-
-    public List<CategoryEntity> parentId(Long id) {
-
+    @Override
+    public List<CategoryEntity> queryCategoryByParentId(Long id) {
         List<CategoryEntity> parentLists = this.selectList(new EntityWrapper<CategoryEntity>().eq("parent_id", id));
         return parentLists;
     }
@@ -53,7 +53,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     /**
      * 子类id查出父类id
      */
-    public String parentIds(Long id) {
+    @Override
+    public String queryParentByChildId(Long id) {
         CategoryEntity productCategoryEntity = this.selectById(id);
         Long p1 = productCategoryEntity.getParentId();
         CategoryEntity productCategoryEntity2 = this.selectById(p1);

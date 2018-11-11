@@ -44,7 +44,7 @@ public class ProductRecyclingController extends AbstractController {
     @RequestMapping("/list")
     public R list(@RequestParam Map<String, Object> params) {
         Map<String, Object> map = productsService.queryRecyclingPage(params, getUserId());
-        return R.ok().put("page", map.get("page")).put("proCount", map.get("proCount")).put("approvedCount", map.get("approvedCount")).put("numberOfVariants", map.get("numberOfVariants")).put("variantsCount", map.get("variantsCount"));
+        return R.ok().put("page", map.get("page")).put("proNum", map.get("proCount")).put("via", map.get("approvedCount")).put("variant", map.get("numberOfVariants")).put("allVariant", map.get("variantsCount"));
     }
 
     /**

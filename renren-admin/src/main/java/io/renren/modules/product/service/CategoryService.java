@@ -18,11 +18,11 @@ public interface CategoryService extends IService<CategoryEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    List<CategoryEntity> parent();
+    List<CategoryEntity> queryCategoryOne();
 
-    List<CategoryEntity> parentId(Long id);
+    List<CategoryEntity> queryCategoryByParentId(Long id);
 
-    String parentIds(Long id);
+    String queryParentByChildId(Long id);
 
 
 }

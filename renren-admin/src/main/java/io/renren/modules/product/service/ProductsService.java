@@ -28,13 +28,13 @@ public interface ProductsService extends IService<ProductsEntity> {
 
     Long getNewProductId(Long userId);
 
-    int auditCount(String number);
+    int auditCount(String number, String del);
 
-    int putawayCount(String number);
+    int putawayCount(String number, String del);
 
-    int productCount(String number);
+    int productCount(String number, String del);
 
-    int count(Long id);
+    int count(Long id, String del);
 
-    int counts(Long id);
+    int counts(Long id, String del);
 }

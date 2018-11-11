@@ -77,7 +77,8 @@ public class CategoryController {
     @RequiresPermissions("product:category:update")
     public R update(@RequestBody CategoryEntity category) {
         ValidatorUtils.validateEntity(category);
-        categoryService.updateAllColumnById(category);//全部更新
+        //全部更新
+        categoryService.updateAllColumnById(category);
 
         return R.ok();
     }
@@ -95,51 +96,50 @@ public class CategoryController {
 
     /**
      * @methodname: parent:一级分类
-     * @param: []
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/6 10:29
      */
-    @RequestMapping("/parentlist")
-    public R parentList() {
-        List<CategoryEntity> parentList = categoryService.parent();
+    @RequestMapping("/querycategoryone")
+    public R queryCategoryOne(@RequestParam(value="del",required = false,defaultValue = "0") String del) {
+        List<CategoryEntity> parentList = categoryService.queryCategoryOne();
         for (CategoryEntity categoryEntity : parentList) {
             Long id = categoryEntity.getCategoryId();
-            int c = productsService.count(id);
+            int c = productsService.count(id,del);
 
             categoryEntity.setCount(c);
         }
-        return R.ok().put("parentList", parentList);
+        return R.ok().put("categoryOneList", parentList);
     }
 
     /**
-     * @methodname: parentId:父id查询
-     * @param: [categoryId]
+     * @methodname: parentId:根据父id查询
+     * @param: categoryId
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/6 10:28
      */
-    @RequestMapping("/childlist")
-    public R parentId(Long categoryId) {
-        List<CategoryEntity> parentLists = categoryService.parentId(categoryId);
+    @RequestMapping("/querycategorybyparentid")
+    public R queryCategoryByParentId(Long categoryId, @RequestParam(value="del",required = false,defaultValue = "0") String del) {
+        List<CategoryEntity> parentLists = categoryService.queryCategoryByParentId(categoryId);
         for (CategoryEntity categoryEntity : parentLists) {
             Long id = categoryEntity.getCategoryId();
-            int count = productsService.counts(id);
+            int count = productsService.counts(id,del);
             categoryEntity.setCount(count);
         }
         return R.ok().put("parentLists", parentLists);
     }
 
     /**
-     * @methodname: parentids:根据子id查出父类的id
+     * @methodname: queryParentByChildId: 根据子id查出父类的id
      * @param: [categoryId]
      * @return: java.lang.String
      * @auther: jhy
      * @date: 2018/11/6 10:27
      */
-    @RequestMapping("/parentids")
-    public String parentids(Long categoryId) {
-        String ids = categoryService.parentIds(categoryId);
+    @RequestMapping("/queryparentbychildid")
+    public String queryParentByChildId(Long categoryId) {
+        String ids = categoryService.queryParentByChildId(categoryId);
         return ids;
     }
 

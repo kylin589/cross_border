@@ -100,17 +100,17 @@ public class DataDictionaryController {
      * @date: 2018/11/6 10:02
      */
     @RequestMapping("/auditlist")
-    public R auditlist() {
+    public R auditlist(@RequestParam(value = "del", required = false, defaultValue = "0") String del) {
         List<DataDictionaryEntity> auditList = dataDictionaryService.auditList();
         //定义一个变量 全部的总和
         int auditCounts = 0;
         for (DataDictionaryEntity dataDictionaryEntity : auditList) {
             String number = dataDictionaryEntity.getDataNumber();
-            int auditCount = productsService.auditCount(number);
+            int auditCount = productsService.auditCount(number, del);
             dataDictionaryEntity.setCount(auditCount);
             auditCounts += auditCount;
         }
-        return R.ok().put("auditlist", auditList).put("auditCounts", auditCounts);
+        return R.ok().put("auditList", auditList).put("auditCounts", auditCounts);
     }
 
 
@@ -122,17 +122,17 @@ public class DataDictionaryController {
      * @date: 2018/11/6 10:05
      */
     @RequestMapping("/putawaylist")
-    public R putawaylist() {
+    public R putawaylist(@RequestParam(value = "del", required = false, defaultValue = "0") String del) {
         List<DataDictionaryEntity> putawayList = dataDictionaryService.putawayList();
         //定义一个变量 全部的总和
         int putawayCounts = 0;
         for (DataDictionaryEntity dataDictionaryEntity : putawayList) {
             String number = dataDictionaryEntity.getDataNumber();
-            int putawayCount = productsService.putawayCount(number);
+            int putawayCount = productsService.putawayCount(number, del);
             dataDictionaryEntity.setCount(putawayCount);
             putawayCounts += putawayCount;
         }
-        return R.ok().put("putawaylist", putawayList).put("putawayCounts", putawayCounts);
+        return R.ok().put("putawayList", putawayList).put("putawayCounts", putawayCounts);
     }
 
 
@@ -143,17 +143,17 @@ public class DataDictionaryController {
      * @auther: jhy
      * @date: 2018/11/6 9:59
      */
-    @RequestMapping("/productlist")
-    public R productlist() {
-        List<DataDictionaryEntity> productList = dataDictionaryService.productList();
+    @RequestMapping("/producttypelist")
+    public R productlist(@RequestParam(value = "del", required = false, defaultValue = "0") String del) {
+        List<DataDictionaryEntity> productList = dataDictionaryService.productTypeList();
         //定义一个变量 全部的总和
         int productCounts = 0;
         for (DataDictionaryEntity dataDictionaryEntity : productList) {
             String number = dataDictionaryEntity.getDataNumber();
-            int productCount = productsService.productCount(number);
+            int productCount = productsService.productCount(number, del);
             dataDictionaryEntity.setCount(productCount);
             productCounts += productCount;
         }
-        return R.ok().put("productlist", productList).put("producCounts", productCounts);
+        return R.ok().put("productTypeList", productList).put("productTypeCounts", productCounts);
     }
 }

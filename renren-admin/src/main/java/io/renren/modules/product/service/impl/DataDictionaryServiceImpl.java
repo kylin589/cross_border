@@ -29,18 +29,21 @@ public class DataDictionaryServiceImpl extends ServiceImpl<DataDictionaryDao, Da
         return new PageUtils(page);
     }
 
+    @Override
     public List<DataDictionaryEntity> auditList() {
-        List<DataDictionaryEntity> dataList = this.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "AUDIT_STATE"));
+        List<DataDictionaryEntity> dataList = this.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "AUDIT_STATE").orderBy(true,"data_sort",true));
         return dataList;
     }
 
+    @Override
     public List<DataDictionaryEntity> putawayList() {
-        List<DataDictionaryEntity> dataList = this.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "SHELVE_STATE"));
+        List<DataDictionaryEntity> dataList = this.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "SHELVE_STATE").orderBy(true,"data_sort",true));
         return dataList;
     }
 
-    public List<DataDictionaryEntity> productList() {
-        List<DataDictionaryEntity> productList = this.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "PRODUCT_TYPE"));
+    @Override
+    public List<DataDictionaryEntity> productTypeList() {
+        List<DataDictionaryEntity> productList = this.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "PRODUCT_TYPE").orderBy(true,"data_sort",true));
         return productList;
     }
 

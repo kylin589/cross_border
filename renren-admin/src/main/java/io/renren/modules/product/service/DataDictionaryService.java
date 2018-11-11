@@ -22,7 +22,7 @@ public interface DataDictionaryService extends IService<DataDictionaryEntity> {
 
     List<DataDictionaryEntity> putawayList();
 
-    List<DataDictionaryEntity> productList();
+    List<DataDictionaryEntity> productTypeList();
 
 }
 
