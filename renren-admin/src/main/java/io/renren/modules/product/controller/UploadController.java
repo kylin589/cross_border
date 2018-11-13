@@ -66,9 +66,7 @@ public class UploadController {
         return R.ok();
     }
 
-    /**
-     * 修改
-     */
+
     @RequestMapping("/update")
     @RequiresPermissions("product:upload:update")
     public R update(@RequestBody UploadEntity upload){
@@ -79,7 +77,11 @@ public class UploadController {
     }
 
     /**
-     * 删除
+     * @methodname: delete 删除
+     * @param: [uploadIds] 下载id数组
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:upload:delete")

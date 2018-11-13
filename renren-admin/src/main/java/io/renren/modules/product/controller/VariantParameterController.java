@@ -33,7 +33,11 @@ public class VariantParameterController {
     private VariantParameterService variantParameterService;
 
     /**
-     * 列表
+     * @methodname: list 列表
+     * @param: [params] 参数接受
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:variantparameter:list")
@@ -45,7 +49,11 @@ public class VariantParameterController {
 
 
     /**
-     * 信息
+     * @methodname: info 信息
+     * @param: [paramsId] 变体id
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/info/{paramsId}")
     @RequiresPermissions("product:variantparameter:info")
@@ -56,7 +64,11 @@ public class VariantParameterController {
     }
 
     /**
-     * 保存
+     * @methodname: save 保存
+     * @param: [variantParameter] 变体实体
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:variantparameter:save")
@@ -67,7 +79,11 @@ public class VariantParameterController {
     }
 
     /**
-     * 修改
+     * @methodname: delete 修改
+     * @param: [variantParameter] 变体实体
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:variantparameter:update")
@@ -79,7 +95,11 @@ public class VariantParameterController {
     }
 
     /**
-     * 删除
+     * @methodname: delete 删除
+     * @param: [paramsIds] 变体id数组
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:variantparameter:delete")

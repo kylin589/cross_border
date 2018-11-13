@@ -34,8 +34,13 @@ public class VariantsInfoController {
     @Autowired
     private VariantsInfoService variantsInfoService;
 
+
     /**
-     * 列表
+     * @methodname: list 列表
+     * @param: [params] 参数接受
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:variantsinfo:list")
@@ -47,7 +52,11 @@ public class VariantsInfoController {
 
 
     /**
-     * 信息
+     * @methodname: info 信息
+     * @param: [variantId] 变体信息id
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/info/{variantId}")
     @RequiresPermissions("product:variantsinfo:info")
@@ -58,7 +67,11 @@ public class VariantsInfoController {
     }
 
     /**
-     * 保存
+     * @methodname: save 保存
+     * @param: [variantsInfo] 变体信息实体
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:variantsinfo:save")
@@ -69,7 +82,11 @@ public class VariantsInfoController {
     }
 
     /**
-     * 修改
+     * @methodname: update 修改
+     * @param: [variantsInfo] 变体信息实体
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:variantsinfo:update")
@@ -80,8 +97,13 @@ public class VariantsInfoController {
         return R.ok();
     }
 
+
     /**
-     * 删除
+     * @methodname: delete 删除
+     * @param: [variantIds] 变体信息id数组
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:variantsinfo:delete")
