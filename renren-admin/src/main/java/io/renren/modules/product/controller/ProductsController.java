@@ -41,16 +41,16 @@ public class ProductsController extends AbstractController {
     private CategoryService categoryService;
 
     /**
-     * @methodname 员工：我的产品列表
-     *               管理员：所有产品
-     *               根据用户id查询没有被删除的产品，按时间降序排列
      * @param params 产品id
      * @return R
-     *          page 产品page
-     *          proCount 产品数量
-     *          approvedCount 审核通过
-     *          numberOfVariants 包含变体的商品
-     *          variantsCount 变体总数
+     * page 产品page
+     * proCount 产品数量
+     * approvedCount 审核通过
+     * numberOfVariants 包含变体的商品
+     * variantsCount 变体总数
+     * @methodname 员工：我的产品列表
+     * 管理员：所有产品
+     * 根据用户id查询没有被删除的产品，按时间降序排列
      * @auther zjr
      * @date 2018-11-7 9:54
      */
@@ -62,11 +62,11 @@ public class ProductsController extends AbstractController {
     }
 
     /**
-     * @methodname: 更改产品的审核、上架、产品状态
      * @param productIds 产品id
      * @param number     状态number，如001
      * @param type       以什么状态进行修改，如AUDIT_STATE
      * @return R
+     * @methodname: 更改产品的审核、上架、产品状态
      * @auther zjr
      * @date 2018-11-7 9:54
      */
@@ -92,9 +92,9 @@ public class ProductsController extends AbstractController {
     }
 
     /**
-     * @methodname 产品假删除
      * @param productIds 产品id
      * @return R
+     * @methodname 产品假删除
      * @auther zjr
      * @date 2018-11-7 9:58
      */
@@ -112,8 +112,8 @@ public class ProductsController extends AbstractController {
     }
 
     /**
-     * @methodname 生成SKU
      * @return R里包括SKU结果。
+     * @methodname 生成SKU
      * @auther zjr
      * @date 2018-11-7 11:23
      */
@@ -125,8 +125,8 @@ public class ProductsController extends AbstractController {
     }
 
     /**
-     * @methodname 修正SKU
      * @return R里包括SKU结果。
+     * @methodname 修正SKU
      * @auther zjr
      * @date 2018-11-7 11:23
      */
@@ -138,7 +138,10 @@ public class ProductsController extends AbstractController {
     }
 
     /**
-     * 信息
+     * @return R.ok()
+     * @methodname 产品详情
+     * @auther zjr
+     * @date 2018-11-10 10:23
      */
     @RequestMapping("/info/{productId}")
     @RequiresPermissions("product:products:info")
@@ -149,7 +152,10 @@ public class ProductsController extends AbstractController {
     }
 
     /**
-     * 保存
+     * @return R.ok()
+     * @methodname 保存产品
+     * @auther zjr
+     * @date 2018-11-10 10:23
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:products:save")
@@ -159,19 +165,22 @@ public class ProductsController extends AbstractController {
     }
 
     /**
-     * @methodname 获取新建产品的id
      * @return R里包括productId。
+     * @methodname 获取新建产品的id
      * @auther zjr
      * @date 2018-11-10 10:23
      */
     @RequestMapping("/getproductid")
     public R getProductId() {
         Long productId = productsService.getNewProductId(getUserId());
-        return R.ok().put("productId",productId);
+        return R.ok().put("productId", productId);
     }
 
     /**
-     * 修改
+     * @return R.ok()
+     * @methodname 更新
+     * @auther zjr
+     * @date 2018-11-10 10:23
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:products:update")

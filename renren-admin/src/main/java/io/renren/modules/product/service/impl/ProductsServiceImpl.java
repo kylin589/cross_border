@@ -33,6 +33,20 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     @Autowired
     private ImageAddressService imageAddressService;
 
+    /**
+     * 我的产品列表
+     *
+     * @param params url参数
+     * @param userId 用户id
+     * @return Map<String   ,       Object>
+     * page 产品page
+     * proCount 产品数量
+     * approvedCount 审核通过
+     * numberOfVariants 包含变体的商品
+     * variantsCount 变体总数
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
     @Override
     public Map<String, Object> queryPage(Map<String, Object> params, Long userId) {
 
@@ -117,6 +131,20 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         return map;
     }
 
+    /**
+     * 产品回收站
+     *
+     * @param params url参数
+     * @param userId 用户id
+     * @return Map<String   ,       Object>
+     * page 产品page
+     * proCount 产品数量
+     * approvedCount 审核通过
+     * numberOfVariants 包含变体的商品
+     * variantsCount 变体总数
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
     @Override
     public Map<String, Object> queryRecyclingPage(Map<String, Object> params, Long userId) {
 
@@ -205,6 +233,22 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         return map;
     }
 
+    /**
+     * 审核通过总数
+     *
+     * @param category      分类
+     * @param title         标题
+     * @param sku
+     * @param startDate     开始时间
+     * @param endDate       结束时间
+     * @param shelveNumber  上架状态
+     * @param productNumber 产品存放类型
+     * @param ids           用户ids
+     * @param isDeleted     是否删除
+     * @return 总数
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
     @Override
     public int getApprovedCount(String category, String title, String sku, String startDate, String endDate, String shelveNumber, String productNumber, List<Long> ids, int isDeleted) {
         String timeType ="create_time";
@@ -226,12 +270,28 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         return this.selectCount(approvedCountWrapper);
     }
 
+    /**
+     * 统计包含变体的商品总数
+     *
+     * @param wrapper 查询条件
+     * @return 总数
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
     @Override
     public int getNumberOfVariants(EntityWrapper<ProductsEntity> wrapper) {
         wrapper.isNotNull("color_id").or().isNotNull("size_id");
         return this.selectCount(wrapper);
     }
 
+    /**
+     * 统计变体总数
+     *
+     * @param wrapper 查询条件
+     * @return 总数
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
     @Override
     public int getWariantsCount(EntityWrapper<ProductsEntity> wrapper) {
         List<ProductsEntity> list = this.selectList(wrapper);
@@ -244,6 +304,14 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         return variantsInfoService.selectCount(variantsCountWrapper);
     }
 
+    /**
+     * 获取新商品的编号
+     *
+     * @param userId 用户id
+     * @return 编号
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
     @Override
     public Long getNewProductId(Long userId) {
         ProductsEntity product = new ProductsEntity();
@@ -303,6 +371,15 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         return c;
     }
 
+    /**
+     * 获取商品数量
+     * @param params url 参数
+     * @param userId 用户id
+     * @param isDel 是否删除
+     * @return 数量
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
     @Override
     public int getTotalCount(Map<String, Object> params, Long userId,String isDel) {
         // 分类传过来的是三级分类的id
