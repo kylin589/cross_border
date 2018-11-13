@@ -34,6 +34,10 @@ public class AmazonTemplateController {
 
     /**
      * 列表
+     * @param params url参数
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:amazontemplate:list")
@@ -43,9 +47,12 @@ public class AmazonTemplateController {
         return R.ok().put("page", page);
     }
 
-
     /**
      * 信息
+     * @param amazonTemplateId id
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/info/{amazonTemplateId}")
     @RequiresPermissions("product:amazontemplate:info")
@@ -57,6 +64,10 @@ public class AmazonTemplateController {
 
     /**
      * 保存
+     * @param amazonTemplate 实体类
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:amazontemplate:save")
@@ -68,6 +79,10 @@ public class AmazonTemplateController {
 
     /**
      * 修改
+     * @param amazonTemplate 实体
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:amazontemplate:update")
@@ -80,6 +95,10 @@ public class AmazonTemplateController {
 
     /**
      * 删除
+     * @param amazonTemplateIds id数组
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:amazontemplate:delete")
