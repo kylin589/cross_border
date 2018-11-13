@@ -35,9 +35,13 @@ public class CategoryController {
     @Autowired
     private ProductsService productsService;
 
-
     /**
      * 列表
+     *
+     * @param params url参数
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:category:list")
@@ -50,6 +54,11 @@ public class CategoryController {
 
     /**
      * 信息
+     *
+     * @param categoryId id
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/info/{categoryId}")
     @RequiresPermissions("product:category:info")
@@ -61,6 +70,11 @@ public class CategoryController {
 
     /**
      * 保存
+     *
+     * @param category 实体
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:category:save")
@@ -72,6 +86,11 @@ public class CategoryController {
 
     /**
      * 修改
+     *
+     * @param category 实体
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:category:update")
@@ -85,6 +104,11 @@ public class CategoryController {
 
     /**
      * 删除
+     *
+     * @param categoryIds id数组
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:category:delete")
@@ -101,12 +125,12 @@ public class CategoryController {
      * @date: 2018/11/6 10:29
      */
     @RequestMapping("/querycategoryone")
-    public R queryCategoryOne(@RequestParam(value="del",required = false,defaultValue = "0") String del) {
+    public R queryCategoryOne(@RequestParam(value = "del", required = false, defaultValue = "0") String del) {
         List<CategoryEntity> parentList = categoryService.queryCategoryOne();
         for (CategoryEntity categoryEntity : parentList) {
             Long id = categoryEntity.getCategoryId();
             //根据分类id查出一级分类产品总数
-            int c = productsService.count(id,del);
+            int c = productsService.count(id, del);
             categoryEntity.setCount(c);
         }
         return R.ok().put("categoryOneList", parentList);
@@ -120,13 +144,13 @@ public class CategoryController {
      * @date: 2018/11/6 10:28
      */
     @RequestMapping("/querycategorybyparentid")
-    public R queryCategoryByParentId(Long categoryId, @RequestParam(value="del",required = false,defaultValue = "0") String del) {
-       //根据分类的父级id查出分类的信息
+    public R queryCategoryByParentId(Long categoryId, @RequestParam(value = "del", required = false, defaultValue = "0") String del) {
+        //根据分类的父级id查出分类的信息
         List<CategoryEntity> parentLists = categoryService.queryCategoryByParentId(categoryId);
         for (CategoryEntity categoryEntity : parentLists) {
             Long id = categoryEntity.getCategoryId();
             //父类分类id查子类的产品总和
-            int count = productsService.counts(id,del);
+            int count = productsService.counts(id, del);
             categoryEntity.setCount(count);
         }
         return R.ok().put("parentLists", parentLists);
