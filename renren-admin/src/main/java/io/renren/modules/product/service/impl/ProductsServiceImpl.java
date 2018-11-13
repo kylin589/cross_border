@@ -38,7 +38,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String   ,       Object>
+     * @return Map<String       ,               Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -136,7 +136,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String   ,       Object>
+     * @return Map<String       ,               Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -251,9 +251,9 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      */
     @Override
     public int getApprovedCount(String category, String title, String sku, String startDate, String endDate, String shelveNumber, String productNumber, List<Long> ids, int isDeleted) {
-        String timeType ="create_time";
-        if ("1".equals(isDeleted)){
-            timeType  = "last_operation_time";
+        String timeType = "create_time";
+        if ("1".equals(isDeleted)) {
+            timeType = "last_operation_time";
         }
         EntityWrapper<ProductsEntity> approvedCountWrapper = new EntityWrapper<>();
         approvedCountWrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
@@ -323,7 +323,11 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     /**
-     * 审核类型分类统计每个分类的总数
+     * @methodname: auditCount 审核类型分类统计每个分类的总数
+     * @param: [number, del]
+     * @return: int
+     * @auther: jhy
+     * @date: 2018/11/13 23:43
      */
     @Override
     public int auditCount(String number, String del) {
@@ -333,7 +337,11 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
 
     /**
-     * 上架类型分类统计每个分类的总数
+     * @methodname: putawayCount 上架类型分类统计每个分类的总数
+     * @param: [number, del]
+     * @return: int
+     * @auther: jhy
+     * @date: 2018/11/13 23:43
      */
     @Override
     public int putawayCount(String number, String del) {
@@ -343,7 +351,11 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
 
     /**
-     * 产品类型分类统计每个分类的总数
+     * @methodname: productCount 产品类型分类统计每个分类的总数
+     * @param: [number, del]
+     * @return: int
+     * @auther: jhy
+     * @date: 2018/11/13 23:44
      */
     @Override
     public int productCount(String number, String del) {
@@ -352,9 +364,11 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     /**
-     * 一级分类商品总数
-     * @param id
-     * @return
+     * @methodname: count 一级分类商品总数
+     * @param: [id, del]
+     * @return: int
+     * @auther: jhy
+     * @date: 2018/11/13 23:42
      */
     @Override
     public int count(Long id, String del) {
@@ -363,7 +377,11 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     /**
-     * 父类查子类产品总和
+     * @methodname: counts 父级查子类产品总和
+     * @param: [id, del] 父级id，删除
+     * @return: int
+     * @auther: jhy
+     * @date: 2018/11/13 23:40
      */
     @Override
     public int counts(Long id, String del) {
@@ -373,15 +391,16 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
     /**
      * 获取商品数量
+     *
      * @param params url 参数
      * @param userId 用户id
-     * @param isDel 是否删除
+     * @param isDel  是否删除
      * @return 数量
      * @author zjr
      * @date 2018-11-07 14:54:47
      */
     @Override
-    public int getTotalCount(Map<String, Object> params, Long userId,String isDel) {
+    public int getTotalCount(Map<String, Object> params, Long userId, String isDel) {
         // 分类传过来的是三级分类的id
 
         String category = (String) params.get("category");
@@ -411,9 +430,9 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
             ids.add(userId);
         }
         */
-        String timeType ="create_time";
-        if ("1".equals(isDel)){
-            timeType  = "last_operation_time";
+        String timeType = "create_time";
+        if ("1".equals(isDel)) {
+            timeType = "last_operation_time";
         }
 
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();

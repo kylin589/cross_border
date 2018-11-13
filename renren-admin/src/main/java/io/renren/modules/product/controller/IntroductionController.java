@@ -28,7 +28,11 @@ public class IntroductionController {
     private IntroductionService introductionService;
 
     /**
-     * 列表
+     * @methodname: list 列表
+     * @param: [params] 接受参数
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:introduction:list")
@@ -40,7 +44,11 @@ public class IntroductionController {
 
 
     /**
-     * 信息
+     * @methodname: info 信息
+     * @param: [introductionId] 国家介绍id
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/info/{introductionId}")
     @RequiresPermissions("product:introduction:info")
@@ -51,7 +59,11 @@ public class IntroductionController {
     }
 
     /**
-     * 保存
+     * @methodname: save 保存
+     * @param: [introduction] 国家介绍实体
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:introduction:save")
@@ -62,7 +74,11 @@ public class IntroductionController {
     }
 
     /**
-     * 修改
+     * @methodname: update 删除
+     * @param: [introduction] 国家介绍实体
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:introduction:update")
@@ -74,7 +90,11 @@ public class IntroductionController {
     }
 
     /**
-     * 删除
+     * @methodname: delete 删除
+     * @param: [introductionIds] 国家介绍id数组
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:introduction:delete")

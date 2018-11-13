@@ -26,12 +26,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 new Query<CategoryEntity>(params).getPage(),
                 new EntityWrapper<CategoryEntity>()
         );
-
         return new PageUtils(page);
     }
 
     /**
-     * 一级分类，条件父级id为空
+     * @methodname: queryCategoryOne 一级分类，条件父级id为空
+     * @param: 无
+     * @return: java.util.List<io.renren.modules.product.entity.CategoryEntity>
+     * @auther: jhy
+     * @date: 2018/11/13 23:31
      */
     @Override
     public List<CategoryEntity> queryCategoryOne() {
@@ -42,7 +45,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     /**
-     * 根据父级id查询出子类的分类信息
+     * @methodname: queryCategoryByParentId 根据父级id查询出子类的分类信息
+     * @param: [id] 父级id
+     * @return: java.util.List<io.renren.modules.product.entity.CategoryEntity>
+     * @auther: jhy
+     * @date: 2018/11/13 23:32
      */
     @Override
     public List<CategoryEntity> queryCategoryByParentId(Long id) {
@@ -51,7 +58,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     /**
-     * 三级id查出一级id和二级id
+     * @methodname: queryParentByChildId 三级id查出一级id和二级id
+     * @param: [id] 三级id
+     * @return: java.lang.String
+     * @auther: jhy
+     * @date: 2018/11/13 23:33
      */
     @Override
     public String queryParentByChildId(Long id) {

@@ -113,7 +113,7 @@ public class VariantsInfoController {
         return R.ok();
     }
     /**
-     * @methodname: variantsinfoList:根据产品id查出变体参数信息并进行排序
+     * @methodname: variantsinfoLis 根据产品id查出变体参数信息并进行排序
      * @param: [productId] 产品的id
      * @return: io.renren.common.utils.R
      * @auther: jhy

@@ -18,7 +18,6 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 
 
-
 /**
  * 物流成本
  *
@@ -37,7 +36,7 @@ public class FreightCostController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:freightcost:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = freightCostService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -49,7 +48,7 @@ public class FreightCostController {
      */
     @RequestMapping("/info/{freightCostId}")
     @RequiresPermissions("product:freightcost:info")
-    public R info(@PathVariable("freightCostId") Long freightCostId){
+    public R info(@PathVariable("freightCostId") Long freightCostId) {
         FreightCostEntity freightCost = freightCostService.selectById(freightCostId);
 
         return R.ok().put("freightCost", freightCost);
@@ -60,7 +59,7 @@ public class FreightCostController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:freightcost:save")
-    public R save(@RequestBody FreightCostEntity freightCost){
+    public R save(@RequestBody FreightCostEntity freightCost) {
         freightCostService.insert(freightCost);
 
         return R.ok();
@@ -71,10 +70,10 @@ public class FreightCostController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:freightcost:update")
-    public R update(@RequestBody FreightCostEntity freightCost){
+    public R update(@RequestBody FreightCostEntity freightCost) {
         ValidatorUtils.validateEntity(freightCost);
         freightCostService.updateAllColumnById(freightCost);//全部更新
-        
+
         return R.ok();
     }
 
@@ -83,11 +82,12 @@ public class FreightCostController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:freightcost:delete")
-    public R delete(@RequestBody Long[] freightCostIds){
+    public R delete(@RequestBody Long[] freightCostIds) {
         freightCostService.deleteBatchIds(Arrays.asList(freightCostIds));
 
         return R.ok();
     }
+
     /**
      * @methodname: freightOne 根据物流成本id查出物流信息
      * @param: [freightCostId] 物流信息的id
@@ -97,7 +97,6 @@ public class FreightCostController {
      */
     @RequestMapping("freightone")
     public R freightOne(Long freightCostId) {
-
         FreightCostEntity freightCostEntity = freightCostService.selectById(freightCostId);
         return R.ok().put("freightCostEntity", freightCostEntity);
     }
