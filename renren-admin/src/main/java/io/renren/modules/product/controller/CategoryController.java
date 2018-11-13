@@ -105,8 +105,8 @@ public class CategoryController {
         List<CategoryEntity> parentList = categoryService.queryCategoryOne();
         for (CategoryEntity categoryEntity : parentList) {
             Long id = categoryEntity.getCategoryId();
+            //根据分类id查出一级分类产品总数
             int c = productsService.count(id,del);
-
             categoryEntity.setCount(c);
         }
         return R.ok().put("categoryOneList", parentList);
@@ -114,16 +114,18 @@ public class CategoryController {
 
     /**
      * @methodname: parentId:根据父id查询
-     * @param: categoryId
-     * @return: io.renren.common.utils.R
+     * @param: categoryId 父级id
+     * @return: io.renren.common.utils.R 分类的信息
      * @auther: jhy
      * @date: 2018/11/6 10:28
      */
     @RequestMapping("/querycategorybyparentid")
     public R queryCategoryByParentId(Long categoryId, @RequestParam(value="del",required = false,defaultValue = "0") String del) {
+       //根据分类的父级id查出分类的信息
         List<CategoryEntity> parentLists = categoryService.queryCategoryByParentId(categoryId);
         for (CategoryEntity categoryEntity : parentLists) {
             Long id = categoryEntity.getCategoryId();
+            //父类分类id查子类的产品总和
             int count = productsService.counts(id,del);
             categoryEntity.setCount(count);
         }
@@ -131,9 +133,9 @@ public class CategoryController {
     }
 
     /**
-     * @methodname: queryParentByChildId: 根据子id查出父类的id
-     * @param: [categoryId]
-     * @return: java.lang.String
+     * @methodname: queryParentByChildId 根据子id查出父类的id
+     * @param: [categoryId] 三级分类的id
+     * @return: java.lang.String  字符串的形式返回一级二级三级id，以逗号进行的拼接
      * @auther: jhy
      * @date: 2018/11/6 10:27
      */

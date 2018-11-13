@@ -91,8 +91,8 @@ public class ImageAddressController extends AbstractController {
     }
 
     /**
-     * @methodname: upload:上传图片
-     * @param: [file, productId]
+     * @methodname: upload 上传图片
+     * @param: [file, productId] 上传的图片文件，产品id
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/6 15:54
@@ -123,6 +123,7 @@ public class ImageAddressController extends AbstractController {
             dest.getParentFile().mkdirs();
         }
         try {
+            //图片写到指定的文件夹
             file.transferTo(dest);
             ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
             imageAddressEntity.setImageUrl(url);
@@ -142,7 +143,7 @@ public class ImageAddressController extends AbstractController {
 
     /**
      * @methodname: imageinfo:根据产品id查图片
-     * @param: [productId]
+     * @param: [productId] 产品的id
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/6 15:54
@@ -154,7 +155,7 @@ public class ImageAddressController extends AbstractController {
     }
 
     /**
-     * @methodname: deleteimage:图片批量删除
+     * @methodname: deleteimage 图片批量删除
      * @param: [imageIds]
      * @return: io.renren.common.utils.R
      * @auther: jhy
@@ -173,8 +174,8 @@ public class ImageAddressController extends AbstractController {
     }
 
     /**
-     * @methodname: isdeleteList:根据产品id查出被逻辑删除的图片
-     * @param: [productId]
+     * @methodname: isdeleteList 根据产品id查出被逻辑删除的图片
+     * @param: [productId] 产品的id
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/7 14:32
@@ -186,8 +187,8 @@ public class ImageAddressController extends AbstractController {
     }
 
     /**
-     * @methodname: recoverdelete:恢复逻辑删除的图片
-     * @param: [imageIds]
+     * @methodname: recoverdelete 恢复逻辑删除的图片
+     * @param: [imageIds] 图片id数组
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/7 14:32
@@ -206,7 +207,7 @@ public class ImageAddressController extends AbstractController {
 
     /**
      * @methodname: deleteimage:根据图片id彻底删除图片信息及图片文件
-     * @param: [imageIds]
+     * @param: [imageIds] 图片的id数组
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/7 15:21

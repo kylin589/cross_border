@@ -323,7 +323,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     /**
-     * 审核类型分类统计
+     * 审核类型分类统计每个分类的总数
      */
     @Override
     public int auditCount(String number, String del) {
@@ -333,7 +333,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
 
     /**
-     * 上架类型分类统计
+     * 上架类型分类统计每个分类的总数
      */
     @Override
     public int putawayCount(String number, String del) {
@@ -343,7 +343,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
 
     /**
-     * 产品类型分类统计
+     * 产品类型分类统计每个分类的总数
      */
     @Override
     public int productCount(String number, String del) {
@@ -353,7 +353,6 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
     /**
      * 一级分类商品总数
-     *
      * @param id
      * @return
      */
@@ -364,7 +363,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     /**
-     * 父类查子类
+     * 父类查子类产品总和
      */
     @Override
     public int counts(Long id, String del) {

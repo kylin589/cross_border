@@ -93,8 +93,8 @@ public class DataDictionaryController {
     }
 
     /**
-     * @methodname: auditlist:审核状态分类
-     * @param: []
+     * @methodname: auditlist 审核状态分类
+     * @param: 无
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/6 10:02
@@ -108,6 +108,7 @@ public class DataDictionaryController {
             String number = dataDictionaryEntity.getDataNumber();
             int auditCount = productsService.auditCount(number, del);
             dataDictionaryEntity.setCount(auditCount);
+            //审核状态分类每个状态的总数进行相加
             auditCounts += auditCount;
         }
         return R.ok().put("auditList", auditList).put("auditCounts", auditCounts);
@@ -116,7 +117,7 @@ public class DataDictionaryController {
 
     /**
      * @methodname: putawaylist:上架状态分类
-     * @param: []
+     * @param: 无
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/6 10:05
@@ -130,6 +131,7 @@ public class DataDictionaryController {
             String number = dataDictionaryEntity.getDataNumber();
             int putawayCount = productsService.putawayCount(number, del);
             dataDictionaryEntity.setCount(putawayCount);
+            //上架状态分类每个状态的总数进行相加
             putawayCounts += putawayCount;
         }
         return R.ok().put("putawayList", putawayList).put("putawayCounts", putawayCounts);
@@ -138,7 +140,7 @@ public class DataDictionaryController {
 
     /**
      * @methodname: productlist产品类型分类
-     * @param: []
+     * @param: 无
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/6 9:59
@@ -152,6 +154,7 @@ public class DataDictionaryController {
             String number = dataDictionaryEntity.getDataNumber();
             int productCount = productsService.productCount(number, del);
             dataDictionaryEntity.setCount(productCount);
+            //产品类型分类每个类型的总数进行相加
             productCounts += productCount;
         }
         return R.ok().put("productTypeList", productList).put("productTypeCounts", productCounts);

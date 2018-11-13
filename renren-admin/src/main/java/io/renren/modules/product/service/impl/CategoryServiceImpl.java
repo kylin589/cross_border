@@ -31,7 +31,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     /**
-     * 一级分类
+     * 一级分类，条件父级id为空
      */
     @Override
     public List<CategoryEntity> queryCategoryOne() {
@@ -42,7 +42,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     /**
-     * 父类查子类
+     * 根据父级id查询出子类的分类信息
      */
     @Override
     public List<CategoryEntity> queryCategoryByParentId(Long id) {
@@ -51,16 +51,17 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     /**
-     * 子类id查出父类id
+     * 三级id查出一级id和二级id
      */
     @Override
     public String queryParentByChildId(Long id) {
         CategoryEntity productCategoryEntity = this.selectById(id);
-        Long p1 = productCategoryEntity.getParentId();
-        CategoryEntity productCategoryEntity2 = this.selectById(p1);
-        Long p = productCategoryEntity2.getParentId();
-        String a = p + "," + p1 + "," + id;
-        return a;
+        Long twoId = productCategoryEntity.getParentId();
+        CategoryEntity productCategoryEntity2 = this.selectById(twoId);
+        Long oneId = productCategoryEntity2.getParentId();
+        //把一级二级三级id以逗号进行拼接
+        String ids = oneId + "," + twoId + "," + id;
+        return ids;
     }
 
 }
