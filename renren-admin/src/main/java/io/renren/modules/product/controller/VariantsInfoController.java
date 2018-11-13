@@ -1,8 +1,10 @@
 package io.renren.modules.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,5 +90,16 @@ public class VariantsInfoController {
 
         return R.ok();
     }
-
+    /**
+     * @methodname: variantsinfoList:根据产品id查出变体参数信息并进行排序
+     * @param: [productId] 产品的id
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
+     */
+    @RequestMapping("variantsinfolist")
+    public R variantsinfoList(Long productId) {
+        List<VariantsInfoEntity> variantsInfoEntities = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId).orderBy("variant_sort"));
+        return R.ok().put("variantsInfoEntities", variantsInfoEntities);
+    }
 }

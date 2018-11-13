@@ -83,5 +83,16 @@ public class IntroductionController {
 
         return R.ok();
     }
-
+    /**
+     * @methodname: introductionOne 根据国家介绍id查出介绍信息
+     * @param: [introductionId]国家介绍id
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 17:53
+     */
+    @RequestMapping("/introductionone")
+    public R introductionOne(Long introductionId) {
+        IntroductionEntity introductionEntity = introductionService.selectById(introductionId);
+        return R.ok().put("introductionEntity", introductionEntity);
+    }
 }

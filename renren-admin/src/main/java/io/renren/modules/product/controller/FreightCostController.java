@@ -88,5 +88,17 @@ public class FreightCostController {
 
         return R.ok();
     }
+    /**
+     * @methodname: freightOne 根据物流成本id查出物流信息
+     * @param: [freightCostId] 物流信息的id
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 17:35
+     */
+    @RequestMapping("freightone")
+    public R freightOne(Long freightCostId) {
 
+        FreightCostEntity freightCostEntity = freightCostService.selectById(freightCostId);
+        return R.ok().put("freightCostEntity", freightCostEntity);
+    }
 }
