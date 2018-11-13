@@ -34,6 +34,10 @@ public class AmazonCategoryController {
 
     /**
      * 列表
+     * @param params url 参数
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:amazoncategory:list")
@@ -43,9 +47,12 @@ public class AmazonCategoryController {
         return R.ok().put("page", page);
     }
 
-
     /**
      * 信息
+     * @param amazonCategoryId id
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/info/{amazonCategoryId}")
     @RequiresPermissions("product:amazoncategory:info")
@@ -57,6 +64,10 @@ public class AmazonCategoryController {
 
     /**
      * 保存
+     * @param amazonCategory 分类实体
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:amazoncategory:save")
@@ -68,6 +79,10 @@ public class AmazonCategoryController {
 
     /**
      * 修改
+     * @param amazonCategory 分类实体
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:amazoncategory:update")
@@ -80,6 +95,10 @@ public class AmazonCategoryController {
 
     /**
      * 删除
+     * @param amazonCategoryIds id数组
+     * @return R.ok()
+     * @return zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:amazoncategory:delete")
