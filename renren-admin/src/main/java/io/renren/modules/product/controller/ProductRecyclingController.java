@@ -30,14 +30,14 @@ public class ProductRecyclingController extends AbstractController {
     private ProductsService productsService;
 
     /**
-     * @methodname 产品回收站
      * @param params 产品id
      * @return R
-     *          page 产品page
-     *          proCount 产品数量
-     *          approvedCount 审核通过
-     *          numberOfVariants 包含变体的商品
-     *          variantsCount 变体总数
+     * page 产品page
+     * proCount 产品数量
+     * approvedCount 审核通过
+     * numberOfVariants 包含变体的商品
+     * variantsCount 变体总数
+     * @methodname 产品回收站列表
      * @auther zjr
      * @date 2018-11-7 9:54
      */
@@ -50,21 +50,32 @@ public class ProductRecyclingController extends AbstractController {
     /**
      * @param productIds 产品id
      * @return R
-     * @methodname 恢复
+     * @methodname 产品一键恢复
+     * 把is_deleted从1该为0
      * @auther zjr
      * @date 2018-11-7 9:59
      */
     @RequestMapping("/restore")
-    public R restore(@RequestBody Long[] productIds) {
+    public R restore(@RequestBody String[] productIds) {
         for (int i = 0; i < productIds.length; i++) {
             ProductsEntity entity = new ProductsEntity();
-            entity.setProductId(productIds[i]);
+            entity.setProductId(Long.valueOf(productIds[i]));
             entity.setIsDeleted(0);
             entity.setLastOperationTime(new Date());
             entity.setLastOperationUserId(getUserId());
             productsService.updateById(entity);
         }
         return R.ok();
+    }
+
+    /**
+     * @param params
+     * @return
+     */
+    @RequestMapping("/gettotalcount")
+    public R getTotalCount(@RequestParam Map<String, Object> params) {
+        int totalCount = productsService.getTotalCount(params, getUserId(), "1");
+        return R.ok().put("totalCount", totalCount);
     }
 
     /**

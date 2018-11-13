@@ -14,16 +14,16 @@ import java.util.List;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class ProductControllerTest {
-
+/*
     @Autowired
     private CategoryService categoryService;
     @Autowired
     private ProductsService productsService;
 
-    /**
+    *//**
      * 一级分类
      * 入参：无
-     */
+     *//*
     @Test
     public void parentList() {
         List<CategoryEntity> parentList = categoryService.parent();
@@ -38,10 +38,10 @@ public class ProductControllerTest {
     }
 
 
-    /**
+    *//**
      * 父级查子级
      * 入参：父级id
-     */
+     *//*
     @Test
     public void parentId() {
         List<CategoryEntity> parentLists = categoryService.parentId(1L);
@@ -55,14 +55,14 @@ public class ProductControllerTest {
 
     }
 
-    /**
+    *//**
      * 子类id查父类id
      * 入参：子类id
-     */
+     *//*
     @Test
     public void parentIds() {
         String ids = categoryService.parentIds(81L);
         System.out.println(ids);
-    }
+    }*/
 
 }

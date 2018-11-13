@@ -7,8 +7,10 @@ import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.product.dao.ProductsDao;
+import io.renren.modules.product.entity.ImageAddressEntity;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.VariantsInfoEntity;
+import io.renren.modules.product.service.ImageAddressService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.service.VariantsInfoService;
 import org.apache.commons.lang.StringUtils;
@@ -28,14 +30,18 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     @Autowired
     private VariantsInfoService variantsInfoService;
 
+    @Autowired
+    private ImageAddressService imageAddressService;
+
     @Override
     public Map<String, Object> queryPage(Map<String, Object> params, Long userId) {
 
         // 分类传过来的是三级分类的id
-        // TODO: 2018/11/11 缺少所选择的员工id 
+        // TODO: 2018/11/11 缺少所选择的员工id
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
+        // TODO: 2018/11/13 时间处理 
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
@@ -57,14 +63,14 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         */
 
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
-        wrapper.eq("category_three_id", category)
+        wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
                 .like(StringUtils.isNotBlank(title), "product_title", title)
                 .like(StringUtils.isNotBlank(sku), "product_sku", sku)
-                .ge("create_time", startDate)
-                .le("create_time", endDate)
-                .eq("audit_status", auditNumber)
-                .eq("shelve_status", shelveNumber)
-                .eq("product_type", productNumber)
+                .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
+                .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
                 .in("create_user_id", ids)
                 .eq("is_deleted", 0)
                 .orderBy(true, "create_time", false)
@@ -74,6 +80,16 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                 new Query<ProductsEntity>(params).getPage(),
                 wrapper
         );
+
+        PageUtils pageUtils = new PageUtils(page);
+        List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
+        for (int i = 0; i < list.size(); i++) {
+            ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
+            imageAddressEntity.setImageId(list.get(i).getMainImageId());
+            imageAddressService.selectById(imageAddressEntity);
+            list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
+        }
+        pageUtils.setList(list);
 
         // 产品数量
         int proCount = this.selectCount(wrapper);
@@ -93,7 +109,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         int variantsCount = getWariantsCount(wrapper);
 
         Map<String, Object> map = new HashMap<>(5);
-        map.put("page", new PageUtils(page));
+        map.put("page", pageUtils);
         map.put("proCount", proCount);
         map.put("approvedCount", approvedCount);
         map.put("numberOfVariants", numberOfVariants);
@@ -105,15 +121,21 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     public Map<String, Object> queryRecyclingPage(Map<String, Object> params, Long userId) {
 
         // 分类传过来的是三级分类的id
+
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
+        // 时间是：value9
+        String value9 = (String) params.get("value9");
+        System.out.println("value9:" + value9);
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
 
+        startDate = "";
+        endDate = "";
         // TODO: 2018/10/31  判断是不是管理员，根据管理员id查员工的商品
         // TODO: 2018/11/8  1.判断用户角色 或者 判断用户是否有子级
         // TODO: 2018/11/8  2.如果是管理员，那么就把他手底下的员工id查询出来，生成数组或者list列表
@@ -129,14 +151,14 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         */
 
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
-        wrapper.eq("category_three_id", category)
+        wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
                 .like(StringUtils.isNotBlank(title), "product_title", title)
                 .like(StringUtils.isNotBlank(sku), "product_sku", sku)
-                .ge("create_time", startDate)
-                .le("create_time", endDate)
-                .eq("audit_status", auditNumber)
-                .eq("shelve_status", shelveNumber)
-                .eq("product_type", productNumber)
+                .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
+                .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
                 .in("create_user_id", ids)
                 .eq("is_deleted", 1)
                 .orderBy(true, "last_operation_time", false)
@@ -146,6 +168,16 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         Page<ProductsEntity> page = this.selectPage(
                 new Query<ProductsEntity>(params).getPage(), wrapper
         );
+
+        PageUtils pageUtils = new PageUtils(page);
+        List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
+        for (int i = 0; i < list.size(); i++) {
+            ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
+            imageAddressEntity.setImageId(list.get(i).getMainImageId());
+            imageAddressEntity = imageAddressService.selectById(imageAddressEntity);
+            list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
+        }
+        pageUtils.setList(list);
 
         // 产品数量
         int proCount = this.selectCount(wrapper);
@@ -165,7 +197,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         int variantsCount = getWariantsCount(wrapper);
 
         Map<String, Object> map = new HashMap<>(5);
-        map.put("page", new PageUtils(page));
+        map.put("page", pageUtils);
         map.put("proCount", proCount);
         map.put("approvedCount", approvedCount);
         map.put("numberOfVariants", numberOfVariants);
@@ -175,18 +207,22 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
     @Override
     public int getApprovedCount(String category, String title, String sku, String startDate, String endDate, String shelveNumber, String productNumber, List<Long> ids, int isDeleted) {
+        String timeType ="create_time";
+        if ("1".equals(isDeleted)){
+            timeType  = "last_operation_time";
+        }
         EntityWrapper<ProductsEntity> approvedCountWrapper = new EntityWrapper<>();
-        approvedCountWrapper.eq("category_three_id", category)
+        approvedCountWrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
                 .like(StringUtils.isNotBlank(title), "product_title", title)
                 .like(StringUtils.isNotBlank(sku), "product_sku", sku)
-                .ge("create_time", startDate)
-                .le("create_time", endDate)
+                .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
                 .eq("audit_status", "001")
-                .eq("shelve_status", shelveNumber)
-                .eq("product_type", productNumber)
+                .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
                 .in("create_user_id", ids)
                 .eq("is_deleted", isDeleted)
-                .orderBy(true, "create_time", false);
+                .orderBy(true, timeType, false);
         return this.selectCount(approvedCountWrapper);
     }
 
@@ -266,5 +302,60 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     public int counts(Long id, String del) {
         int c = this.selectCount(new EntityWrapper<ProductsEntity>().eq("category_two_id", id).or().eq("category_three_id", id).eq("is_deleted", del));
         return c;
+    }
+
+    @Override
+    public int getTotalCount(Map<String, Object> params, Long userId,String isDel) {
+        // 分类传过来的是三级分类的id
+
+        String category = (String) params.get("category");
+        String title = (String) params.get("title");
+        String sku = (String) params.get("sku");
+        // 时间是：value9
+        String value9 = (String) params.get("value9");
+        System.out.println("value9:" + value9);
+        String startDate = (String) params.get("startDate");
+        String endDate = (String) params.get("endDate");
+        String auditNumber = (String) params.get("auditNumber");
+        String shelveNumber = (String) params.get("shelveNumber");
+        String productNumber = (String) params.get("productNumber");
+
+        startDate = "";
+        endDate = "";
+        // TODO: 2018/10/31  判断是不是管理员，根据管理员id查员工的商品
+        // TODO: 2018/11/8  1.判断用户角色 或者 判断用户是否有子级
+        // TODO: 2018/11/8  2.如果是管理员，那么就把他手底下的员工id查询出来，生成数组或者list列表
+        // TODO: 2018/11/8  3.判断是否是管理员，如果不是，就把当前用户id传入list.
+        List<Long> ids = new ArrayList<>();
+        ids.add(userId);
+        /*
+        if (){
+
+        }else {
+            ids.add(userId);
+        }
+        */
+        String timeType ="create_time";
+        if ("1".equals(isDel)){
+            timeType  = "last_operation_time";
+        }
+
+        EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
+        wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
+                .like(StringUtils.isNotBlank(title), "product_title", title)
+                .like(StringUtils.isNotBlank(sku), "product_sku", sku)
+                .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
+                .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                .in("create_user_id", ids)
+                .eq("is_deleted", isDel)
+                .orderBy(true, timeType, false)
+                .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+
+        // 产品数量
+        int proCount = this.selectCount(wrapper);
+        return proCount;
     }
 }

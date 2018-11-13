@@ -90,6 +90,42 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/amazon/mws-orders -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>mws-orders</artifactId>
+			<version>2013-09-01-2015-09-25</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/amazon/mws-client -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>mws-client</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/amazon/feeds -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>feeds</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/amazon/maws -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>maws</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/amazon/mws-sellers -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>mws-sellers</artifactId>
+			<version>2011-07-01</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
+		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>2.1.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

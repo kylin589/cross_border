@@ -14,15 +14,15 @@ import java.util.List;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class ProductDataTest {
-    @Autowired
+   /* @Autowired
     private DataDictionaryService dataDictionaryService;
     @Autowired
     private ProductsService productsService;
 
-    /**
+    *//**
      * 审核状态分类
      * 入参：无
-     */
+     *//*
     @Test
     public void auditlist(){
         List<DataDictionaryEntity> auditList=dataDictionaryService.auditList();
@@ -38,10 +38,10 @@ public class ProductDataTest {
         System.out.println(auditCounts);
     }
 
-    /**
+    *//**
      * 上架状态分类
      * 入参：无
-     */
+     *//*
     @Test
     public void putawaylist(){
         List<DataDictionaryEntity> putawayList=dataDictionaryService.putawayList();
@@ -58,10 +58,10 @@ public class ProductDataTest {
 
 
 
-    /**
+    *//**
      * 产品类型分类
      * 入参：无
-     */
+     *//*
     @Test
     public void productlist(){
         List<DataDictionaryEntity> productList=dataDictionaryService.productList();
@@ -74,5 +74,5 @@ public class ProductDataTest {
             System.out.println(dataDictionaryEntity.getDataContent()+"  "+dataDictionaryEntity.getCount());
         }
         System.out.println(productCounts);
-    }
+    }*/
 }

@@ -37,4 +37,6 @@ public interface ProductsService extends IService<ProductsEntity> {
     int count(Long id, String del);
 
     int counts(Long id, String del);
+
+    int getTotalCount(Map<String, Object> params, Long userId,String isDel);
 }
