@@ -27,15 +27,15 @@ public interface ProductsService extends IService<ProductsEntity> {
     int getWariantsCount(EntityWrapper<ProductsEntity> wrapper);
 
     Long getNewProductId(Long userId);
-
+    //审核状态每个分类总数
     int auditCount(String number, String del);
-
+    //上架状态每个分类总数
     int putawayCount(String number, String del);
-
+    //产品类型每个分类总数
     int productCount(String number, String del);
-
+    //一级分类产品总数
     int count(Long id, String del);
-
+    //父类查子类的产品总和
     int counts(Long id, String del);
 
     int getTotalCount(Map<String, Object> params, Long userId,String isDel);
