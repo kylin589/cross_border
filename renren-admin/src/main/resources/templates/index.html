@@ -70,7 +70,7 @@
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite>贤心</cite>
+                        <cite>{{user.displayName}}</cite>
                     </a>
                     <dl class="layui-nav-child">
                         <dd>
@@ -153,49 +153,51 @@
         <!-- 辅助元素，一般用于移动设备下遮罩 -->
         <div class="layadmin-body-shade" layadmin-event="shade"></div>
     </div>
+
+    <div id="baseInfo" class="tankuang" style="display: none">
+        <h3>我的账号</h3>
+        <p>
+            <label for="">账户：</label>
+            <span>{{user.username}}</span>
+        </p>
+        <p>
+            <label for="">账户ID：</label>
+            <span>{{user.userId}}</span>
+        </p>
+        <p>
+            <label for="">昵称：</label>
+            <input type="text" placeholder="昵称" v-model="user.displayName">
+        </p>
+        <p>
+            <label for="">英文名称：</label>
+            <input type="text" placeholder="英文名称" v-model="user.enName">
+            <span class="dec">用于生产SKU</span>
+        </p>
+        <p>
+            <label for="">英文品牌：</label>
+            <input type="text" placeholder="英文品牌" v-model="user.enBrand">
+           <span class="dec">用于生产SKU，全大写英文，不能有空格</span>
+        </p>
+    </div>
+
+    <div id="passwordLayer" class="tankuang" style="display: none">
+        <h3>修改密码</h3>
+        <p>
+            <label for="">账户：</label>
+            <span class="label label-success" style="vertical-align: bottom;">{{user.username}}</span>
+        </p>
+        <p>
+            <label for="">原密码：</label>
+            <input type="password" v-model="password" placeholder="原密码" >
+        </p>
+        <p>
+            <label for="">新密码：</label>
+            <input type="password" v-model="newPassword" placeholder="新密码">
+        </p>
+    </div>
 </div>
 
 
-<div id="baseInfo" class="tankuang" style="display: none">
-    <h3>我的账户</h3>
-    <p>
-        <label for="">账户：</label>
-        <span>siefgaweif</span>
-    </p>
-    <p>
-        <label for="">账户ID：</label>
-        <span>色</span>
-    </p>
-    <p>
-        <label for="">英文名称：</label>
-        <input type="text" placeholder="英文名称">
-        <span class="dec">用于生产SKU</span>
-    </p>
-    <p>
-        <label for="">英文品牌：</label>
-        <input type="text" placeholder="英文品牌">
-        <span class="dec">用于生产SKU，全大写英文，不能有空格</span>
-    </p>
-    <p>
-        <label for="">昵称：</label>
-        <input type="text" placeholder="昵称">
-    </p>
-</div>
-<div id="passwordLayer" class="tankuang" style="display: none">
-    <h3>修改密码</h3>
-    <p>
-        <label for="">原密码：</label>
-        <input type="text" placeholder="原密码">
-    </p>
-    <p>
-        <label for="">新密码：</label>
-        <input type="text" placeholder="新密码">
-    </p>
-    <p>
-        <label for="">确认密码：</label>
-        <input type="text" placeholder="确认密码">
-    </p>
-</div>
 
 <script type="text/javascript" src="${request.contextPath}/statics/libs/jquery.min.js"></script>
 <script src="${request.contextPath}/statics/kuajing/js/layui.js"></script>

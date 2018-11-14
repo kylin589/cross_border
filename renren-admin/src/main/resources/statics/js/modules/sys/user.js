@@ -3,9 +3,10 @@ $(function () {
         url: baseURL + 'sys/user/list',
         datatype: "json",
         colModel: [			
-			{ label: '用户ID', name: 'userId', index: "user_id", width: 45, key: true },
-			{ label: '用户名', name: 'username', width: 75 },
-            { label: '所属部门', name: 'deptName', sortable: false, width: 75 },
+			{ label: '账户ID', name: 'userId', index: "user_id", width: 45, key: true },
+            { label: '昵称', name: 'displayName', width: 65 },
+			{ label: '账户', name: 'username', width: 55 },
+            { label: '所属公司', name: 'deptName', sortable: false, width: 75 },
 			{ label: '邮箱', name: 'email', width: 90 },
 			{ label: '手机号', name: 'mobile', width: 100 },
 			{ label: '状态', name: 'status', width: 60, formatter: function(value, options, row){
@@ -81,14 +82,14 @@ var vm = new Vue({
             vm.title = "新增";
             vm.roleList = {};
             vm.user = {deptName:null, deptId:null, status:1, roleIdList:[]};
-
+            $('#user_password').show();
             //获取角色信息
             this.getRoleList();
 
             vm.getDept();
         },
         getDept: function(){
-            //加载部门树
+            //加载公司树
             $.get(baseURL + "sys/dept/list", function(r){
                 ztree = $.fn.zTree.init($("#deptTree"), setting, r);
                 var node = ztree.getNodeByParam("deptId", vm.user.deptId);
@@ -104,7 +105,7 @@ var vm = new Vue({
             if(userId == null){
                 return ;
             }
-
+            $('#user_password').hide();
             vm.showList = false;
             vm.title = "修改";
 
@@ -172,7 +173,7 @@ var vm = new Vue({
                 type: 1,
                 offset: '50px',
                 skin: 'layui-layer-molv',
-                title: "选择部门",
+                title: "选择公司",
                 area: ['300px', '450px'],
                 shade: 0,
                 shadeClose: false,
@@ -180,7 +181,7 @@ var vm = new Vue({
                 btn: ['确定', '取消'],
                 btn1: function (index) {
                     var node = ztree.getSelectedNodes();
-                    //选择上级部门
+                    //选择上级公司
                     vm.user.deptId = node[0].deptId;
                     vm.user.deptName = node[0].name;
 

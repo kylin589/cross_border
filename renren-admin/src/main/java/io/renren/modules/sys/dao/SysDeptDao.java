@@ -22,7 +22,7 @@ import io.renren.modules.sys.entity.SysDeptEntity;
 import java.util.List;
 
 /**
- * 部门管理
+ * 公司管理
  * 
  * @author chenshun
  * @email sunlightcs@gmail.com
@@ -31,8 +31,8 @@ import java.util.List;
 public interface SysDeptDao extends BaseMapper<SysDeptEntity> {
 
     /**
-     * 查询子部门ID列表
-     * @param parentId  上级部门ID
+     * 查询子公司ID列表
+     * @param parentId  上级公司ID
      */
     List<Long> queryDetpIdList(Long parentId);
 
