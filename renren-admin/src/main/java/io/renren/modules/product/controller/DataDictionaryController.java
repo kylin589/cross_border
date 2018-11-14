@@ -37,6 +37,10 @@ public class DataDictionaryController {
 
     /**
      * 列表
+     * @param params url列表
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:datadictionary:list")
@@ -46,9 +50,12 @@ public class DataDictionaryController {
         return R.ok().put("page", page);
     }
 
-
     /**
      * 信息
+     * @param dataId id
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/info/{dataId}")
     @RequiresPermissions("product:datadictionary:info")
@@ -60,6 +67,10 @@ public class DataDictionaryController {
 
     /**
      * 保存
+     * @param dataDictionary 实体
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:datadictionary:save")
