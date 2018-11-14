@@ -33,13 +33,14 @@ window.onload = function () {
             $('.radiobox').attr("data-checked", 'true');
         }
     })
-    // 商品单机选中
-    // $('.pro_list .item').click(function () {
-    //     $(this).toggleClass('action');
-    // })
-    // $('.pro_list .item h3 a').click(function () {
-    //     console.log(11111);
-    // })
+
+    $('.inner-content-div2').slimScroll({
+        height: '370px' //设置显示的高度
+    });
+
+    $('.changeType').focus(function () {
+        vm.fenleiTankuang();
+    })
 }
 
 
@@ -48,9 +49,9 @@ var vm = new Vue({
     data: {
         proList: [],
         screenData: {
-            auditAll: 234,
-            shelveAll: 33,
-            typeAll: 55
+            auditAll: 0,
+            shelveAll: 0,
+            typeAll: 0
         },
         statistics: {
             proNum: 0,
@@ -69,6 +70,7 @@ var vm = new Vue({
             productTypeCounts: null
         },
         categoryOneList: [],
+        categoryTwoList: [],
         totalCount: null,
         currPage: null,
         limit: null,
@@ -239,6 +241,77 @@ var vm = new Vue({
                 productIds[i] = $('div.item.action').eq(i).attr("data-id");
             }
             return productIds;
+        },
+        fenleiTankuang: function () {
+            var con = $('.fenleiCon');
+            $('#fenleiTankuang div.con').append(con);
+            $('.fenleiCon ul li').click(function () {
+                var id = $(this).attr('data-id');
+                var bol = $(this).attr('data-ifNext');
+                vm.fenlei(bol, id);
+            })
+
+            // 分类弹框
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#fenleiTankuang'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['800px', '500px'],
+                shadeClose: true,
+                btn: ['确定', '取消'],
+                btn1: function (index) {
+
+
+                },
+                btn2: function (index) {
+                    $('#fenleiTankuang div.con>div.qita').remove();
+                }
+            });
+        },
+        fenlei: function (bol, id) {
+            var data = vm.categoryOneList;
+            // ajax
+            if (bol == 'true') {
+                $.get('../../product/category/querycategorybyparentid', {
+                    categoryId: id,
+                    del: "1"
+                }, function (r) {
+                    vm.categoryTwoList = r.categoryList;
+                });
+
+                // arr赋值
+                data = vm.categoryTwoList;
+            }
+
+            // 分类弹框
+            var html1 = $('<div class="qita"></div>');
+            var html2 = $('<div class="some-content-related-div" style="width: 100%;margin: 0 auto;"></div>');
+            var html3 = $('<div class="inner-content-div2"></div>');
+            var ul = $('<ul></ul>');
+            var _html = '';
+            // data.forEach(function (index,item) {
+            //     _html = '<li id="'+item.id+'">'+item.value+'</li>';
+            // })
+            for (var i = 0; i < data.length; i++) {
+                var index = i;
+                _html += '<li id="' + data[index].id + '">' + data[index].value + '</li>';
+            }
+            ul.append(_html);
+            html3.append(ul);
+            html2.append(html3);
+            html1.append(html2);
+            $('#fenleiTankuang div.con').append(html1);
+            $('.inner-content-div2').slimScroll({
+                height: '370px' //设置显示的高度
+            });
+            $('.inner-content-div2 ul li').click(function () {
+                $(this).parent().parent().parent().parent().parent().nextAll().remove();
+                var id = $(this).attr('data-id');
+                var bol = $(this).attr('data-ifTwo');
+                vm.fenlei(bol, id);
+            })
+            // this.fenlei();
         }
     },
     created: function () {
@@ -248,6 +321,5 @@ var vm = new Vue({
         this.getQueryCategoryOne();
         this.getPage(1, 30);
         this.laypage();
-    },
-
+    }
 })

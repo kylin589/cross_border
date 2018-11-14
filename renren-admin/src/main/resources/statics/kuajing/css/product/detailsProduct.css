@@ -242,13 +242,165 @@ form .chengben label{
 
 
 /*产品回收站*/
+.tankuang ul{
+    padding: 5px;
+}
 .tankuang ul li{
     box-sizing: border-box;
     display: inline-block;
-    width: 20%;
-    padding: 5px;
+    width: calc(20% - 6px);
+    padding: 4px;
+    border: 1px solid transparent;
+    margin: 3px;
 }
 .tankuang ul li img{
     width: 100%;
     border-radius: 3px;
 }
+.tankuang ul li.action{
+    border-color: #00a3e8;
+    box-shadow: 0 0 10px #00a3e8;
+}
+
+#addVariant>div{
+    /*display: flex;*/
+    padding: 10px 20px;
+    margin-bottom: 8px;
+}
+#addVariant>div label{
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #666;
+}
+#addVariant>div select , #addVariant>div textarea{
+    display: block;
+    width: 100%;
+    padding: 4px;
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    color: #444;
+}
+#addVariant>div span{
+    display: inline-block;
+    color: #444;
+    font-size: 13px;
+    padding: 4px;
+    border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+}
+#addVariant>div span:hover{
+    background: #00a3e8;
+    color: #fff;
+}
+
+/*变体*/
+.variantName{
+    margin-bottom: 10px;
+}
+.variantName span{
+    display: inline-block;
+}
+.variantName a{
+    display: inline-block;
+    padding: 4px;
+    border-radius: 3px;
+    background: #ccedfa;
+    color: #333;
+    margin-right: 16px;
+}
+.variantName i{
+    position: relative;
+    color: #00a3e8;
+    top: -15px;
+    left: -25px;
+    visibility:hidden;
+}
+.variantDetails span{
+    color: #333;
+    margin: 0 10px 0 0!important;
+}
+.variantDetails a{
+    color: #00a3e8;
+    margin-right: 10px;
+}
+table{
+    width: 100%;
+}
+table tr{
+    display: flex;
+}
+table tr th,table tr td{
+    width: 100px;
+}
+table tr th:nth-child(8),table tr td:nth-child(8){
+    width: 130px;
+}
+table tr th:nth-child(7),table tr td:nth-child(7){
+    width: 70px;
+}
+table tr th:first-child,table tr td:first-child{
+    width: 50px;
+}
+table tr th:last-child,table tr td:last-child{
+    flex: 1;
+}
+table tr th,table tr td{
+    padding: 4px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+}
+table tr th{
+    background: #f0f0f0;
+    font-size: 14px;
+    text-align: left;
+}
+table tr td input[type=text]{
+    height: 28px;
+    width: 80px;
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    padding-left: 6px;
+}
+table tr td input[type=button]{
+    border: none!important;
+    background: none!important;
+    padding: 0!important;
+}
+table tr td input[type=button]:hover{
+    border: none!important;
+    background: none!important;
+}
+table tr td input[type=button].del{
+    color: #ff4a3d!important;
+}
+table tr td input[type=button].chan{
+    color: #00a3e8!important;
+}
+table tr td input[type=button].all{
+    color: #ff6d29!important;
+}
+
+
+.tableY tr th:first-child{
+    width: 70px;
+    background: none;
+    text-align: center;
+    text-align: center;
+    border-right: 1px solid #f0f0f0;
+}
+
+.tableY tr:first-child th:first-child{
+    background: #f0f0f0;
+}
+.tableY tr:nth-child(5) th , .tableY tr:nth-child(5) td{
+    color: #00a3e8;
+}
+.tableY tr:nth-child(6) th , .tableY tr:nth-child(6) td{
+    color: #00a3e8;
+}
+.tableY tr:nth-child(7) th , .tableY tr:nth-child(7) td{
+    color: #00a3e8;
+}
+

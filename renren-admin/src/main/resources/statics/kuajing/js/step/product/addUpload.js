@@ -13,30 +13,6 @@ $(function () {
 
 window.onload = function () {
 
-    function fenlei() {
-        var data = vm.leven1;
-        // 分类弹框
-        var html1 = $('<div></div>');
-        var html2 = $('<div class="some-content-related-div" style="width: 100%;margin: 0 auto;"></div>');
-        var html3 = $('<div class="inner-content-div2"></div>');
-        var ul = $('<ul></ul>');
-        var _html = '';
-        // data.forEach(function (index,item) {
-        //     _html = '<li id="'+item.id+'">'+item.value+'</li>';
-        // })
-        for(var i = 0;i<data.length;i++){
-            var index = i;
-            _html += '<li id="'+data[index].id+'" onclick="fenlei()">'+data[index].value+'</li>';
-        }
-        ul.append(_html);
-        html3.append(ul);
-        html2.append(html3);
-        html1.append(html2);
-        $('#fenleiTankuang div.con').append(html1);
-        $('.inner-content-div2').slimScroll({
-            height: '270px' //设置显示的高度
-        });
-    }
 
 }
 
@@ -164,13 +140,18 @@ var vm = new Vue({
             ifTwo:'true',
             id:111,
             value:'手表Uhren'
-        }]
+        }],
+        arr:[],
+        arr2:[]
     },
     methods:{
         fenleiTankuang:function () {
             var con = $('.fenleiCon');
             $('#fenleiTankuang div.con').append(con);
             $('.fenleiCon ul li').click(function () {
+                var id = $(this).attr('data-id');
+                var bol = $(this).attr('data-ifTwo');
+                vm.fenlei(bol,id);
                 vm.fenlei();
             })
 
@@ -193,7 +174,18 @@ var vm = new Vue({
                 }
             });
         },
-        fenlei:function () {
+        fenlei:function (bol,id) {
+
+
+            if(bol == 'true'){
+                // ajax
+
+                // arr赋值
+
+                var data = vm.arr;
+            }
+
+
             var data = vm.leven1;
             // 分类弹框
             var html1 = $('<div class="qita"></div>');
@@ -214,11 +206,13 @@ var vm = new Vue({
             html1.append(html2);
             $('#fenleiTankuang div.con').append(html1);
             $('.inner-content-div2').slimScroll({
-                height: '270px' //设置显示的高度
+                height: '370px' //设置显示的高度
             });
             $('.inner-content-div2 ul li').click(function () {
                 $(this).parent().parent().parent().parent().parent().nextAll().remove();
-                vm.fenlei();
+                var id = $(this).attr('data-id');
+                var bol = $(this).attr('data-ifTwo');
+                vm.fenlei(bol,id);
             })
             // this.fenlei();
         }

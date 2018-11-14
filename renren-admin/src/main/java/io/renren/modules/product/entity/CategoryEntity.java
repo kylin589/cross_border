@@ -44,6 +44,20 @@ public class CategoryEntity implements Serializable {
 	}
 
 	/**
+	 * 是否有下一级
+	 */
+	@TableField(exist=false)
+	private String ifNext;
+
+	public String getIfNext() {
+		return ifNext;
+	}
+
+	public void setIfNext(String ifNext) {
+		this.ifNext = ifNext;
+	}
+
+	/**
 	 * 设置：内部分类id
 	 */
 	public void setCategoryId(Long categoryId) {
