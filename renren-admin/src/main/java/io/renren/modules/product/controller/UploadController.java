@@ -33,7 +33,11 @@ public class UploadController {
     private UploadService uploadService;
 
     /**
-     * 列表
+     * @methodname: list 信息
+     * @param: [params] 接受参数
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:upload:list")
@@ -45,7 +49,11 @@ public class UploadController {
 
 
     /**
-     * 信息
+     * @methodname: info 信息
+     * @param: [uploadId] 下载id
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/info/{uploadId}")
     @RequiresPermissions("product:upload:info")
@@ -56,7 +64,11 @@ public class UploadController {
     }
 
     /**
-     * 保存
+     * @methodname: save 保存
+     * @param: [upload] 下载实体
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:upload:save")
@@ -67,7 +79,11 @@ public class UploadController {
     }
 
     /**
-     * 修改
+     * @methodname: update 更新
+     * @param: [upload] 下载实体
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:upload:update")
@@ -79,7 +95,11 @@ public class UploadController {
     }
 
     /**
-     * 删除
+     * @methodname: delete 删除
+     * @param: [uploadIds] 下载id数组
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:upload:delete")
