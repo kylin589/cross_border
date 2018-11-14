@@ -33,6 +33,10 @@ public class FreightCostController {
 
     /**
      * 列表
+     * @param params url参数
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:freightcost:list")
@@ -45,6 +49,9 @@ public class FreightCostController {
 
     /**
      * 信息
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/info/{freightCostId}")
     @RequiresPermissions("product:freightcost:info")

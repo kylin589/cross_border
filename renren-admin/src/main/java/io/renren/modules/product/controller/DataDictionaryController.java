@@ -82,6 +82,10 @@ public class DataDictionaryController {
 
     /**
      * 修改
+     * @param dataDictionary 实体
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:datadictionary:update")
@@ -94,6 +98,10 @@ public class DataDictionaryController {
 
     /**
      * 删除
+     * @param dataIds id数组
+     * @return R.ok()
+     * @author zjr
+     * @date 2018-11-07 14:54:47
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:datadictionary:delete")
