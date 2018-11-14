@@ -100,7 +100,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         for (int i = 0; i < list.size(); i++) {
             ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
             imageAddressEntity.setImageId(list.get(i).getMainImageId());
-            imageAddressService.selectById(imageAddressEntity);
+            imageAddressEntity = imageAddressService.selectById(imageAddressEntity);
             list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
         }
         pageUtils.setList(list);

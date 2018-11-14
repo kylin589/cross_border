@@ -55,10 +55,9 @@ public class ProductsController extends AbstractController {
      * @date 2018-11-7 9:54
      */
     @RequestMapping("/list")
-    @RequiresPermissions("product:products:list")
     public R list(@RequestParam Map<String, Object> params) {
         Map<String, Object> map = productsService.queryPage(params, getUserId());
-        return R.ok().put("page", map.get("page")).put("proCount", map.get("proCount")).put("approvedCount", map.get("approvedCount")).put("numberOfVariants", map.get("numberOfVariants")).put("variantsCount", map.get("variantsCount"));
+        return R.ok().put("page", map.get("page")).put("proNum", map.get("proCount")).put("via", map.get("approvedCount")).put("variant", map.get("numberOfVariants")).put("allVariant", map.get("variantsCount"));
     }
 
     /**
@@ -144,7 +143,6 @@ public class ProductsController extends AbstractController {
      * @date 2018-11-10 10:23
      */
     @RequestMapping("/info/{productId}")
-    @RequiresPermissions("product:products:info")
     public R info(@PathVariable("productId") Long productId) {
         ProductsEntity products = productsService.selectById(productId);
 
@@ -183,7 +181,6 @@ public class ProductsController extends AbstractController {
      * @date 2018-11-10 10:23
      */
     @RequestMapping("/update")
-    @RequiresPermissions("product:products:update")
     public R update(@RequestBody ProductsEntity products) {
         ValidatorUtils.validateEntity(products);
         //全部更新
@@ -375,5 +372,17 @@ public class ProductsController extends AbstractController {
 
         }
         return R.ok();
+    }
+    /**
+     * @methodname: getTotalCount 获取总记录数
+     * @param: [params] 接受参数
+     * @return: io.renren.common.utils.R
+     * @auther: zjr
+     * @date: 2018/11/8 21:22
+     */
+    @RequestMapping("/gettotalcount")
+    public R getTotalCount(@RequestParam Map<String, Object> params) {
+        int totalCount = productsService.getTotalCount(params, getUserId(), "0");
+        return R.ok().put("totalCount", totalCount);
     }
 }

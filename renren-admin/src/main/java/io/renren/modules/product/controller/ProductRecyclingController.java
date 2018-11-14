@@ -72,7 +72,7 @@ public class ProductRecyclingController extends AbstractController {
      * @methodname: getTotalCount 获取总记录数
      * @param: [params] 接受参数
      * @return: io.renren.common.utils.R
-     * @auther: jhy
+     * @auther: zjr
      * @date: 2018/11/8 21:22
      */
     @RequestMapping("/gettotalcount")
