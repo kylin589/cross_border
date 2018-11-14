@@ -1,4 +1,3 @@
-
 $(function () {
     // 筛选区域
     $('.screen>div.audit ul li').click(function () {

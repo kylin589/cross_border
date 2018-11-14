@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.FreightCostDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.FreightCostEntity" id="freightCostMap">
+        <result property="freightCostId" column="freight_cost_id"/>
+        <result property="freight" column="freight"/>
+        <result property="price" column="price"/>
+        <result property="foreignCurrency" column="foreign_currency"/>
+        <result property="optimization" column="optimization"/>
+        <result property="finalPrice" column="final_price"/>
+        <result property="profit" column="profit"/>
+    </resultMap>
+
+
+</mapper>

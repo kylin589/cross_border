@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.ProductsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.ProductsEntity" id="productsMap">
+        <result property="productId" column="product_id"/>
+        <result property="categoryOneId" column="category_one_id"/>
+        <result property="categoryTwoId" column="category_two_id"/>
+        <result property="categoryThreeId" column="category_three_id"/>
+        <result property="productCategory" column="product_category"/>
+        <result property="auditStatus" column="audit_status"/>
+        <result property="shelveStatus" column="shelve_status"/>
+        <result property="productType" column="product_type"/>
+        <result property="mainImageId" column="main_image_id"/>
+        <result property="producerName" column="producer_name"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="manufacturerNumber" column="manufacturer_number"/>
+        <result property="productSku" column="product_sku"/>
+        <result property="productSource" column="product_source"/>
+        <result property="sellerLink" column="seller_link"/>
+        <result property="productRemark" column="product_remark"/>
+        <result property="eanCode" column="ean_code"/>
+        <result property="upcCode" column="upc_code"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="productWeight" column="product_weight"/>
+        <result property="productLength" column="product_length"/>
+        <result property="productWide" column="product_wide"/>
+        <result property="productHeight" column="product_height"/>
+        <result property="domesticFreight" column="domestic_freight"/>
+        <result property="discount" column="discount"/>
+        <result property="americanFreight" column="american_freight"/>
+        <result property="canadaFreight" column="canada_freight"/>
+        <result property="mexicoFreight" column="mexico_freight"/>
+        <result property="britainFreight" column="britain_freight"/>
+        <result property="franceFreight" column="france_freight"/>
+        <result property="germanyFreight" column="germany_freight"/>
+        <result property="italyFreight" column="italy_freight"/>
+        <result property="spainFreight" column="spain_freight"/>
+        <result property="japanFreight" column="japan_freight"/>
+        <result property="australiaFreight" column="australia_freight"/>
+        <result property="stock" column="stock"/>
+        <result property="pretreatmentDate" column="pretreatment_date"/>
+        <result property="productAbbreviations" column="product_abbreviations"/>
+        <result property="productTitle" column="product_title"/>
+        <result property="chineseIntroduction" column="chinese_introduction"/>
+        <result property="britainIntroduction" column="britain_introduction"/>
+        <result property="franceIntroduction" column="france_introduction"/>
+        <result property="germanyIntroduction" column="germany_introduction"/>
+        <result property="italyIntroduction" column="italy_introduction"/>
+        <result property="spainIntroduction" column="spain_introduction"/>
+        <result property="japanIntroduction" column="japan_introduction"/>
+        <result property="colorId" column="color_id"/>
+        <result property="sizeId" column="size_id"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="lastOperationTime" column="last_operation_time"/>
+        <result property="lastOperationUserId" column="last_operation_user_id"/>
+    </resultMap>
+
+
+</mapper>
