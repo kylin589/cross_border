@@ -32,7 +32,7 @@ import java.util.List;
 
 
 /**
- * 部门管理
+ * 公司管理
  * 
  * @author chenshun
  * @email sunlightcs@gmail.com
@@ -56,18 +56,18 @@ public class SysDeptController extends AbstractController {
 	}
 
 	/**
-	 * 选择部门(添加、修改菜单)
+	 * 选择公司(添加、修改菜单)
 	 */
 	@RequestMapping("/select")
 	@RequiresPermissions("sys:dept:select")
 	public R select(){
 		List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>());
 
-		//添加一级部门
+		//添加一级公司
 		if(getUserId() == Constant.SUPER_ADMIN){
 			SysDeptEntity root = new SysDeptEntity();
 			root.setDeptId(0L);
-			root.setName("一级部门");
+			root.setName("一级公司");
 			root.setParentId(-1L);
 			root.setOpen(true);
 			deptList.add(root);
@@ -77,7 +77,7 @@ public class SysDeptController extends AbstractController {
 	}
 
 	/**
-	 * 上级部门Id(管理员则为0)
+	 * 上级公司Id(管理员则为0)
 	 */
 	@RequestMapping("/info")
 	@RequiresPermissions("sys:dept:list")
@@ -141,10 +141,10 @@ public class SysDeptController extends AbstractController {
 	@RequestMapping("/delete")
 	@RequiresPermissions("sys:dept:delete")
 	public R delete(long deptId){
-		//判断是否有子部门
+		//判断是否有子公司
 		List<Long> deptList = sysDeptService.queryDetpIdList(deptId);
 		if(deptList.size() > 0){
-			return R.error("请先删除子部门");
+			return R.error("请先删除子公司");
 		}
 
 		sysDeptService.deleteById(deptId);

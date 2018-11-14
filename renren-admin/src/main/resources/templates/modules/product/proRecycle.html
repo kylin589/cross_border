@@ -5,6 +5,7 @@
     <title>产品回收站</title>
     <#include "/header_kuajing.html">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/myProduct.css" media="all">
+    <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
     <style>
         .layui-col-md3 {
             width: 20%;
@@ -15,7 +16,7 @@
 <div class="box" id="step">
     <!--搜索区域-->
     <div class="search1">
-        <input type="text" class="sousuoAreaInput" placeholder="产品类目">
+       <!--<input type="text" class="sousuoAreaInput" placeholder="产品类目">
         <div class="sousuoArea">
             <div class="areaOne">
                 <ul>
@@ -24,7 +25,8 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div>-->
+        <input type="text" class="changeType" placeholder="--选择分类--">
         <input type="text" placeholder="标题" v-mode="title">
         <input type="text" placeholder="SKU" v-mode="sku">
         <div style="display: inline-block;">
@@ -101,6 +103,24 @@
     <!--分页-->
     <div id="page" style="text-align: center"></div>
 
+    <!--分类弹框-->
+    <div id="fenleiTankuang" style="">
+        <div class="con">
+
+        </div>
+
+    </div>
+
+    <div class="fenleiCon">
+        <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
+            <div class="inner-content-div2">
+                <!--要加滚动条的具体内容-->
+                <ul>
+                    <li v-for='item in categoryOneList' :data-id="item.categoryId" :data-ifNext="item.ifNext">{{ item.categoryName }} （{{ item.count }}）</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
 </div>
 <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>

@@ -56,10 +56,10 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 
 	@Override
 	public List<Long> getSubDeptIdList(Long deptId){
-		//部门及子部门ID列表
+		//公司及子公司ID列表
 		List<Long> deptIdList = new ArrayList<>();
 
-		//获取子部门ID
+		//获取子公司ID
 		List<Long> subIdList = queryDetpIdList(deptId);
 		getDeptTreeList(subIdList, deptIdList);
 

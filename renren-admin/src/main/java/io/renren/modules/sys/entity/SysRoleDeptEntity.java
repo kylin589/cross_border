@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import java.io.Serializable;
 
 /**
- * 角色与部门对应关系
+ * 角色与公司对应关系
  *
  * @author chenshun
  * @email sunlightcs@gmail.com
@@ -41,7 +41,7 @@ public class SysRoleDeptEntity implements Serializable {
 	private Long roleId;
 
 	/**
-	 * 部门ID
+	 * 公司ID
 	 */
 	private Long deptId;
 
@@ -78,15 +78,15 @@ public class SysRoleDeptEntity implements Serializable {
 	}
 	
 	/**
-	 * 设置：部门ID
-	 * @param deptId 部门ID
+	 * 设置：公司ID
+	 * @param deptId 公司ID
 	 */
 	public void setDeptId(Long deptId) {
 		this.deptId = deptId;
 	}
 
 	/**
-	 * 获取：部门ID
+	 * 获取：公司ID
 	 * @return Long
 	 */
 	public Long getDeptId() {

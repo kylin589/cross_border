@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.product.service.ProductsService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -132,6 +133,7 @@ public class CategoryController {
             //根据分类id查出一级分类产品总数
             int c = productsService.count(id, del);
             categoryEntity.setCount(c);
+            categoryEntity.setIfNext("true");
         }
         return R.ok().put("categoryOneList", parentList);
     }
@@ -149,11 +151,18 @@ public class CategoryController {
         List<CategoryEntity> parentLists = categoryService.queryCategoryByParentId(categoryId);
         for (CategoryEntity categoryEntity : parentLists) {
             Long id = categoryEntity.getCategoryId();
+            int temp = categoryService.selectCount(new EntityWrapper<CategoryEntity>().eq("parent_id", categoryEntity.getCategoryId()));
+            System.out.println(temp);
+            if (temp==0){
+                categoryEntity.setIfNext("false");
+            }else{
+                categoryEntity.setIfNext("true");
+            }
             //父类分类id查子类的产品总和
             int count = productsService.counts(id, del);
             categoryEntity.setCount(count);
         }
-        return R.ok().put("parentLists", parentLists);
+        return R.ok().put("categoryList", parentLists);
     }
 
     /**
