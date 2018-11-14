@@ -57,13 +57,13 @@ public class SysRoleEntity implements Serializable {
 	private String remark;
 
 	/**
-	 * 部门ID
+	 * 公司ID
 	 */
-	@NotNull(message="部门不能为空")
+	@NotNull(message="公司不能为空")
 	private Long deptId;
 
 	/**
-	 * 部门名称
+	 * 公司名称
 	 */
 	@TableField(exist=false)
 	private String deptName;

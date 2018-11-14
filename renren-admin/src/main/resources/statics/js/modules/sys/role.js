@@ -5,7 +5,7 @@ $(function () {
         colModel: [
             { label: '角色ID', name: 'roleId', index: "role_id", width: 45, key: true },
             { label: '角色名称', name: 'roleName', index: "role_name", width: 75 },
-            { label: '所属部门', name: 'deptName', sortable: false, width: 75 },
+            { label: '所属公司', name: 'deptName', sortable: false, width: 75 },
             { label: '备注', name: 'remark', width: 100 },
             { label: '创建时间', name: 'createTime', index: "create_time", width: 80}
         ],
@@ -56,7 +56,7 @@ var menu_setting = {
     }
 };
 
-//部门结构树
+//公司结构树
 var dept_ztree;
 var dept_setting = {
     data: {
@@ -168,7 +168,7 @@ var vm = new Vue({
                     menu_ztree.checkNode(node, true, false);
                 }
 
-                //勾选角色所拥有的部门数据权限
+                //勾选角色所拥有的公司数据权限
                 var deptIds = vm.role.deptIdList;
                 for(var i=0; i<deptIds.length; i++) {
                     var node = data_ztree.getNodeByParam("deptId", deptIds[i]);
@@ -233,7 +233,7 @@ var vm = new Vue({
             });
         },
         getDept: function(){
-            //加载部门树
+            //加载公司树
             $.get(baseURL + "sys/dept/list", function(r){
                 dept_ztree = $.fn.zTree.init($("#deptTree"), dept_setting, r);
                 var node = dept_ztree.getNodeByParam("deptId", vm.role.deptId);
@@ -249,7 +249,7 @@ var vm = new Vue({
                 type: 1,
                 offset: '50px',
                 skin: 'layui-layer-molv',
-                title: "选择部门",
+                title: "选择公司",
                 area: ['300px', '450px'],
                 shade: 0,
                 shadeClose: false,
@@ -257,7 +257,7 @@ var vm = new Vue({
                 btn: ['确定', '取消'],
                 btn1: function (index) {
                     var node = dept_ztree.getSelectedNodes();
-                    //选择上级部门
+                    //选择上级公司
                     vm.role.deptId = node[0].deptId;
                     vm.role.deptName = node[0].name;
 

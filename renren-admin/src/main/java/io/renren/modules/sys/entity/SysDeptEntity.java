@@ -20,13 +20,18 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
+import io.renren.common.validator.group.AddGroup;
+import io.renren.common.validator.group.UpdateGroup;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 
 /**
- * 部门管理
+ * 公司管理
  * 
  * @author chenshun
  * @email sunlightcs@gmail.com
@@ -36,14 +41,15 @@ import java.util.List;
 public class SysDeptEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	//部门ID
+	//公司ID
 	@TableId
 	private Long deptId;
-	//上级部门ID，一级部门为0
+	//上级公司ID，一级公司为0
 	private Long parentId;
-	//部门名称
+	//公司名称
+	@NotBlank(message="公司名称不能为空", groups = {AddGroup.class, UpdateGroup.class})
 	private String name;
-	//上级部门名称
+	//上级公司名称
 	@TableField(exist=false)
 	private String parentName;
 	//排序
@@ -59,6 +65,35 @@ public class SysDeptEntity implements Serializable {
 	@TableField(exist=false)
 	private List<?> list;
 
+	//公司账户数
+	@NotBlank(message="公司账户数不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private Integer accountCount;
+
+	//公司SKU信息
+	@NotBlank(message="公司SKU信息不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private String companySku;
+
+	//公司地址
+	@NotBlank(message="公司地址不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private String companyAddress;
+
+	//公司负责人
+	@NotBlank(message="公司负责人不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private String companyPerson;
+
+	//电话
+	@NotBlank(message="电话不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private String companyTel;
+
+	//QQ
+	@NotBlank(message="QQ不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private String companyQq;
+
+	//平台佣金点数
+	@NotBlank(message="平台佣金点数不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private BigDecimal comPoints;
+
+
 
 	public void setDeptId(Long deptId) {
 		this.deptId = deptId;
@@ -68,25 +103,25 @@ public class SysDeptEntity implements Serializable {
 		return deptId;
 	}
 	/**
-	 * 设置：上级部门ID，一级部门为0
+	 * 设置：上级公司ID，一级公司为0
 	 */
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
 	}
 	/**
-	 * 获取：上级部门ID，一级部门为0
+	 * 获取：上级公司ID，一级公司为0
 	 */
 	public Long getParentId() {
 		return parentId;
 	}
 	/**
-	 * 设置：部门名称
+	 * 设置：公司名称
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 	/**
-	 * 获取：部门名称
+	 * 获取：公司名称
 	 */
 	public String getName() {
 		return name;

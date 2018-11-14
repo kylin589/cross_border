@@ -211,38 +211,38 @@ paths:
   /sys/dept/list:
     get:
       tags:
-        - 部门管理
-      summary: 部门列表
+        - 公司管理
+      summary: 公司列表
       produces:
         - application/json
       responses:
         '200':
-          description: 返回部门列表
+          description: 返回公司列表
           schema:
             $ref: '#/definitions/SysDeptEntity'
   /sys/dept/select:
     get:
       tags:
-        - 部门管理
-      summary: 选择部门
-      description: 添加、修改部门的时候，选择上级部门接口
+        - 公司管理
+      summary: 选择公司
+      description: 添加、修改公司的时候，选择上级公司接口
       produces:
         - application/json
       responses:
         '200':
-          description: 返回部门列表
+          description: 返回公司列表
           schema:
             $ref: '#/definitions/SysDeptEntity'
   /sys/dept/info:
     get:
       tags:
-        - 部门管理
-      summary: 获取上级部门Id(管理员则为0)
+        - 公司管理
+      summary: 获取上级公司Id(管理员则为0)
       produces:
         - application/json
       responses:
         '200':
-          description: 返回部门信息
+          description: 返回公司信息
           schema:
             type: object
             properties:
@@ -251,7 +251,7 @@ paths:
                 type: integer
                 format: int32
               deptId:
-                description: 上级部门ID
+                description: 上级公司ID
                 type: integer
                 format: int64
               msg:
@@ -260,31 +260,31 @@ paths:
   /sys/dept/info/{deptId}:
     get:
       tags:
-        - 部门管理
-      summary: 获取部门信息
+        - 公司管理
+      summary: 获取公司信息
       produces:
         - application/json
       parameters:
         - name: deptId
-          description: 部门ID
+          description: 公司ID
           in: path
           type: integer
           required: true
       responses:
         '200':
-          description: 返回部门信息
+          description: 返回公司信息
           schema:
             $ref: '#/definitions/SysDeptEntity'
   /sys/dept/save:
     post:
       tags:
-        - 部门管理
-      summary: 添加部门
+        - 公司管理
+      summary: 添加公司
       produces:
         - application/json
       parameters:
         - name: body
-          description: 部门对象
+          description: 公司对象
           in: body
           type: string
           schema:
@@ -297,13 +297,13 @@ paths:
   /sys/dept/update:
     post:
       tags:
-        - 部门管理
-      summary: 修改部门
+        - 公司管理
+      summary: 修改公司
       produces:
         - application/json
       parameters:
         - name: body
-          description: 部门对象
+          description: 公司对象
           in: body
           type: string
           schema:
@@ -316,13 +316,13 @@ paths:
   /sys/dept/delete:
     post:
       tags:
-        - 部门管理
-      summary: 删除部门
+        - 公司管理
+      summary: 删除公司
       produces:
         - application/json
       parameters:
         - name: body
-          description: 部门ID列表
+          description: 公司ID列表
           in: body
           type: array
           items:
@@ -1039,11 +1039,11 @@ definitions:
         description: 用户名
         type: string
       deptId:
-        description: 部门ID
+        description: 公司ID
         type: integer
         format: int64
       deptName:
-        description: 部门名称
+        description: 公司名称
         type: string
       password:
         description: 密码
@@ -1083,7 +1083,7 @@ definitions:
           description: 用户名
           type: string
         deptId:
-          description: 部门ID
+          description: 公司ID
           type: integer
           format: int64
         password:
@@ -1109,18 +1109,18 @@ definitions:
     type: object
     properties:
       deptId:
-        description: 部门ID
+        description: 公司ID
         type: integer
         format: int64
       name:
-        description: 部门名称
+        description: 公司名称
         type: string
       parentId:
-        description: 上级部门ID，一级部门为0
+        description: 上级公司ID，一级公司为0
         type: integer
         format: int64
       parentName:
-        description: 上级部门名称
+        description: 上级公司名称
         type: string
       orderNum:
         description: 排序
@@ -1134,10 +1134,10 @@ definitions:
     type: object
     properties:
       name:
-        description: 部门名称
+        description: 公司名称
         type: string
       parentId:
-        description: 上级部门ID，一级部门为0
+        description: 上级公司ID，一级公司为0
         type: integer
         format: int64
       orderNum:
@@ -1155,11 +1155,11 @@ definitions:
         description: 角色名称
         type: string
       deptId:
-        description: 部门ID
+        description: 公司ID
         type: integer
         format: int64
       deptName:
-        description: 部门名称
+        description: 公司名称
         type: string
       remark:
         description: 备注
@@ -1189,7 +1189,7 @@ definitions:
         description: 角色名称
         type: string
       deptId:
-        description: 部门ID
+        description: 公司ID
         type: integer
         format: int64
       remark:

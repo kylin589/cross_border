@@ -28,7 +28,7 @@ import java.util.List;
 
 
 /**
- * 角色与部门对应关系
+ * 角色与公司对应关系
  *
  * @author chenshun
  * @email sunlightcs@gmail.com
@@ -40,7 +40,7 @@ public class SysRoleDeptServiceImpl extends ServiceImpl<SysRoleDeptDao, SysRoleD
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void saveOrUpdate(Long roleId, List<Long> deptIdList) {
-		//先删除角色与部门关系
+		//先删除角色与公司关系
 		deleteBatch(new Long[]{roleId});
 
 		if(deptIdList.size() == 0){

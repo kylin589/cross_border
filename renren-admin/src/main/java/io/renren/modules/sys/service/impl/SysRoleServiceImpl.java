@@ -86,7 +86,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 		//保存角色与菜单关系
 		sysRoleMenuService.saveOrUpdate(role.getRoleId(), role.getMenuIdList());
 
-		//保存角色与部门关系
+		//保存角色与公司关系
 		sysRoleDeptService.saveOrUpdate(role.getRoleId(), role.getDeptIdList());
 	}
 
@@ -98,7 +98,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 		//更新角色与菜单关系
 		sysRoleMenuService.saveOrUpdate(role.getRoleId(), role.getMenuIdList());
 
-		//保存角色与部门关系
+		//保存角色与公司关系
 		sysRoleDeptService.saveOrUpdate(role.getRoleId(), role.getDeptIdList());
 	}
 
@@ -111,7 +111,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 		//删除角色与菜单关联
 		sysRoleMenuService.deleteBatch(roleIds);
 
-		//删除角色与部门关联
+		//删除角色与公司关联
 		sysRoleDeptService.deleteBatch(roleIds);
 
 		//删除角色与用户关联

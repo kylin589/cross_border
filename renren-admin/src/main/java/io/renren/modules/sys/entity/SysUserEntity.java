@@ -95,17 +95,31 @@ public class SysUserEntity implements Serializable {
 	private Date createTime;
 
 	/**
-	 * 部门ID
+	 * 公司ID
 	 */
-	@NotNull(message="部门不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	@NotNull(message="公司不能为空", groups = {AddGroup.class, UpdateGroup.class})
 	private Long deptId;
 
 	/**
-	 * 部门名称
+	 * 公司名称
 	 */
 	@TableField(exist=false)
 	private String deptName;
-
+	/**
+	 * 昵称
+	 */
+	@NotBlank(message="昵称不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private String displayName;
+	/**
+	 * 英文名称
+	 */
+	@NotBlank(message="英文名称不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private String enName;
+	/**
+	 * 英文品牌
+	 */
+	@NotBlank(message="英文品牌不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	private String enBrand;
 	/**
 	 * 设置：
 	 * @param userId 
@@ -248,5 +262,29 @@ public class SysUserEntity implements Serializable {
 
 	public void setDeptName(String deptName) {
 		this.deptName = deptName;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getEnName() {
+		return enName;
+	}
+
+	public void setEnName(String enName) {
+		this.enName = enName;
+	}
+
+	public String getEnBrand() {
+		return enBrand;
+	}
+
+	public void setEnBrand(String enBrand) {
+		this.enBrand = enBrand;
 	}
 }

@@ -78,6 +78,7 @@ var vm = new Vue({
 		getUser: function(){
 			$.getJSON("sys/user/info?_"+$.now(), function(r){
 				vm.user = r.user;
+				console.log(vm.user);
 			});
 		},
 		updatePassword: function(){
@@ -120,8 +121,20 @@ var vm = new Vue({
                 content: $("#baseInfo"),
                 btn: ['保存','取消'],
                 btn1: function (index) {
-                    layer.close(index);
-                    layer.msg('保存成功', {icon: 1});
+                    $.ajax({
+                        type: "POST",
+                        url: "sys/user/update",
+                        data: JSON.stringify(vm.user),
+                        contentType: "application/json",
+                        success: function(result){
+                            if(result.code == 0){
+                                layer.close(index);
+                                layer.alert('保存成功');
+                            }else{
+                                layer.alert(result.msg);
+                            }
+                        }
+                    });
                 }
             });
         },
