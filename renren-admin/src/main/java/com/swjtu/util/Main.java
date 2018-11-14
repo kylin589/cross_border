@@ -1,8 +1,6 @@
 package com.swjtu.util;
 
-import io.renren.modules.product.entity.IntroductionEntity;
-import io.renren.modules.product.service.Html;
-import io.renren.modules.translate.TranSlateController;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
