@@ -100,7 +100,7 @@
         <div v-for="(item,index) in proList" class="item" :data-id="item.productId" @click="activePro(index)">
             <!--<img src="${request.contextPath}/statics/kuajing/img/img1.jpg">-->
             <img :src="item.mainImageUrl">
-            <h3><a href="detailsProduct1.html">{{ item.productTitle }}</a></h3>
+            <h3><a href="detailsProduct.html">{{ item.productTitle }}</a></h3>
             <div class="footer">
                 <p>时间：{{ item.createTime }}</p>
                 <p>编号：{{ item.productId }}</p>
