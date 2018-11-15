@@ -132,7 +132,8 @@ public class ImageAddressController extends AbstractController {
             imageAddressEntity.setCreateTime(new Date());
             imageAddressEntity.setCreateUserId(getUserId());
             imageAddressService.insert(imageAddressEntity);
-            return R.ok().put("url", url);
+            Long id=imageAddressEntity.getImageId();
+            return R.ok().put("url", url).put("id",id);
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (IOException e) {

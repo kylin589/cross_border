@@ -152,13 +152,14 @@ public class ProductsController extends AbstractController {
     /**
      * @return R.ok()
      * @methodname 保存产品
-     * @auther zjr
+     * @auther jhy
      * @date 2018-11-10 10:23
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:products:save")
     public R save(@RequestBody ProductsEntity products) {
-        // TODO: 2018/11/10
+
+
         return R.ok();
     }
 
