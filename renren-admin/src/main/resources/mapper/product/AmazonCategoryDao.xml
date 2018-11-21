@@ -9,6 +9,12 @@
         <result property="parentId" column="parent_id"/>
         <result property="categoryName" column="category_name"/>
         <result property="displayName" column="display_name"/>
+        <result property="nodeIdUk" column="node_id_uk"/>
+        <result property="nodeIdDe" column="node_id_de"/>
+        <result property="nodeIdFr" column="node_id_fr"/>
+        <result property="nodeIdIt" column="node_id_it"/>
+        <result property="nodeIdEs" column="node_id_es"/>
+        <result property="region" column="region"/>
     </resultMap>
 
 

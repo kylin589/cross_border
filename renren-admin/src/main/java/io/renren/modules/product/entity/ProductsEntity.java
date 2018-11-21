@@ -180,39 +180,39 @@ public class ProductsEntity implements Serializable {
     /**
      * 中文介绍
      */
-    private Integer chineseIntroduction;
+    private Long chineseIntroduction;
     /**
      * 英语介绍
      */
-    private Integer britainIntroduction;
+    private Long britainIntroduction;
     /**
      * 法语介绍
      */
-    private Integer franceIntroduction;
+    private Long franceIntroduction;
     /**
      * 德语介绍
      */
-    private Integer germanyIntroduction;
+    private Long germanyIntroduction;
     /**
      * 意大利语介绍
      */
-    private Integer italyIntroduction;
+    private Long italyIntroduction;
     /**
      * 西班牙语介绍
      */
-    private Integer spainIntroduction;
+    private Long spainIntroduction;
     /**
      * 日语介绍
      */
-    private Integer japanIntroduction;
+    private Long japanIntroduction;
     /**
      * （变体参数）颜色的id
      */
-    private Integer colorId;
+    private Long colorId;
     /**
      * （变体参数）尺寸id
      */
-    private Integer sizeId;
+    private Long sizeId;
     /**
      * 软删（1：删除）
      */
@@ -1091,126 +1091,126 @@ public class ProductsEntity implements Serializable {
     /**
      * 设置：中文介绍
      */
-    public void setChineseIntroduction(Integer chineseIntroduction) {
+    public void setChineseIntroduction(Long chineseIntroduction) {
         this.chineseIntroduction = chineseIntroduction;
     }
 
     /**
      * 获取：中文介绍
      */
-    public Integer getChineseIntroduction() {
+    public Long getChineseIntroduction() {
         return chineseIntroduction;
     }
 
     /**
      * 设置：英语介绍
      */
-    public void setBritainIntroduction(Integer britainIntroduction) {
+    public void setBritainIntroduction(Long britainIntroduction) {
         this.britainIntroduction = britainIntroduction;
     }
 
     /**
      * 获取：英语介绍
      */
-    public Integer getBritainIntroduction() {
+    public Long getBritainIntroduction() {
         return britainIntroduction;
     }
 
     /**
      * 设置：法语介绍
      */
-    public void setFranceIntroduction(Integer franceIntroduction) {
+    public void setFranceIntroduction(Long franceIntroduction) {
         this.franceIntroduction = franceIntroduction;
     }
 
     /**
      * 获取：法语介绍
      */
-    public Integer getFranceIntroduction() {
+    public Long getFranceIntroduction() {
         return franceIntroduction;
     }
 
     /**
      * 设置：德语介绍
      */
-    public void setGermanyIntroduction(Integer germanyIntroduction) {
+    public void setGermanyIntroduction(Long germanyIntroduction) {
         this.germanyIntroduction = germanyIntroduction;
     }
 
     /**
      * 获取：德语介绍
      */
-    public Integer getGermanyIntroduction() {
+    public Long getGermanyIntroduction() {
         return germanyIntroduction;
     }
 
     /**
      * 设置：意大利语介绍
      */
-    public void setItalyIntroduction(Integer italyIntroduction) {
+    public void setItalyIntroduction(Long italyIntroduction) {
         this.italyIntroduction = italyIntroduction;
     }
 
     /**
      * 获取：意大利语介绍
      */
-    public Integer getItalyIntroduction() {
+    public Long getItalyIntroduction() {
         return italyIntroduction;
     }
 
     /**
      * 设置：西班牙语介绍
      */
-    public void setSpainIntroduction(Integer spainIntroduction) {
+    public void setSpainIntroduction(Long spainIntroduction) {
         this.spainIntroduction = spainIntroduction;
     }
 
     /**
      * 获取：西班牙语介绍
      */
-    public Integer getSpainIntroduction() {
+    public Long getSpainIntroduction() {
         return spainIntroduction;
     }
 
     /**
      * 设置：日语介绍
      */
-    public void setJapanIntroduction(Integer japanIntroduction) {
+    public void setJapanIntroduction(Long japanIntroduction) {
         this.japanIntroduction = japanIntroduction;
     }
 
     /**
      * 获取：日语介绍
      */
-    public Integer getJapanIntroduction() {
+    public Long getJapanIntroduction() {
         return japanIntroduction;
     }
 
     /**
      * 设置：（变体参数）颜色的id
      */
-    public void setColorId(Integer colorId) {
+    public void setColorId(Long colorId) {
         this.colorId = colorId;
     }
 
     /**
      * 获取：（变体参数）颜色的id
      */
-    public Integer getColorId() {
+    public Long getColorId() {
         return colorId;
     }
 
     /**
      * 设置：（变体参数）尺寸id
      */
-    public void setSizeId(Integer sizeId) {
+    public void setSizeId(Long sizeId) {
         this.sizeId = sizeId;
     }
 
     /**
      * 获取：（变体参数）尺寸id
      */
-    public Integer getSizeId() {
+    public Long getSizeId() {
         return sizeId;
     }
 
