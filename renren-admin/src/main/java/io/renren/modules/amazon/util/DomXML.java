@@ -1,5 +1,4 @@
-package io.renren.modules.util;
-
+package io.renren.modules.amazon.util;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -8,20 +7,11 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class Dom4jDemo {
-
-
-    /**
-     * @methodname: main Dom4j解析xml
-     * @param: [args]
-     * @return: void
-     * @auther: jhy
-     * @date: 2018/11/14 8:52
-     */
+public class DomXML {
     @Test
-    public  void domXML() throws Exception {
+    public void analysisListOrdersResponse() throws Exception{
         SAXReader sax = new SAXReader();//dom4j解析，SaxReader加载xml文档获得Document
-        Document document = sax.read("C:\\Users\\asus\\Desktop\\ProductsFeedSubmissionResult.xml");//获取到文档对象
+        Document document = sax.read("C:\\Users\\asus\\Desktop\\ListOrdersResponse.xml");//获取到文档对象
         Element elemRoot = document.getRootElement();//获取到跟元素
         Element header = elemRoot.element("Header");
         Element merchantIdentfier = header.element("MerchantIdentifier");
@@ -116,4 +106,3 @@ public class Dom4jDemo {
         }
     }
 }
-
