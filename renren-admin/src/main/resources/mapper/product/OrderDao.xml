@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.OrderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.OrderEntity" id="orderMap">
+        <result property="orderId" column="order_id"/>
+        <result property="amazonOrderId" column="amazon_order_id"/>
+        <result property="buyDate" column="buy_date"/>
+        <result property="amazonOrderState" column="amazon_order_state"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="productSku" column="product_sku"/>
+        <result property="productAsin" column="product_asin"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="orderMoney" column="order_money"/>
+        <result property="amazonCommission" column="amazon_commission"/>
+        <result property="accountMoney" column="account_money"/>
+        <result property="interFreight" column="inter_freight"/>
+        <result property="platformCommissions" column="platform_commissions"/>
+        <result property="orderProfit" column="order_profit"/>
+        <result property="returnCost" column="return_cost"/>
+    </resultMap>
+
+
+</mapper>
