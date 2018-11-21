@@ -42,6 +42,7 @@ public class ListOrdersAsyncServiceTest {
     private ListOrdersAsyncService listOrdersAsyncService;
 
     @Test
+    @Ignore
     public void invokeListOrdersTest() {
 
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
@@ -79,25 +80,74 @@ public class ListOrdersAsyncServiceTest {
     }
 
     @Test
-    public void ListOrderItemsByNextTokenAsyncTest(){
-        // Get a client connection.
-        MarketplaceWebServiceOrdersAsyncClient client = MarketplaceWebServiceOrdersSampleConfig.getAsyncClient();
+    @Ignore
+    public void listOrderItemsByNextTokenAsyncTest(){
+        MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
+        config.setServiceURL(serviceURL);
+
+        MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
+                appName, appVersion, config, null);
 
         // Create a request list.
         List<ListOrdersByNextTokenRequest> requestList = new ArrayList<ListOrdersByNextTokenRequest>();
         ListOrdersByNextTokenRequest request = new ListOrdersByNextTokenRequest();
-        String sellerId = "A3OT34MAE5R969";
+        // String sellerId = "A3OT34MAE5R969";
         request.setSellerId(sellerId);
-        String mwsAuthToken = "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A";
+        // String mwsAuthToken = "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A";
         request.setMWSAuthToken(mwsAuthToken);
-
-
-        String nextToken = "example";
+        String nextToken = "fSKnKj1qo99/YYuZQbKv1QafEPREmauvizt1MIhPYZYOpmdYy2BlWdVncdvmRFv9Bm4WEItVacpTg2dsYWmzKd8ytOVgN7d/KyNtf5fepe3iG+vCyuJg6hanQHYOdTc+S+0zfa1p/rlwwUVaIJ5xpkFIaEVlNiMgr390vvVWxn1fnxQ7X6uzaF7TMh5o5U17y+9VsJ0xnRjNwKEvbXwVRAEJIskodtiAKbo82QdwNfQn+AwiN87vnp+lUkZL6+7mkUcxfLpcvmXCcTjnCe7d9QC0s33bXHPMJUiAnEg/VQSLdbAGTjFVaOrSyOslVIrxsSNO+ZJB0flNr+lvPPgkmY/BBCgkNvGZJVHL0xZ68mFOlEANlTTF+AiWZjtq5O8Vu3UzQHFKvEKFmWkEh3p1SY57CVI/H9ImehdapzRS0eeSdpZRB7wxkv++oSr7md1azurCEvRg0oZVIqDORMMh+vgSGNlBymhlKyHkmpcASUKY9TB3jldv+X/y5ZICxITwxDxzcxlN3cZKBK7iEwGf1glpi+km+v61ZQ+8nmCw/wtMIENUTqf/iM/UC0E9WR84T6B1SgezW1etTshJEF7OfCHpqJO4CEcxYUuw4IE3xTA=";
         request.setNextToken(nextToken);
         requestList.add(request);
 
         // Make the calls.
         listOrdersAsyncService.invokeListOrdersByNextToken(client, requestList);
+    }
+
+    @Test
+    public void getOrderAsyncTest(){
+
+        MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
+        config.setServiceURL(serviceURL);
+
+        MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
+                appName, appVersion, config, null);
+
+        // Create a request list.
+        List<GetOrderRequest> requestList = new ArrayList<GetOrderRequest>();
+        GetOrderRequest request = new GetOrderRequest();
+        // String sellerId = "A3OT34MAE5R969";
+        request.setSellerId(sellerId);
+        // String mwsAuthToken = "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A";
+        request.setMWSAuthToken(mwsAuthToken);
+        List<String> amazonOrderId = new ArrayList<String>();
+        // 最多50个
+        amazonOrderId.add("404-8753970-2929168");
+        amazonOrderId.add("302-8563289-3648321");
+        request.setAmazonOrderId(amazonOrderId);
+        requestList.add(request);
+
+        // Make the calls.
+        listOrdersAsyncService.invokeGetOrder(client, requestList);
+    }
+
+    @Test
+    public void listOrderItemsAsyncTest(){
+        // Get a client connection.
+        MarketplaceWebServiceOrdersAsyncClient client = MarketplaceWebServiceOrdersSampleConfig.getAsyncClient();
+
+        // Create a request list.
+        List<ListOrderItemsRequest> requestList = new ArrayList<ListOrderItemsRequest>();
+        ListOrderItemsRequest request = new ListOrderItemsRequest();
+        // String sellerId = "example";
+        request.setSellerId(sellerId);
+        // String mwsAuthToken = "example";
+        request.setMWSAuthToken(mwsAuthToken);
+        String amazonOrderId = "example";
+        request.setAmazonOrderId(amazonOrderId);
+        requestList.add(request);
+
+        // Make the calls.
+        listOrdersAsyncService.invokeListOrderItems(client, requestList);
 
     }
 }

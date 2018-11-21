@@ -1,6 +1,8 @@
 package io.renren.modules.amazon.service;
 
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsync;
+import com.amazonservices.mws.orders._2013_09_01.model.GetOrderRequest;
+import com.amazonservices.mws.orders._2013_09_01.model.ListOrderItemsRequest;
 import com.amazonservices.mws.orders._2013_09_01.model.ListOrdersByNextTokenRequest;
 import com.amazonservices.mws.orders._2013_09_01.model.ListOrdersRequest;
 import io.renren.modules.product.entity.OrderEntity;
@@ -13,5 +15,9 @@ public interface ListOrdersAsyncService {
 
     List<Object> invokeListOrdersByNextToken(MarketplaceWebServiceOrdersAsync client, List<ListOrdersByNextTokenRequest> requestList) ;
 
-    List<OrderEntity> analysis(List<Object> responseList);
+    List<Object> invokeGetOrder(MarketplaceWebServiceOrdersAsync client, List<GetOrderRequest> requestList);
+
+    List<Object> invokeListOrderItems(MarketplaceWebServiceOrdersAsync client, List<ListOrderItemsRequest> requestList);
+
+    List<OrderEntity> analysisListOrders(List<Object> responseList);
 }
