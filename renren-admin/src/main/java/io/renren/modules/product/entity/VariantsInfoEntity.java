@@ -23,7 +23,7 @@ public class VariantsInfoEntity implements Serializable {
     /**
      * 产品ID
      */
-    private Integer productId;
+    private Long productId;
     /**
      * 变体排序
      */
@@ -55,13 +55,13 @@ public class VariantsInfoEntity implements Serializable {
     /**
      * 获取：产品ID
      */
-    public Integer getProductId() {
+    public Long getProductId() {
         return productId;
     }
     /**
      * 设置：产品ID
      */
-    public void setProductId(Integer productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 

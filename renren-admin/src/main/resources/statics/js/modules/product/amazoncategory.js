@@ -6,7 +6,13 @@ $(function () {
 			{ label: 'amazonCategoryId', name: 'amazonCategoryId', index: 'amazon_category_id', width: 50, key: true },
 			{ label: '上级id', name: 'parentId', index: 'parent_id', width: 80 }, 			
 			{ label: '类目名称', name: 'categoryName', index: 'category_name', width: 80 }, 			
-			{ label: '展示名称（中文+英文）', name: 'displayName', index: 'display_name', width: 80 }			
+			{ label: '展示名称（中文+英文）', name: 'displayName', index: 'display_name', width: 80 }, 			
+			{ label: '英国节点id', name: 'nodeIdUk', index: 'node_id_uk', width: 80 }, 			
+			{ label: '德国节点id', name: 'nodeIdDe', index: 'node_id_de', width: 80 }, 			
+			{ label: '法国节点id', name: 'nodeIdFr', index: 'node_id_fr', width: 80 }, 			
+			{ label: '意大利节点id', name: 'nodeIdIt', index: 'node_id_it', width: 80 }, 			
+			{ label: '西班牙节点id', name: 'nodeIdEs', index: 'node_id_es', width: 80 }, 			
+			{ label: '所属区域(欧洲0、北美1、远东2）', name: 'region', index: 'region', width: 80 }			
         ],
 		viewrecords: true,
         height: 385,

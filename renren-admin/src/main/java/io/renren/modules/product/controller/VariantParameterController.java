@@ -49,7 +49,7 @@ public class VariantParameterController {
 
 
     /**
-     * @methodname: info 信息
+     * @methodname: info 变体信息
      * @param: [paramsId] 变体id
      * @return: io.renren.common.utils.R
      * @auther: jhy
@@ -74,8 +74,8 @@ public class VariantParameterController {
     @RequiresPermissions("product:variantparameter:save")
     public R save(@RequestBody VariantParameterEntity variantParameter){
         variantParameterService.insert(variantParameter);
-
-        return R.ok();
+        Long id =variantParameter.getParamsId();
+        return R.ok().put("id",id);
     }
 
     /**

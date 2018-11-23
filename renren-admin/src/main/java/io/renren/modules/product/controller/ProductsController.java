@@ -1,5 +1,6 @@
 package io.renren.modules.product.controller;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
@@ -158,8 +159,93 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/save")
     @RequiresPermissions("product:products:save")
     public R save(@RequestBody ProductsEntity products) {
-
-
+        Long threeId = products.getCategoryThreeId();
+        //根据三级id查出一级二级三级字符串
+        String idString = categoryService.queryParentByChildId(threeId);
+        String[] id = idString.split(",");
+        products.setCategoryOneId(Long.parseLong(id[0]));
+        products.setCategoryTwoId(Long.parseLong(id[1]));
+        products.setCategoryThreeId(Long.parseLong(id[2]));
+        FreightCostEntity americanFC = products.getAmericanFC();
+        freightCostService.insert(americanFC);
+        products.setAmericanFreight(americanFC.getFreightCostId());
+        // 加拿大运费
+        FreightCostEntity canadaFC = products.getCanadaFC();
+        freightCostService.insert(canadaFC);
+        products.setCanadaFreight(canadaFC.getFreightCostId());
+        // 墨西哥运费
+        FreightCostEntity mexicoFC = products.getMexicoFC();
+        freightCostService.insert(mexicoFC);
+        products.setMexicoFreight(mexicoFC.getFreightCostId());
+        //英国运费
+        FreightCostEntity britainFC = products.getBritainFC();
+        freightCostService.insert(britainFC);
+        products.setBritainFreight(britainFC.getFreightCostId());
+        // 法国运费
+        FreightCostEntity franceFC = products.getFranceFC();
+        freightCostService.insert(franceFC);
+        products.setFranceFreight(franceFC.getFreightCostId());
+        // 德国运费
+        FreightCostEntity germanyFC = products.getGermanyFC();
+        freightCostService.insert(germanyFC);
+        products.setGermanyFreight(germanyFC.getFreightCostId());
+        //意大利运费
+        FreightCostEntity italyFC = products.getItalyFC();
+        freightCostService.insert(italyFC);
+        products.setItalyFreight(italyFC.getFreightCostId());
+        //西班牙运费
+        FreightCostEntity spainFC = products.getSpainFC();
+        freightCostService.insert(spainFC);
+        products.setSpainFreight(spainFC.getFreightCostId());
+        // 日本运费
+        FreightCostEntity japanFC = products.getJapanFC();
+        freightCostService.insert(japanFC);
+        products.setJapanFreight(japanFC.getFreightCostId());
+        //澳大利亚运费
+        FreightCostEntity australiaFC = products.getAustraliaFC();
+        freightCostService.insert(australiaFC);
+        products.setAustraliaFreight(australiaFC.getFreightCostId());
+        //中文介绍
+        IntroductionEntity chinesePRE=products.getChinesePRE();
+        introductionService.insert(chinesePRE);
+        products.setChineseIntroduction(chinesePRE.getIntroductionId());
+        //英文介绍
+        IntroductionEntity britainPRE=products.getBritainPRE();
+        introductionService.insert(britainPRE);
+        products.setBritainIntroduction(britainPRE.getIntroductionId());
+        //法语介绍
+        IntroductionEntity francePRE=products.getFrancePRE();
+        introductionService.insert(francePRE);
+        products.setFranceIntroduction(francePRE.getIntroductionId());
+        //德语介绍
+        IntroductionEntity germanyPRE=products.getGermanyPRE();
+        introductionService.insert(germanyPRE);
+        products.setGermanyIntroduction(germanyPRE.getIntroductionId());
+        //意大利语介绍
+        IntroductionEntity italyPRE=products.getItalyPRE();
+        introductionService.insert(italyPRE);
+        products.setItalyIntroduction(italyPRE.getIntroductionId());
+        //西班牙语介绍
+        IntroductionEntity spainPRE=products.getSpainPRE();
+        introductionService.insert(spainPRE);
+        products.setSpainIntroduction(spainPRE.getIntroductionId());
+        //日语介绍
+        IntroductionEntity japanPRE=products.getJapanPRE();
+        introductionService.insert(japanPRE);
+        products.setJapanIntroduction(japanPRE.getIntroductionId());
+        products.setLastOperationTime(new Date());
+        products.setLastOperationUserId(this.getUserId());
+        VariantParameterEntity colorVP=products.getColorVP();
+        products.setColorId(colorVP.getParamsId());
+        VariantParameterEntity sizeVP=products.getSizeVP();
+        products.setSizeId(sizeVP.getParamsId());
+        //插入变体信息
+        List<VariantsInfoEntity>variantsInfosList =products.getVariantsInfos();
+        for (VariantsInfoEntity variantsInfoEntity : variantsInfosList) {
+            variantsInfoEntity.setProductId(products.getProductId());
+            variantsInfoService.insert(variantsInfoEntity);
+        }
+        productsService.updateById(products);
         return R.ok();
     }
 
@@ -232,32 +318,32 @@ public class ProductsController extends AbstractController {
         FreightCostEntity australiaFC = freightCostService.selectById(australiaid);
         productsEntity.setAustraliaFC(australiaFC);
         //各个国家的介绍
-        int chineseinid = productsEntity.getChineseIntroduction();
+        Long chineseinid = productsEntity.getChineseIntroduction();
         IntroductionEntity chinesePRE = introductionService.selectById(chineseinid);
         productsEntity.setChinesePRE(chinesePRE);
-        int britaininid = productsEntity.getBritainIntroduction();
+        Long britaininid = productsEntity.getBritainIntroduction();
         IntroductionEntity britainPRE = introductionService.selectById(britaininid);
         productsEntity.setBritainPRE(britainPRE);
-        int franceinid = productsEntity.getFranceIntroduction();
+        Long franceinid = productsEntity.getFranceIntroduction();
         IntroductionEntity francePRE = introductionService.selectById(franceinid);
         productsEntity.setFrancePRE(francePRE);
-        int germanyInid = productsEntity.getGermanyIntroduction();
+        Long germanyInid = productsEntity.getGermanyIntroduction();
         IntroductionEntity germanyPRE = introductionService.selectById(germanyInid);
         productsEntity.setGermanyPRE(germanyPRE);
-        int italyInid = productsEntity.getItalyIntroduction();
+        Long italyInid = productsEntity.getItalyIntroduction();
         IntroductionEntity italyPRE = introductionService.selectById(italyInid);
         productsEntity.setItalyPRE(italyPRE);
-        int spainInid = productsEntity.getSpainIntroduction();
+        Long spainInid = productsEntity.getSpainIntroduction();
         IntroductionEntity spainPRE = introductionService.selectById(spainInid);
         productsEntity.setSpainPRE(spainPRE);
-        int japanInid = productsEntity.getJapanIntroduction();
+        Long japanInid = productsEntity.getJapanIntroduction();
         IntroductionEntity japanPRE = introductionService.selectById(japanInid);
         productsEntity.setJapanPRE(japanPRE);
         //颜色尺寸大小查变体
-        int colorid = productsEntity.getColorId();
+        Long colorid = productsEntity.getColorId();
         VariantParameterEntity colorVP = variantParameterService.selectById(colorid);
         productsEntity.setColorVP(colorVP);
-        int sizeid = productsEntity.getSizeId();
+        Long sizeid = productsEntity.getSizeId();
         VariantParameterEntity sizeVP = variantParameterService.selectById(sizeid);
         productsEntity.setSizeVP(sizeVP);
 
@@ -294,7 +380,7 @@ public class ProductsController extends AbstractController {
             productsEntity.setProductWeight(batchModifyDto.getProductWeight());
             productsEntity.setProductLength(batchModifyDto.getProductLength());
             productsEntity.setProductWide(batchModifyDto.getProductWide());
-            int chineseId = productsEntity.getChineseIntroduction();
+            Long chineseId = productsEntity.getChineseIntroduction();
             IntroductionEntity chinesePRE = introductionService.selectById(chineseId);
             String productTitle = productsEntity.getProductTitle();
             //标题前加
@@ -374,6 +460,7 @@ public class ProductsController extends AbstractController {
         }
         return R.ok();
     }
+
     /**
      * @methodname: getTotalCount 获取总记录数
      * @param: [params] 接受参数

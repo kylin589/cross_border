@@ -152,7 +152,6 @@ public class CategoryController {
         for (CategoryEntity categoryEntity : parentLists) {
             Long id = categoryEntity.getCategoryId();
             int temp = categoryService.selectCount(new EntityWrapper<CategoryEntity>().eq("parent_id", categoryEntity.getCategoryId()));
-            System.out.println(temp);
             if (temp==0){
                 categoryEntity.setIfNext("false");
             }else{
