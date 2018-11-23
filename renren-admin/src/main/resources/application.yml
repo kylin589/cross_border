@@ -78,3 +78,9 @@ logging:
   level.io.renren: debug
   path: logs/
   file: admin.log
+
+mws-config:
+  access-key: AKIAJPTOJEGMM7G4FJQA
+  secret-key: 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
+  app-name: CrossBorder
+  app-version: 1.0

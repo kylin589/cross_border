@@ -247,19 +247,16 @@ public class DateUtils {
     }
 
     /**
-     * 获取现在时间减2分钟
+     * 获取现在时间减45天
      *
      * @return 返回时间格式 yyyy-mm-dd  HH:mm:ss
      * @author zjr
      * @date 2018-11-19 14:54:47
      */
-    public static Date getNowDateShortLessTwoMinutes() {
+    public static XMLGregorianCalendar getTheDateNow45DaysShort() {
         Date currentTime = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_PATTERN);
-        String dateString = formatter.format(currentTime);
-        ParsePosition pos = new ParsePosition(8);
-        Date currentTime_2 = formatter.parse(dateString, pos);
-        return currentTime_2;
+        currentTime = addDateDays(currentTime,-45);
+        return xmlToDate(currentTime);
     }
 
     /**
@@ -269,12 +266,8 @@ public class DateUtils {
      * @author zjr
      * @date 2018-11-19 14:54:47
      */
-    public static Date getNowDateShort() {
+    public static XMLGregorianCalendar getNowDateShort() {
         Date currentTime = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN);
-        String dateString = formatter.format(currentTime);
-        ParsePosition pos = new ParsePosition(8);
-        Date currentTime_2 = formatter.parse(dateString, pos);
-        return currentTime_2;
+        return xmlToDate(currentTime);
     }
 }
