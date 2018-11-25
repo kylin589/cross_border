@@ -1,6 +1,5 @@
 package io.renren.modules.product.controller;
 
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;

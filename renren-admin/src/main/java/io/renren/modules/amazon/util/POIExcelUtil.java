@@ -20,9 +20,9 @@ import java.util.List;
 
 public class POIExcelUtil {
     @Autowired
-    private static final AmazonCategoryService amazonCategoryService = new AmazonCategoryServiceImpl();
+    private static AmazonCategoryService amazonCategoryService;
 
-    public static void insetCategory(String pathname,int region) throws Exception {
+    public static void insetCategory(String pathname, int region) throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(new File(pathname)));
         //获取第一个标签页  根据标签页名称获取
         HSSFSheet sheet = workbook.getSheet("MAPPINGS");
@@ -48,7 +48,7 @@ public class POIExcelUtil {
                         parentId = 0L;
                         amazonCategoryEntity.setParentId(parentId);
                         amazonCategoryEntity.setRegion(region);
-                        amazonCategoryEntity.setDisplayName(EntoZh(categoryNameArr[i])+categoryNameArr[i]);
+                        amazonCategoryEntity.setDisplayName(EntoZh(categoryNameArr[i]) + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                         //是否为最后一个分类
                     } else if (categoryNameArr.length - 1 == i) {
@@ -64,12 +64,12 @@ public class POIExcelUtil {
                         amazonCategoryEntity.setNodeIdEs(row.getCell(6).getStringCellValue());
                         amazonCategoryEntity.setParentId(parentId);
                         amazonCategoryEntity.setRegion(region);
-                        amazonCategoryEntity.setDisplayName(EntoZh(categoryNameArr[i])+categoryNameArr[i]);
+                        amazonCategoryEntity.setDisplayName(EntoZh(categoryNameArr[i]) + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                     } else {
                         amazonCategoryEntity.setParentId(parentId);
                         amazonCategoryEntity.setRegion(region);
-                        amazonCategoryEntity.setDisplayName(EntoZh(categoryNameArr[i])+categoryNameArr[i]);
+                        amazonCategoryEntity.setDisplayName(EntoZh(categoryNameArr[i]) + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                     }
                     parentId = insert(amazonCategoryEntity);
@@ -104,7 +104,7 @@ public class POIExcelUtil {
         // 设置参数：传过来的参数
         querierTrans.setParams(LANG.EN, LANG.ZH, name);
         // 向查询器中添加 Google 翻译器
-       // querierTrans.attach(new GoogleTranslator());
+        // querierTrans.attach(new GoogleTranslator());
         // 向查询器中添加 Baidu 翻译器
         querierTrans.attach(new BaiduTranslator());
         // 执行查询并接收查询结果

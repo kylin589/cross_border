@@ -153,9 +153,6 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
-        // 时间是：value9
-        String value9 = (String) params.get("value9");
-        System.out.println("value9:" + value9);
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
@@ -406,9 +403,6 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
-        // 时间是：value9
-        String value9 = (String) params.get("value9");
-        System.out.println("value9:" + value9);
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
