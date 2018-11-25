@@ -102,7 +102,20 @@ public class OrderDto {
      * 两位数国家/地区代码。格式为 ISO 3166-1-alpha 2 。
      */
     private String countryCode;
+    /**
+     * 电话
+     * jhy
+     */
+    private String phone;
 
+
+
+    /**
+     * 地址类型
+     * jhy
+     */
+
+    private String addressType;
     /**
      * 订单费用。三位数的货币代码。格式为 ISO 4217。
      */
@@ -136,6 +149,11 @@ public class OrderDto {
      * 可选项
      */
     private String paymentMethod;
+    /**
+     * jhy
+     */
+    private String paymentMethodDetail;
+
 
     /**
      * 订单生成所在商城的匿名编码。
@@ -176,6 +194,12 @@ public class OrderDto {
      * 可选项
      */
     private String cbaDisplayableShippingLabel;
+    /**
+     * jhy
+     */
+    private  String shippedByAmazonTFM;
+
+
 
     /**
      * 订单类型。
@@ -485,5 +509,79 @@ public class OrderDto {
 
     public void setLatestDeliveryDate(String latestDeliveryDate) {
         this.latestDeliveryDate = latestDeliveryDate;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddressType() {
+        return addressType;
+    }
+
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
+    }
+    public String getPaymentMethodDetail() {
+        return paymentMethodDetail;
+    }
+
+    public void setPaymentMethodDetail(String paymentMethodDetail) {
+        this.paymentMethodDetail = paymentMethodDetail;
+    }
+    public String getShippedByAmazonTFM() {
+        return shippedByAmazonTFM;
+    }
+
+    public void setShippedByAmazonTFM(String shippedByAmazonTFM) {
+        this.shippedByAmazonTFM = shippedByAmazonTFM;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderDto{" +
+                "amazonOrderId='" + amazonOrderId + '\'' +
+                ", sellerOrderId='" + sellerOrderId + '\'' +
+                ", purchaseDate='" + purchaseDate + '\'' +
+                ", lastUpdateDate='" + lastUpdateDate + '\'' +
+                ", orderStatus='" + orderStatus + '\'' +
+                ", fulfillmentChannel='" + fulfillmentChannel + '\'' +
+                ", salesChannel='" + salesChannel + '\'' +
+                ", orderChannel='" + orderChannel + '\'' +
+                ", shipServiceLevel='" + shipServiceLevel + '\'' +
+                ", name='" + name + '\'' +
+                ", addressLine1='" + addressLine1 + '\'' +
+                ", addressLine2='" + addressLine2 + '\'' +
+                ", addressLine3='" + addressLine3 + '\'' +
+                ", city='" + city + '\'' +
+                ", county='" + county + '\'' +
+                ", district='" + district + '\'' +
+                ", stateOrRegion='" + stateOrRegion + '\'' +
+                ", postalCode='" + postalCode + '\'' +
+                ", countryCode='" + countryCode + '\'' +
+                ", phone='" + phone + '\'' +
+                ", addressType='" + addressType + '\'' +
+                ", currencyCode='" + currencyCode + '\'' +
+                ", amount='" + amount + '\'' +
+                ", numberOfItemsShipped='" + numberOfItemsShipped + '\'' +
+                ", numberOfItemsUnshipped='" + numberOfItemsUnshipped + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", paymentMethodDetail='" + paymentMethodDetail + '\'' +
+                ", marketplaceId='" + marketplaceId + '\'' +
+                ", buyerEmail='" + buyerEmail + '\'' +
+                ", buyerName='" + buyerName + '\'' +
+                ", shipmentServiceLevelCategory='" + shipmentServiceLevelCategory + '\'' +
+                ", cbaDisplayableShippingLabel='" + cbaDisplayableShippingLabel + '\'' +
+                ", shippedByAmazonTFM='" + shippedByAmazonTFM + '\'' +
+                ", orderType='" + orderType + '\'' +
+                ", earliestShipDate='" + earliestShipDate + '\'' +
+                ", latestShipDate='" + latestShipDate + '\'' +
+                ", earliestDeliveryDate='" + earliestDeliveryDate + '\'' +
+                ", latestDeliveryDate='" + latestDeliveryDate + '\'' +
+                '}';
     }
 }

@@ -5,13 +5,70 @@ import java.util.concurrent.*;
 
 import com.amazonservices.mws.orders._2013_09_01.*;
 import com.amazonservices.mws.orders._2013_09_01.model.*;
+import io.renren.modules.amazon.config.MarketplaceWebServiceOrdersSampleConfig;
+import io.renren.common.utils.DateUtils;
+import io.renren.modules.amazon.entity.AmazonMarketplaceEntity;
+import io.renren.modules.amazon.service.AmazonMarketplaceService;
 import io.renren.modules.amazon.service.ListOrdersAsyncService;
 import io.renren.modules.product.entity.OrderEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.List;
 @Service("listOrdersAsyncService")
 public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
+
+    @Autowired
+    private AmazonMarketplaceService amazonMarketplaceService;
+
+    @Override
+    public void listOrdersRequest(String sellerId, String mwsAuthToken, Integer region, String lastUpdatedAfterStr) {
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("region",region);
+        List<AmazonMarketplaceEntity> amazonMarketplaceEntityList = amazonMarketplaceService.selectByMap(map);
+
+        String serviceURL = amazonMarketplaceEntityList.get(0).getMwsPoint();
+
+        // Get a client connection.
+        MarketplaceWebServiceOrdersAsyncClient client = MarketplaceWebServiceOrdersSampleConfig.getAsyncClient(serviceURL);
+
+        // Create a request list.
+        List<ListOrdersRequest> requestList = new ArrayList<ListOrdersRequest>();
+        ListOrdersRequest request = new ListOrdersRequest();
+
+        request.setSellerId(sellerId);
+
+        request.setMWSAuthToken(mwsAuthToken);
+
+        // 指定某一格式为 ISO 8601 的日期，用以选择最后更新日期为该日期之后（或当天）的订单。更新即为对订单状态进行更改，包括新订单的创建。包括亚马逊和卖家所进行的更新。必须不迟于两分钟，且在请求提交时间之前。
+        XMLGregorianCalendar lastUpdatedAfter = DateUtils.getTheDateNow45DaysShort();
+        request.setLastUpdatedAfter(lastUpdatedAfter);
+
+        // 店铺ID
+        List<String> marketplaceId = new ArrayList<>();
+        for (AmazonMarketplaceEntity am: amazonMarketplaceEntityList) {
+            marketplaceId.add(am.getMarketplaceId());
+        }
+        request.setMarketplaceId(marketplaceId);
+        requestList.add(request);
+
+        // TODO: 2018/11/23 星期五写到这里
+        // Boolean is
+
+        List<Object> responseList = invokeListOrders(client, requestList);
+        for (Object response: requestList) {
+           // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
+           String className = response.getClass().getName();
+           if ("MarketplaceWebServiceOrdersException".equals(className)){
+               break;
+           }else if ("ListOrdersResponse".equals(className)){
+
+           }
+        }
+
+    }
 
     @Override
     public List<Object> invokeListOrders(MarketplaceWebServiceOrdersAsync client, List<ListOrdersRequest> requestList) {
@@ -37,7 +94,6 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
             } catch (ExecutionException ee) {
                 Throwable cause = ee.getCause();
                 if (cause instanceof MarketplaceWebServiceOrdersException) {
-                    // TODO: 2018/11/21 报错怎么办？
                     // Exception properties are important for diagnostics.
                     MarketplaceWebServiceOrdersException ex = (MarketplaceWebServiceOrdersException) cause;
                     ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
@@ -206,6 +262,103 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
         return responseList;
     }
 
+    @Override
+    public List<Object> invokeListOrderItemsByNextToken(MarketplaceWebServiceOrdersAsync client, List<ListOrderItemsByNextTokenRequest> requestList) {
+        // Call the service async.
+        List<Future<ListOrderItemsByNextTokenResponse>> futureList =
+                new ArrayList<Future<ListOrderItemsByNextTokenResponse>>();
+        for (ListOrderItemsByNextTokenRequest request : requestList) {
+            Future<ListOrderItemsByNextTokenResponse> future =
+                    client.listOrderItemsByNextTokenAsync(request);
+            futureList.add(future);
+        }
+        List<Object> responseList = new ArrayList<Object>();
+        for (Future<ListOrderItemsByNextTokenResponse> future : futureList) {
+            Object xresponse;
+            try {
+                ListOrderItemsByNextTokenResponse response = future.get();
+                ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
+                // We recommend logging every the request id and timestamp of every call.
+                System.out.println("Response:");
+                System.out.println("RequestId: "+rhmd.getRequestId());
+                System.out.println("Timestamp: "+rhmd.getTimestamp());
+                String responseXml = response.toXML();
+                System.out.println(responseXml);
+                xresponse = response;
+            } catch (ExecutionException ee) {
+                Throwable cause = ee.getCause();
+                if (cause instanceof MarketplaceWebServiceOrdersException) {
+                    // Exception properties are important for diagnostics.
+                    MarketplaceWebServiceOrdersException ex =
+                            (MarketplaceWebServiceOrdersException)cause;
+                    ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
+                    System.out.println("Service Exception:");
+                    System.out.println("RequestId: "+rhmd.getRequestId());
+                    System.out.println("Timestamp: "+rhmd.getTimestamp());
+                    System.out.println("Message: "+ex.getMessage());
+                    System.out.println("StatusCode: "+ex.getStatusCode());
+                    System.out.println("ErrorCode: "+ex.getErrorCode());
+                    System.out.println("ErrorType: "+ex.getErrorType());
+                    xresponse = ex;
+                } else {
+                    xresponse = cause;
+                }
+            } catch (Exception e) {
+                xresponse = e;
+            }
+            responseList.add(xresponse);
+        }
+        return responseList;
+    }
+
+    @Override
+    public List<Object> invokeGetServiceStatus(MarketplaceWebServiceOrdersAsync client, List<GetServiceStatusRequest> requestList) {
+        // Call the service async.
+        List<Future<GetServiceStatusResponse>> futureList =
+                new ArrayList<Future<GetServiceStatusResponse>>();
+        for (GetServiceStatusRequest request : requestList) {
+            Future<GetServiceStatusResponse> future =
+                    client.getServiceStatusAsync(request);
+            futureList.add(future);
+        }
+        List<Object> responseList = new ArrayList<Object>();
+        for (Future<GetServiceStatusResponse> future : futureList) {
+            Object xresponse;
+            try {
+                GetServiceStatusResponse response = future.get();
+                ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
+                // We recommend logging every the request id and timestamp of every call.
+                System.out.println("Response:");
+                System.out.println("RequestId: "+rhmd.getRequestId());
+                System.out.println("Timestamp: "+rhmd.getTimestamp());
+                String responseXml = response.toXML();
+                System.out.println(responseXml);
+                xresponse = response;
+            } catch (ExecutionException ee) {
+                Throwable cause = ee.getCause();
+                if (cause instanceof MarketplaceWebServiceOrdersException) {
+                    // Exception properties are important for diagnostics.
+                    MarketplaceWebServiceOrdersException ex =
+                            (MarketplaceWebServiceOrdersException)cause;
+                    ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
+                    System.out.println("Service Exception:");
+                    System.out.println("RequestId: "+rhmd.getRequestId());
+                    System.out.println("Timestamp: "+rhmd.getTimestamp());
+                    System.out.println("Message: "+ex.getMessage());
+                    System.out.println("StatusCode: "+ex.getStatusCode());
+                    System.out.println("ErrorCode: "+ex.getErrorCode());
+                    System.out.println("ErrorType: "+ex.getErrorType());
+                    xresponse = ex;
+                } else {
+                    xresponse = cause;
+                }
+            } catch (Exception e) {
+                xresponse = e;
+            }
+            responseList.add(xresponse);
+        }
+        return responseList;
+    }
     @Override
     public List<OrderEntity> analysisListOrders(List<Object> responseList) {
         // TODO: 2018/11/20 解析 responseList，调用 xml 方法

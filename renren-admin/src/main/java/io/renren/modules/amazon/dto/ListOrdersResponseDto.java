@@ -22,7 +22,7 @@ public class ListOrdersResponseDto {
      * 如果您使用 CreatedAfter 请求参数，将返回日期。如果您还使用 CreatedBefore 请求参数，将返回您随同该请求参数提供的日期。否则将返回 CreatedBefore 请求参数的默认值：您的请求时间减去两分钟。
      * 可选。将返回 LastUpdatedBefore 或 CreatedBefore。
      */
-    private String CreatedBefore;
+    private String createdBefore;
 
     /**
      * 订单列表。
@@ -46,11 +46,11 @@ public class ListOrdersResponseDto {
     }
 
     public String getCreatedBefore() {
-        return CreatedBefore;
+        return createdBefore;
     }
 
     public void setCreatedBefore(String createdBefore) {
-        CreatedBefore = createdBefore;
+        this.createdBefore = createdBefore;
     }
 
     public List<OrderDto> getOrders() {

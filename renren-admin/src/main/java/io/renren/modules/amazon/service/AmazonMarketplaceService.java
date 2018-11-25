@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.amazon.entity.AmazonMarketplaceEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,6 @@ import java.util.Map;
 public interface AmazonMarketplaceService extends IService<AmazonMarketplaceEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
 }
 
