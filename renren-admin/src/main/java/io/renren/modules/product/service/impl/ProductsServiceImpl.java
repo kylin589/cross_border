@@ -38,7 +38,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String       ,               Object>
+     * @return Map<String               ,                               Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -98,10 +98,12 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         PageUtils pageUtils = new PageUtils(page);
         List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
         for (int i = 0; i < list.size(); i++) {
-            ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
-            imageAddressEntity.setImageId(list.get(i).getMainImageId());
-            imageAddressEntity = imageAddressService.selectById(imageAddressEntity);
-            list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
+            if (list.get(i).getMainImageId() != null) {
+                ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
+                imageAddressEntity.setImageId(list.get(i).getMainImageId());
+                imageAddressEntity = imageAddressService.selectById(imageAddressEntity);
+                list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
+            }
         }
         pageUtils.setList(list);
 
@@ -136,7 +138,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String       ,               Object>
+     * @return Map<String               ,                               Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
