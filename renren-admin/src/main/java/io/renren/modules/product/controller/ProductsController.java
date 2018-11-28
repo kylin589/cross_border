@@ -1,6 +1,5 @@
 package io.renren.modules.product.controller;
 
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
@@ -157,7 +156,6 @@ public class ProductsController extends AbstractController {
      * @date 2018-11-10 10:23
      */
     @RequestMapping("/save")
-    @RequiresPermissions("product:products:save")
     public R save(@RequestBody ProductsEntity products) {
         Long threeId = products.getCategoryThreeId();
         //根据三级id查出一级二级三级字符串

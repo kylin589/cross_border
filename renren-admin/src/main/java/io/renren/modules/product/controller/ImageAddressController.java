@@ -97,7 +97,7 @@ public class ImageAddressController extends AbstractController {
      * @auther: jhy
      * @date: 2018/11/6 15:54
      */
-    @RequestMapping("/upload")//
+    @RequestMapping("/upload")
     public R upload(@RequestParam("file") MultipartFile file, Long productId) throws Exception {
         //判断文件是否为空
         if (file.isEmpty()) {
@@ -181,7 +181,7 @@ public class ImageAddressController extends AbstractController {
      * @auther: jhy
      * @date: 2018/11/7 14:32
      */
-    @RequestMapping()
+    @RequestMapping("/isdeleteList")
     public R isdeleteList(Long productId) {
         List<ImageAddressEntity> isdeleteList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "1"));
         return R.ok().put("isdeleteList", isdeleteList);
