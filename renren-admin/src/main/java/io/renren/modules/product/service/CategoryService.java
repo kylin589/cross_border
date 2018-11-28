@@ -3,6 +3,7 @@ package io.renren.modules.product.service;
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.product.entity.CategoryEntity;
+import io.renren.modules.product.entity.ProductsEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,8 @@ public interface CategoryService extends IService<CategoryEntity> {
     List<CategoryEntity> queryCategoryByParentId(Long id);
     //根据三级id查出一级和二级id
     String queryParentByChildId(Long id);
+    //根据三级id查出一级和二级id和注入商品分类
+    String queryParentByChildIdAndCategory(Long id,ProductsEntity productsEntity);
 
 
 }

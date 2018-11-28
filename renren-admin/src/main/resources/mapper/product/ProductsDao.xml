@@ -60,5 +60,18 @@
         <result property="lastOperationUserId" column="last_operation_user_id"/>
     </resultMap>
 
-
+    <update id="relationVariantColor" >
+        update product_products
+        <set>
+            <if test="variantParameterId != null">color_id=#{variantParameterId}</if>
+        </set>
+        where product_id=#{productId}
+    </update>
+    <update id="relationVariantSize" >
+        update product_products
+        <set>
+            <if test="variantParameterId != null">size_id=#{variantParameterId}</if>
+        </set>
+        where product_id=#{productId}
+    </update>
 </mapper>

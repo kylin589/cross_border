@@ -97,12 +97,12 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
         PageUtils pageUtils = new PageUtils(page);
         List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
-        for (int i = 0; i < list.size(); i++) {
-            ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
-            imageAddressEntity.setImageId(list.get(i).getMainImageId());
-            imageAddressEntity = imageAddressService.selectById(imageAddressEntity);
-            list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
-        }
+        /*for (int i = 0; i < list.size(); i++) {
+            if(list.get(i).getMainImageId() != null){
+                ImageAddressEntity imageAddressEntity  = imageAddressService.selectById(list.get(i).getMainImageId());
+                list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
+            }
+        }*/
         pageUtils.setList(list);
 
         // 产品数量
@@ -452,5 +452,26 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         // 产品数量
         int proCount = this.selectCount(wrapper);
         return proCount;
+    }
+
+    @Override
+    public boolean relationVariantColor(Long productId, Long variantParameterId) {
+        int flag = baseMapper.relationVariantColor(productId,variantParameterId);
+        if(flag != 0){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean relationVariantSize(Long productId, Long variantParameterId) {
+        int flag = baseMapper.relationVariantSize(productId,variantParameterId);
+        if(flag != 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

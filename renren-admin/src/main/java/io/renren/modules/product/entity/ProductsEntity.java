@@ -233,6 +233,18 @@ public class ProductsEntity implements Serializable {
      * 最后操作人id
      */
     private Long lastOperationUserId;
+    /**
+     * 公司id
+     */
+   private Long deptId;
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
 
     /**
      * 美国运费
@@ -363,7 +375,6 @@ public class ProductsEntity implements Serializable {
     /**
      * 主图片信息
      */
-    @TableField(exist = false)
     private String mainImageUrl;
 
     public String getMainImageUrl() {
