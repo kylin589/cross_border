@@ -97,7 +97,7 @@ public class ImageAddressController extends AbstractController {
      * @auther: jhy
      * @date: 2018/11/6 15:54
      */
-    @RequestMapping("/upload")//
+    @RequestMapping("/upload")
     public R upload(@RequestParam("file") MultipartFile file, Long productId) throws Exception {
         //判断文件是否为空
         if (file.isEmpty()) {
