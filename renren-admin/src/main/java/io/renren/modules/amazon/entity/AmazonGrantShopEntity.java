@@ -9,25 +9,33 @@ import java.util.Date;
 /**
  * 
  * 
- * @author zjr
- * @email zhang-jiarui@baizesoft.com
- * @date 2018-11-19 11:02:06
+ * @author wdh
+ * @email 594340717@qq.com
+ * @date 2018-11-27 11:00:50
  */
-@TableName("product_amazon_marketplace")
-public class AmazonMarketplaceEntity implements Serializable {
+@TableName("amazon_grant_shop")
+public class AmazonGrantShopEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 主键
+	 * 授权店铺id
 	 */
 	@TableId
-	private Integer pointId;
+	private Long grantShopId;
 	/**
-	 * 亚马逊商场
+	 * 店铺名称
 	 */
-	private String country;
+	private String shopName;
 	/**
-	 * 国家代码
+	 * 店铺账户
+	 */
+	private String shopAccount;
+	/**
+	 * 授权国家
+	 */
+	private String grantCounty;
+	/**
+	 * 国家标识
 	 */
 	private String countryCode;
 	/**
@@ -42,42 +50,63 @@ public class AmazonMarketplaceEntity implements Serializable {
 	 * 所属区域(欧洲0、北美1、远东2）
 	 */
 	private Integer region;
+
 	/**
-	 * 软删（1：删除）
+	 * 设置：授权店铺id
 	 */
-	private Integer isDeleted;
-	/**
-	 * 设置：主键
-	 */
-	public void setPointId(Integer pointId) {
-		this.pointId = pointId;
+	public void setGrantShopId(Long grantShopId) {
+		this.grantShopId = grantShopId;
 	}
 	/**
-	 * 获取：主键
+	 * 获取：授权店铺id
 	 */
-	public Integer getPointId() {
-		return pointId;
+	public Long getGrantShopId() {
+		return grantShopId;
 	}
 	/**
-	 * 设置：亚马逊商场
+	 * 设置：店铺名称
 	 */
-	public void setCountry(String country) {
-		this.country = country;
+	public void setShopName(String shopName) {
+		this.shopName = shopName;
 	}
 	/**
-	 * 获取：亚马逊商场
+	 * 获取：店铺名称
 	 */
-	public String getCountry() {
-		return country;
+	public String getShopName() {
+		return shopName;
 	}
 	/**
-	 * 设置：国家代码
+	 * 设置：店铺账户
+	 */
+	public void setShopAccount(String shopAccount) {
+		this.shopAccount = shopAccount;
+	}
+	/**
+	 * 获取：店铺账户
+	 */
+	public String getShopAccount() {
+		return shopAccount;
+	}
+	/**
+	 * 设置：授权国家
+	 */
+	public void setGrantCounty(String grantCounty) {
+		this.grantCounty = grantCounty;
+	}
+	/**
+	 * 获取：授权国家
+	 */
+	public String getGrantCounty() {
+		return grantCounty;
+	}
+	/**
+	 * 设置：国家标识
 	 */
 	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
 	}
 	/**
-	 * 获取：国家代码
+	 * 获取：国家标识
 	 */
 	public String getCountryCode() {
 		return countryCode;
@@ -117,13 +146,5 @@ public class AmazonMarketplaceEntity implements Serializable {
 	 */
 	public Integer getRegion() {
 		return region;
-	}
-
-	public Integer getIsDeleted() {
-		return isDeleted;
-	}
-
-	public void setIsDeleted(Integer isDeleted) {
-		this.isDeleted = isDeleted;
 	}
 }

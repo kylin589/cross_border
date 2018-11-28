@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<#if shiro.hasPermission("amazon:amazongrantshop:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("amazon:amazongrantshop:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("amazon:amazongrantshop:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">店铺名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="amazonGrantShop.shopName" placeholder="店铺名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">店铺账户</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="amazonGrantShop.shopAccount" placeholder="店铺账户"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">授权国家</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="amazonGrantShop.grantCounty" placeholder="授权国家"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">国家标识</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="amazonGrantShop.countryCode" placeholder="国家标识"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">亚马逊MWS端点</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="amazonGrantShop.mwsPoint" placeholder="亚马逊MWS端点"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">MarketplaceId</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="amazonGrantShop.marketplaceId" placeholder="MarketplaceId"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所属区域(欧洲0、北美1、远东2）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="amazonGrantShop.region" placeholder="所属区域(欧洲0、北美1、远东2）"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/amazon/amazongrantshop.js?_${.now?long}"></script>
+</body>
+</html>

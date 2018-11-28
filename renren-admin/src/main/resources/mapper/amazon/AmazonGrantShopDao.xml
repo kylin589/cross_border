@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.amazon.dao.AmazonGrantShopDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.amazon.entity.AmazonGrantShopEntity" id="amazonGrantShopMap">
+        <result property="grantShopId" column="grant_shop_id"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="shopAccount" column="shop_account"/>
+        <result property="grantCounty" column="grant_county"/>
+        <result property="countryCode" column="country_code"/>
+        <result property="mwsPoint" column="mws_point"/>
+        <result property="marketplaceId" column="marketplace_id"/>
+        <result property="region" column="region"/>
+    </resultMap>
+
+
+</mapper>
