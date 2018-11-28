@@ -38,7 +38,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String               ,                               Object>
+     * @return Map<String       ,               Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -97,14 +97,12 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
         PageUtils pageUtils = new PageUtils(page);
         List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getMainImageId() != null) {
-                ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
-                imageAddressEntity.setImageId(list.get(i).getMainImageId());
-                imageAddressEntity = imageAddressService.selectById(imageAddressEntity);
+        /*for (int i = 0; i < list.size(); i++) {
+            if(list.get(i).getMainImageId() != null){
+                ImageAddressEntity imageAddressEntity  = imageAddressService.selectById(list.get(i).getMainImageId());
                 list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
             }
-        }
+        }*/
         pageUtils.setList(list);
 
         // 产品数量
@@ -138,7 +136,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String               ,                               Object>
+     * @return Map<String       ,               Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -155,6 +153,9 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
+        // 时间是：value9
+        String value9 = (String) params.get("value9");
+        System.out.println("value9:" + value9);
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
@@ -448,5 +449,26 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         // 产品数量
         int proCount = this.selectCount(wrapper);
         return proCount;
+    }
+
+    @Override
+    public boolean relationVariantColor(Long productId, Long variantParameterId) {
+        int flag = baseMapper.relationVariantColor(productId,variantParameterId);
+        if(flag != 0){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean relationVariantSize(Long productId, Long variantParameterId) {
+        int flag = baseMapper.relationVariantSize(productId,variantParameterId);
+        if(flag != 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

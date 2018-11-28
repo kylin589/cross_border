@@ -116,4 +116,8 @@ public interface ProductsService extends IService<ProductsEntity> {
      * @date 2018-11-07 14:54:47
      */
     int getTotalCount(Map<String, Object> params, Long userId, String isDel);
+
+    boolean relationVariantColor(Long productId, Long variantParameterId);
+
+    boolean relationVariantSize(Long productId, Long variantParameterId);
 }
