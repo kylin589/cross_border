@@ -53,6 +53,10 @@ public class UploadEntity implements Serializable {
 	/**
 	 * 亚马逊分类
 	 */
+	private String amazonCategoryNodeId;
+	/**
+	 * 亚马逊分类
+	 */
 	private String amazonCategory;
 	/**
 	 * 亚马逊模板id
@@ -201,6 +205,15 @@ public class UploadEntity implements Serializable {
 	public String getAmazonCategory() {
 		return amazonCategory;
 	}
+
+	public String getAmazonCategoryNodeId() {
+		return amazonCategoryNodeId;
+	}
+
+	public void setAmazonCategoryNodeId(String amazonCategoryNodeId) {
+		this.amazonCategoryNodeId = amazonCategoryNodeId;
+	}
+
 	/**
 	 * 设置：亚马逊模板id
 	 */
