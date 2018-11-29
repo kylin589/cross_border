@@ -181,7 +181,7 @@ public class ImageAddressController extends AbstractController {
      * @auther: jhy
      * @date: 2018/11/7 14:32
      */
-    @RequestMapping("/isdeleteList")
+    @RequestMapping("/querydeleteimage")
     public R isdeleteList(Long productId) {
         List<ImageAddressEntity> isdeleteList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "1"));
         return R.ok().put("isdeleteList", isdeleteList);

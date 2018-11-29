@@ -3,7 +3,12 @@ package io.renren.modules.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.product.entity.ProductsEntity;
+import io.renren.modules.product.entity.VariantsInfoEntity;
+import io.renren.modules.product.service.ProductsService;
+import io.renren.modules.product.service.VariantsInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +36,10 @@ import io.renren.common.utils.R;
 public class VariantParameterController {
     @Autowired
     private VariantParameterService variantParameterService;
+    @Autowired
+    private ProductsService productsService;
+    @Autowired
+    private VariantsInfoService variantsInfoService;
 
     /**
      * @methodname: list 列表
@@ -71,11 +80,24 @@ public class VariantParameterController {
      * @date: 2018/11/8 21:22
      */
     @RequestMapping("/save")
-    @RequiresPermissions("product:variantparameter:save")
-    public R save(@RequestBody VariantParameterEntity variantParameter){
+//    @RequiresPermissions("product:variantparameter:save")
+    public R save(String paramsType,String paramsValue,long productId){
+        VariantParameterEntity variantParameter = new VariantParameterEntity();
+        variantParameter.setParamsType(paramsType);
+        variantParameter.setParamsValue(paramsValue);
         variantParameterService.insert(variantParameter);
         Long id =variantParameter.getParamsId();
-        return R.ok().put("id",id);
+        boolean flag;
+        if("color".equals(paramsType)){
+            flag = productsService.relationVariantColor(productId,id);
+        }else{
+            flag = productsService.relationVariantSize(productId,id);
+        }
+        if(flag){
+            return R.ok().put("variantParameterId",variantParameter.getParamsId());
+        }else{
+            return R.error("保存失败，请联系管理员");
+        }
     }
 
     /**
@@ -86,11 +108,11 @@ public class VariantParameterController {
      * @date: 2018/11/8 21:22
      */
     @RequestMapping("/update")
-    @RequiresPermissions("product:variantparameter:update")
+//    @RequiresPermissions("product:variantparameter:update")
     public R update(@RequestBody VariantParameterEntity variantParameter){
         ValidatorUtils.validateEntity(variantParameter);
         variantParameterService.updateAllColumnById(variantParameter);//全部更新
-        
+
         return R.ok();
     }
 
@@ -101,10 +123,34 @@ public class VariantParameterController {
      * @auther: jhy
      * @date: 2018/11/8 21:22
      */
-    @RequestMapping("/delete")
+    /*@RequestMapping("/delete")
     @RequiresPermissions("product:variantparameter:delete")
     public R delete(@RequestBody Long[] paramsIds){
         variantParameterService.deleteBatchIds(Arrays.asList(paramsIds));
+
+        return R.ok();
+    }*/
+    /**
+     * @methodname: delete 删除
+     * @param: [productId, variantParameterEntity]
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/27 21:45
+     */
+    @RequestMapping("/delete")
+   // @RequiresPermissions("product:variantparameter:delete")
+    public R delete(@RequestBody Long productId, @RequestBody VariantParameterEntity variantParameterEntity){
+        String paramsType = variantParameterEntity.getParamsType();
+        if (paramsType.equals("color")){
+            ProductsEntity productsEntity = productsService.selectById(productId);
+            productsEntity.setColorId(null);
+            productsService.updateById(productsEntity);
+        }else {
+            ProductsEntity productsEntity = productsService.selectById(productId);
+            productsEntity.setSizeId(null);
+            productsService.updateById(productsEntity);
+        }
+        variantParameterService.deleteById(variantParameterEntity);
 
         return R.ok();
     }

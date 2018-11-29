@@ -27,9 +27,17 @@ public class UploadEntity implements Serializable {
 	 */
 	private Long productId;
 	/**
+	 * 主图片url
+	 */
+	private String mainUrl;
+	/**
 	 * 店铺id
 	 */
-	private Long authorizeShop;
+	private Long grantShopId;
+	/**
+	 * 店铺
+	 */
+	private String grantShop;
 	/**
 	 * 操作类型（默认0：上传   1：修改）
 	 */
@@ -39,29 +47,25 @@ public class UploadEntity implements Serializable {
 	 */
 	private String operateItem;
 	/**
-	 * 亚马逊分类一级id
+	 * 亚马逊分类id
 	 */
-	private Long amazonCategoryOneId;
+	private Long amazonCategoryId;
 	/**
-	 * 亚马逊分类二级id
+	 * 亚马逊分类
 	 */
-	private Long amazonCategoryTwoId;
+	private String amazonCategoryNodeId;
 	/**
-	 * 亚马逊分类三级id
+	 * 亚马逊分类
 	 */
-	private Long amazonCategoryThreeId;
-	/**
-	 * 亚马逊分类四级id
-	 */
-	private Long amazonCategoryFourId;
-	/**
-	 * 亚马逊分类五级id
-	 */
-	private Long amazonCategoryFiveId;
+	private String amazonCategory;
 	/**
 	 * 亚马逊模板id
 	 */
 	private Long amazonTemplateId;
+	/**
+	 * 亚马逊模板
+	 */
+	private String amazonTemplate;
 	/**
 	 * 是否有分类属性（默认0：没有  1：有）
 	 */
@@ -85,11 +89,35 @@ public class UploadEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
-	private Date createTime;
-	/**
-	 * 
-	 */
 	private Date uploadTime;
+	/**
+	 * 修改时间
+	 */
+	private Date updateTime;
+	/**
+	 * 用户id
+	 */
+	private Long userId;
+	/**
+	 * 公司id
+	 */
+	private Long deptId;
+
+	public Long getGrantShopId() {
+		return grantShopId;
+	}
+
+	public void setGrantShopId(Long grantShopId) {
+		this.grantShopId = grantShopId;
+	}
+
+	public String getGrantShop() {
+		return grantShop;
+	}
+
+	public void setGrantShop(String grantShop) {
+		this.grantShop = grantShop;
+	}
 
 	/**
 	 * 设置：上传id
@@ -104,6 +132,18 @@ public class UploadEntity implements Serializable {
 		return uploadId;
 	}
 	/**
+	 * 设置：主图片url
+	 */
+	public void setMainUrl(String mainUrl) {
+		this.mainUrl = mainUrl;
+	}
+	/**
+	 * 获取：主图片url
+	 */
+	public String getMainUrl() {
+		return mainUrl;
+	}
+	/**
 	 * 设置：产品id
 	 */
 	public void setProductId(Long productId) {
@@ -115,18 +155,8 @@ public class UploadEntity implements Serializable {
 	public Long getProductId() {
 		return productId;
 	}
-	/**
-	 * 设置：店铺id
-	 */
-	public void setAuthorizeShop(Long authorizeShop) {
-		this.authorizeShop = authorizeShop;
-	}
-	/**
-	 * 获取：店铺id
-	 */
-	public Long getAuthorizeShop() {
-		return authorizeShop;
-	}
+
+
 	/**
 	 * 设置：操作类型（默认0：上传   1：修改）
 	 */
@@ -152,65 +182,38 @@ public class UploadEntity implements Serializable {
 		return operateItem;
 	}
 	/**
-	 * 设置：亚马逊分类一级id
+	 * 设置：亚马逊分类id
 	 */
-	public void setAmazonCategoryOneId(Long amazonCategoryOneId) {
-		this.amazonCategoryOneId = amazonCategoryOneId;
+	public void setAmazonCategoryId(Long amazonCategoryId) {
+		this.amazonCategoryId = amazonCategoryId;
 	}
 	/**
-	 * 获取：亚马逊分类一级id
+	 * 获取：亚马逊分类id
 	 */
-	public Long getAmazonCategoryOneId() {
-		return amazonCategoryOneId;
+	public Long getAmazonCategoryId() {
+		return amazonCategoryId;
 	}
 	/**
-	 * 设置：亚马逊分类二级id
+	 * 设置：亚马逊分类
 	 */
-	public void setAmazonCategoryTwoId(Long amazonCategoryTwoId) {
-		this.amazonCategoryTwoId = amazonCategoryTwoId;
+	public void setAmazonCategory(String amazonCategory) {
+		this.amazonCategory = amazonCategory;
 	}
 	/**
-	 * 获取：亚马逊分类二级id
+	 * 获取：亚马逊分类
 	 */
-	public Long getAmazonCategoryTwoId() {
-		return amazonCategoryTwoId;
+	public String getAmazonCategory() {
+		return amazonCategory;
 	}
-	/**
-	 * 设置：亚马逊分类三级id
-	 */
-	public void setAmazonCategoryThreeId(Long amazonCategoryThreeId) {
-		this.amazonCategoryThreeId = amazonCategoryThreeId;
+
+	public String getAmazonCategoryNodeId() {
+		return amazonCategoryNodeId;
 	}
-	/**
-	 * 获取：亚马逊分类三级id
-	 */
-	public Long getAmazonCategoryThreeId() {
-		return amazonCategoryThreeId;
+
+	public void setAmazonCategoryNodeId(String amazonCategoryNodeId) {
+		this.amazonCategoryNodeId = amazonCategoryNodeId;
 	}
-	/**
-	 * 设置：亚马逊分类四级id
-	 */
-	public void setAmazonCategoryFourId(Long amazonCategoryFourId) {
-		this.amazonCategoryFourId = amazonCategoryFourId;
-	}
-	/**
-	 * 获取：亚马逊分类四级id
-	 */
-	public Long getAmazonCategoryFourId() {
-		return amazonCategoryFourId;
-	}
-	/**
-	 * 设置：亚马逊分类五级id
-	 */
-	public void setAmazonCategoryFiveId(Long amazonCategoryFiveId) {
-		this.amazonCategoryFiveId = amazonCategoryFiveId;
-	}
-	/**
-	 * 获取：亚马逊分类五级id
-	 */
-	public Long getAmazonCategoryFiveId() {
-		return amazonCategoryFiveId;
-	}
+
 	/**
 	 * 设置：亚马逊模板id
 	 */
@@ -223,6 +226,19 @@ public class UploadEntity implements Serializable {
 	public Long getAmazonTemplateId() {
 		return amazonTemplateId;
 	}
+	/**
+	 * 设置：亚马逊模板
+	 */
+	public void setAmazonTemplate(String amazonTemplate) {
+		this.amazonTemplate = amazonTemplate;
+	}
+	/**
+	 * 获取：亚马逊模板
+	 */
+	public String getAmazonTemplate() {
+		return amazonTemplate;
+	}
+
 	/**
 	 * 设置：是否有分类属性（默认0：没有  1：有）
 	 */
@@ -284,27 +300,39 @@ public class UploadEntity implements Serializable {
 		return returnError;
 	}
 	/**
-	 * 设置：创建时间
-	 */
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	/**
-	 * 获取：创建时间
-	 */
-	public Date getCreateTime() {
-		return createTime;
-	}
-	/**
-	 * 设置：
+	 * 设置：上传时间
 	 */
 	public void setUploadTime(Date uploadTime) {
 		this.uploadTime = uploadTime;
 	}
 	/**
-	 * 获取：
+	 * 获取：上传时间
 	 */
 	public Date getUploadTime() {
 		return uploadTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public Long getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(Long deptId) {
+		this.deptId = deptId;
 	}
 }

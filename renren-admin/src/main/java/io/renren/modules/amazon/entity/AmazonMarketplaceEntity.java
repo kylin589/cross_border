@@ -42,7 +42,11 @@ public class AmazonMarketplaceEntity implements Serializable {
 	 * 所属区域(欧洲0、北美1、远东2）
 	 */
 	private Integer region;
-
+	/**
+	 * 软删（1：删除）
+	 */
+	private Integer isDeleted;
+	private String amazonSite;
 	/**
 	 * 设置：主键
 	 */
@@ -114,5 +118,21 @@ public class AmazonMarketplaceEntity implements Serializable {
 	 */
 	public Integer getRegion() {
 		return region;
+	}
+
+	public Integer getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Integer isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public String getAmazonSite() {
+		return amazonSite;
+	}
+
+	public void setAmazonSite(String amazonSite) {
+		this.amazonSite = amazonSite;
 	}
 }
