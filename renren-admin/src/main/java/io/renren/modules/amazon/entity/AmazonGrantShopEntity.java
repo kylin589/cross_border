@@ -23,6 +23,10 @@ public class AmazonGrantShopEntity implements Serializable {
 	@TableId
 	private Long grantShopId;
 	/**
+	 * 授权id
+	 */
+	private Long grantId;
+	/**
 	 * 店铺名称
 	 */
 	private String shopName;
@@ -38,6 +42,8 @@ public class AmazonGrantShopEntity implements Serializable {
 	 * 国家标识
 	 */
 	private String countryCode;
+	//站点
+	private String amazonSite;
 	/**
 	 * 亚马逊MWS端点
 	 */
@@ -51,6 +57,8 @@ public class AmazonGrantShopEntity implements Serializable {
 	 */
 	private Integer region;
 
+	private Long userId;
+	private Long deptId;
 	/**
 	 * 设置：授权店铺id
 	 */
@@ -111,6 +119,15 @@ public class AmazonGrantShopEntity implements Serializable {
 	public String getCountryCode() {
 		return countryCode;
 	}
+
+	public String getAmazonSite() {
+		return amazonSite;
+	}
+
+	public void setAmazonSite(String amazonSite) {
+		this.amazonSite = amazonSite;
+	}
+
 	/**
 	 * 设置：亚马逊MWS端点
 	 */
@@ -146,5 +163,29 @@ public class AmazonGrantShopEntity implements Serializable {
 	 */
 	public Integer getRegion() {
 		return region;
+	}
+
+	public Long getGrantId() {
+		return grantId;
+	}
+
+	public void setGrantId(Long grantId) {
+		this.grantId = grantId;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public Long getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(Long deptId) {
+		this.deptId = deptId;
 	}
 }

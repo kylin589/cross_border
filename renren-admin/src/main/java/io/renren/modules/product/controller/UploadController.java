@@ -172,11 +172,25 @@ public class UploadController extends AbstractController {
             upload.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
             upload.setAmazonCategory(addUploadVM.getAmazonCategory());
             //设置分类节点id
-            String county = amazonGrantShop.getGrantCounty();
+            String county = amazonGrantShop.getCountryCode();
             COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
             switch (countyEnum){
-                case AU:
+                case GB:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdUk());
                     break;
+                case DE:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdDe());
+                    break;
+                case FR:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdFr());
+                    break;
+                case IT:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdIt());
+                    break;
+                case ES:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdEs());
+                    break;
+                // TODO: 2018/11/28 北美
                 default:
                     break;
             }

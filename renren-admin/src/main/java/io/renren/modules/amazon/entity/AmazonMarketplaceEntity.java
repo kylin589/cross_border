@@ -46,6 +46,7 @@ public class AmazonMarketplaceEntity implements Serializable {
 	 * 软删（1：删除）
 	 */
 	private Integer isDeleted;
+	private String amazonSite;
 	/**
 	 * 设置：主键
 	 */
@@ -125,5 +126,13 @@ public class AmazonMarketplaceEntity implements Serializable {
 
 	public void setIsDeleted(Integer isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+
+	public String getAmazonSite() {
+		return amazonSite;
+	}
+
+	public void setAmazonSite(String amazonSite) {
+		this.amazonSite = amazonSite;
 	}
 }
