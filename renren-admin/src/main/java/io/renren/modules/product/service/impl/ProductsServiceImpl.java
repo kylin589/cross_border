@@ -29,7 +29,6 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
     @Autowired
     private VariantsInfoService variantsInfoService;
-
     @Autowired
     private ImageAddressService imageAddressService;
 
@@ -38,7 +37,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String       ,               Object>
+     * @return Map<String                               ,                                                               O                               bject>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -48,34 +47,18 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      * @date 2018-11-07 14:54:47
      */
     @Override
-    public Map<String, Object> queryPage(Map<String, Object> params, Long userId) {
-
+    public Map<String, Object> queryMyPage(Map<String, Object> params, Long userId) {
         // 分类传过来的是三级分类的id
-        // TODO: 2018/11/11 缺少所选择的员工id
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
-        // TODO: 2018/11/13 时间处理 
+        // TODO: 2018/11/13 时间处理
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
-
-        // TODO: 2018/10/31  判断是不是管理员，根据管理员id查员工的商品
-        // TODO: 2018/11/8  1.判断用户角色 或者 判断用户是否有子级
-        // TODO: 2018/11/8  2.如果是管理员，那么就把他手底下的员工id查询出来，生成数组或者list列表
-        // TODO: 2018/11/8  3.判断是否是管理员，如果不是，就把当前用户id传入list.
-        List<Long> ids = new ArrayList<>();
-        ids.add(userId);
-        /*
-        if (){
-
-        }else {
-            ids.add(userId);
-        }
-        */
-
+        //条件构造器拼接条件
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
                 .like(StringUtils.isNotBlank(title), "product_title", title)
@@ -85,16 +68,11 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                 .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
                 .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                 .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
-                .in("create_user_id", ids)
+                .eq("create_user_id", userId)//当前用户
                 .eq("is_deleted", 0)
-                .orderBy(true, "create_time", false)
+                .orderBy(true, "create_time", false)//时间排序
                 .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
-
-        Page<ProductsEntity> page = this.selectPage(
-                new Query<ProductsEntity>(params).getPage(),
-                wrapper
-        );
-
+        Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
         PageUtils pageUtils = new PageUtils(page);
         List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
         /*for (int i = 0; i < list.size(); i++) {
@@ -104,24 +82,109 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
             }
         }*/
         pageUtils.setList(list);
-
         // 产品数量
         int proCount = this.selectCount(wrapper);
-
         // 审核通过
         int approvedCount;
         if (AUDIT_KEY.equals(auditNumber)) {
             approvedCount = this.selectCount(wrapper);
         } else {
-            approvedCount = getApprovedCount(category, title, sku, startDate, endDate, shelveNumber, productNumber, ids, 0);
+            //我的产品审核通过
+            approvedCount = getMyApprovedCount(category, title, sku, startDate, endDate, shelveNumber, productNumber, userId, 0);
         }
-
         // 包含变体的商品
         int numberOfVariants = getNumberOfVariants(wrapper);
-
         // 变体总数
         int variantsCount = getWariantsCount(wrapper);
+        Map<String, Object> map = new HashMap<>(5);
+        map.put("page", pageUtils);
+        map.put("proCount", proCount);
+        map.put("approvedCount", approvedCount);
+        map.put("numberOfVariants", numberOfVariants);
+        map.put("variantsCount", variantsCount);
+        return map;
+    }
 
+    /**
+     * 所有产品列表
+     *
+     * @param params url参数
+     * @param deptId 公司id
+     * @return Map<String                                                               ,                                                                                                                               O                                                               b                                                               ject>
+     * page 产品page
+     * proCount 产品数量
+     * approvedCount 审核通过
+     * numberOfVariants 包含变体的商品
+     * variantsCount 变体总数
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
+    @Override
+    public Map<String, Object> queryAllPage(Map<String, Object> params, Long deptId) {
+        // 分类传过来的是三级分类的id
+        String category = (String) params.get("category");
+        String title = (String) params.get("title");
+        String sku = (String) params.get("sku");
+        // TODO: 2018/11/13 时间处理
+        String startDate = (String) params.get("startDate");
+        String endDate = (String) params.get("endDate");
+        String auditNumber = (String) params.get("auditNumber");
+        String shelveNumber = (String) params.get("shelveNumber");
+        String productNumber = (String) params.get("productNumber");
+        //条件构造器拼接条件
+        EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
+        //管理员
+        if (deptId == 1) {
+            wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
+                    .like(StringUtils.isNotBlank(title), "product_title", title)
+                    .like(StringUtils.isNotBlank(sku), "product_sku", sku)
+                    .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                    .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
+                    .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                    .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq("is_deleted", 0)
+                    .orderBy(true, "create_time", false)//时间排序
+                    .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+        } else {
+            //加盟商
+            wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
+                    .like(StringUtils.isNotBlank(title), "product_title", title)
+                    .like(StringUtils.isNotBlank(sku), "product_sku", sku)
+                    .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                    .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
+                    .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                    .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq("dept_id", deptId)
+                    .eq("is_deleted", 0)
+                    .orderBy(true, "create_time", false)//时间排序
+                    .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+        }
+        Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
+        PageUtils pageUtils = new PageUtils(page);
+        List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
+        /*for (int i = 0; i < list.size(); i++) {
+            if(list.get(i).getMainImageId() != null){
+                ImageAddressEntity imageAddressEntity  = imageAddressService.selectById(list.get(i).getMainImageId());
+                list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
+            }
+        }*/
+        pageUtils.setList(list);
+        // 产品数量
+        int proCount = this.selectCount(wrapper);
+        // 审核通过
+        int approvedCount;
+        if (AUDIT_KEY.equals(auditNumber)) {
+            approvedCount = this.selectCount(wrapper);
+        } else {
+            //所有产品审核通过
+            approvedCount = getAllApprovedCount(category, title, sku, startDate, endDate, shelveNumber, productNumber, deptId, 0);
+        }
+        // 包含变体的商品
+        int numberOfVariants = getNumberOfVariants(wrapper);
+        // 变体总数
+        int variantsCount = getWariantsCount(wrapper);
         Map<String, Object> map = new HashMap<>(5);
         map.put("page", pageUtils);
         map.put("proCount", proCount);
@@ -136,7 +199,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String       ,               Object>
+     * @return Map<String                               ,                               Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -147,9 +210,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      */
     @Override
     public Map<String, Object> queryRecyclingPage(Map<String, Object> params, Long userId) {
-
         // 分类传过来的是三级分类的id
-
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
@@ -161,22 +222,8 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String auditNumber = (String) params.get("auditNumber");
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
-
         startDate = "";
         endDate = "";
-        // TODO: 2018/10/31  判断是不是管理员，根据管理员id查员工的商品
-        // TODO: 2018/11/8  1.判断用户角色 或者 判断用户是否有子级
-        // TODO: 2018/11/8  2.如果是管理员，那么就把他手底下的员工id查询出来，生成数组或者list列表
-        // TODO: 2018/11/8  3.判断是否是管理员，如果不是，就把当前用户id传入list.
-        List<Long> ids = new ArrayList<>();
-        ids.add(userId);
-        /*
-        if (){
-
-        }else {
-            ids.add(userId);
-        }
-        */
 
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
@@ -187,16 +234,11 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                 .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
                 .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                 .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
-                .in("create_user_id", ids)
+                .eq("create_user_id", userId)
                 .eq("is_deleted", 1)
                 .orderBy(true, "last_operation_time", false)
                 .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
-
-
-        Page<ProductsEntity> page = this.selectPage(
-                new Query<ProductsEntity>(params).getPage(), wrapper
-        );
-
+        Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
         PageUtils pageUtils = new PageUtils(page);
         List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
         for (int i = 0; i < list.size(); i++) {
@@ -206,24 +248,19 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
             list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
         }
         pageUtils.setList(list);
-
         // 产品数量
         int proCount = this.selectCount(wrapper);
-
         // 审核通过
         int approvedCount;
         if (AUDIT_KEY.equals(auditNumber)) {
             approvedCount = this.selectCount(wrapper);
         } else {
-            approvedCount = getApprovedCount(category, title, sku, startDate, endDate, shelveNumber, productNumber, ids, 1);
+            approvedCount = getMyApprovedCount(category, title, sku, startDate, endDate, shelveNumber, productNumber, userId, 1);
         }
-
         // 包含变体的商品
         int numberOfVariants = getNumberOfVariants(wrapper);
-
         // 变体总数
         int variantsCount = getWariantsCount(wrapper);
-
         Map<String, Object> map = new HashMap<>(5);
         map.put("page", pageUtils);
         map.put("proCount", proCount);
@@ -234,7 +271,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     /**
-     * 审核通过总数
+     * 我的产品审核通过总数
      *
      * @param category      分类
      * @param title         标题
@@ -243,14 +280,14 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      * @param endDate       结束时间
      * @param shelveNumber  上架状态
      * @param productNumber 产品存放类型
-     * @param ids           用户ids
+     * @param userId        用户ids
      * @param isDeleted     是否删除
      * @return 总数
      * @author zjr
      * @date 2018-11-07 14:54:47
      */
     @Override
-    public int getApprovedCount(String category, String title, String sku, String startDate, String endDate, String shelveNumber, String productNumber, List<Long> ids, int isDeleted) {
+    public int getMyApprovedCount(String category, String title, String sku, String startDate, String endDate, String shelveNumber, String productNumber, Long userId, int isDeleted) {
         String timeType = "create_time";
         if ("1".equals(isDeleted)) {
             timeType = "last_operation_time";
@@ -264,9 +301,59 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                 .eq("audit_status", "001")
                 .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                 .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
-                .in("create_user_id", ids)
+                .eq("create_user_id", userId)
                 .eq("is_deleted", isDeleted)
                 .orderBy(true, timeType, false);
+        return this.selectCount(approvedCountWrapper);
+    }
+
+    /**
+     * 所有产品审核通过总数
+     *
+     * @param category      分类
+     * @param title         标题
+     * @param sku
+     * @param startDate     开始时间
+     * @param endDate       结束时间
+     * @param shelveNumber  上架状态
+     * @param productNumber 产品存放类型
+     * @param deptId        用户ids
+     * @param isDeleted     是否删除
+     * @return 总数
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
+    @Override
+    public int getAllApprovedCount(String category, String title, String sku, String startDate, String endDate, String shelveNumber, String productNumber, Long deptId, int isDeleted) {
+        String timeType = "create_time";
+        if ("1".equals(isDeleted)) {
+            timeType = "last_operation_time";
+        }
+        EntityWrapper<ProductsEntity> approvedCountWrapper = new EntityWrapper<>();
+        if (deptId == 1) {
+            approvedCountWrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
+                    .like(StringUtils.isNotBlank(title), "product_title", title)
+                    .like(StringUtils.isNotBlank(sku), "product_sku", sku)
+                    .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                    .eq("audit_status", "001")
+                    .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                    .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq("is_deleted", isDeleted)
+                    .orderBy(true, timeType, false);
+        } else {
+            approvedCountWrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
+                    .like(StringUtils.isNotBlank(title), "product_title", title)
+                    .like(StringUtils.isNotBlank(sku), "product_sku", sku)
+                    .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                    .eq("audit_status", "001")
+                    .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                    .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq("dept_id", deptId)
+                    .eq("is_deleted", isDeleted)
+                    .orderBy(true, timeType, false);
+        }
         return this.selectCount(approvedCountWrapper);
     }
 
@@ -323,6 +410,8 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     /**
+     * 我的产品
+     *
      * @methodname: auditCount 审核类型分类统计每个分类的总数
      * @param: [number, del]
      * @return: int
@@ -330,13 +419,14 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      * @date: 2018/11/13 23:43
      */
     @Override
-    public int auditCount(String number, String del) {
-        int auditCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("audit_status", number).eq("is_deleted", del));
+    public int auditCount(String number, String del, Long userId) {
+        int auditCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("audit_status", number).eq("is_deleted", del).eq("create_user_id", userId));
         return auditCount;
     }
 
-
     /**
+     * 我的产品
+     *
      * @methodname: putawayCount 上架类型分类统计每个分类的总数
      * @param: [number, del]
      * @return: int
@@ -344,13 +434,14 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      * @date: 2018/11/13 23:43
      */
     @Override
-    public int putawayCount(String number, String del) {
-        int putawayCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("shelve_status", number).eq("is_deleted", del));
+    public int putawayCount(String number, String del, Long userId) {
+        int putawayCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("shelve_status", number).eq("is_deleted", del).eq("create_user_id", userId));
         return putawayCount;
     }
 
-
     /**
+     * 我的产品
+     *
      * @methodname: productCount 产品类型分类统计每个分类的总数
      * @param: [number, del]
      * @return: int
@@ -358,8 +449,69 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      * @date: 2018/11/13 23:44
      */
     @Override
-    public int productCount(String number, String del) {
-        int productCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("product_type", number).eq("is_deleted", del));
+    public int productCount(String number, String del, Long userId) {
+        int productCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("product_type", number).eq("is_deleted", del).eq("create_user_id", userId));
+        return productCount;
+    }
+
+    /**
+     * 所有产品
+     *
+     * @methodname: auditCountAll 审核类型分类统计每个分类的总数
+     * @param: [number, del]
+     * @return: int
+     * @auther: jhy
+     * @date: 2018/11/13 23:43
+     */
+    @Override
+    public int auditCountAll(String number, String del, Long deptId) {
+        int auditCount = 0;
+        if (deptId == 1) {
+            auditCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("audit_status", number).eq("is_deleted", del));
+        } else {
+            auditCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("audit_status", number).eq("is_deleted", del).eq("dept_id", deptId));
+        }
+        return auditCount;
+    }
+
+    /**
+     * 所有产品
+     *
+     * @methodname: putawayCountAll 上架类型分类统计每个分类的总数
+     * @param: [number, del]
+     * @return: int
+     * @auther: jhy
+     * @date: 2018/11/13 23:43
+     */
+    @Override
+    public int putawayCountAll(String number, String del, Long deptId) {
+        int putawayCount = 0;
+        if (deptId == 1) {
+            putawayCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("shelve_status", number).eq("is_deleted", del));
+        } else {
+            putawayCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("shelve_status", number).eq("is_deleted", del).eq("dept_id", deptId));
+        }
+        return putawayCount;
+    }
+
+    /**
+     * 所有产品
+     *
+     * @methodname: productCountAll 产品类型分类统计每个分类的总数
+     * @param: [number, del]
+     * @return: int
+     * @auther: jhy
+     * @date: 2018/11/13 23:44
+     */
+    @Override
+    public int productCountAll(String number, String del, Long deptId) {
+        int productCount = 0;
+        if (deptId == 1) {
+            productCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("product_type", number).eq("is_deleted", del));
+        } else {
+            productCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("product_type", number).eq("is_deleted", del).eq("dept_id", deptId));
+        }
+
         return productCount;
     }
 
@@ -390,7 +542,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     /**
-     * 获取商品数量
+     * 获取我的产品数量
      *
      * @param params url 参数
      * @param userId 用户id
@@ -400,9 +552,8 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      * @date 2018-11-07 14:54:47
      */
     @Override
-    public int getTotalCount(Map<String, Object> params, Long userId, String isDel) {
+    public int getMyTotalCount(Map<String, Object> params, Long userId, String isDel) {
         // 分类传过来的是三级分类的id
-
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
@@ -414,19 +565,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
         startDate = "";
         endDate = "";
-        // TODO: 2018/10/31  判断是不是管理员，根据管理员id查员工的商品
-        // TODO: 2018/11/8  1.判断用户角色 或者 判断用户是否有子级
-        // TODO: 2018/11/8  2.如果是管理员，那么就把他手底下的员工id查询出来，生成数组或者list列表
-        // TODO: 2018/11/8  3.判断是否是管理员，如果不是，就把当前用户id传入list.
-        List<Long> ids = new ArrayList<>();
-        ids.add(userId);
-        /*
-        if (){
 
-        }else {
-            ids.add(userId);
-        }
-        */
         String timeType = "create_time";
         if ("1".equals(isDel)) {
             timeType = "last_operation_time";
@@ -441,33 +580,108 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                 .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
                 .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                 .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
-                .in("create_user_id", ids)
+                .eq("create_user_id", userId)
                 .eq("is_deleted", isDel)
                 .orderBy(true, timeType, false)
                 .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+        // 产品数量
+        int proCount = this.selectCount(wrapper);
+        return proCount;
+    }
+
+    /**
+     * 获取所有产品数量
+     *
+     * @param params url 参数
+     * @param deptId 用户id
+     * @param isDel  是否删除
+     * @return 数量
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
+    @Override
+    public int getAllTotalCount(Map<String, Object> params, Long deptId, String isDel) {
+        // 分类传过来的是三级分类的id
+        String category = (String) params.get("category");
+        String title = (String) params.get("title");
+        String sku = (String) params.get("sku");
+        String startDate = (String) params.get("startDate");
+        String endDate = (String) params.get("endDate");
+        String auditNumber = (String) params.get("auditNumber");
+        String shelveNumber = (String) params.get("shelveNumber");
+        String productNumber = (String) params.get("productNumber");
+
+        startDate = "";
+        endDate = "";
+
+        String timeType = "create_time";
+        if ("1".equals(isDel)) {
+            timeType = "last_operation_time";
+        }
+
+        EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
+        if (deptId == 1) {
+            wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
+                    .like(StringUtils.isNotBlank(title), "product_title", title)
+                    .like(StringUtils.isNotBlank(sku), "product_sku", sku)
+                    .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                    .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
+                    .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                    .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq("is_deleted", isDel)
+                    .orderBy(true, timeType, false)
+                    .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+        } else {
+            wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
+                    .like(StringUtils.isNotBlank(title), "product_title", title)
+                    .like(StringUtils.isNotBlank(sku), "product_sku", sku)
+                    .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                    .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
+                    .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                    .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq("dept_id", deptId)
+                    .eq("is_deleted", isDel)
+                    .orderBy(true, timeType, false)
+                    .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+        }
 
         // 产品数量
         int proCount = this.selectCount(wrapper);
         return proCount;
     }
 
+    /**
+     * @methodname: relationVariantColor 变体颜色与产品绑定
+     * @param: [productId, variantParameterId]
+     * @return: boolean
+     * @auther: jhy
+     * @date: 2018/11/30 14:18
+     */
     @Override
     public boolean relationVariantColor(Long productId, Long variantParameterId) {
-        int flag = baseMapper.relationVariantColor(productId,variantParameterId);
-        if(flag != 0){
+        int flag = baseMapper.relationVariantColor(productId, variantParameterId);
+        if (flag != 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
-
     }
 
+    /**
+     * @methodname: relationVariantSize 变体尺寸与产品绑定
+     * @param: [productId, variantParameterId]
+     * @return: boolean
+     * @auther: jhy
+     * @date: 2018/11/30 14:19
+     */
     @Override
     public boolean relationVariantSize(Long productId, Long variantParameterId) {
-        int flag = baseMapper.relationVariantSize(productId,variantParameterId);
-        if(flag != 0){
+        int flag = baseMapper.relationVariantSize(productId, variantParameterId);
+        if (flag != 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

@@ -22,7 +22,7 @@ import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class ImageAddressTest extends AbstractController {
+public class Image extends AbstractController {
     @Autowired
     private ImageAddressService imageAddressService;
 

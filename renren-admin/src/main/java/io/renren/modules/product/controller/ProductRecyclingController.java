@@ -30,7 +30,7 @@ public class ProductRecyclingController extends AbstractController {
     private ProductsService productsService;
 
     /**
-     * @param params 产品id
+     * @param params 产品回收站列表
      * @return R
      * page 产品page
      * proCount 产品数量
@@ -77,7 +77,7 @@ public class ProductRecyclingController extends AbstractController {
      */
     @RequestMapping("/gettotalcount")
     public R getTotalCount(@RequestParam Map<String, Object> params) {
-        int totalCount = productsService.getTotalCount(params, getUserId(), "1");
+        int totalCount = productsService.getMyTotalCount(params, getUserId(), "1");
         return R.ok().put("totalCount", totalCount);
     }
 

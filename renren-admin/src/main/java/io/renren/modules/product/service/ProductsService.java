@@ -9,19 +9,16 @@ import java.util.Map;
 
 /**
  * 产品
- *
  * @author zjr
  * @email zhang-jiarui@baizesoft.com
  * @date 2018-11-07 14:54:47
  */
 public interface ProductsService extends IService<ProductsEntity> {
-
     /**
      * 我的产品列表
-     *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String   ,       Object>
+     * @return Map<String,Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -30,14 +27,28 @@ public interface ProductsService extends IService<ProductsEntity> {
      * @author zjr
      * @date 2018-11-07 14:54:47
      */
-    Map<String, Object> queryPage(Map<String, Object> params, Long userId);
+    Map<String, Object> queryMyPage(Map<String, Object> params, Long userId);
+
+    /**
+     * 所有产品列表
+     * @param params url参数
+     * @param deptId 用户id
+     * @return Map<String,Object>
+     * page 产品page
+     * proCount 产品数量
+     * approvedCount 审核通过
+     * numberOfVariants 包含变体的商品
+     * variantsCount 变体总数
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
+    Map<String,Object> queryAllPage(Map<String,Object> params, Long deptId);
 
     /**
      * 产品回收站
-     *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String   ,       Object>
+     * @return Map<String,Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -49,8 +60,7 @@ public interface ProductsService extends IService<ProductsEntity> {
     Map<String, Object> queryRecyclingPage(Map<String, Object> params, Long userId);
 
     /**
-     * 审核通过总数
-     *
+     * 我的产品审核通过总数
      * @param category      分类
      * @param title         标题
      * @param sku
@@ -58,17 +68,32 @@ public interface ProductsService extends IService<ProductsEntity> {
      * @param endDate       结束时间
      * @param shelveNumber  上架状态
      * @param productNumber 产品存放类型
-     * @param ids           用户ids
+     * @param userId           用户ids
      * @param isDeleted     是否删除
      * @return 总数
      * @author zjr
      * @date 2018-11-07 14:54:47
      */
-    int getApprovedCount(String category, String title, String sku, String startDate, String endDate, String shelveNumber, String productNumber, List<Long> ids, int isDeleted);
+    int getMyApprovedCount(String category, String title, String sku, String startDate, String endDate, String shelveNumber, String productNumber, Long userId, int isDeleted);
 
     /**
+     * 所有产品审核通过总数
+     * @param category      分类
+     * @param title         标题
+     * @param sku
+     * @param startDate     开始时间
+     * @param endDate       结束时间
+     * @param shelveNumber  上架状态
+     * @param productNumber 产品存放类型
+     * @param deptId          用户ids
+     * @param isDeleted     是否删除
+     * @return 总数
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
+    int getAllApprovedCount(String category, String title, String sku, String startDate, String endDate, String shelveNumber, String productNumber, Long deptId, int isDeleted);
+    /**
      * 统计包含变体的商品总数
-     *
      * @param wrapper 查询条件
      * @return 总数
      * @author zjr
@@ -78,7 +103,6 @@ public interface ProductsService extends IService<ProductsEntity> {
 
     /**
      * 统计变体总数
-     *
      * @param wrapper 查询条件
      * @return 总数
      * @author zjr
@@ -88,26 +112,38 @@ public interface ProductsService extends IService<ProductsEntity> {
 
     /**
      * 获取新商品的编号
-     *
      * @param userId 用户id
      * @return 编号
      * @author zjr
      * @date 2018-11-07 14:54:47
      */
     Long getNewProductId(Long userId);
-    //审核状态每个分类总数
-    int auditCount(String number, String del);
-    //上架状态每个分类总数
-    int putawayCount(String number, String del);
-    //产品类型每个分类总数
-    int productCount(String number, String del);
+
+
+    //当前用户审核状态每个分类总数
+    int auditCount(String number, String del, Long userId);
+    //当前用户上架状态每个分类总数
+    int putawayCount(String number, String del, Long userId);
+    //当前用户产品类型每个分类总数
+    int productCount(String number, String del, Long userId);
+
+
+    //公司审核状态每个分类总数
+    int auditCountAll(String number, String del, Long deptId);
+    //公司上架状态每个分类总数
+    int putawayCountAll(String number, String del, Long deptId);
+    //公司产品类型每个分类总数
+    int productCountAll(String number, String del, Long deptId);
+
+
     //一级分类产品总数
     int count(Long id, String del);
     //父类查子类的产品总和
     int counts(Long id, String del);
 
+
     /**
-     * 获取商品数量
+     * 获取我的商品数量
      * @param params url 参数
      * @param userId 用户id
      * @param isDel 是否删除
@@ -115,9 +151,22 @@ public interface ProductsService extends IService<ProductsEntity> {
      * @author zjr
      * @date 2018-11-07 14:54:47
      */
-    int getTotalCount(Map<String, Object> params, Long userId, String isDel);
+    int getMyTotalCount(Map<String, Object> params, Long userId, String isDel);
+    /**
+     * 获取所有商品数量
+     * @param params url 参数
+     * @param deptId 公司id
+     * @param isDel 是否删除
+     * @return 数量
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
+    int getAllTotalCount(Map<String, Object> params, Long deptId, String isDel);
 
+    //变体参数颜色与产品绑定
     boolean relationVariantColor(Long productId, Long variantParameterId);
-
+   //变体参数尺寸与产品绑定
     boolean relationVariantSize(Long productId, Long variantParameterId);
+
+
 }
