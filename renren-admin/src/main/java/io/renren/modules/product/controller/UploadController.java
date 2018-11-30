@@ -3,8 +3,14 @@ package io.renren.modules.product.controller;
 import java.util.*;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.entity.AmazonCategoryHistoryEntity;
+import io.renren.modules.amazon.entity.AmazonGrantEntity;
+import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonCategoryHistoryService;
+import io.renren.modules.amazon.service.AmazonGrantShopService;
+import io.renren.modules.amazon.util.COUNTY;
+import io.renren.modules.product.entity.AmazonCategoryEntity;
 import io.renren.modules.product.entity.ProductsEntity;
+import io.renren.modules.product.service.AmazonCategoryService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.vm.AddUploadVM;
 import io.renren.modules.sys.controller.AbstractController;
@@ -38,6 +44,13 @@ public class UploadController extends AbstractController {
 
     @Autowired
     private AmazonCategoryHistoryService amazonCategoryHistoryService;
+
+    @Autowired
+    private AmazonGrantShopService amazonGrantShopService;
+
+    @Autowired
+    private AmazonCategoryService amazonCategoryService;
+
     /**
      * @methodname: list 信息
      * @param: [params] 接受参数
@@ -151,11 +164,36 @@ public class UploadController extends AbstractController {
             //设置主图片
             upload.setMainUrl(product.getMainImageUrl());
             //设置授权账户
+            AmazonGrantShopEntity amazonGrantShop = amazonGrantShopService.selectById(addUploadVM.getGrantShopId());
             upload.setGrantShopId(addUploadVM.getGrantShopId());
             upload.setGrantShop(addUploadVM.getGrantShop());
             //设置分类
+            AmazonCategoryEntity amazonCategory = amazonCategoryService.selectById(addUploadVM.getAmazonCategoryId());
             upload.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
             upload.setAmazonCategory(addUploadVM.getAmazonCategory());
+            //设置分类节点id
+            String county = amazonGrantShop.getCountryCode();
+            COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
+            switch (countyEnum){
+                case GB:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdUk());
+                    break;
+                case DE:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdDe());
+                    break;
+                case FR:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdFr());
+                    break;
+                case IT:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdIt());
+                    break;
+                case ES:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdEs());
+                    break;
+                // TODO: 2018/11/28 北美
+                default:
+                    break;
+            }
             //设置模板
             upload.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
             upload.setAmazonTemplate(addUploadVM.getAmazonTemplate());

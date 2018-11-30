@@ -5,11 +5,33 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class XMLUtil {
+
+    /**
+     * 将文档对象写入对应的文件中
+     *
+     * @param document 文档对象
+     * @param path     写入文档的路径
+     * @throws IOException
+     */
+    public final static void writeXMLToFile(Document document, String path) throws IOException {
+        if (document == null || path == null) {
+            return;
+        }
+        FileWriter fileWiter = new FileWriter(path);
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        XMLWriter writer = new XMLWriter(fileWiter, format);
+        writer.write(document);
+        writer.close();
+        fileWiter.close();
+    }
 
     /**
      * @methodname: analysisListOrdersResponse Dom4j解析亚马逊订单返回的xml数据 工具类
@@ -404,138 +426,138 @@ public class XMLUtil {
      */
     public static ListOrderItemsByNextTokenResponseDto analysisListOrderItemsByNextTokenResponse(String responseXml) {
         Document document = null;
-        ListOrderItemsByNextTokenResponseDto listOrderItemsByNextTokenResponseDto= new ListOrderItemsByNextTokenResponseDto();
-        List<OrderItemDto> orderItemDtos= new ArrayList<OrderItemDto>();
+        ListOrderItemsByNextTokenResponseDto listOrderItemsByNextTokenResponseDto = new ListOrderItemsByNextTokenResponseDto();
+        List<OrderItemDto> orderItemDtos = new ArrayList<OrderItemDto>();
         try {
             // 将字符串转为XML
             document = DocumentHelper.parseText(responseXml);
             Element rootElement = document.getRootElement();//获取根标签
             Element listOrderItemsByNextTokenResult = rootElement.element("ListOrderItemsByNextTokenResult");//获取指定的标签
             Element nextToken = listOrderItemsByNextTokenResult.element("NextToken");//获取指定的标签下的指定标签
-            if (nextToken!=null){
+            if (nextToken != null) {
                 listOrderItemsByNextTokenResponseDto.setNextToken(nextToken.getTextTrim());
             }
             Element amazonOrderId = listOrderItemsByNextTokenResult.element("AmazonOrderId");
             listOrderItemsByNextTokenResponseDto.setAmazonOrderId(amazonOrderId.getTextTrim());
             Element orderItems = listOrderItemsByNextTokenResult.element("OrderItems");
             List<Element> orderItemList = orderItems.elements();
-            OrderItemDto orderItemDto =null;
+            OrderItemDto orderItemDto = null;
             //遍历orderitems下的子标签
             for (Element orderItem : orderItemList) {
-                orderItemDto= new OrderItemDto();
+                orderItemDto = new OrderItemDto();
                 Element asin = orderItem.element("ASIN");
                 orderItemDto.setASIN(asin.getTextTrim());
                 Element sellerSKU = orderItem.element("SellerSKU");
                 //根据名字获取到需要的数据，对所有的可选项加判断
-                if (sellerSKU!=null){
+                if (sellerSKU != null) {
                     orderItemDto.setSellerSKU(sellerSKU.getTextTrim());
                 }
                 Element orderItemId = orderItem.element("OrderItemId");
                 orderItemDto.setOrderItemId(orderItemId.getTextTrim());
                 Element title = orderItem.element("Title");
-                if (title!=null){
+                if (title != null) {
                     orderItemDto.setTitle(title.getTextTrim());
                 }
                 Element quantityOrdered = orderItem.element("QuantityOrdered");
                 orderItemDto.setQuantityOrdered(Integer.valueOf(quantityOrdered.getTextTrim()));
                 Element quantityShipped = orderItem.element("QuantityShipped");
-                if (quantityShipped!=null){
+                if (quantityShipped != null) {
                     orderItemDto.setQuantityShipped(Integer.valueOf(quantityShipped.getTextTrim()));
                 }
                 Element itemPrice = orderItem.element("ItemPrice");
-                if (itemPrice!=null){
+                if (itemPrice != null) {
                     Element currencyCode = itemPrice.element("CurrencyCode");
-                    MoneyDto moneyDto=new MoneyDto();
+                    MoneyDto moneyDto = new MoneyDto();
                     moneyDto.setCurrencyCode(currencyCode.getTextTrim());
                     Element amount = itemPrice.element("Amount");
                     moneyDto.setAmount(amount.getTextTrim());
                     orderItemDto.setItemPrice(moneyDto);
                 }
                 Element shippingPrice = orderItem.element("ShippingPrice");
-                if (shippingPrice!=null){
+                if (shippingPrice != null) {
                     Element currencyCode = shippingPrice.element("CurrencyCode");
-                    MoneyDto moneyDto=new MoneyDto();
+                    MoneyDto moneyDto = new MoneyDto();
                     moneyDto.setCurrencyCode(currencyCode.getTextTrim());
                     Element amount = shippingPrice.element("Amount");
                     moneyDto.setAmount(amount.getTextTrim());
                     orderItemDto.setShippingPrice(moneyDto);
                 }
                 Element giftWrapTax = orderItem.element("GiftWrapTax");
-                if (giftWrapTax!=null){
+                if (giftWrapTax != null) {
                     Element currencyCode = giftWrapTax.element("CurrencyCode");
-                    MoneyDto moneyDto=new MoneyDto();
+                    MoneyDto moneyDto = new MoneyDto();
                     moneyDto.setCurrencyCode(currencyCode.getTextTrim());
                     Element amount = giftWrapTax.element("Amount");
                     moneyDto.setAmount(amount.getTextTrim());
                     orderItemDto.setGiftWrapTax(moneyDto);
                 }
                 Element shippingDiscount = orderItem.element("ShippingDiscount");
-                if (shippingDiscount!=null){
+                if (shippingDiscount != null) {
                     Element currencyCode = shippingDiscount.element("CurrencyCode");
-                    MoneyDto moneyDto=new MoneyDto();
+                    MoneyDto moneyDto = new MoneyDto();
                     moneyDto.setCurrencyCode(currencyCode.getTextTrim());
                     Element amount = shippingDiscount.element("Amount");
                     moneyDto.setAmount(amount.getTextTrim());
                     orderItemDto.setShippingDiscount(moneyDto);
                 }
                 Element promotionDiscount = orderItem.element("PromotionDiscount");
-                if (promotionDiscount!=null){
+                if (promotionDiscount != null) {
                     Element currencyCode = promotionDiscount.element("CurrencyCode");
-                    MoneyDto moneyDto=new MoneyDto();
+                    MoneyDto moneyDto = new MoneyDto();
                     moneyDto.setCurrencyCode(currencyCode.getTextTrim());
                     Element amount = promotionDiscount.element("Amount");
                     moneyDto.setAmount(amount.getTextTrim());
                     orderItemDto.setPromotionDiscount(moneyDto);
                 }
                 Element promotionIds = orderItem.element("PromotionIds");
-                if (promotionIds!=null){
+                if (promotionIds != null) {
                     orderItemDto.setPromotionIds(promotionIds.getTextTrim());
                 }
                 Element codFee = orderItem.element("CODFee");
-                if (codFee!=null){
+                if (codFee != null) {
                     Element currencyCode = codFee.element("CurrencyCode");
-                    MoneyDto moneyDto=new MoneyDto();
+                    MoneyDto moneyDto = new MoneyDto();
                     moneyDto.setCurrencyCode(currencyCode.getTextTrim());
                     Element amount = codFee.element("Amount");
                     moneyDto.setAmount(amount.getTextTrim());
                     orderItemDto.setCODFee(moneyDto);
                 }
                 Element codFeeDiscount = orderItem.element("CODFeeDiscount");
-                if (codFeeDiscount!=null){
+                if (codFeeDiscount != null) {
                     Element currencyCode = codFeeDiscount.element("CurrencyCode");
-                    MoneyDto moneyDto=new MoneyDto();
+                    MoneyDto moneyDto = new MoneyDto();
                     moneyDto.setCurrencyCode(currencyCode.getTextTrim());
                     Element amount = codFeeDiscount.element("Amount");
                     moneyDto.setAmount(amount.getTextTrim());
                     orderItemDto.setCODFeeDiscount(moneyDto);
                 }
                 Element giftMessageText = orderItem.element("GiftMessageText");
-                if (giftMessageText!=null){
+                if (giftMessageText != null) {
                     orderItemDto.setGiftMessageText(giftMessageText.getTextTrim());
                 }
                 Element giftWrapLevel = orderItem.element("GiftWrapLevel");
-                if (giftWrapLevel!=null){
+                if (giftWrapLevel != null) {
                     orderItemDto.setGiftWrapLevel(giftWrapLevel.getTextTrim());
                 }
 
                 Element conditionNote = orderItem.element("ConditionNote");
-                if (conditionNote!=null){
+                if (conditionNote != null) {
                     orderItemDto.setConditionNote(conditionNote.getTextTrim());
                 }
                 Element conditionId = orderItem.element("ConditionId");
-                if (conditionId!=null){
+                if (conditionId != null) {
                     orderItemDto.setConditionId(conditionId.getTextTrim());
                 }
                 Element conditionSubtypeId = orderItem.element("ConditionSubtypeId");
-                if (conditionSubtypeId!=null) {
+                if (conditionSubtypeId != null) {
                     orderItemDto.setConditionSubtypeId(conditionSubtypeId.getTextTrim());
                 }
                 Element scheduledDeliveryStartDate = orderItem.element("ScheduledDeliveryStartDate");
-                if (scheduledDeliveryStartDate!=null){
+                if (scheduledDeliveryStartDate != null) {
                     orderItemDto.setScheduledDeliveryStartDate(scheduledDeliveryStartDate.getTextTrim());
                 }
                 Element scheduledDeliveryEndDate = orderItem.element("ScheduledDeliveryEndDate");
-                if (scheduledDeliveryEndDate!=null){
+                if (scheduledDeliveryEndDate != null) {
                     orderItemDto.setScheduledDeliveryEndDate(scheduledDeliveryEndDate.getTextTrim());
                 }
                 orderItemDtos.add(orderItemDto);
