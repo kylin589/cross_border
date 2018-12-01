@@ -17,12 +17,5 @@ import java.util.Map;
 public interface DataDictionaryService extends IService<DataDictionaryEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
-    //审核状态分类
-    List<DataDictionaryEntity> auditList();
-    //上架状态分类
-    List<DataDictionaryEntity> putawayList();
-    //产品类型分类
-    List<DataDictionaryEntity> productTypeList();
-
 }
 

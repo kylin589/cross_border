@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -119,32 +121,29 @@ public class DataDictionaryController extends AbstractController {
      */
     @RequestMapping("/mystatuslist")
     public R myStatusList(@RequestParam(value = "del", required = false, defaultValue = "0") String del) {
-        List<DataDictionaryEntity> auditList = dataDictionaryService.auditList();
+        List<DataDictionaryEntity> auditList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "AUDIT_STATE").orderBy(true, "data_sort", true));
         //定义一个变量 全部的总和
         int auditCounts = 0;
         for (DataDictionaryEntity dataDictionaryEntity : auditList) {
-            String number = dataDictionaryEntity.getDataNumber();
-            int auditCount = productsService.auditCount(number, del, getUserId());
+            int auditCount = productsService.selectCount(new EntityWrapper<ProductsEntity>().eq("audit_status", dataDictionaryEntity.getDataNumber()).eq("is_deleted", del).eq("create_user_id", getUserId()));
             dataDictionaryEntity.setCount(auditCount);
             //审核状态分类每个状态的总数进行相加
             auditCounts += auditCount;
         }
-        List<DataDictionaryEntity> putawayList = dataDictionaryService.putawayList();
+        List<DataDictionaryEntity> putawayList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "SHELVE_STATE").orderBy(true, "data_sort", true));
         //定义一个变量 全部的总和
         int putawayCounts = 0;
         for (DataDictionaryEntity dataDictionaryEntity : putawayList) {
-            String number = dataDictionaryEntity.getDataNumber();
-            int putawayCount = productsService.putawayCount(number, del,getUserId());
+            int putawayCount = productsService.selectCount(new EntityWrapper<ProductsEntity>().eq("shelve_status", dataDictionaryEntity.getDataNumber()).eq("is_deleted", del).eq("create_user_id", getUserId()));
             dataDictionaryEntity.setCount(putawayCount);
             //上架状态分类每个状态的总数进行相加
             putawayCounts += putawayCount;
         }
-        List<DataDictionaryEntity> productList = dataDictionaryService.productTypeList();
+        List<DataDictionaryEntity> productList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "PRODUCT_TYPE").orderBy(true, "data_sort", true));
         //定义一个变量 全部的总和
         int productCounts = 0;
         for (DataDictionaryEntity dataDictionaryEntity : productList) {
-            String number = dataDictionaryEntity.getDataNumber();
-            int productCount = productsService.productCount(number, del,getUserId());
+            int productCount = productsService.selectCount(new EntityWrapper<ProductsEntity>().eq("product_type", dataDictionaryEntity.getDataNumber()).eq("is_deleted", del).eq("create_user_id", getUserId()));
             dataDictionaryEntity.setCount(productCount);
             //产品类型分类每个类型的总数进行相加
             productCounts += productCount;
@@ -161,7 +160,7 @@ public class DataDictionaryController extends AbstractController {
      */
     @RequestMapping("/allstatuslist")
     public R allStatusList(@RequestParam(value = "del", required = false, defaultValue = "0") String del) {
-        List<DataDictionaryEntity> auditList = dataDictionaryService.auditList();
+        List<DataDictionaryEntity> auditList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "AUDIT_STATE").orderBy(true, "data_sort", true));
         //定义一个变量 全部的总和
         int auditCounts = 0;
         for (DataDictionaryEntity dataDictionaryEntity : auditList) {
@@ -171,7 +170,7 @@ public class DataDictionaryController extends AbstractController {
             //审核状态分类每个状态的总数进行相加
             auditCounts += auditCount;
         }
-        List<DataDictionaryEntity> putawayList = dataDictionaryService.putawayList();
+        List<DataDictionaryEntity> putawayList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "SHELVE_STATE").orderBy(true, "data_sort", true));
         //定义一个变量 全部的总和
         int putawayCounts = 0;
         for (DataDictionaryEntity dataDictionaryEntity : putawayList) {
@@ -181,7 +180,7 @@ public class DataDictionaryController extends AbstractController {
             //上架状态分类每个状态的总数进行相加
             putawayCounts += putawayCount;
         }
-        List<DataDictionaryEntity> productList = dataDictionaryService.productTypeList();
+        List<DataDictionaryEntity> productList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "PRODUCT_TYPE").orderBy(true, "data_sort", true));
         //定义一个变量 全部的总和
         int productCounts = 0;
         for (DataDictionaryEntity dataDictionaryEntity : productList) {
@@ -193,6 +192,4 @@ public class DataDictionaryController extends AbstractController {
         }
         return R.ok().put("auditList", auditList).put("auditCounts", auditCounts).put("putawayList", putawayList).put("putawayCounts", putawayCounts).put("productTypeList", productList).put("productTypeCounts", productCounts);
     }
-
-
 }

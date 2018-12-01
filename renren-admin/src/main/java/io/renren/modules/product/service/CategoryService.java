@@ -18,10 +18,6 @@ import java.util.Map;
 public interface CategoryService extends IService<CategoryEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
-    //一级分类
-    List<CategoryEntity> queryCategoryOne();
-    //父级分类分类的id查出子级分类
-    List<CategoryEntity> queryCategoryByParentId(Long id);
     //根据三级id查出一级和二级id
     String queryParentByChildId(Long id);
     //根据三级id查出一级和二级id和注入商品分类

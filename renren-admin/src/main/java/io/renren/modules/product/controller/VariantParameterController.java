@@ -146,14 +146,11 @@ public class VariantParameterController {
         String paramsType = variantParameterEntity.getParamsType();
         if (paramsType.equals("color")){
             ProductsEntity productsEntity = productsService.selectById(variantParameterDelVM.getProductId());
-            System.out.println(productsEntity.getColorId());
             productsEntity.setColorId(0L);
             productsService.updateById(productsEntity);
         }else {
             ProductsEntity productsEntity = productsService.selectById(variantParameterDelVM.getProductId());
-            System.out.println(productsEntity.getSizeId());
             productsEntity.setSizeId(0L);
-            System.out.println(productsEntity.getSizeId());
             productsService.updateById(productsEntity);
         }
         variantParameterService.deleteById(variantParameterEntity);

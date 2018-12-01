@@ -1,11 +1,13 @@
 package io.renren.modules.product.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.service.ProductsService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,51 +117,50 @@ public class CategoryController {
     @RequiresPermissions("product:category:delete")
     public R delete(@RequestBody Long[] categoryIds) {
         categoryService.deleteBatchIds(Arrays.asList(categoryIds));
-
         return R.ok();
     }
 
     /**
-     * @methodname: parent:一级分类
+     * @methodname: parent:一级分类及一级分类没有被删除的产品总数
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/6 10:29
      */
     @RequestMapping("/querycategoryone")
     public R queryCategoryOne(@RequestParam(value = "del", required = false, defaultValue = "0") String del) {
-        List<CategoryEntity> parentList = categoryService.queryCategoryOne();
+        Map<String, Object> map = new HashMap<>();
+        map.put("parent_id", 0);
+        List<CategoryEntity> parentList = categoryService.selectByMap(map);
         for (CategoryEntity categoryEntity : parentList) {
-            Long id = categoryEntity.getCategoryId();
             //根据分类id查出一级分类产品总数
-            int c = productsService.count(id, del);
-            categoryEntity.setCount(c);
+            int oneCategoryProductCount = productsService.selectCount(new EntityWrapper<ProductsEntity>().eq("category_one_id", categoryEntity.getCategoryId()).eq("is_deleted", del));
+            categoryEntity.setCount(oneCategoryProductCount);
             categoryEntity.setIfNext("true");
         }
         return R.ok().put("categoryOneList", parentList);
     }
 
     /**
-     * @methodname: parentId:根据父id查询
+     * @methodname: parentId:根据父id查询子类分类及子类分类下没有被删除的产品总数
      * @param: categoryId 父级id
      * @return: io.renren.common.utils.R 分类的信息
      * @auther: jhy
      * @date: 2018/11/6 10:28
      */
     @RequestMapping("/querycategorybyparentid")
-    public R queryCategoryByParentId(Long categoryId, @RequestParam(value = "del", required = false, defaultValue = "0") String del) {
-        //根据分类的父级id查出分类的信息
-        List<CategoryEntity> parentLists = categoryService.queryCategoryByParentId(categoryId);
+    public R queryCategoryByParentId(@RequestParam Long categoryId, @RequestParam(value = "del", required = false, defaultValue = "0") String del) {
+        //根据分类的父级id查出子类分类
+        List<CategoryEntity> parentLists = categoryService.selectList(new EntityWrapper<CategoryEntity>().eq("parent_id", categoryId));
         for (CategoryEntity categoryEntity : parentLists) {
-            Long id = categoryEntity.getCategoryId();
             int temp = categoryService.selectCount(new EntityWrapper<CategoryEntity>().eq("parent_id", categoryEntity.getCategoryId()));
             if (temp==0){
                 categoryEntity.setIfNext("false");
             }else{
                 categoryEntity.setIfNext("true");
             }
-            //父类分类id查子类的产品总和
-            int count = productsService.counts(id, del);
-            categoryEntity.setCount(count);
+            //父类分类id查子类没有删除的产品总和
+            int childCategoryProductCount = productsService.selectCount(new EntityWrapper<ProductsEntity>().eq("category_two_id", categoryEntity.getCategoryId()).or().eq("category_three_id", categoryEntity.getCategoryId()).eq("is_deleted", del));
+            categoryEntity.setCount(childCategoryProductCount);
         }
         return R.ok().put("categoryList", parentLists);
     }

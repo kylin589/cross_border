@@ -107,10 +107,6 @@ public class ImageAddressController extends AbstractController {
         String fileName = file.getOriginalFilename();
         // 获取上传文件的后缀名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));
-
-        /*if (!suffixName.matches("^[(jpg)|(png)|(gif)|(jpeg)]+$")) {
-            return R.error("请上传PNG、JPG、GIF、JPEG格式的文件！");
-        }*/
         // 文件上传后是保存在本地的路径
         String filePath = "E:/test/";
 

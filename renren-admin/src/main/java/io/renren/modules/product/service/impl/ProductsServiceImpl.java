@@ -409,50 +409,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         return product.getProductId();
     }
 
-    /**
-     * 我的产品
-     *
-     * @methodname: auditCount 审核类型分类统计每个分类的总数
-     * @param: [number, del]
-     * @return: int
-     * @auther: jhy
-     * @date: 2018/11/13 23:43
-     */
-    @Override
-    public int auditCount(String number, String del, Long userId) {
-        int auditCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("audit_status", number).eq("is_deleted", del).eq("create_user_id", userId));
-        return auditCount;
-    }
 
-    /**
-     * 我的产品
-     *
-     * @methodname: putawayCount 上架类型分类统计每个分类的总数
-     * @param: [number, del]
-     * @return: int
-     * @auther: jhy
-     * @date: 2018/11/13 23:43
-     */
-    @Override
-    public int putawayCount(String number, String del, Long userId) {
-        int putawayCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("shelve_status", number).eq("is_deleted", del).eq("create_user_id", userId));
-        return putawayCount;
-    }
-
-    /**
-     * 我的产品
-     *
-     * @methodname: productCount 产品类型分类统计每个分类的总数
-     * @param: [number, del]
-     * @return: int
-     * @auther: jhy
-     * @date: 2018/11/13 23:44
-     */
-    @Override
-    public int productCount(String number, String del, Long userId) {
-        int productCount = this.selectCount(new EntityWrapper<ProductsEntity>().eq("product_type", number).eq("is_deleted", del).eq("create_user_id", userId));
-        return productCount;
-    }
 
     /**
      * 所有产品
@@ -513,32 +470,6 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         }
 
         return productCount;
-    }
-
-    /**
-     * @methodname: count 一级分类商品总数
-     * @param: [id, del]
-     * @return: int
-     * @auther: jhy
-     * @date: 2018/11/13 23:42
-     */
-    @Override
-    public int count(Long id, String del) {
-        int c = this.selectCount(new EntityWrapper<ProductsEntity>().eq("category_one_id", id).eq("is_deleted", del));
-        return c;
-    }
-
-    /**
-     * @methodname: counts 父级查子类产品总和
-     * @param: [id, del] 父级id，删除
-     * @return: int
-     * @auther: jhy
-     * @date: 2018/11/13 23:40
-     */
-    @Override
-    public int counts(Long id, String del) {
-        int c = this.selectCount(new EntityWrapper<ProductsEntity>().eq("category_two_id", id).or().eq("category_three_id", id).eq("is_deleted", del));
-        return c;
     }
 
     /**

@@ -119,15 +119,6 @@ public interface ProductsService extends IService<ProductsEntity> {
      */
     Long getNewProductId(Long userId);
 
-
-    //当前用户审核状态每个分类总数
-    int auditCount(String number, String del, Long userId);
-    //当前用户上架状态每个分类总数
-    int putawayCount(String number, String del, Long userId);
-    //当前用户产品类型每个分类总数
-    int productCount(String number, String del, Long userId);
-
-
     //公司审核状态每个分类总数
     int auditCountAll(String number, String del, Long deptId);
     //公司上架状态每个分类总数
@@ -135,11 +126,6 @@ public interface ProductsService extends IService<ProductsEntity> {
     //公司产品类型每个分类总数
     int productCountAll(String number, String del, Long deptId);
 
-
-    //一级分类产品总数
-    int count(Long id, String del);
-    //父类查子类的产品总和
-    int counts(Long id, String del);
 
 
     /**
