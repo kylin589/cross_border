@@ -33,16 +33,26 @@ public class OrderController {
     private OrderService orderService;
 
     /**
-     * 列表
+     * 我的订单
      */
-    @RequestMapping("/list")
-    @RequiresPermissions("product:order:list")
-    public R list(@RequestParam Map<String, Object> params){
+    @RequestMapping("/getMyList")
+//    @RequiresPermissions("product:order:mylist")
+    public R getMyList(@RequestParam Map<String, Object> params){
         PageUtils page = orderService.queryPage(params);
 
         return R.ok().put("page", page);
     }
 
+    /**
+     * 所有订单
+     */
+    @RequestMapping("/getAllList")
+//    @RequiresPermissions("product:order:alllist")
+    public R getAllList(@RequestParam Map<String, Object> params){
+        PageUtils page = orderService.queryPage(params);
+
+        return R.ok().put("page", page);
+    }
 
     /**
      * 信息

@@ -1,9 +1,11 @@
 package io.renren.modules.amazon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.sys.controller.AbstractController;
+import io.renren.modules.sys.service.SysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,19 +30,34 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("amazon/amazongrantshop")
-public class AmazonGrantShopController {
+public class AmazonGrantShopController extends AbstractController{
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
+    @Autowired
+    private SysUserService sysUserService;
 
     /**
-     * 列表
+     * 我的店铺列表
      */
-    @RequestMapping("/list")
-    @RequiresPermissions("amazon:amazongrantshop:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = amazonGrantShopService.queryPage(params);
-
-        return R.ok().put("page", page);
+    @RequestMapping("/myShopList")
+//    @RequiresPermissions("amazon:amazongrantshop:list")
+    public R myShopList(@RequestParam Map<String, Object> params){
+        List shopList = amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("user_id",getUserId()));
+        return R.ok().put("shopList", shopList);
+    }
+    /**
+     * 所有店铺列表
+     */
+    @RequestMapping("/allShopList")
+//    @RequiresPermissions("amazon:amazongrantshop:list")
+    public R allShopList(@RequestParam Map<String, Object> params){
+        List<AmazonGrantShopEntity> shopList = new ArrayList<AmazonGrantShopEntity>();
+        if(getDeptId() == 1){
+            shopList = amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>());
+        }else{
+            shopList = amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("dept_id",getDeptId()));
+        }
+        return R.ok().put("shopList", shopList);
     }
 
 

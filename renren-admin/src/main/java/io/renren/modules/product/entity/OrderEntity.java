@@ -32,13 +32,13 @@ public class OrderEntity implements Serializable {
 	 */
 	private Date buyDate;
 	/**
-	 * amazon订单状态
-	 */
-	private String amazonOrderState;
-	/**
-	 * 内部订单标识
+	 * 订单状态标识
 	 */
 	private String orderStatus;
+	/**
+	 * 订单状态
+	 */
+	private String orderState;
 	/**
 	 * 店铺名称(店铺+国家）
 	 */
@@ -84,6 +84,10 @@ public class OrderEntity implements Serializable {
 	 */
 	private BigDecimal returnCost;
 
+	private Long userId;
+
+	private Long deptId;
+
 	/**
 	 * 设置：订单id
 	 */
@@ -123,15 +127,15 @@ public class OrderEntity implements Serializable {
 	/**
 	 * 设置：amazon订单状态
 	 */
-	public void setAmazonOrderState(String amazonOrderState) {
-		this.amazonOrderState = amazonOrderState;
-	}
+//	public void setAmazonOrderState(String amazonOrderState) {
+//		this.amazonOrderState = amazonOrderState;
+//	}
 	/**
 	 * 获取：amazon订单状态
 	 */
-	public String getAmazonOrderState() {
-		return amazonOrderState;
-	}
+//	public String getAmazonOrderState() {
+//		return amazonOrderState;
+//	}
 	/**
 	 * 设置：内部订单标识
 	 */
@@ -144,6 +148,15 @@ public class OrderEntity implements Serializable {
 	public String getOrderStatus() {
 		return orderStatus;
 	}
+
+	public String getOrderState() {
+		return orderState;
+	}
+
+	public void setOrderState(String orderState) {
+		this.orderState = orderState;
+	}
+
 	/**
 	 * 设置：店铺名称(店铺+国家）
 	 */
@@ -275,5 +288,21 @@ public class OrderEntity implements Serializable {
 	 */
 	public BigDecimal getReturnCost() {
 		return returnCost;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public Long getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(Long deptId) {
+		this.deptId = deptId;
 	}
 }

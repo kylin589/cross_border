@@ -17,6 +17,7 @@ var menuItem = Vue.extend({
 		'<a href="javascript:;" :lay-tips="item.name" lay-direction="2">',
 			'<i :class="item.icon"></i>',
 			'<cite>{{item.name}}</cite>',
+			'<span class="layui-nav-more"></span>',
 		'</a>',
 		'<dl class="layui-nav-child">',
 			'<dd v-for="list in item.list" :data-name="list.name" class="">',

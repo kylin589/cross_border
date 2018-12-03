@@ -18,6 +18,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        String shopName = (String) params.get("shopName");
+        String orderStateCode = (String) params.get("orderStateCode");
         Page<OrderEntity> page = this.selectPage(
                 new Query<OrderEntity>(params).getPage(),
                 new EntityWrapper<OrderEntity>()

@@ -37,9 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -117,5 +115,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         return this.update(userEntity,
                 new EntityWrapper<SysUserEntity>().eq("user_id", userId).eq("password", password));
     }
+
+	@Override
+	public LinkedHashSet<Long> selectUserCollection(Long deptId) {
+		LinkedHashSet<Long> ret = new LinkedHashSet();
+		List<SysUserEntity> userList = this.selectList(new EntityWrapper<SysUserEntity>().eq("dept_id",deptId));
+		for(SysUserEntity user : userList){
+			ret.add(user.getUserId());
+		}
+		return ret;
+	}
 
 }
