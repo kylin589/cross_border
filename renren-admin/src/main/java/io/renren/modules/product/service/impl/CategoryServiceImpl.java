@@ -31,33 +31,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return new PageUtils(page);
     }
 
-    /**
-     * @methodname: queryCategoryOne 一级分类，条件父级id为空
-     * @param: 无
-     * @return: java.util.List<io.renren.modules.product.entity.CategoryEntity>
-     * @auther: jhy
-     * @date: 2018/11/13 23:31
-     */
-    @Override
-    public List<CategoryEntity> queryCategoryOne() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("parent_id", 0);
-        List<CategoryEntity> parentList = this.selectByMap(map);
-        return parentList;
-    }
-
-    /**
-     * @methodname: queryCategoryByParentId 根据父级id查询出子类的分类信息
-     * @param: [id] 父级id
-     * @return: java.util.List<io.renren.modules.product.entity.CategoryEntity>
-     * @auther: jhy
-     * @date: 2018/11/13 23:32
-     */
-    @Override
-    public List<CategoryEntity> queryCategoryByParentId(Long id) {
-        List<CategoryEntity> parentLists = this.selectList(new EntityWrapper<CategoryEntity>().eq("parent_id", id));
-        return parentLists;
-    }
 
     /**
      * @methodname: queryParentByChildId 三级id查出一级id和二级id
@@ -97,13 +70,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return idString;
     }
 
+
     @Override
     public String queryParentByChildIdAndCategory(Long categoryId, ProductsEntity productsEntity) {
         //设置一个数组存放查询出的id
         Long[] arr = new Long[3];
         //设置一个字符串数组把查询到的分类放入实体
         String[] string = new String[3];
-
         //把传过来的子级id存放到数组
         arr[0] = categoryId;
         int j = 1;

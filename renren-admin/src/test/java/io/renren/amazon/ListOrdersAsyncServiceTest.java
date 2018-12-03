@@ -1,6 +1,5 @@
 package io.renren.amazon;
 
-import com.amazonservices.mws.orders._2013_09_01.samples.MarketplaceWebServiceOrdersSampleConfig;
 import io.renren.common.utils.DateUtils;
 import io.renren.modules.amazon.service.ListOrdersAsyncService;
 import org.junit.Ignore;

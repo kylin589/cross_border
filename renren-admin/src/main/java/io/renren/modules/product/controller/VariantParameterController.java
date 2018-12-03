@@ -3,12 +3,14 @@ package io.renren.modules.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.VariantsInfoEntity;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.service.VariantsInfoService;
+import io.renren.modules.product.vm.VariantParameterDelVM;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -139,19 +141,19 @@ public class VariantParameterController {
      */
     @RequestMapping("/delete")
    // @RequiresPermissions("product:variantparameter:delete")
-    public R delete(@RequestBody Long productId, @RequestBody VariantParameterEntity variantParameterEntity){
+    public R delete( @RequestBody VariantParameterDelVM variantParameterDelVM){
+        VariantParameterEntity variantParameterEntity = variantParameterDelVM.getVariantParameter();
         String paramsType = variantParameterEntity.getParamsType();
         if (paramsType.equals("color")){
-            ProductsEntity productsEntity = productsService.selectById(productId);
-            productsEntity.setColorId(null);
+            ProductsEntity productsEntity = productsService.selectById(variantParameterDelVM.getProductId());
+            productsEntity.setColorId(0L);
             productsService.updateById(productsEntity);
         }else {
-            ProductsEntity productsEntity = productsService.selectById(productId);
-            productsEntity.setSizeId(null);
+            ProductsEntity productsEntity = productsService.selectById(variantParameterDelVM.getProductId());
+            productsEntity.setSizeId(0L);
             productsService.updateById(productsEntity);
         }
         variantParameterService.deleteById(variantParameterEntity);
-
         return R.ok();
     }
 

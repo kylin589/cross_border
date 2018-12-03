@@ -107,10 +107,6 @@ public class ImageAddressController extends AbstractController {
         String fileName = file.getOriginalFilename();
         // 获取上传文件的后缀名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));
-
-        /*if (!suffixName.matches("^[(jpg)|(png)|(gif)|(jpeg)]+$")) {
-            return R.error("请上传PNG、JPG、GIF、JPEG格式的文件！");
-        }*/
         // 文件上传后是保存在本地的路径
         String filePath = "E:/test/";
 
@@ -131,6 +127,8 @@ public class ImageAddressController extends AbstractController {
             imageAddressEntity.setIsDeleted("0");
             imageAddressEntity.setCreateTime(new Date());
             imageAddressEntity.setCreateUserId(getUserId());
+            imageAddressEntity.setLastOperationUserId(getUserId());
+            imageAddressEntity.setLastOperationTime(new Date());
             imageAddressService.insert(imageAddressEntity);
             Long id=imageAddressEntity.getImageId();
             return R.ok().put("url", url).put("id",id);
@@ -213,7 +211,7 @@ public class ImageAddressController extends AbstractController {
      * @auther: jhy
      * @date: 2018/11/7 15:21
      */
-    @RequestMapping("deleteimage")
+    @RequestMapping("/deleteimage")
     public R deleteimage(Long[] imageIds) {
         for (int i = 0; i < imageIds.length; i++) {
             ImageAddressEntity addressEntity = imageAddressService.selectById(imageIds[i]);

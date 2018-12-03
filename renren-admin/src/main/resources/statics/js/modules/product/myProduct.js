@@ -92,7 +92,19 @@ var vm = new Vue({
         productNumber: ''
     },
     methods: {
-        getAuditList: function () {
+        getMyStatusList:function(){
+            $.get('../../product/datadictionary/mystatuslist',function (r) {
+                vm.audit.auditList = r.auditList;
+                vm.audit.auditCounts = r.auditCounts;
+                vm.putaway.putawayList = r.putawayList;
+                vm.putaway.putawayCounts = r.putawayCounts;
+                vm.productType.productTypeList = r.productTypeList;
+                vm.productType.productTypeCounts = r.productTypeCounts;
+            });
+        },
+
+
+        /*getAuditList: function () {
             $.get('../../product/datadictionary/auditlist', function (r) {
                 vm.audit.auditList = r.auditList;
                 vm.audit.auditCounts = r.auditCounts;
@@ -109,7 +121,7 @@ var vm = new Vue({
                 vm.productType.productTypeList = r.productTypeList;
                 vm.productType.productTypeCounts = r.productTypeCounts;
             });
-        },
+        },*/
         getQueryCategoryOne: function () {
             $.get('../../product/category/querycategoryone', function (r) {
                 vm.categoryOneList = r.categoryOneList;
@@ -171,7 +183,7 @@ var vm = new Vue({
         },
         getPage: function (crr, lmt) {
             $.ajax({
-                url: '../../product/products/list',
+                url: '../../product/products/mylist',
                 type: 'post',
                 data: {
                     '_search': false,
@@ -252,9 +264,10 @@ var vm = new Vue({
         }
     },
     created: function () {
-        this.getAuditList();
+        this.getMyStatusList();
+        /*this.getAuditList();
         this.getPutawayList();
-        this.getProductTypeList();
+        this.getProductTypeList();*/
         this.getQueryCategoryOne();
         this.getPage(1, 30);
         this.laypage();

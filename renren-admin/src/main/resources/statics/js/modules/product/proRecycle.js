@@ -83,7 +83,17 @@ var vm = new Vue({
         productNumber: ''
     },
     methods: {
-        getAuditList: function () {
+        getMyStatusList:function(){
+            $.get('../../product/datadictionary/mystatuslist?del=1',function (r) {
+                vm.audit.auditList = r.auditList;
+                vm.audit.auditCounts = r.auditCounts;
+                vm.putaway.putawayList = r.putawayList;
+                vm.putaway.putawayCounts = r.putawayCounts;
+                vm.productType.productTypeList = r.productTypeList;
+                vm.productType.productTypeCounts = r.productTypeCounts;
+            });
+        },
+      /*  getAuditList: function () {
             $.get('../../product/datadictionary/auditlist?del=1', function (r) {
                 vm.audit.auditList = r.auditList;
                 vm.audit.auditCounts = r.auditCounts;
@@ -100,7 +110,7 @@ var vm = new Vue({
                 vm.productType.productTypeList = r.productTypeList;
                 vm.productType.productTypeCounts = r.productTypeCounts;
             });
-        },
+        },*/
         getQueryCategoryOne: function () {
             $.get('../../product/category/querycategoryone?del=1', function (r) {
                 vm.categoryOneList = r.categoryOneList;
@@ -315,9 +325,10 @@ var vm = new Vue({
         }
     },
     created: function () {
-        this.getAuditList();
+        this.getMyStatusList();
+       /* this.getAuditList();
         this.getPutawayList();
-        this.getProductTypeList();
+        this.getProductTypeList();*/
         this.getQueryCategoryOne();
         this.getPage(1, 30);
         this.laypage();

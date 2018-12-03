@@ -21,7 +21,13 @@ import java.util.List;
 public class POIExcelUtil {
     @Autowired
     private static AmazonCategoryService amazonCategoryService;
-
+    /**
+     * @methodname: insetCategory 解析excel表格
+     * @param: [pathname, region] excel的路径，所属区域(欧洲0、北美1、远东2）
+     * @return: void
+     * @auther: jhy
+     * @date: 2018/12/1 14:41
+     */
     public static void insetCategory(String pathname, int region) throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(new File(pathname)));
         //获取第一个标签页  根据标签页名称获取
