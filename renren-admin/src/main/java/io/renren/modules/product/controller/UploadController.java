@@ -1,6 +1,12 @@
 package io.renren.modules.product.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.renren.common.annotation.SysLog;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.entity.AmazonCategoryHistoryEntity;
 import io.renren.modules.amazon.entity.AmazonGrantEntity;
@@ -8,12 +14,15 @@ import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonCategoryHistoryService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.util.COUNTY;
+import io.renren.modules.job.entity.ScheduleJobEntity;
+import io.renren.modules.job.service.ScheduleJobService;
 import io.renren.modules.product.entity.AmazonCategoryEntity;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.service.AmazonCategoryService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.vm.AddUploadVM;
 import io.renren.modules.sys.controller.AbstractController;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +59,9 @@ public class UploadController extends AbstractController {
 
     @Autowired
     private AmazonCategoryService amazonCategoryService;
+
+    @Autowired
+    private ScheduleJobService scheduleJobService;
 
     /**
      * @methodname: list 信息
@@ -109,7 +121,7 @@ public class UploadController extends AbstractController {
     public R update(@RequestBody UploadEntity upload){
         ValidatorUtils.validateEntity(upload);
         uploadService.updateAllColumnById(upload);//全部更新
-        
+
         return R.ok();
     }
 
@@ -238,4 +250,165 @@ public class UploadController extends AbstractController {
         return R.ok();
     }
 
+
+    /**
+     * @methodname: saveTimingUpload 创建定时上传产品任务任务
+     * @param: [addUploadVM] 前台接受参数的实体类
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/12/3 16:08
+     */
+    @RequestMapping("/saveTimingUpload")
+    //@RequiresPermissions("sys:schedule:save")
+    //@RequestBody AddUploadVM addUploadVM
+    public R saveTimingUpload(@RequestBody AddUploadVM addUploadVM){
+        //创建定时任务的实体
+        ScheduleJobEntity scheduleJob =new ScheduleJobEntity();
+        //设置为spring bean的名称
+        scheduleJob.setBeanName("timingUpload");
+        //设置方法名
+        scheduleJob.setMethodName("timingUpload");
+
+        //获取当前的用户和用户id和公司id
+        addUploadVM.setUser(getUser());
+        addUploadVM.setUserId(getUserId());
+        addUploadVM.setDeptId(getDeptId());
+
+        //把addUploadVM实体转换成json字符串
+        ObjectMapper mapper = new ObjectMapper();
+        String addUploadVMString=null;
+        try {
+            addUploadVMString = mapper.writeValueAsString(addUploadVM);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        //设置参数
+        scheduleJob.setParams(addUploadVMString);
+        //把前台获取到的字符串时间转成时间格式
+        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = addUploadVM.getTime();
+        //String time="2018-12-03 15:35:00";
+        Date date=null;
+        try {
+            date=formatDate.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //获取到的日期转成需要的cron表达式字符串格式
+        SimpleDateFormat formatString = new SimpleDateFormat("ss mm HH dd MM ? yyyy");
+        String stringDate = formatString.format(date);
+        //设置cron时间格式
+        scheduleJob.setCronExpression(stringDate);
+        scheduleJobService.save(scheduleJob);
+        return R.ok();
+    }
+
+    /**
+     * @methodname: timingUpload 定时上传
+     * @param: [addUploadVM]
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/12/4 14:54
+     */
+    @RequestMapping
+    //@RequiresPermissions("product:upload:addupload")
+    public R timingUpload(@RequestBody AddUploadVM addUploadVM) {
+        List<UploadEntity> uploadList = new ArrayList<UploadEntity>();
+        Set<Long> ret = new LinkedHashSet<>(0);
+        if (addUploadVM.getStartId() != null && addUploadVM.getEndId() != null) {
+            Long index = addUploadVM.getStartId();
+            while (index <= addUploadVM.getEndId()) {
+                ret.add(index);
+                index++;
+            }
+        }
+        if (addUploadVM.getUploadIds() != null) {
+            ret.addAll(Arrays.asList(addUploadVM.getUploadIds()));
+        }
+        System.out.println("ret:" + ret);
+        //迭代
+        Iterator i = ret.iterator();
+        //遍历
+        while (i.hasNext()) {
+            UploadEntity upload = new UploadEntity();
+            //获取产品
+            ProductsEntity product = productsService.selectById(Long.valueOf(i.next().toString()));
+            //设置产品id
+            upload.setProductId(product.getProductId());
+            //设置主图片
+            upload.setMainUrl(product.getMainImageUrl());
+            //设置授权账户
+            AmazonGrantShopEntity amazonGrantShop = amazonGrantShopService.selectById(addUploadVM.getGrantShopId());
+            upload.setGrantShopId(addUploadVM.getGrantShopId());
+            upload.setGrantShop(addUploadVM.getGrantShop());
+            //设置分类
+            AmazonCategoryEntity amazonCategory = amazonCategoryService.selectById(addUploadVM.getAmazonCategoryId());
+            upload.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+            upload.setAmazonCategory(addUploadVM.getAmazonCategory());
+            //设置分类节点id
+            String county = amazonGrantShop.getCountryCode();
+            COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
+            switch (countyEnum) {
+                case GB:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdUk());
+                    break;
+                case DE:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdDe());
+                    break;
+                case FR:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdFr());
+                    break;
+                case IT:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdIt());
+                    break;
+                case ES:
+                    upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdEs());
+                    break;
+                // TODO: 2018/11/28 北美
+                default:
+                    break;
+            }
+            //设置模板
+            upload.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
+            upload.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+            //设置操作类型（0：上传   1：修改）
+            upload.setOperateType(0);
+            //数组转','号隔开的字符串
+            String operateItem = StringUtils.join(addUploadVM.getOperateItem(), ",");
+            //设置操作项
+            upload.setOperateItem(operateItem);
+            //设置是否有分类属性
+            upload.setIsAttribute(addUploadVM.getIsAttribute());
+            // TODO: 2018/11/27 分类属性
+            //设置状态(0：正在上传1：上传成功2：上传失败)
+            upload.setUploadState(0);
+            //设置常用属性
+            upload.setUploadTime(new Date());
+            upload.setUpdateTime(new Date());
+            upload.setUserId(addUploadVM.getUserId());
+            upload.setDeptId(addUploadVM.getDeptId());
+            //添加到list
+            uploadList.add(upload);
+        }
+        //批量添加到上传表
+        uploadService.insertBatch(uploadList);
+        //添加到分类历史记录表
+        AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        //如果有历史数据，则累加数量1
+        if (categoryHistory != null) {
+            int count = categoryHistory.getCount() + 1;
+            categoryHistory.setCount(count);
+            amazonCategoryHistoryService.updateAllColumnById(categoryHistory);
+        } else {
+            //如果没有历史数据，则新增历史数据
+            AmazonCategoryHistoryEntity categoryHistoryNew = new AmazonCategoryHistoryEntity();
+            categoryHistoryNew.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+            categoryHistoryNew.setAmazonCategory(addUploadVM.getAmazonCategory());
+            categoryHistoryNew.setCount(1);
+            categoryHistoryNew.setUserId(addUploadVM.getUserId());
+            categoryHistoryNew.setUserId(addUploadVM.getDeptId());
+            amazonCategoryHistoryService.insert(categoryHistoryNew);
+        }
+        return R.ok();
+    }
 }
