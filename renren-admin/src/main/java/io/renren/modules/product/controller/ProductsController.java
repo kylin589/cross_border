@@ -778,5 +778,6 @@ public class ProductsController extends AbstractController {
         productsService.updateById(products);
         return R.ok();
     }
+
 }
 

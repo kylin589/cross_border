@@ -25,6 +25,7 @@ import io.renren.modules.sys.controller.AbstractController;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,7 @@ import io.renren.modules.product.service.UploadService;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 
+import javax.xml.crypto.Data;
 
 
 /**
@@ -63,6 +65,23 @@ public class UploadController extends AbstractController {
     @Autowired
     private ScheduleJobService scheduleJobService;
 
+    //英国
+    private static final int GBUTC =0;
+    // 美国
+    private static final int USUTC =+5;
+    //德国
+    private static final int DEUTC =-1;
+    //法国
+    private static final int FRUTC =-1;
+    //意大利
+    private static final int ITUTC =-1;
+    //墨西哥
+    private static final int MXUTC =+6;
+    //西班牙
+    private static final int ESUTC =-1;
+    //加拿大
+    private static final int CAUTC =+5;
+
     /**
      * @methodname: list 信息
      * @param: [params] 接受参数
@@ -72,7 +91,7 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:upload:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = uploadService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -88,7 +107,7 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/info/{uploadId}")
     @RequiresPermissions("product:upload:info")
-    public R info(@PathVariable("uploadId") Long uploadId){
+    public R info(@PathVariable("uploadId") Long uploadId) {
         UploadEntity upload = uploadService.selectById(uploadId);
 
         return R.ok().put("upload", upload);
@@ -103,7 +122,7 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:upload:save")
-    public R save(@RequestBody UploadEntity upload){
+    public R save(@RequestBody UploadEntity upload) {
         uploadService.insert(upload);
 
         return R.ok();
@@ -118,7 +137,7 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:upload:update")
-    public R update(@RequestBody UploadEntity upload){
+    public R update(@RequestBody UploadEntity upload) {
         ValidatorUtils.validateEntity(upload);
         uploadService.updateAllColumnById(upload);//全部更新
 
@@ -134,7 +153,7 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:upload:delete")
-    public R delete(@RequestBody Long[] uploadIds){
+    public R delete(@RequestBody Long[] uploadIds) {
         uploadService.deleteBatchIds(Arrays.asList(uploadIds));
 
         return R.ok();
@@ -142,32 +161,32 @@ public class UploadController extends AbstractController {
 
     /**
      * addUpload:立即上传
-     * @param: [addUploadVM]
      *
+     * @param: [addUploadVM]
      * @return: io.renren.common.utils.R
      * @auther: wdh
      * @date: 2018/11/27 16:17
      */
     @RequestMapping("/addUpload")
 //    @RequiresPermissions("product:upload:addupload")
-    public R addUpload(@RequestBody AddUploadVM addUploadVM){
+    public R addUpload(@RequestBody AddUploadVM addUploadVM) {
         List<UploadEntity> uploadList = new ArrayList<UploadEntity>();
         Set<Long> ret = new LinkedHashSet<>(0);
-        if(addUploadVM.getStartId() != null && addUploadVM.getEndId() != null){
+        if (addUploadVM.getStartId() != null && addUploadVM.getEndId() != null) {
             Long index = addUploadVM.getStartId();
-            while (index <= addUploadVM.getEndId()){
+            while (index <= addUploadVM.getEndId()) {
                 ret.add(index);
                 index++;
             }
         }
-        if(addUploadVM.getUploadIds() != null){
+        if (addUploadVM.getUploadIds() != null) {
             ret.addAll(Arrays.asList(addUploadVM.getUploadIds()));
         }
         System.out.println("ret:" + ret);
         //迭代
         Iterator i = ret.iterator();
         //遍历
-        while(i.hasNext()){
+        while (i.hasNext()) {
             UploadEntity upload = new UploadEntity();
             //获取产品
             ProductsEntity product = productsService.selectById(Long.valueOf(i.next().toString()));
@@ -186,7 +205,7 @@ public class UploadController extends AbstractController {
             //设置分类节点id
             String county = amazonGrantShop.getCountryCode();
             COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
-            switch (countyEnum){
+            switch (countyEnum) {
                 case GB:
                     upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdUk());
                     break;
@@ -212,7 +231,7 @@ public class UploadController extends AbstractController {
             //设置操作类型（0：上传   1：修改）
             upload.setOperateType(0);
             //数组转','号隔开的字符串
-            String operateItem = StringUtils.join(addUploadVM.getOperateItem(),",");
+            String operateItem = StringUtils.join(addUploadVM.getOperateItem(), ",");
             //设置操作项
             upload.setOperateItem(operateItem);
             //设置是否有分类属性
@@ -233,11 +252,11 @@ public class UploadController extends AbstractController {
         //添加到分类历史记录表
         AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId());
         //如果有历史数据，则累加数量1
-        if(categoryHistory != null){
+        if (categoryHistory != null) {
             int count = categoryHistory.getCount() + 1;
             categoryHistory.setCount(count);
             amazonCategoryHistoryService.updateAllColumnById(categoryHistory);
-        }else{
+        } else {
             //如果没有历史数据，则新增历史数据
             AmazonCategoryHistoryEntity categoryHistoryNew = new AmazonCategoryHistoryEntity();
             categoryHistoryNew.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
@@ -261,9 +280,9 @@ public class UploadController extends AbstractController {
     @RequestMapping("/saveTimingUpload")
     //@RequiresPermissions("sys:schedule:save")
     //@RequestBody AddUploadVM addUploadVM
-    public R saveTimingUpload(@RequestBody AddUploadVM addUploadVM){
+    public R saveTimingUpload(@RequestBody AddUploadVM addUploadVM) {
         //创建定时任务的实体
-        ScheduleJobEntity scheduleJob =new ScheduleJobEntity();
+        ScheduleJobEntity scheduleJob = new ScheduleJobEntity();
         //设置为spring bean的名称
         scheduleJob.setBeanName("timingUpload");
         //设置方法名
@@ -276,7 +295,7 @@ public class UploadController extends AbstractController {
 
         //把addUploadVM实体转换成json字符串
         ObjectMapper mapper = new ObjectMapper();
-        String addUploadVMString=null;
+        String addUploadVMString = null;
         try {
             addUploadVMString = mapper.writeValueAsString(addUploadVM);
         } catch (JsonProcessingException e) {
@@ -288,9 +307,9 @@ public class UploadController extends AbstractController {
         SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = addUploadVM.getTime();
         //String time="2018-12-03 15:35:00";
-        Date date=null;
+        Date date = null;
         try {
-            date=formatDate.parse(time);
+            date = formatDate.parse(time);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -410,5 +429,89 @@ public class UploadController extends AbstractController {
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
         return R.ok();
+    }
+
+    /**
+     * @methodname: timeZoneConversion 国家时区转换
+     * @param: [countryCode, countryTime]
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/12/5 16:59
+     */
+    @RequestMapping("/timeZoneConversion")
+    public R timeZoneConversion(String countryCode, String countryTime) {
+        //国家编码转成大写
+        COUNTY countyEnum = COUNTY.valueOf(countryCode.toUpperCase());
+        String CNTimeString=null;
+        int CNTime=0;
+        switch (countyEnum) {
+            //英国
+            case GB:
+                CNTime=8+GBUTC;
+                CNTimeString = addDateMinut(countryTime, CNTime);
+                break;
+            // 美国
+            case US:
+                CNTime=8+USUTC;
+                CNTimeString = addDateMinut(countryTime, CNTime);
+                break;
+            //德国
+            case DE:
+                CNTime=8+DEUTC;
+                CNTimeString = addDateMinut(countryTime, CNTime);
+                break;
+            //法国
+            case FR:
+                CNTime=8+FRUTC;
+                CNTimeString = addDateMinut(countryTime, CNTime);
+                break;
+            //意大利
+            case IT:
+                CNTime=8+ITUTC;
+                CNTimeString = addDateMinut(countryTime, CNTime);
+                break;
+            //墨西哥
+            case MX:
+                CNTime=8+MXUTC;
+                CNTimeString = addDateMinut(countryTime, CNTime);
+                break;
+
+            //西班牙
+            case ES:
+                CNTime=8+ESUTC;
+                CNTimeString = addDateMinut(countryTime, CNTime);
+                break;
+            //加拿大
+            case CA:
+                CNTime=8+CAUTC;
+                CNTimeString = addDateMinut(countryTime, CNTime);
+                break;
+            default:
+                break;
+        }
+        return R.ok().put("CNTimeString",CNTimeString);
+    }
+
+
+    //时间的计算
+    public static String addDateMinut(String day, int hour){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = format.parse(day);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (date == null){
+            return "";
+        }
+        //获取日历
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.HOUR, hour);// 24小时制
+        date = cal.getTime();
+        cal = null;
+        return format.format(date);
+
     }
 }
