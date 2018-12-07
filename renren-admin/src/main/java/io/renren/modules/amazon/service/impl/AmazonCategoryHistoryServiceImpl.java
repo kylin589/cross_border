@@ -21,9 +21,10 @@ public class AmazonCategoryHistoryServiceImpl extends ServiceImpl<AmazonCategory
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        Long userId = (Long)params.get("userId");
         Page<AmazonCategoryHistoryEntity> page = this.selectPage(
                 new Query<AmazonCategoryHistoryEntity>(params).getPage(),
-                new EntityWrapper<AmazonCategoryHistoryEntity>()
+                new EntityWrapper<AmazonCategoryHistoryEntity>().eq("user_id",userId)
         );
 
         return new PageUtils(page);

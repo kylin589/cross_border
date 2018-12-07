@@ -1,9 +1,13 @@
 package io.renren.modules.amazon.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +32,7 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("amazon/amazoncategoryhistory")
-public class AmazonCategoryHistoryController {
+public class AmazonCategoryHistoryController extends AbstractController{
     @Autowired
     private AmazonCategoryHistoryService amazonCategoryHistoryService;
 
@@ -38,11 +42,21 @@ public class AmazonCategoryHistoryController {
     @RequestMapping("/list")
     @RequiresPermissions("amazon:amazoncategoryhistory:list")
     public R list(@RequestParam Map<String, Object> params){
+        params.put("userId",getUserId());
         PageUtils page = amazonCategoryHistoryService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 
+    /**
+     * 列表
+     */
+    @RequestMapping("/getMyList")
+//    @RequiresPermissions("amazon:amazoncategoryhistory:list")
+    public R list(){
+        List<AmazonCategoryHistoryEntity> list = new ArrayList<AmazonCategoryHistoryEntity>();
+        list = amazonCategoryHistoryService.selectList(new EntityWrapper<AmazonCategoryHistoryEntity>().eq("user_id",getUserId()));
+        return R.ok().put("list", list);
+    }
 
     /**
      * 信息

@@ -275,7 +275,7 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setAmazonCategory(addUploadVM.getAmazonCategory());
             categoryHistoryNew.setCount(1);
             categoryHistoryNew.setUserId(getUserId());
-            categoryHistoryNew.setUserId(getDeptId());
+            categoryHistoryNew.setDeptId(getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
         return R.ok();
@@ -437,7 +437,7 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setAmazonCategory(addUploadVM.getAmazonCategory());
             categoryHistoryNew.setCount(1);
             categoryHistoryNew.setUserId(addUploadVM.getUserId());
-            categoryHistoryNew.setUserId(addUploadVM.getDeptId());
+            categoryHistoryNew.setDeptId(addUploadVM.getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
         return R.ok();
