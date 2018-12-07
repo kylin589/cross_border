@@ -1,3 +1,36 @@
+//生成菜单
+var menuItem = Vue.extend({
+    name: 'menu-item',
+    props:{item:{}},
+    template:[
+        '<li data-name="home" class="layui-nav-item">',
+        '<a href="javascript:;" :lay-tips="item.name" lay-direction="2">',
+        '<i :class="item.icon"></i>',
+        '<cite>{{item.name}}</cite>',
+        '<span class="layui-nav-more"></span>',
+        '</a>',
+        '<dl class="layui-nav-child">',
+        '<dd v-for="list in item.list" :data-name="list.name" class="">',
+        '<a :lay-href="list.url">{{ list.name }}</a>',
+        '</dd>',
+        '</dl>',
+        '</li>',
+    ].join('')
+
+});
+
+var menuItem1 = Vue.extend({
+    name: 'menu-item',
+    props:{item:{}},
+    template:[
+        '<cite>{{item.name}}</cite>',
+    ].join('')
+
+});
+
+
+//注册菜单组件
+Vue.component('menuItem',menuItem);
 
 $(function () {
 	$('.passwordLayer').click(function () {
@@ -8,44 +41,10 @@ $(function () {
     })
 })
 
-//生成菜单
-var menuItem = Vue.extend({
-    name: 'menu-item',
-    props:{item:{}},
-	template:[
-    '<li data-name="home" class="layui-nav-item">',
-		'<a href="javascript:;" :lay-tips="item.name" lay-direction="2">',
-			'<i :class="item.icon"></i>',
-			'<cite>{{item.name}}</cite>',
-			'<span class="layui-nav-more"></span>',
-		'</a>',
-		'<dl class="layui-nav-child">',
-			'<dd v-for="list in item.list" :data-name="list.name" class="">',
-				'<a :lay-href="list.url">{{ list.name }}</a>',
-			'</dd>',
-		'</dl>',
-	'</li>',
-	].join('')
-    // template:[
-    //     '<li>',
-    //     '	<a v-if="item.type === 0" href="javascript:;">',
-    //     '		<i v-if="item.icon != null" :class="item.icon"></i>',
-    //     '		<span>{{item.name}}</span>',
-    //     '		<i class="fa fa-angle-left pull-right"></i>',
-    //     '	</a>',
-    //     '	<ul v-if="item.type === 0" class="treeview-menu">',
-    //     '		<menu-item :item="item" v-for="item in item.list"></menu-item>',
-    //     '	</ul>',
-    //
-    //     '	<a v-if="item.type === 1 && item.parentId === 0" :href="\'#\'+item.url">',
-    //     '		<i v-if="item.icon != null" :class="item.icon"></i>',
-    //     '		<span>{{item.name}}</span>',
-    //     '	</a>',
-    //
-    //     '	<a v-if="item.type === 1 && item.parentId != 0" :href="\'#\'+item.url"><i v-if="item.icon != null" :class="item.icon"></i><i v-else class="fa fa-circle-o"></i> {{item.name}}</a>',
-    //     '</li>'
-    // ].join('')
-});
+window.onload=function () {
+    $('cite').css('display','inline-block');
+    console.log($('cite'));
+}
 
 //iframe自适应
 $(window).on('resize', function() {
@@ -57,8 +56,7 @@ $(window).on('resize', function() {
 
 }).resize();
 
-//注册菜单组件
-Vue.component('menuItem',menuItem);
+
 
 var vm = new Vue({
 	el:'#LAY_app',
@@ -74,6 +72,12 @@ var vm = new Vue({
 		getMenuList: function (event) {
 			$.getJSON("sys/menu/nav?_"+$.now(), function(r){
 				vm.menuList = r.menuList;
+				console.log(vm.menuList);
+
+                // new_element=document.createElement('scrit');
+                // new_element.setAttribute('type','text/javascript');
+                // new_element.setAttribute('src','statics/kuajing/js/layui.js');
+                // document.body.appendChild(new_element);
 			});
 		},
 		getUser: function(){
@@ -164,6 +168,7 @@ var vm = new Vue({
 
 
 function routerList(router, menuList){
+	console.log("1111111111111111111111111");
 	for(var key in menuList){
 		var menu = menuList[key];
 		if(menu.type == 0){

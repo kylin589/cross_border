@@ -6,7 +6,9 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.product.entity.OrderEntity;
 import io.renren.modules.product.entity.ProductsEntity;
+import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,7 +38,8 @@ public class DataDictionaryController extends AbstractController {
     private DataDictionaryService dataDictionaryService;
     @Autowired
     private ProductsService productsService;
-
+    @Autowired
+    private OrderService orderService;
     /**
      * 列表
      * @param params url列表
@@ -191,5 +194,44 @@ public class DataDictionaryController extends AbstractController {
             productCounts += productCount;
         }
         return R.ok().put("auditList", auditList).put("auditCounts", auditCounts).put("putawayList", putawayList).put("putawayCounts", putawayCounts).put("productTypeList", productList).put("productTypeCounts", productCounts);
+    }
+
+    /**
+     * @methodname: myOrderStateList 我的订单状态获取
+     * @return: io.renren.common.utils.R
+     * @auther: wdh
+     * @date: 2018/12/3 10:02
+     */
+    @RequestMapping("/myOrderStateList")
+    public R myOrderStateList() {
+        List<DataDictionaryEntity> orderStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "AMAZON_ORDER_STATE").orderBy(true, "data_sort", true));
+        //定义一个变量 全部的总和
+        int allOrderCount = 0;
+        for (DataDictionaryEntity orderState : orderStateList) {
+            int orderCount = orderService.selectCount(new EntityWrapper<OrderEntity>().eq("order_status",orderState.getDataNumber()).eq("user_id",getUserId()));
+            orderState.setCount(orderCount);
+            //产品类型分类每个类型的总数进行相加
+            allOrderCount += orderCount;
+        }
+        return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
+    }
+    /**
+     * @methodname: myOrderStateList 所有订单状态获取
+     * @return: io.renren.common.utils.R
+     * @auther: wdh
+     * @date: 2018/12/3 10:02
+     */
+    @RequestMapping("/allOrderStateList")
+    public R allOrderStateList() {
+        List<DataDictionaryEntity> orderStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "AMAZON_ORDER_STATE").orderBy(true, "data_sort", true));
+        //定义一个变量 全部的总和
+        int allOrderCount = 0;
+        for (DataDictionaryEntity orderState : orderStateList) {
+            int orderCount = orderService.selectCount(new EntityWrapper<OrderEntity>().eq("order_status",orderState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()));
+            orderState.setCount(orderCount);
+            //产品类型分类每个类型的总数进行相加
+            allOrderCount += orderCount;
+        }
+        return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
     }
 }

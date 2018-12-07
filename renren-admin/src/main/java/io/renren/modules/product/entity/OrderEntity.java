@@ -44,6 +44,10 @@ public class OrderEntity implements Serializable {
 	 */
 	private String shopName;
 	/**
+	 * 关联产品id
+	 */
+	private String productId;
+	/**
 	 * 产品sku
 	 */
 	private String productSku;
@@ -83,6 +87,15 @@ public class OrderEntity implements Serializable {
 	 * 退货费用
 	 */
 	private BigDecimal returnCost;
+	/**
+	 * 国内物流单号
+	 */
+	private String domesticWaybill;
+	/**
+	 * 国外物流单号
+	 */
+	private String abroadWaybill;
+
 
 	private Long userId;
 
@@ -169,6 +182,15 @@ public class OrderEntity implements Serializable {
 	public String getShopName() {
 		return shopName;
 	}
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+
 	/**
 	 * 设置：产品sku
 	 */
@@ -288,6 +310,22 @@ public class OrderEntity implements Serializable {
 	 */
 	public BigDecimal getReturnCost() {
 		return returnCost;
+	}
+
+	public String getDomesticWaybill() {
+		return domesticWaybill;
+	}
+
+	public void setDomesticWaybill(String domesticWaybill) {
+		this.domesticWaybill = domesticWaybill;
+	}
+
+	public String getAbroadWaybill() {
+		return abroadWaybill;
+	}
+
+	public void setAbroadWaybill(String abroadWaybill) {
+		this.abroadWaybill = abroadWaybill;
 	}
 
 	public Long getUserId() {
