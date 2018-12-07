@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.FreightPriceDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.FreightPriceEntity" id="freightPriceMap">
+        <result property="freightPriceId" column="freight_price_id"/>
+        <result property="countryCode" column="country_code"/>
+        <result property="type" column="type"/>
+        <result property="price" column="price"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+</mapper>

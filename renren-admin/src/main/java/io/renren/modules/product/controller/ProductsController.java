@@ -3,19 +3,20 @@ package io.renren.modules.product.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.amazon.util.COUNTY;
 import io.renren.modules.product.dto.BatchModifyDto;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hpsf.Decimal;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
+
 
 /**
  * 产品
@@ -39,7 +40,19 @@ public class ProductsController extends AbstractController {
     private VariantsInfoService variantsInfoService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private FreightPriceService freightPriceService;
 
+    private String US;//美国
+    private String CA;//加拿大
+    private String MX;// 墨西哥
+    private String GB;// 英国
+    private String FR;// 法国
+    private String DE;// 德国
+    private String IT;// 意大利
+    private String ES;// 西班牙
+    private String JP; // 日本
+    private String AU; // 澳大利亚
 
     /**
      * @param params 我的产品列表
@@ -779,5 +792,180 @@ public class ProductsController extends AbstractController {
         return R.ok();
     }
 
+
+    /**
+     * @methodname: costFreight 成本运费
+     * @param: [productsEntity]
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/12/6 11:39
+     */
+    @RequestMapping("/costFreight")
+    public R costFreight(ProductsEntity productsEntity) {
+
+        //各个国家的运费信息
+        //美国运费
+        Long americanid = productsEntity.getAmericanFreight();
+        FreightCostEntity americanFC = null;
+        if (americanid != null) {
+            americanFC = freightCostService.selectById(americanid);
+            productsEntity.setAmericanFC(americanFC);
+        }
+        //加拿大运费
+        Long canadaid = productsEntity.getCanadaFreight();
+        FreightCostEntity canadaFC = null;
+        if (canadaid != null) {
+            canadaFC = freightCostService.selectById(canadaid);
+            productsEntity.setCanadaFC(canadaFC);
+        }
+        //墨西哥运费
+        Long mexicoid = productsEntity.getMexicoFreight();
+        FreightCostEntity mexicoFC = null;
+        if (mexicoid != null) {
+            mexicoFC = freightCostService.selectById(mexicoid);
+            productsEntity.setMexicoFC(mexicoFC);
+        }
+        //英国运费
+        Long britainid = productsEntity.getBritainFreight();
+        FreightCostEntity britainFC = null;
+        if (britainid != null) {
+            britainFC = freightCostService.selectById(britainid);
+            productsEntity.setBritainFC(britainFC);
+        }
+        //法国运费
+        Long franceid = productsEntity.getFranceFreight();
+        FreightCostEntity franceFC = null;
+        if (franceid != null) {
+            franceFC = freightCostService.selectById(franceid);
+            productsEntity.setFranceFC(franceFC);
+        }
+        //德国运费
+        Long germanyid = productsEntity.getGermanyFreight();
+        FreightCostEntity germanyFC = null;
+        if (germanyid != null) {
+            germanyFC = freightCostService.selectById(germanyid);
+            productsEntity.setGermanyFC(germanyFC);
+        }
+        //意大利运费
+        Long italyid = productsEntity.getItalyFreight();
+        FreightCostEntity italyFC = null;
+        if (italyid != null) {
+            italyFC = freightCostService.selectById(italyid);
+            productsEntity.setItalyFC(italyFC);
+        }
+        //西班牙运费
+        Long spainid = productsEntity.getSpainFreight();
+        FreightCostEntity spainFC = null;
+        if (spainid != null) {
+            spainFC = freightCostService.selectById(spainid);
+            productsEntity.setSpainFC(spainFC);
+        }
+        //日本运费
+        Long japanid = productsEntity.getJapanFreight();
+        FreightCostEntity japanFC = null;
+        if (japanid != null) {
+            japanFC = freightCostService.selectById(japanid);
+            productsEntity.setJapanFC(japanFC);
+        }
+        //澳大利亚运费
+        Long australiaid = productsEntity.getAustraliaFreight();
+        FreightCostEntity australiaFC = null;
+        if (australiaid != null) {
+            australiaFC = freightCostService.selectById(australiaid);
+            productsEntity.setAustraliaFC(australiaFC);
+        }
+        //产品重量
+        Double productWeight = productsEntity.getProductWeight();
+        //产品长
+        Double productLength = productsEntity.getProductLength();
+        //产品宽
+        Double productWide = productsEntity.getProductWide();
+        //产品高
+        Double productHeight = productsEntity.getProductHeight();
+        //根据长宽高计算出来重量
+        Double weight = calculatedWeight(productLength, productWide, productHeight);
+        if (productWeight != 0 || weight != 0) {
+            //体积重量大于实际重量的必须按体积重量计收资费
+            //计算出各国运费
+            if (productWeight > weight) {
+                americanFC = calculateFreight(productWeight, americanFC, US);
+                BigDecimal  americanPrice = americanFC.getPrice();
+                canadaFC=calculateFreight(productWeight, canadaFC, CA);
+                BigDecimal   canadaPrice = canadaFC.getPrice();
+                mexicoFC=calculateFreight(productWeight, mexicoFC, MX);
+                BigDecimal mexicoPrice = mexicoFC.getPrice();
+                britainFC=calculateFreight(productWeight, britainFC, GB);
+                BigDecimal britainPrice = britainFC.getPrice();
+                franceFC=calculateFreight(productWeight, franceFC, FR);
+                BigDecimal francePrice = franceFC.getPrice();
+                germanyFC=calculateFreight(productWeight, germanyFC, DE);
+                BigDecimal germanyPrice = germanyFC.getPrice();
+                italyFC=calculateFreight(productWeight, italyFC, IT);
+                BigDecimal italyPrice = italyFC.getPrice();
+                spainFC=calculateFreight(productWeight, spainFC, ES);
+                BigDecimal spainPrice = spainFC.getPrice();
+                japanFC=calculateFreight(productWeight, japanFC, JP);
+                BigDecimal japanPrice = japanFC.getPrice();
+                australiaFC=calculateFreight(productWeight, australiaFC, AU);
+                BigDecimal australiaPrice = australiaFC.getPrice();
+
+            }else {
+                //计算出各国运费
+                americanFC= calculateFreight(weight, americanFC, US);
+                BigDecimal  americanPrice = americanFC.getPrice();
+                canadaFC=calculateFreight(weight, canadaFC, CA);
+                BigDecimal   canadaPrice = canadaFC.getPrice();
+                mexicoFC=calculateFreight(weight, mexicoFC, MX);
+                BigDecimal mexicoPrice = mexicoFC.getPrice();
+                britainFC=calculateFreight(weight, britainFC, GB);
+                BigDecimal britainPrice = britainFC.getPrice();
+                franceFC=calculateFreight(weight, franceFC, FR);
+                BigDecimal francePrice = franceFC.getPrice();
+                germanyFC=calculateFreight(weight, germanyFC, DE);
+                BigDecimal germanyPrice = germanyFC.getPrice();
+                italyFC=calculateFreight(weight, italyFC, IT);
+                BigDecimal italyPrice = italyFC.getPrice();
+                spainFC=calculateFreight(weight, spainFC, ES);
+                BigDecimal spainPrice = spainFC.getPrice();
+                japanFC=calculateFreight(weight, japanFC, JP);
+                BigDecimal japanPrice = japanFC.getPrice();
+                australiaFC=calculateFreight(weight, australiaFC, AU);
+                BigDecimal australiaPrice = australiaFC.getPrice();
+            }
+        } else {
+            return R.ok().put("code", 1);
+        }
+        return R.ok();
+    }
+
+    //根据产品长宽高计算产品重量
+    public  Double calculatedWeight(Double productLength, Double productWide, Double productHeight) {
+        //体积重量按每6000立方厘米折合1公斤计算,体积重量的计算公式为:体积重量=(长X宽X高)/6000
+        Double weight = (productHeight * productLength * productWide) / 6000;
+        return weight;
+    }
+
+    //计算国际运费
+    public  FreightCostEntity calculateFreight(Double weight, FreightCostEntity freightCostEntity, String countryCode) {
+        if (weight < 2) {
+            //根据国家编号查找运费价格进行运费计算
+            FreightPriceEntity freightPriceEntity = freightPriceService.selectOne(new EntityWrapper<FreightPriceEntity>().eq("type", "小包").eq("country_code", countryCode));
+            BigDecimal bigDecimal =new BigDecimal(weight);
+            //计算出运费价格
+            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice());
+            freightCostEntity.setFreight(freightPrice);
+            freightCostEntity.setType("小包");
+            return freightCostEntity;
+        }else{
+            //根据国家编号查找运费价格进行运费计算
+            FreightPriceEntity freightPriceEntity = freightPriceService.selectOne(new EntityWrapper<FreightPriceEntity>().eq("type","大包").eq("country_code",countryCode));
+            BigDecimal bigDecimal =new BigDecimal(weight);
+            //计算出运费价格
+            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice());
+            freightCostEntity.setFreight(freightPrice);
+            freightCostEntity.setType("大包");
+            return freightCostEntity;
+        }
+    }
 }
 

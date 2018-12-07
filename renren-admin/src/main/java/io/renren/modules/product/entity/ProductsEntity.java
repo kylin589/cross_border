@@ -377,6 +377,7 @@ public class ProductsEntity implements Serializable {
      */
     private String mainImageUrl;
 
+
     public String getMainImageUrl() {
         return mainImageUrl;
     }

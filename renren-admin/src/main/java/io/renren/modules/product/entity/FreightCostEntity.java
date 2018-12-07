@@ -49,6 +49,36 @@ public class FreightCostEntity implements Serializable {
 	private BigDecimal profit;
 
 	/**
+	 *产品类型（大包，小包）
+	 */
+	private String type;
+
+	/**
+	 *利润率
+	 */
+	private String profitRate;
+
+	public String getProfitRate() {
+		return profitRate;
+	}
+
+	public void setProfitRate(String profitRate) {
+		this.profitRate = profitRate;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	/**
 	 * 设置：物流成本id
 	 */
 	public void setFreightCostId(Long freightCostId) {
