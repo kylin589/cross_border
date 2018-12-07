@@ -122,7 +122,7 @@ public class AmazonCategoryController {
      * @auther: jhy
      * @date: 2018/11/16 11:51
      */
-    @RequestMapping("/amazon one category")
+    @RequestMapping("/amazonOneCategory")
     public R queryByAreaOneClassify(Integer region){
         List<AmazonCategoryEntity>amazonCategoryEntityList=amazonCategoryService.queryByAreaOneClassify(region);
         return R.ok().put("amazonCategoryEntityList",amazonCategoryEntityList);
@@ -135,7 +135,7 @@ public class AmazonCategoryController {
      * @auther: jhy
      * @date: 2018/11/16 15:02
      */
-    @RequestMapping("/child category list")
+    @RequestMapping("/childCategoryList")
     public R queryByParentIdChildList(Long amazonCategoryId){
         List<AmazonCategoryEntity>amazonCategoryEntityChildList=amazonCategoryService.selectList(new EntityWrapper<AmazonCategoryEntity>().eq("parent_id",amazonCategoryId));
         for (AmazonCategoryEntity amazonCategoryEntity : amazonCategoryEntityChildList) {
@@ -157,7 +157,7 @@ public class AmazonCategoryController {
      * @auther: jhy
      * @date: 2018/11/16 15:46
      */
-    @RequestMapping()
+    @RequestMapping("/queryParentbyChildId")
     public R queryByChindIdParentId(Long amazonCategoryId){
         String ids=amazonCategoryService.queryByChindIdParentId(amazonCategoryId);
         return R.ok().put("ids",ids);
