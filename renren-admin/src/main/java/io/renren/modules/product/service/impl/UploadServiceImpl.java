@@ -17,13 +17,28 @@ import io.renren.modules.product.service.UploadService;
 public class UploadServiceImpl extends ServiceImpl<UploadDao, UploadEntity> implements UploadService {
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
+    public PageUtils queryMyUploadPage(Map<String, Object> params) {
+        Long userId = (Long)params.get("userId");
         Page<UploadEntity> page = this.selectPage(
                 new Query<UploadEntity>(params).getPage(),
-                new EntityWrapper<UploadEntity>()
+                new EntityWrapper<UploadEntity>().eq("user_id",userId)
         );
 
         return new PageUtils(page);
     }
 
+    @Override
+    public PageUtils queryAllUploadPage(Map<String, Object> params) {
+        Long deptId = (Long)params.get("userId");
+        EntityWrapper<UploadEntity> wrapper = new EntityWrapper<UploadEntity>();
+        if(deptId != 1){
+            wrapper.eq("dept_id",deptId);
+        }
+        Page<UploadEntity> page = this.selectPage(
+                new Query<UploadEntity>(params).getPage(),
+                wrapper
+        );
+
+        return new PageUtils(page);
+    }
 }

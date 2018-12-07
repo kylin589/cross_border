@@ -2,7 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.renren.modules.product.dao.OrderDao">
-
+    <!-- 查询条件 -->
+    <sql id="sql_Where_Clause">
+        <where>
+            <if test="params.userId != null">
+                and user_id =#{params.userId}
+            </if>
+            <if test="params.deptId != null">
+                and dept_id =#{params.value}
+            </if>
+        </where>
+    </sql>
 	<!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.renren.modules.product.entity.OrderEntity" id="orderMap">
         <result property="orderId" column="order_id"/>
@@ -22,11 +32,17 @@
         <result property="orderProfit" column="order_profit"/>
         <result property="returnCost" column="return_cost"/>
     </resultMap>
-<!--    <resultMap type="io.renren.modules.product.entity.OrderCountEneity" id="orderCountMap">
+
+    <resultMap type="io.renren.modules.product.entity.OrderStatisticsEneity" id="orderCountMap">
         <result property="orderCounts" column="order_counts"/>
         <result property="orderMoney" column="order_money"/>
         <result property="orderProfit" column="order_profit"/>
-    </resultMap>-->
+        <result property="returnCounts" column="return_counts"/>
+        <result property="returnCost" column="return_cost"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="orderFreight" column="order_freight"/>
+    </resultMap>
+
     <update id="updateState" >
         update product_order
         <set>
@@ -35,18 +51,11 @@
         </set>
         where order_id=#{orderId}
     </update>
-    <!--&lt;!&ndash; 查询我的订单金额总数 &ndash;&gt;-->
-    <!--<select id="sumMyOrderMoney" parameterType="long" resultType="int">-->
-        <!--select count(order_id) AS order_counts, sum(order_money) AS order_counts, sum(order_profit) AS order_profit,-->
-        <!--sum(return_cost) AS return_cost, sum(purchase_price) AS purchase_price-->
-         <!--from product_order where user_id = #{userId}-->
-    <!--</select>-->
-    <!-- 查询所有订单金额总数 -->
-    <select id="sumAllOrderMoney" resultType="int">
-        select sum(order_money) from product_order
-    </select>
-    <!-- 查询所有订单金额总数 -->
-    <select id="sumAllOrderMoney" parameterType="long" resultType="int">
-        select sum(order_money) from product_order where dept_id = #{deptId}
+    <!-- 查询我的订单金额总数 -->
+    <select id="statisticsOrderCounts"  resultMap="orderCountMap">
+        select count(order_id) AS order_counts, sum(order_money) AS order_money, sum(order_profit) AS order_profit,
+        sum(return_cost) AS return_cost, sum(purchase_price) AS purchase_price, sum(inter_freight) AS order_freight
+         from product_order
+        <include refid="sql_Where_Clause" />
     </select>
 </mapper>

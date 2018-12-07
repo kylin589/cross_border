@@ -1,8 +1,11 @@
 package io.renren.modules.product.dao;
 
+import io.renren.modules.product.entity.OrderStatisticsEneity;
 import io.renren.modules.product.entity.OrderEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.Map;
 
 /**
  * 
@@ -13,7 +16,5 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface OrderDao extends BaseMapper<OrderEntity> {
     int updateState(@Param("orderId")Long orderId, @Param("orderState")String orderState, @Param("orderStatus")String orderStatus);
-    int sumMyOrderMoney(@Param("userId")Long userId);
-    int sumAllOrderMoney();
-    int sumAllOrderMoney(@Param("deptId")Long deptId);
+    OrderStatisticsEneity statisticsOrderCounts(@Param("params") Map<String, Object> map);
 }

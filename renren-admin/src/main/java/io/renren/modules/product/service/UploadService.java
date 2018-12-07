@@ -15,6 +15,7 @@ import java.util.Map;
  */
 public interface UploadService extends IService<UploadEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryMyUploadPage(Map<String, Object> params);
+    PageUtils queryAllUploadPage(Map<String, Object> params);
 }
 
