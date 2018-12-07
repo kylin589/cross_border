@@ -1,5 +1,10 @@
 package io.renren.modules.product.vm;
 
+import io.renren.modules.sys.entity.SysUserEntity;
+
+import javax.xml.crypto.Data;
+import java.util.Arrays;
+
 /**
  * @Auther: wdh
  * @Date: 2018/11/27 10:36
@@ -29,7 +34,56 @@ public class AddUploadVM {
     //是否有分类属性（默认0：没有  1：有）
     private Integer isAttribute;
     // TODO: 2018/11/27 分类属性
+    //接受前台传过来的时间；
+    private String time;
+    //前台传过来的国家
+    private String countryCode;
 
+    //用户
+    private SysUserEntity user;
+    //用户id
+    private Long userId;
+    //公司id
+    private Long deptId;
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public SysUserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(SysUserEntity user) {
+        this.user = user;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public Long getStartId() {
         return startId;
@@ -117,5 +171,23 @@ public class AddUploadVM {
 
     public void setIsAttribute(Integer isAttribute) {
         this.isAttribute = isAttribute;
+    }
+
+    @Override
+    public String toString() {
+        return "AddUploadVM{" +
+                "startId=" + startId +
+                ", endId=" + endId +
+                ", uploadIds=" + Arrays.toString(uploadIds) +
+                ", grantShopId=" + grantShopId +
+                ", grantShop='" + grantShop + '\'' +
+                ", operateItem=" + Arrays.toString(operateItem) +
+                ", amazonCategoryId=" + amazonCategoryId +
+                ", amazonCategory='" + amazonCategory + '\'' +
+                ", amazonTemplateId=" + amazonTemplateId +
+                ", amazonTemplate='" + amazonTemplate + '\'' +
+                ", isAttribute=" + isAttribute +
+                ", time='" + time + '\'' +
+                '}';
     }
 }
