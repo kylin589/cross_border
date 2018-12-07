@@ -1,7 +1,6 @@
 package io.renren.modules.product.service;
 
 import com.baomidou.mybatisplus.service.IService;
-import io.renren.common.utils.PageUtils;
 import io.renren.modules.product.entity.OrderEntity;
 
 import java.util.Map;
@@ -15,6 +14,25 @@ import java.util.Map;
  */
 public interface OrderService extends IService<OrderEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 我的订单
+     * @param params
+     * @param userId 用户id
+     * @return
+     */
+    Map<String, Object> queryMyPage(Map<String, Object> params, Long userId);
+    /**
+     * 所有订单
+     * @param params
+     * @param deptId 公司id
+     * @return
+     */
+    Map<String, Object> queryAllPage(Map<String, Object> params, Long deptId);
+
+    /**
+     * 修改状态
+     */
+    boolean updateState(Long orderId, String orderState);
 }
 

@@ -25,7 +25,6 @@ import io.renren.modules.sys.controller.AbstractController;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -91,7 +90,7 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("product:upload:list")
-    public R list(@RequestParam Map<String, Object> params) {
+    public R list(@RequestParam Map<String, Object> params){
         PageUtils page = uploadService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -107,7 +106,7 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/info/{uploadId}")
     @RequiresPermissions("product:upload:info")
-    public R info(@PathVariable("uploadId") Long uploadId) {
+    public R info(@PathVariable("uploadId") Long uploadId){
         UploadEntity upload = uploadService.selectById(uploadId);
 
         return R.ok().put("upload", upload);
@@ -122,7 +121,7 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("product:upload:save")
-    public R save(@RequestBody UploadEntity upload) {
+    public R save(@RequestBody UploadEntity upload){
         uploadService.insert(upload);
 
         return R.ok();
@@ -137,10 +136,10 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("product:upload:update")
-    public R update(@RequestBody UploadEntity upload) {
+    public R update(@RequestBody UploadEntity upload){
         ValidatorUtils.validateEntity(upload);
         uploadService.updateAllColumnById(upload);//全部更新
-
+        
         return R.ok();
     }
 
@@ -153,7 +152,7 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("product:upload:delete")
-    public R delete(@RequestBody Long[] uploadIds) {
+    public R delete(@RequestBody Long[] uploadIds){
         uploadService.deleteBatchIds(Arrays.asList(uploadIds));
 
         return R.ok();
@@ -161,32 +160,32 @@ public class UploadController extends AbstractController {
 
     /**
      * addUpload:立即上传
-     *
      * @param: [addUploadVM]
+     *
      * @return: io.renren.common.utils.R
      * @auther: wdh
      * @date: 2018/11/27 16:17
      */
     @RequestMapping("/addUpload")
 //    @RequiresPermissions("product:upload:addupload")
-    public R addUpload(@RequestBody AddUploadVM addUploadVM) {
+    public R addUpload(@RequestBody AddUploadVM addUploadVM){
         List<UploadEntity> uploadList = new ArrayList<UploadEntity>();
         Set<Long> ret = new LinkedHashSet<>(0);
-        if (addUploadVM.getStartId() != null && addUploadVM.getEndId() != null) {
+        if(addUploadVM.getStartId() != null && addUploadVM.getEndId() != null){
             Long index = addUploadVM.getStartId();
-            while (index <= addUploadVM.getEndId()) {
+            while (index <= addUploadVM.getEndId()){
                 ret.add(index);
                 index++;
             }
         }
-        if (addUploadVM.getUploadIds() != null) {
+        if(addUploadVM.getUploadIds() != null){
             ret.addAll(Arrays.asList(addUploadVM.getUploadIds()));
         }
         System.out.println("ret:" + ret);
         //迭代
         Iterator i = ret.iterator();
         //遍历
-        while (i.hasNext()) {
+        while(i.hasNext()){
             UploadEntity upload = new UploadEntity();
             //获取产品
             ProductsEntity product = productsService.selectById(Long.valueOf(i.next().toString()));
@@ -205,7 +204,7 @@ public class UploadController extends AbstractController {
             //设置分类节点id
             String county = amazonGrantShop.getCountryCode();
             COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
-            switch (countyEnum) {
+            switch (countyEnum){
                 case GB:
                     upload.setAmazonCategoryNodeId(amazonCategory.getNodeIdUk());
                     break;
@@ -231,7 +230,7 @@ public class UploadController extends AbstractController {
             //设置操作类型（0：上传   1：修改）
             upload.setOperateType(0);
             //数组转','号隔开的字符串
-            String operateItem = StringUtils.join(addUploadVM.getOperateItem(), ",");
+            String operateItem = StringUtils.join(addUploadVM.getOperateItem(),",");
             //设置操作项
             upload.setOperateItem(operateItem);
             //设置是否有分类属性
@@ -252,11 +251,11 @@ public class UploadController extends AbstractController {
         //添加到分类历史记录表
         AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId());
         //如果有历史数据，则累加数量1
-        if (categoryHistory != null) {
+        if(categoryHistory != null){
             int count = categoryHistory.getCount() + 1;
             categoryHistory.setCount(count);
             amazonCategoryHistoryService.updateAllColumnById(categoryHistory);
-        } else {
+        }else{
             //如果没有历史数据，则新增历史数据
             AmazonCategoryHistoryEntity categoryHistoryNew = new AmazonCategoryHistoryEntity();
             categoryHistoryNew.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());

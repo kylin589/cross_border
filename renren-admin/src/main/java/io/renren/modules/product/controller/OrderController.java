@@ -1,9 +1,11 @@
 package io.renren.modules.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,21 +30,28 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("product/order")
-public class OrderController {
+public class OrderController extends AbstractController{
     @Autowired
     private OrderService orderService;
-
     /**
-     * 列表
+     * 我的订单
      */
-    @RequestMapping("/list")
-    @RequiresPermissions("product:order:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = orderService.queryPage(params);
-
-        return R.ok().put("page", page);
+    @RequestMapping("/getMyList")
+//    @RequiresPermissions("product:order:mylist")
+    public R getMyList(@RequestParam Map<String, Object> params){
+        Map<String, Object> map = orderService.queryMyPage(params, getUserId());
+        return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts")).put("orderMoney",map.get("orderMoney"));
     }
 
+    /**
+     * 所有订单
+     */
+    @RequestMapping("/getAllList")
+//    @RequiresPermissions("product:order:alllist")
+    public R getAllList(@RequestParam Map<String, Object> params){
+        Map<String, Object> map = orderService.queryAllPage(params, getUserId());
+        return R.ok().put("page", map.get("page"));
+    }
 
     /**
      * 信息
@@ -87,6 +96,18 @@ public class OrderController {
         orderService.deleteBatchIds(Arrays.asList(orderIds));
 
         return R.ok();
+    }
+
+    /**
+     * 修改状态
+     */
+    @RequestMapping("/updateState")
+    public R updateState(@RequestParam Long orderId, @RequestParam String orderState){
+        boolean flag = orderService.updateState(orderId,orderState);
+        if(flag){
+            return R.ok();
+        }
+        return R.error();
     }
 
 }

@@ -11,7 +11,11 @@
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/layui.css" media="all">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/admin.css" media="all">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/common.css" media="all">
-
+    <style>
+        cite{
+            display:none;
+        }
+    </style>
     <script>
         /^http(s*):\/\//.test(location.href) || alert('请先部署到 localhost 下再访问');
     </script>
@@ -107,8 +111,159 @@
 
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
 
+                    <li data-name="home" class="layui-nav-item">
+                        <template v-if="menuList.length>=1">
+                            <a href="javascript:;" :lay-tips="menuList[0].name" lay-direction="2">
+                                <i :class="menuList[0].icon"></i>
+                                <cite>{{menuList[0].name}}</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd v-for="list in menuList[0].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </dl>
+                        </template>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <a href="javascript:;" lay-direction="2">
+                            <template v-if="menuList.length>=2">
+                                <i :class="menuList[1].icon"></i>
+                                <cite>{{menuList[1].name}}</cite>
+                            </template>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <template v-if="menuList.length>=2">
+                                <dd v-for="list in menuList[1].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </template>
+                        </dl>
+                    </li>
+                    <!--<li data-name="home" class="layui-nav-item">-->
+                        <!--<a href="javascript:;" lay-direction="2">-->
+                            <!--<template v-if="menuList.length>=3">-->
+                                <!--<i :class="menuList[2].icon"></i>-->
+                                <!--<cite>{{menuList[2].name}}</cite>-->
+                            <!--</template>-->
+                        <!--</a>-->
+                        <!--<dl class="layui-nav-child">-->
+                            <!--<template v-if="menuList.length>=3">-->
+                                <!--<dd v-for="list in menuList[2].list" :data-name="list.name" class="">-->
+                                    <!--<a :lay-href="list.url">{{ list.name }}</a>-->
+                                <!--</dd>-->
+                            <!--</template>-->
+                        <!--</dl>-->
+                    <!--</li>-->
+                    <li data-name="home" class="layui-nav-item">
+                        <template v-if="menuList.length>=2">
+                            <a href="javascript:;" :lay-tips="menuList[1].name" lay-direction="2">
+                                <i :class="menuList[1].icon"></i>
+                                <cite>{{menuList[1].name}}</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd v-for="list in menuList[1].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </dl>
+                        </template>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <template v-if="menuList.length>=4">
+                            <a href="javascript:;" :lay-tips="menuList[3].name" lay-direction="2">
+                                <i :class="menuList[3].icon"></i>
+                                <cite>{{menuList[3].name}}</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd v-for="list in menuList[3].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </dl>
+                        </template>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <template v-if="menuList.length>=5">
+                            <a href="javascript:;" :lay-tips="menuList[4].name" lay-direction="2">
+                                <i :class="menuList[4].icon"></i>
+                                <cite>{{menuList[4].name}}</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd v-for="list in menuList[4].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </dl>
+                        </template>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <template v-if="menuList.length>=6">
+                            <a href="javascript:;" :lay-tips="menuList[5].name" lay-direction="2">
+                                <i :class="menuList[5].icon"></i>
+                                <cite>{{menuList[5].name}}</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd v-for="list in menuList[5].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </dl>
+                        </template>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <template v-if="menuList.length>=7">
+                            <a href="javascript:;" :lay-tips="menuList[6].name" lay-direction="2">
+                                <i :class="menuList[6].icon"></i>
+                                <cite>{{menuList[6].name}}</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd v-for="list in menuList[6].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </dl>
+                        </template>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <template v-if="menuList.length>=8">
+                            <a href="javascript:;" :lay-tips="menuList[7].name" lay-direction="2">
+                                <i :class="menuList[7].icon"></i>
+                                <cite>{{menuList[7].name}}</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd v-for="list in menuList[7].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </dl>
+                        </template>
+                    </li>
+                    <!--<li data-name="home" class="layui-nav-item">-->
+                        <!--<a href="javascript:;" lay-direction="2">-->
+                            <!--<template v-if="menuList.length>=5">-->
+                                <!--<i :class="menuList[4].icon"></i>-->
+                                <!--<cite>{{menuList[4].name}}</cite>-->
+                            <!--</template>-->
+                        <!--</a>-->
+                        <!--<dl class="layui-nav-child">-->
+                            <!--<template v-if="menuList.length>=5">-->
+                                <!--<dd v-for="list in menuList[4].list" :data-name="list.name" class="">-->
+                                    <!--<a :lay-href="list.url">{{ list.name }}</a>-->
+                                <!--</dd>-->
+                            <!--</template>-->
+                        <!--</dl>-->
+                    <!--</li>-->
+
+
+
+                    <!--<li v-for="item in menuList" data-name="home" class="layui-nav-item">-->
+                        <!--<a href="javascript:;" :lay-tips="item.name" lay-direction="2">-->
+                        <!--<i :class="item.icon"></i>-->
+                        <!--<cite>{{item.name}}</cite>-->
+                        <!--</a>-->
+                        <!--<dl class="layui-nav-child">-->
+                        <!--<dd v-for="list in item.list" :data-name="list.name" class="">-->
+                            <!--<a :lay-href="list.url">{{ list.name }}</a>-->
+                            <!--</dd>-->
+                        <!--</dl>-->
+                    <!--</li>-->
+
                     <!-- vue生成的菜单 -->
-                    <menu-item :item="item" v-for="item in menuList"></menu-item>
+                    <!--<menu-item :item="item" v-for="item in menuList"></menu-item>-->
 
                 </ul>
             </div>
@@ -200,7 +355,9 @@
 
 
 <script type="text/javascript" src="${request.contextPath}/statics/libs/jquery.min.js"></script>
+
 <script type="text/javascript" src="${request.contextPath}/statics/libs/vue.min.js"></script>
+
 <script type="text/javascript" src="${request.contextPath}/statics/js/index.js"></script>
 <script src="${request.contextPath}/statics/kuajing/js/layui.js"></script>
 
