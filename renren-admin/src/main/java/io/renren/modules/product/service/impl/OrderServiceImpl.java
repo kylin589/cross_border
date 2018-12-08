@@ -181,5 +181,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }
         return false;
     }
+
+    @Override
+    public OrderEntity queryInfoById(Long orderId) {
+
+        return null;
+    }
 }
 

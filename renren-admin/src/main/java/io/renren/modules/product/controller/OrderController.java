@@ -56,11 +56,10 @@ public class OrderController extends AbstractController{
     /**
      * 信息
      */
-    @RequestMapping("/info/{orderId}")
-    @RequiresPermissions("product:order:info")
-    public R info(@PathVariable("orderId") Long orderId){
+    @RequestMapping("/getOrderInfo")
+//    @RequiresPermissions("product:order:info")
+    public R getOrderInfo(@RequestParam Long orderId){
         OrderEntity order = orderService.selectById(orderId);
-
         return R.ok().put("order", order);
     }
 

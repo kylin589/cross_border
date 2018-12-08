@@ -1,11 +1,13 @@
 package io.renren.modules.product.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -100,7 +102,14 @@ public class OrderEntity implements Serializable {
 	private Long userId;
 
 	private Long deptId;
+	//更新时间
+	private Date updateTime;
 
+	/**
+	 * 国内物流
+	 */
+//	@TableField(exist = false)
+//	private List<>
 	/**
 	 * 设置：订单id
 	 */
@@ -137,18 +146,6 @@ public class OrderEntity implements Serializable {
 	public Date getBuyDate() {
 		return buyDate;
 	}
-	/**
-	 * 设置：amazon订单状态
-	 */
-//	public void setAmazonOrderState(String amazonOrderState) {
-//		this.amazonOrderState = amazonOrderState;
-//	}
-	/**
-	 * 获取：amazon订单状态
-	 */
-//	public String getAmazonOrderState() {
-//		return amazonOrderState;
-//	}
 	/**
 	 * 设置：内部订单标识
 	 */
