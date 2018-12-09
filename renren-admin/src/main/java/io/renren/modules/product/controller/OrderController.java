@@ -40,7 +40,7 @@ public class OrderController extends AbstractController{
 //    @RequiresPermissions("product:order:mylist")
     public R getMyList(@RequestParam Map<String, Object> params){
         Map<String, Object> map = orderService.queryMyPage(params, getUserId());
-        return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts")).put("orderMoney",map.get("orderMoney"));
+        return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts"));
     }
 
     /**
@@ -50,17 +50,16 @@ public class OrderController extends AbstractController{
 //    @RequiresPermissions("product:order:alllist")
     public R getAllList(@RequestParam Map<String, Object> params){
         Map<String, Object> map = orderService.queryAllPage(params, getUserId());
-        return R.ok().put("page", map.get("page"));
+        return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts"));
     }
 
     /**
      * 信息
      */
-    @RequestMapping("/info/{orderId}")
-    @RequiresPermissions("product:order:info")
-    public R info(@PathVariable("orderId") Long orderId){
+    @RequestMapping("/getOrderInfo")
+//    @RequiresPermissions("product:order:info")
+    public R getOrderInfo(@RequestParam Long orderId){
         OrderEntity order = orderService.selectById(orderId);
-
         return R.ok().put("order", order);
     }
 

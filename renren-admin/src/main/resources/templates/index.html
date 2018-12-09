@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/common.css" media="all">
     <style>
         cite{
-            display:none;
+            /*display:none;*/
         }
     </style>
     <script>
@@ -155,13 +155,13 @@
                         <!--</dl>-->
                     <!--</li>-->
                     <li data-name="home" class="layui-nav-item">
-                        <template v-if="menuList.length>=2">
-                            <a href="javascript:;" :lay-tips="menuList[1].name" lay-direction="2">
-                                <i :class="menuList[1].icon"></i>
-                                <cite>{{menuList[1].name}}</cite>
+                        <template v-if="menuList.length>=3">
+                            <a href="javascript:;" :lay-tips="menuList[2].name" lay-direction="2">
+                                <i :class="menuList[2].icon"></i>
+                                <cite>{{menuList[2].name}}</cite>
                             </a>
                             <dl class="layui-nav-child">
-                                <dd v-for="list in menuList[1].list" :data-name="list.name" class="">
+                                <dd v-for="list in menuList[2].list" :data-name="list.name" class="">
                                     <a :lay-href="list.url">{{ list.name }}</a>
                                 </dd>
                             </dl>

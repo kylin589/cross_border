@@ -7,11 +7,11 @@ import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import java.util.Map;
 
 /**
- * 
+ * 国内物流
  *
  * @author wdh
  * @email 594340717@qq.com
- * @date 2018-12-03 11:46:03
+ * @date 2018-12-08 11:07:32
  */
 public interface DomesticLogisticsService extends IService<DomesticLogisticsEntity> {
 

@@ -42,8 +42,8 @@ $(function () {
 })
 
 window.onload=function () {
-    $('cite').css('display','inline-block');
-    console.log($('cite'));
+    // $('cite').css('display','inline-block');
+    // console.log($('cite'));
 }
 
 //iframe自适应

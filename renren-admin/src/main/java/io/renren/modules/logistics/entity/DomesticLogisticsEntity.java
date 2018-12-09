@@ -7,11 +7,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 
+ * 国内物流
  * 
  * @author wdh
  * @email 594340717@qq.com
- * @date 2018-12-03 11:46:03
+ * @date 2018-12-08 11:07:32
  */
 @TableName("order_domestic_logistics")
 public class DomesticLogisticsEntity implements Serializable {
@@ -47,9 +47,9 @@ public class DomesticLogisticsEntity implements Serializable {
 	 */
 	private Long deptId;
 	/**
-	 * 
+	 * 创建时间
 	 */
-	private Date createDate;
+	private Date createTime;
 
 	/**
 	 * 设置：国内物流id
@@ -136,15 +136,15 @@ public class DomesticLogisticsEntity implements Serializable {
 		return deptId;
 	}
 	/**
-	 * 设置：
+	 * 设置：创建时间
 	 */
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 	/**
-	 * 获取：
+	 * 获取：创建时间
 	 */
-	public Date getCreateDate() {
-		return createDate;
+	public Date getCreateTime() {
+		return createTime;
 	}
 }

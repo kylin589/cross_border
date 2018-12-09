@@ -10,7 +10,7 @@ $(function () {
 			{ label: '发货日期', name: 'issuanceDate', index: 'issuance_date', width: 80 }, 			
 			{ label: '', name: 'userId', index: 'user_id', width: 80 }, 			
 			{ label: '', name: 'deptId', index: 'dept_id', width: 80 }, 			
-			{ label: '', name: 'createDate', index: 'create_date', width: 80 }			
+			{ label: '创建时间', name: 'createTime', index: 'create_time', width: 80 }			
         ],
 		viewrecords: true,
         height: 385,

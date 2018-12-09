@@ -82,20 +82,33 @@ public class UploadController extends AbstractController {
     private static final int CAUTC =+5;
 
     /**
-     * @methodname: list 信息
+     * @methodname: 我的上传列表
      * @param: [params] 接受参数
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/8 21:22
      */
-    @RequestMapping("/list")
-    @RequiresPermissions("product:upload:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = uploadService.queryPage(params);
-
+    @RequestMapping("/getMyUploadList")
+//    @RequiresPermissions("product:upload:mylist")
+    public R getMyUploadList(@RequestParam Map<String, Object> params){
+        params.put("userId",getUserId());
+        PageUtils page = uploadService.queryMyUploadPage(params);
         return R.ok().put("page", page);
     }
-
+    /**
+     * @methodname: 所有上传列表
+     * @param: [params] 接受参数
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/11/8 21:22
+     */
+    @RequestMapping("/getAllUploadList")
+//    @RequiresPermissions("product:upload:alllist")
+    public R getAllUploadList(@RequestParam Map<String, Object> params){
+        params.put("deptId",getDeptId());
+        PageUtils page = uploadService.queryAllUploadPage(params);
+        return R.ok().put("page", page);
+    }
 
     /**
      * @methodname: info 信息
@@ -262,7 +275,7 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setAmazonCategory(addUploadVM.getAmazonCategory());
             categoryHistoryNew.setCount(1);
             categoryHistoryNew.setUserId(getUserId());
-            categoryHistoryNew.setUserId(getDeptId());
+            categoryHistoryNew.setDeptId(getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
         return R.ok();
@@ -424,7 +437,7 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setAmazonCategory(addUploadVM.getAmazonCategory());
             categoryHistoryNew.setCount(1);
             categoryHistoryNew.setUserId(addUploadVM.getUserId());
-            categoryHistoryNew.setUserId(addUploadVM.getDeptId());
+            categoryHistoryNew.setDeptId(addUploadVM.getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
         return R.ok();

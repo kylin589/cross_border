@@ -1,7 +1,9 @@
 package io.renren.modules.product.service.impl;
 
+import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.logistics.service.DomesticLogisticsService;
 import io.renren.modules.product.entity.DataDictionaryEntity;
+import io.renren.modules.product.entity.OrderStatisticsEneity;
 import io.renren.modules.product.service.DataDictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,18 +82,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 wrapper
         );
         PageUtils pageUtils = new PageUtils(page);
-
-        //订单数
-        int orderCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId));
-        //总金额
-        int orderMoney = baseMapper.sumMyOrderMoney(userId);
-        //订单总利润
-//            orderProfit = baseMapper.sumMyOrderProfit(userId);
-        //订单总运费
-        Map<String, Object> map = new HashMap<>(5);
+        Map<String, Object> condition = new HashMap<>(1);
+        condition.put("userId",userId);
+        OrderStatisticsEneity orderCounts = baseMapper.statisticsOrderCounts(condition);
+        //退货数
+        int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+        orderCounts.setReturnCounts(returnCounts);
+        Map<String, Object> map = new HashMap<>(2);
         map.put("page",pageUtils);
         map.put("orderCounts",orderCounts);
-        map.put("orderMoney",orderMoney);
         return map;
     }
     @Override
@@ -146,32 +145,26 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 wrapper
         );
         PageUtils pageUtils = new PageUtils(page);
-        //初始化
-        int orderCounts = 0;
-        int orderMoney = 0;
-        int orderProfit = 0;
+        OrderStatisticsEneity orderCounts = new OrderStatisticsEneity();
+        Map<String, Object> condition = new HashMap<>(1);
         if(deptId == 1){
             //总公司
-            //所有订单数
-            orderCounts = this.selectCount(new EntityWrapper<OrderEntity>());
-            //所有订单总金额
-            orderMoney = baseMapper.sumAllOrderMoney();
-            //所有订单总利润
-//            orderProfit = baseMapper.sumAllOrderProfit();
+            orderCounts = baseMapper.statisticsOrderCounts(condition);
+            //退货数
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+            orderCounts.setReturnCounts(returnCounts);
         }else{
             //加盟商
-            //公司订单数
-            orderCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("deptId",deptId));
-            //公司订单总金额
-            orderMoney = baseMapper.sumAllOrderMoney(deptId);
-            //公司订单总利润
-//            orderProfit = baseMapper.sumAllOrderProfit(deptId);
+            condition.put("deptId",deptId);
+            orderCounts = baseMapper.statisticsOrderCounts(condition);
+            //退货数
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+            orderCounts.setReturnCounts(returnCounts);
         }
 
-        Map<String, Object> map = new HashMap<>(5);
+        Map<String, Object> map = new HashMap<>(2);
         map.put("page",pageUtils);
         map.put("orderCounts",orderCounts);
-        map.put("orderMoney",orderMoney);
         return map;
     }
 
@@ -187,6 +180,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             return true;
         }
         return false;
+    }
+
+    @Override
+    public OrderEntity queryInfoById(Long orderId) {
+
+        return null;
     }
 }
 
