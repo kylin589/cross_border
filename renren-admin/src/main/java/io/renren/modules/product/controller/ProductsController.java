@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
+import java.util.logging.XMLFormatter;
 
 
 /**
@@ -42,6 +44,8 @@ public class ProductsController extends AbstractController {
     private CategoryService categoryService;
     @Autowired
     private FreightPriceService freightPriceService;
+    @Autowired
+    private AmazonRateService amazonRateService;
 
     private String US;//美国
     private String CA;//加拿大
@@ -809,70 +813,69 @@ public class ProductsController extends AbstractController {
         FreightCostEntity americanFC = null;
         if (americanid != null) {
             americanFC = freightCostService.selectById(americanid);
-            productsEntity.setAmericanFC(americanFC);
         }
         //加拿大运费
         Long canadaid = productsEntity.getCanadaFreight();
         FreightCostEntity canadaFC = null;
         if (canadaid != null) {
             canadaFC = freightCostService.selectById(canadaid);
-            productsEntity.setCanadaFC(canadaFC);
+
         }
         //墨西哥运费
         Long mexicoid = productsEntity.getMexicoFreight();
         FreightCostEntity mexicoFC = null;
         if (mexicoid != null) {
             mexicoFC = freightCostService.selectById(mexicoid);
-            productsEntity.setMexicoFC(mexicoFC);
+
         }
         //英国运费
         Long britainid = productsEntity.getBritainFreight();
         FreightCostEntity britainFC = null;
         if (britainid != null) {
             britainFC = freightCostService.selectById(britainid);
-            productsEntity.setBritainFC(britainFC);
+
         }
         //法国运费
         Long franceid = productsEntity.getFranceFreight();
         FreightCostEntity franceFC = null;
         if (franceid != null) {
             franceFC = freightCostService.selectById(franceid);
-            productsEntity.setFranceFC(franceFC);
+
         }
         //德国运费
         Long germanyid = productsEntity.getGermanyFreight();
         FreightCostEntity germanyFC = null;
         if (germanyid != null) {
             germanyFC = freightCostService.selectById(germanyid);
-            productsEntity.setGermanyFC(germanyFC);
+
         }
         //意大利运费
         Long italyid = productsEntity.getItalyFreight();
         FreightCostEntity italyFC = null;
         if (italyid != null) {
             italyFC = freightCostService.selectById(italyid);
-            productsEntity.setItalyFC(italyFC);
+
         }
         //西班牙运费
         Long spainid = productsEntity.getSpainFreight();
         FreightCostEntity spainFC = null;
         if (spainid != null) {
             spainFC = freightCostService.selectById(spainid);
-            productsEntity.setSpainFC(spainFC);
+
         }
         //日本运费
         Long japanid = productsEntity.getJapanFreight();
         FreightCostEntity japanFC = null;
         if (japanid != null) {
             japanFC = freightCostService.selectById(japanid);
-            productsEntity.setJapanFC(japanFC);
+
         }
         //澳大利亚运费
         Long australiaid = productsEntity.getAustraliaFreight();
         FreightCostEntity australiaFC = null;
         if (australiaid != null) {
             australiaFC = freightCostService.selectById(australiaid);
-            productsEntity.setAustraliaFC(australiaFC);
+
         }
         //产品重量
         Double productWeight = productsEntity.getProductWeight();
@@ -882,90 +885,365 @@ public class ProductsController extends AbstractController {
         Double productWide = productsEntity.getProductWide();
         //产品高
         Double productHeight = productsEntity.getProductHeight();
+        //产品采购价格
+        BigDecimal purchasePrice = productsEntity.getPurchasePrice();
+        //国内运费
+        BigDecimal domesticFreight = productsEntity.getDomesticFreight();
+        //计算成本计算先把产品采购价格和国内运费相加
+        BigDecimal sum = purchasePrice.add(domesticFreight);
+
         //根据长宽高计算出来重量
         Double weight = calculatedWeight(productLength, productWide, productHeight);
         if (productWeight != 0 || weight != 0) {
             //体积重量大于实际重量的必须按体积重量计收资费
-            //计算出各国运费
-            if (productWeight > weight) {
-                americanFC = calculateFreight(productWeight, americanFC, US);
-                BigDecimal  americanPrice = americanFC.getPrice();
-                canadaFC=calculateFreight(productWeight, canadaFC, CA);
-                BigDecimal   canadaPrice = canadaFC.getPrice();
-                mexicoFC=calculateFreight(productWeight, mexicoFC, MX);
-                BigDecimal mexicoPrice = mexicoFC.getPrice();
-                britainFC=calculateFreight(productWeight, britainFC, GB);
-                BigDecimal britainPrice = britainFC.getPrice();
-                franceFC=calculateFreight(productWeight, franceFC, FR);
-                BigDecimal francePrice = franceFC.getPrice();
-                germanyFC=calculateFreight(productWeight, germanyFC, DE);
-                BigDecimal germanyPrice = germanyFC.getPrice();
-                italyFC=calculateFreight(productWeight, italyFC, IT);
-                BigDecimal italyPrice = italyFC.getPrice();
-                spainFC=calculateFreight(productWeight, spainFC, ES);
-                BigDecimal spainPrice = spainFC.getPrice();
-                japanFC=calculateFreight(productWeight, japanFC, JP);
-                BigDecimal japanPrice = japanFC.getPrice();
-                australiaFC=calculateFreight(productWeight, australiaFC, AU);
-                BigDecimal australiaPrice = australiaFC.getPrice();
 
-            }else {
-                //计算出各国运费
-                americanFC= calculateFreight(weight, americanFC, US);
-                BigDecimal  americanPrice = americanFC.getPrice();
-                canadaFC=calculateFreight(weight, canadaFC, CA);
-                BigDecimal   canadaPrice = canadaFC.getPrice();
-                mexicoFC=calculateFreight(weight, mexicoFC, MX);
-                BigDecimal mexicoPrice = mexicoFC.getPrice();
-                britainFC=calculateFreight(weight, britainFC, GB);
-                BigDecimal britainPrice = britainFC.getPrice();
-                franceFC=calculateFreight(weight, franceFC, FR);
-                BigDecimal francePrice = franceFC.getPrice();
-                germanyFC=calculateFreight(weight, germanyFC, DE);
-                BigDecimal germanyPrice = germanyFC.getPrice();
-                italyFC=calculateFreight(weight, italyFC, IT);
-                BigDecimal italyPrice = italyFC.getPrice();
-                spainFC=calculateFreight(weight, spainFC, ES);
-                BigDecimal spainPrice = spainFC.getPrice();
-                japanFC=calculateFreight(weight, japanFC, JP);
-                BigDecimal japanPrice = japanFC.getPrice();
-                australiaFC=calculateFreight(weight, australiaFC, AU);
-                BigDecimal australiaPrice = australiaFC.getPrice();
+            if (productWeight > weight) {
+                //计算出美国运费
+                americanFC = calculateFreight(productWeight, americanFC, US);
+                //美国运费
+                BigDecimal americanFreight = americanFC.getFreight();
+                //美国成本价格=采购价格+国内物流+国际物流价格
+                BigDecimal americanCost = americanFreight.add(sum);
+                //计算出美国售价，外币，优化信息
+                americanFC = priceInfo(americanCost, americanFC, US);
+                productsEntity.setAmericanFC(americanFC);
+
+                canadaFC = calculateFreight(productWeight, canadaFC, CA);
+                BigDecimal canadaFreight = canadaFC.getFreight();
+                BigDecimal canadaCost = canadaFreight.add(sum);
+                canadaFC = priceInfo(canadaCost, canadaFC, CA);
+                productsEntity.setCanadaFC(canadaFC);
+                mexicoFC = calculateFreight(productWeight, mexicoFC, MX);
+                BigDecimal mexicoFreight = mexicoFC.getFreight();
+                BigDecimal mexicoCost = mexicoFreight.add(sum);
+                mexicoFC = priceInfo(mexicoCost, mexicoFC, MX);
+                productsEntity.setMexicoFC(mexicoFC);
+                britainFC = calculateFreight(productWeight, britainFC, GB);
+                BigDecimal britainFreight = britainFC.getFreight();
+                BigDecimal britainCost = britainFreight.add(sum);
+                britainFC = priceInfo(britainCost, britainFC, GB);
+                productsEntity.setBritainFC(britainFC);
+                franceFC = calculateFreight(productWeight, franceFC, FR);
+                BigDecimal franceFreight = franceFC.getFreight();
+                BigDecimal franceCost = franceFreight.add(sum);
+                franceFC = priceInfo(franceCost, franceFC, FR);
+                productsEntity.setFranceFC(franceFC);
+                germanyFC = calculateFreight(productWeight, germanyFC, DE);
+                BigDecimal germanyFreight = germanyFC.getFreight();
+                BigDecimal germanyCost = germanyFreight.add(sum);
+                germanyFC = priceInfo(germanyCost, germanyFC, DE);
+                productsEntity.setGermanyFC(germanyFC);
+                italyFC = calculateFreight(productWeight, italyFC, IT);
+                BigDecimal italyFreight = italyFC.getFreight();
+                BigDecimal italyCost = italyFreight.add(sum);
+                italyFC = priceInfo(italyCost, italyFC, IT);
+                productsEntity.setItalyFC(italyFC);
+                spainFC = calculateFreight(productWeight, spainFC, ES);
+                BigDecimal spainFreight = spainFC.getFreight();
+                BigDecimal spainCost = spainFreight.add(sum);
+                spainFC = priceInfo(spainCost, spainFC, ES);
+                productsEntity.setSpainFC(spainFC);
+                japanFC = calculateFreight(productWeight, japanFC, JP);
+                BigDecimal japanFreight = japanFC.getFreight();
+                BigDecimal japanCost = japanFreight.add(sum);
+                japanFC = priceInfo(japanCost, japanFC, JP);
+                productsEntity.setJapanFC(japanFC);
+                australiaFC = calculateFreight(productWeight, australiaFC, AU);
+                BigDecimal australiaFreight = australiaFC.getFreight();
+                BigDecimal australiaCost = australiaFreight.add(sum);
+                australiaFC = priceInfo(australiaCost, australiaFC, AU);
+                productsEntity.setAustraliaFC(australiaFC);
+            } else {
+                //计算出美国运费
+                americanFC = calculateFreight(weight, americanFC, US);
+                BigDecimal americanFreight = americanFC.getFreight();
+                //美国成本价格=采购价格+国内物流+国际物流价格
+                BigDecimal americanCost = americanFreight.add(sum);
+                //计算出美国售价，外币，优化信息
+                americanFC = priceInfo(americanCost, americanFC, US);
+                productsEntity.setAmericanFC(americanFC);
+                canadaFC = calculateFreight(weight, canadaFC, CA);
+                BigDecimal canadaFreight = canadaFC.getFreight();
+                BigDecimal canadaCost = canadaFreight.add(sum);
+                canadaFC = priceInfo(canadaCost, canadaFC, CA);
+                productsEntity.setCanadaFC(canadaFC);
+                mexicoFC = calculateFreight(weight, mexicoFC, MX);
+                BigDecimal mexicoFreight = mexicoFC.getFreight();
+                BigDecimal mexicoCost = mexicoFreight.add(sum);
+                mexicoFC = priceInfo(mexicoCost, mexicoFC, MX);
+                productsEntity.setMexicoFC(mexicoFC);
+                britainFC = calculateFreight(weight, britainFC, GB);
+                BigDecimal britainFreight = britainFC.getFreight();
+                BigDecimal britainCost = britainFreight.add(sum);
+                britainFC = priceInfo(britainCost, britainFC, GB);
+                productsEntity.setBritainFC(britainFC);
+                franceFC = calculateFreight(weight, franceFC, FR);
+                BigDecimal franceFreight = franceFC.getFreight();
+                BigDecimal franceCost = franceFreight.add(sum);
+                franceFC = priceInfo(franceCost, franceFC, FR);
+                productsEntity.setFranceFC(franceFC);
+                germanyFC = calculateFreight(weight, germanyFC, DE);
+                BigDecimal germanyFreight = germanyFC.getFreight();
+                BigDecimal germanyCost = germanyFreight.add(sum);
+                germanyFC = priceInfo(germanyCost, germanyFC, DE);
+                productsEntity.setGermanyFC(germanyFC);
+                italyFC = calculateFreight(weight, italyFC, IT);
+                BigDecimal italyFreight = italyFC.getFreight();
+                BigDecimal italyCost = italyFreight.add(sum);
+                italyFC = priceInfo(italyCost, italyFC, IT);
+                productsEntity.setItalyFC(italyFC);
+                spainFC = calculateFreight(weight, spainFC, ES);
+                BigDecimal spainFreight = spainFC.getFreight();
+                BigDecimal spainCost = spainFreight.add(sum);
+                spainFC = priceInfo(spainCost, spainFC, ES);
+                productsEntity.setSpainFC(spainFC);
+                japanFC = calculateFreight(weight, japanFC, JP);
+                BigDecimal japanFreight = japanFC.getFreight();
+                BigDecimal japanCost = japanFreight.add(sum);
+                japanFC = priceInfo(japanCost, japanFC, JP);
+                productsEntity.setJapanFC(japanFC);
+                australiaFC = calculateFreight(weight, australiaFC, AU);
+                BigDecimal australiaFreight = australiaFC.getFreight();
+                BigDecimal australiaCost = australiaFreight.add(sum);
+                australiaFC = priceInfo(australiaCost, australiaFC, AU);
+                productsEntity.setAustraliaFC(australiaFC);
             }
+            return R.ok().put("productsEntity", productsEntity);
         } else {
             return R.ok().put("code", 1);
         }
+    }
+
+    /**
+     * @methodname: refresh 刷新（最终，利润，利润率）
+     * @param: [productsEntity]
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/12/8 11:11
+     */
+    public R refresh(ProductsEntity productsEntity) {
+
+        //美国运费信息
+        FreightCostEntity americanFC = productsEntity.getAmericanFC();
+        BigDecimal americanOptimization = americanFC.getOptimization();
+        BigDecimal americanFinalPrice = americanFC.getFinalPrice();
+        //减去亚马逊15%
+        BigDecimal temp = new BigDecimal(0.85);
+        //最终
+        americanFinalPrice = americanOptimization;
+        //美国汇率
+        BigDecimal americanRate = getRate(US);
+        //产品采购价格
+        BigDecimal purchasePrice = productsEntity.getPurchasePrice();
+        //国内运费
+        BigDecimal domesticFreight = productsEntity.getDomesticFreight();
+        //产品采购价格和国内运费的和
+        BigDecimal sum = purchasePrice.add(domesticFreight);
+        //美国运费
+        BigDecimal americanFreight = americanFC.getFreight();
+        //美国成本
+        BigDecimal americanCost = sum.add(americanFreight);
+        //美国利润
+        BigDecimal americanProfit = ((temp.multiply(americanRate).multiply(americanFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(americanCost);
+        americanFC.setProfit(americanProfit);
+        //美国利润率
+        BigDecimal americanProfitRate = americanProfit.divide(americanRate.multiply(americanFinalPrice).setScale(2, BigDecimal.ROUND_HALF_UP), 2);
+        //把利润率格式转化为0.00%格式的
+        DecimalFormat format = new DecimalFormat("0.00%");
+        String americanProfitRateString = format.format(americanProfitRate);
+        americanFC.setProfitRate(americanProfitRateString);
+        productsEntity.setAmericanFC(americanFC);
+
+
+        FreightCostEntity canadaFC = productsEntity.getCanadaFC();
+        BigDecimal canadaOptimization = canadaFC.getOptimization();
+        BigDecimal canadaFinalPrice = canadaFC.getFinalPrice();
+        canadaFinalPrice = canadaOptimization;
+        BigDecimal canadaRate = getRate(CA);
+        BigDecimal canadaFreight = canadaFC.getFreight();
+        BigDecimal canadaCost = sum.add(canadaFreight);
+        BigDecimal canadaProfit = ((temp.multiply(canadaRate).multiply(canadaFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(canadaCost);
+        canadaFC.setProfit(canadaProfit);
+        BigDecimal canadaProfitRate = canadaProfit.divide(canadaRate.multiply(canadaFinalPrice).setScale(2, BigDecimal.ROUND_HALF_UP), 2);
+        String canadaProfitRateString = format.format(canadaProfitRate);
+        canadaFC.setProfitRate(canadaProfitRateString);
+        productsEntity.setCanadaFC(canadaFC);
+
+
+        FreightCostEntity mexicoFC = productsEntity.getMexicoFC();
+        BigDecimal mexicoOptimization = mexicoFC.getOptimization();
+        BigDecimal mexicoFinalPrice = mexicoFC.getFinalPrice();
+        mexicoFinalPrice = mexicoOptimization;
+        BigDecimal mexicoRate = getRate(MX);
+        BigDecimal mexicoFreight = mexicoFC.getFreight();
+        BigDecimal mexicoCost = sum.add(mexicoFreight);
+        BigDecimal mexicoProfit = ((temp.multiply(mexicoRate).multiply(mexicoFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(mexicoCost);
+        mexicoFC.setProfit(mexicoProfit);
+        BigDecimal mexicoProfitRate = mexicoProfit.divide(mexicoRate.multiply(mexicoFinalPrice).setScale(2, BigDecimal.ROUND_HALF_UP), 2);
+        String mexicoProfitRateString = format.format(mexicoProfitRate);
+        mexicoFC.setProfitRate(mexicoProfitRateString);
+        productsEntity.setMexicoFC(mexicoFC);
+
+        FreightCostEntity britainFC = productsEntity.getBritainFC();
+        BigDecimal britainOptimization = britainFC.getOptimization();
+        BigDecimal britainFinalPrice = britainFC.getFinalPrice();
+        britainFinalPrice = britainOptimization;
+        BigDecimal britainRate = getRate(GB);
+        BigDecimal britainFreight = britainFC.getFreight();
+        BigDecimal britainCost = sum.add(britainFreight);
+        BigDecimal britainProfit = ((temp.multiply(britainRate).multiply(britainFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(britainCost);
+        britainFC.setProfit(britainProfit);
+        BigDecimal britainProfitRate = britainProfit.divide(britainRate.multiply(britainFinalPrice).setScale(2, BigDecimal.ROUND_HALF_UP), 2);
+        String britainProfitRateString = format.format(britainProfitRate);
+        britainFC.setProfitRate(britainProfitRateString);
+        productsEntity.setBritainFC(britainFC);
+
+        FreightCostEntity franceFC = productsEntity.getFranceFC();
+        BigDecimal franceOptimization = franceFC.getOptimization();
+        BigDecimal franceFinalPrice = franceFC.getFinalPrice();
+        franceFinalPrice = franceOptimization;
+        BigDecimal franceRate = getRate(FR);
+        BigDecimal franceFreight = franceFC.getFreight();
+        BigDecimal franceCost = sum.add(franceFreight);
+        BigDecimal franceProfit = ((temp.multiply(franceRate).multiply(franceFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(franceCost);
+        franceFC.setProfit(franceProfit);
+        BigDecimal franceProfitRate = franceProfit.divide(franceRate.multiply(franceFinalPrice).setScale(2, BigDecimal.ROUND_HALF_UP), 2);
+        String franceProfitRateString = format.format(franceProfitRate);
+        franceFC.setProfitRate(franceProfitRateString);
+        productsEntity.setFranceFC(franceFC);
+
+
+        FreightCostEntity germanyFC = productsEntity.getGermanyFC();
+        BigDecimal germanyOptimization = germanyFC.getOptimization();
+        BigDecimal germanyFinalPrice = germanyFC.getFinalPrice();
+        germanyFinalPrice = germanyOptimization;
+        BigDecimal germanyRate = getRate(DE);
+        BigDecimal germanyFreight = germanyFC.getFreight();
+        BigDecimal germanyCost = sum.add(germanyFreight);
+        BigDecimal germanyProfit = ((temp.multiply(germanyRate).multiply(germanyFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(germanyCost);
+        germanyFC.setProfit(germanyProfit);
+        BigDecimal germanyProfitRate = germanyProfit.divide(germanyRate.multiply(germanyFinalPrice).setScale(2, BigDecimal.ROUND_HALF_UP), 2);
+        String germanyProfitRateString = format.format(germanyProfitRate);
+        germanyFC.setProfitRate(germanyProfitRateString);
+        productsEntity.setGermanyFC(germanyFC);
+
+
+        FreightCostEntity italyFC = productsEntity.getItalyFC();
+        BigDecimal italyOptimization = italyFC.getOptimization();
+        BigDecimal italyFinalPrice = italyFC.getFinalPrice();
+        italyFinalPrice = italyOptimization;
+        BigDecimal italyRate = getRate(IT);
+        BigDecimal italyFreight = italyFC.getFreight();
+        BigDecimal italyCost = sum.add(italyFreight);
+        BigDecimal italyProfit = ((temp.multiply(italyRate).multiply(italyFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(italyCost);
+        italyFC.setProfit(italyProfit);
+        BigDecimal italyProfitRate = italyProfit.divide(italyRate.multiply(italyFinalPrice).setScale(2, BigDecimal.ROUND_HALF_UP), 2);
+        String italyProfitRateString = format.format(italyProfitRate);
+        italyFC.setProfitRate(italyProfitRateString);
+        productsEntity.setItalyFC(italyFC);
+
+
+        FreightCostEntity spainFC = productsEntity.getSpainFC();
+        BigDecimal spainOptimization = spainFC.getOptimization();
+        BigDecimal spainFinalPrice = spainFC.getFinalPrice();
+        spainFinalPrice = spainOptimization;
+        BigDecimal spainRate = getRate(ES);
+        BigDecimal spainFreight = spainFC.getFreight();
+        BigDecimal spainCost = sum.add(spainFreight);
+        BigDecimal spainProfit = ((temp.multiply(spainRate).multiply(spainFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(spainCost);
+        spainFC.setProfit(spainProfit);
+        BigDecimal spainProfitRate = spainProfit.divide(spainRate.multiply(spainFinalPrice).setScale(2, BigDecimal.ROUND_HALF_UP), 2);
+        String spainProfitRateString = format.format(spainProfitRate);
+        spainFC.setProfitRate(spainProfitRateString);
+        productsEntity.setSpainFC(spainFC);
+
+
+        FreightCostEntity japanFC = productsEntity.getJapanFC();
+        BigDecimal japanOptimization = japanFC.getOptimization();
+        BigDecimal japanFinalPrice = japanFC.getFinalPrice();
+        japanFinalPrice = japanOptimization;
+        BigDecimal japanRate = getRate(JP);
+        BigDecimal japanFreight = japanFC.getFreight();
+        BigDecimal japanCost = sum.add(japanFreight);
+        BigDecimal japanProfit = ((temp.multiply(japanRate).multiply(japanFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(japanCost);
+        japanFC.setProfit(japanProfit);
+        BigDecimal japanProfitRate = japanProfit.divide(japanRate.multiply(japanFinalPrice).setScale(2, BigDecimal.ROUND_HALF_UP), 2);
+        String japanProfitRateString = format.format(japanProfitRate);
+        japanFC.setProfitRate(japanProfitRateString);
+        productsEntity.setJapanFC(japanFC);
+
+        FreightCostEntity australiaFC = productsEntity.getAustraliaFC();
+        BigDecimal australiaOptimization = australiaFC.getOptimization();
+        BigDecimal australiaFinalPrice = australiaFC.getFinalPrice();
+        australiaFinalPrice = australiaOptimization;
+        BigDecimal australiaRate = getRate(AU);
+        BigDecimal australiaFreight = australiaFC.getFreight();
+        BigDecimal australiaCost = sum.add(australiaFreight);
+        BigDecimal australiaProfit = ((temp.multiply(australiaRate).multiply(australiaFinalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(australiaCost);
+        australiaFC.setProfit(australiaProfit);
+
+
         return R.ok();
     }
 
     //根据产品长宽高计算产品重量
-    public  Double calculatedWeight(Double productLength, Double productWide, Double productHeight) {
+    public Double calculatedWeight(Double productLength, Double productWide, Double productHeight) {
         //体积重量按每6000立方厘米折合1公斤计算,体积重量的计算公式为:体积重量=(长X宽X高)/6000
         Double weight = (productHeight * productLength * productWide) / 6000;
         return weight;
     }
 
     //计算国际运费
-    public  FreightCostEntity calculateFreight(Double weight, FreightCostEntity freightCostEntity, String countryCode) {
+    public FreightCostEntity calculateFreight(Double weight, FreightCostEntity freightCostEntity, String countryCode) {
         if (weight < 2) {
             //根据国家编号查找运费价格进行运费计算
             FreightPriceEntity freightPriceEntity = freightPriceService.selectOne(new EntityWrapper<FreightPriceEntity>().eq("type", "小包").eq("country_code", countryCode));
-            BigDecimal bigDecimal =new BigDecimal(weight);
+            BigDecimal bigDecimal = new BigDecimal(weight);
             //计算出运费价格
             BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice());
             freightCostEntity.setFreight(freightPrice);
             freightCostEntity.setType("小包");
             return freightCostEntity;
-        }else{
+        } else {
             //根据国家编号查找运费价格进行运费计算
-            FreightPriceEntity freightPriceEntity = freightPriceService.selectOne(new EntityWrapper<FreightPriceEntity>().eq("type","大包").eq("country_code",countryCode));
-            BigDecimal bigDecimal =new BigDecimal(weight);
+            FreightPriceEntity freightPriceEntity = freightPriceService.selectOne(new EntityWrapper<FreightPriceEntity>().eq("type", "大包").eq("country_code", countryCode));
+            BigDecimal bigDecimal = new BigDecimal(weight);
             //计算出运费价格
             BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice());
             freightCostEntity.setFreight(freightPrice);
             freightCostEntity.setType("大包");
             return freightCostEntity;
         }
+    }
+
+    //计算售价的信息
+    public FreightCostEntity priceInfo(BigDecimal cost, FreightCostEntity freightCostEntity, String countryCode) {
+        BigDecimal bigDecimal = new BigDecimal(0.45);
+        //计算出售价
+        BigDecimal sellingPrice = cost.divide(bigDecimal, 2, BigDecimal.ROUND_HALF_UP);//四舍五入
+        freightCostEntity.setPrice(sellingPrice);
+        //获取国家的汇率
+        AmazonRateEntity amazonRateEntity = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("country_code", countryCode));
+        BigDecimal rate = amazonRateEntity.getRate();
+        BigDecimal multiply = rate.multiply(bigDecimal);
+        //外币
+        BigDecimal foreignCurrency = cost.divide(multiply, 2, BigDecimal.ROUND_HALF_UP);//四舍五入
+        freightCostEntity.setForeignCurrency(foreignCurrency);
+        //优化
+        String foreignCurrencyString = foreignCurrency.toString();//外币变成字符串
+        String[] foreignCurrencyStringArray = foreignCurrencyString.split("\\.");//字符串以"."进行分割
+        String optimizationString = foreignCurrencyStringArray[0] + "." + "99";//把后两位变成99
+        BigDecimal optimization = new BigDecimal(optimizationString);
+        freightCostEntity.setOptimization(optimization);
+        return freightCostEntity;
+    }
+
+    //获取国家的汇率
+    public BigDecimal getRate(String countryCode) {
+        //获取国家的汇率
+        AmazonRateEntity amazonRateEntity = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("country_code", countryCode));
+        BigDecimal rate = amazonRateEntity.getRate();
+        return rate;
     }
 }
 

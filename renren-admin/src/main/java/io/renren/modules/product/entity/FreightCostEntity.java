@@ -58,6 +58,7 @@ public class FreightCostEntity implements Serializable {
 	 */
 	private String profitRate;
 
+
 	public String getProfitRate() {
 		return profitRate;
 	}
