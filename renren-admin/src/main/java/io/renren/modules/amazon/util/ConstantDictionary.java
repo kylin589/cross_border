@@ -65,4 +65,42 @@ public interface ConstantDictionary {
          */
         String[] AMAZON_ORDER_STATE = {ORDER_STATE_PENDING, ORDER_STATE_UNSHIPPED, ORDER_STATE_SHIPPED};
     }
+
+    /**
+     * 币种代码
+     */
+    public interface RateCode {
+        /**
+         * 人民币
+         */
+        String ZH_CODE = "CNY";
+        /**
+         * 美元
+         */
+        String US_CODE = "USD";
+        /**
+         * 日元
+         */
+        String JP_CODE = "JPY";
+        /**
+         * 欧元
+         */
+        String EU_CODE = "EUR";
+        /**
+         * 英镑
+         */
+        String UK_CODE = "GBP";
+        /**
+         * 澳大利亚元
+         */
+        String AU_CODE = "AUD";
+        /**
+         * 加拿大元
+         */
+        String CA_CODE = "CAD";
+        /**
+         * 墨西哥比索
+         */
+        String MXG_CODE = "MXN";
+    }
 }
