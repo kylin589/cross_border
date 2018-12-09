@@ -10,8 +10,6 @@
         <result property="waybill" column="waybill"/>
         <result property="logisticsCompany" column="logistics_company"/>
         <result property="issuanceDate" column="issuance_date"/>
-        <result property="userId" column="user_id"/>
-        <result property="deptId" column="dept_id"/>
         <result property="createTime" column="create_time"/>
     </resultMap>
 

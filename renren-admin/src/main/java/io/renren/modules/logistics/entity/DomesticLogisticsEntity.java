@@ -39,14 +39,6 @@ public class DomesticLogisticsEntity implements Serializable {
 	 */
 	private Date issuanceDate;
 	/**
-	 * 
-	 */
-	private Long userId;
-	/**
-	 * 
-	 */
-	private Long deptId;
-	/**
 	 * 创建时间
 	 */
 	private Date createTime;
@@ -110,30 +102,6 @@ public class DomesticLogisticsEntity implements Serializable {
 	 */
 	public Date getIssuanceDate() {
 		return issuanceDate;
-	}
-	/**
-	 * 设置：
-	 */
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-	/**
-	 * 获取：
-	 */
-	public Long getUserId() {
-		return userId;
-	}
-	/**
-	 * 设置：
-	 */
-	public void setDeptId(Long deptId) {
-		this.deptId = deptId;
-	}
-	/**
-	 * 获取：
-	 */
-	public Long getDeptId() {
-		return deptId;
 	}
 	/**
 	 * 设置：创建时间
