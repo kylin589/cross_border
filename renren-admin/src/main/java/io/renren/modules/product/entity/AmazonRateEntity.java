@@ -24,9 +24,9 @@ public class AmazonRateEntity implements Serializable {
 	@TableId
 	private Long rateId;
 	/**
-	 * 国家代码
+	 * 币种代码
 	 */
-	private String countryCode;
+	private String rateCode;
 	/**
 	 * 汇率
 	 */
@@ -48,18 +48,15 @@ public class AmazonRateEntity implements Serializable {
 	public Long getRateId() {
 		return rateId;
 	}
-	/**
-	 * 设置：国家代码
-	 */
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+
+	public String getRateCode() {
+		return rateCode;
 	}
-	/**
-	 * 获取：国家代码
-	 */
-	public String getCountryCode() {
-		return countryCode;
+
+	public void setRateCode(String rateCode) {
+		this.rateCode = rateCode;
 	}
+
 	/**
 	 * 设置：汇率
 	 */
