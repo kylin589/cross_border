@@ -42,6 +42,10 @@ public class OrderEntity implements Serializable {
 	 */
 	private String orderState;
 	/**
+	 * 国家代码
+	 */
+	private String countryCode;
+	/**
 	 * 店铺名称(店铺+国家）
 	 */
 	private String shopName;
@@ -165,6 +169,14 @@ public class OrderEntity implements Serializable {
 
 	public void setOrderState(String orderState) {
 		this.orderState = orderState;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 	/**
@@ -339,5 +351,13 @@ public class OrderEntity implements Serializable {
 
 	public void setDeptId(Long deptId) {
 		this.deptId = deptId;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 }
