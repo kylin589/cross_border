@@ -336,4 +336,37 @@ public class BatchModifyDto {
     public void setSpain(String spain) {
         this.spain = spain;
     }
+
+    @Override
+    public String toString() {
+        return "BatchModifyDto{" +
+                "auditStatus='" + auditStatus + '\'' +
+                ", shelveStatus='" + shelveStatus + '\'' +
+                ", productType='" + productType + '\'' +
+                ", categoryOneId=" + categoryOneId +
+                ", categoryTwoId=" + categoryTwoId +
+                ", categoryThreeId=" + categoryThreeId +
+                ", producerName='" + producerName + '\'' +
+                ", brandName='" + brandName + '\'' +
+                ", manufacturerNumber='" + manufacturerNumber + '\'' +
+                ", productWeight=" + productWeight +
+                ", productLength=" + productLength +
+                ", productWide=" + productWide +
+                ", productHeight=" + productHeight +
+                ", productTitleQ='" + productTitleQ + '\'' +
+                ", productTitleH='" + productTitleH + '\'' +
+                ", keyWord='" + keyWord + '\'' +
+                ", keyPoints='" + keyPoints + '\'' +
+                ", productDescriptionQ='" + productDescriptionQ + '\'' +
+                ", productDescriptionH='" + productDescriptionH + '\'' +
+                ", keyPointsadd='" + keyPointsadd + '\'' +
+                ", keywordsadd='" + keywordsadd + '\'' +
+                ", chinese='" + chinese + '\'' +
+                ", britain='" + britain + '\'' +
+                ", france='" + france + '\'' +
+                ", germany='" + germany + '\'' +
+                ", italy='" + italy + '\'' +
+                ", spain='" + spain + '\'' +
+                '}';
+    }
 }

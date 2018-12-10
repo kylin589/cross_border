@@ -46,6 +46,7 @@ public class TimingUploadController {
     @Autowired
     private UploadController uploadController;
 
+
     public void timingUpload(String params) {
         //使用ObjectMapper将传过来的字符串参数变成实体
         ObjectMapper om = new ObjectMapper();
@@ -58,4 +59,5 @@ public class TimingUploadController {
         //调用已经写好的立即上传产品的方法
         uploadController.timingUpload(addUploadVM);
     }
+
 }
