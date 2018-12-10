@@ -1,7 +1,11 @@
 package io.renren.modules.product.dto;
 
+import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
+import io.renren.modules.order.entity.ProductShipAddressEntity;
+
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Auther: wdh
@@ -49,19 +53,36 @@ public class OrderDTO {
      * 订单数量
      */
     private Integer orderNumber;
+    /**
+     * 寄件信息
+     */
+    private ProductShipAddressEntity shipAddress;
+    /**
+     * 国内物流
+     */
+    private List<DomesticLogisticsEntity> domesticLogisticsList;
+    /**
+     * 国际物流
+     */
+    // TODO: 2018/12/10
 
     /**
-     * 订单金额
+     * 订单金额（外币）
      */
-    private BigDecimal orderMoney;
+    private BigDecimal orderMoneyForeign;
+
     /**
-     * Amazon佣金
+     * 国际币种
      */
-    private BigDecimal amazonCommission;
+
     /**
-     * 到账金额
+     * Amazon佣金（外币）
      */
-    private BigDecimal accountMoney;
+    private BigDecimal amazonCommissionForeign;
+    /**
+     * 到账金额（外币）
+     */
+    private BigDecimal accountMoneyForeign;
     /**
      * 国际运费
      */

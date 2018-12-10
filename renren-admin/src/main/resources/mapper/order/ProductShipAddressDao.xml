@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.order.dao.ProductShipAddressDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.order.entity.ProductShipAddressEntity" id="productShipAddressMap">
+        <result property="shipAddressId" column="ship_address_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="shipName" column="ship_name"/>
+        <result property="shipCountry" column="ship_country"/>
+        <result property="shipTel" column="ship_tel"/>
+        <result property="shipZip" column="ship_zip"/>
+        <result property="shipRegion" column="ship_region"/>
+        <result property="shipCity" column="ship_city"/>
+        <result property="shipCounty" column="ship_county"/>
+        <result property="shipDistrict" column="ship_district"/>
+        <result property="shipAddressLine" column="ship_address_line"/>
+    </resultMap>
+
+
+</mapper>
