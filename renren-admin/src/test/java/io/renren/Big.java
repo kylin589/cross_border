@@ -24,16 +24,20 @@ public class Big {
         System.out.println(b);*/
         /*BigDecimal add = b.add(c).add(d);
         System.out.println(add);*/
-        BigDecimal divide = ((temp.multiply(z).multiply(h)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(cb);
+        /*BigDecimal divide = ((temp.multiply(z).multiply(h)).setScale(2, BigDecimal.ROUND_HALF_UP)).subtract(cb);
         BigDecimal divide1 = divide.divide(z.multiply(h).setScale(2, BigDecimal.ROUND_HALF_UP),2);
         System.out.println(divide1);
         DecimalFormat df = new DecimalFormat("0.00%");
-        System.out.println(df.format(divide1));
+        System.out.println(df.format(divide1));*/
        /* System.out.println(divide1);
         System.out.println(divide);
         BigDecimal divide2 = divide.divide(divide1,2);
         System.out.println(divide2);
         DecimalFormat df = new DecimalFormat("0.00%");
         System.out.println(df.format(divide2));*/
+
+
+        BigDecimal add = b.add(c);
+        System.out.println(add);
     }
 }
