@@ -1,4 +1,121 @@
 
+/*单选框美化*/
+.rdo {
+    width: 0px;
+    margin-right: 25px;/*选项之间的距离*/
+    position: relative;
+}
+.rdo:before,.rdo:after {
+    content: '';
+    position: absolute;
+    border-radius: 50%; /*圆角*/
+    transition: .4s ease; /*中点跳转的速度*/
+}
+.rdo:before {/*所有选项*/
+    width: 12px;
+    height: 12px; /*外圆的大小*/
+    background: #fff; /*圆环的颜色*/
+    border: 1px solid #888;/*外圆的边框*/
+}
+.rdo:after {/*未选中的中点*/
+    top: 4px;
+    left: 4px;
+    width: 6px;
+    height: 6px;
+    background-color: transparent; /*未选的中点的颜色*/
+}
+.rdo:checked:after {/*选中的中点*/
+    top: 4px;
+    left: 4px;
+    width: 6px;
+    height: 6px;
+    background-color:#00a3e8; /*选中的中点*/
+}
+.rdo:checked:before {
+    border-color:#00a3e8; /*选中的外圆边框*/
+}
+.rdo-text{
+    display: inline-block;
+    width: 60px;
+    font-size: 14px;
+    position: relative;
+    /*top: 3px;*/
+    left: -6px;
+}
+
+#pilUp h3 {
+    margin: 10px;
+    color: #00a3e8;
+    font-weight: bold;
+}
+#pilUp .form_item{
+    /*margin-bottom: 18px;*/
+    padding: 10px 36px;
+}
+#pilUp .item{
+    display: flex;
+    margin-bottom: 14px;
+}
+#pilUp .item>div:nth-child(1){
+    width: 110px;
+}
+#pilUp .item>div:nth-child(1) h4{
+    font-weight: bold;
+    color: #666;
+}
+#pilUp .item>div:nth-child(2){
+    flex: 1;
+}
+#pilUp .item>div:nth-child(2) input[type=text]{
+    height: 28px;
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    padding-left: 6px;
+    margin-right: 10px;
+}
+#pilUp .item>div:nth-child(2) textarea{
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    color: #999;
+    height: 80px;
+    width: 300px;
+    padding:10px;
+    vertical-align: text-top;
+}
+#pilUp .item>div:nth-child(2) .pro_inf span{
+    display: inline-block;
+    margin: 0 10px 15px 0;
+}
+
+#pilUp .item>div:nth-child(2) .pro_inf label{
+    display: inline-block;
+    width: 103px;
+    line-height: 28px;
+    color: #444;
+    padding-left: 5px;
+}
+#pilUp .item>div:nth-child(2) .pro_inf label:before{
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    background: -webkit-linear-gradient(bottom, #1e9fff , #63e3f0); /* Safari 5.1 - 6.0 *
+    background: -o-linear-gradient(right,  #29c5db , #63abf0); /* Opera 11.1 - 12.0 */
+    background: -moz-linear-gradient(bottom, #1e9fff , #63e3f0); /* Firefox 3.6 - 15 */
+    background: linear-gradient(to bottom,  #1e9fff , #63e3f0); /* 标准的语法 */
+    margin-right: 5px;
+}
+
+.size_input{
+    width: 50px;
+}
+
+.sousuoAreaInput{
+    width: 500px;
+    /*padding: 6px;*/
+    /*border: 1px solid #aaa;*/
+    /*border-radius: 3px;*/
+}
 /*搜索*/
 .search1{
     overflow: hidden;
@@ -24,7 +141,7 @@
     border: 1px solid #00a3e8;
     margin-left: 10px;
     background: #fff;
-
+    cursor: pointer;
 }
 .search1 .create{
     float: right;
@@ -36,6 +153,10 @@
     color:#fff;
     background: url("../../img/create_bg.png");
     background-size: 100% 100%;
+    cursor: pointer;
+}
+.search1 .create:hover{
+    /*box-shadow: 0 0 20px #ccc;*/
 }
 
 /*搜索分类*/
@@ -47,12 +168,20 @@
 }
 .sousuoArea{
     position: absolute;
+    top:47px;
+    left:10px;
+    width: 510px;
     /*display: flex;*/
     display: none;
     background: #fff;
-    border: 1px solid #ddd;
+    /*border: 1px solid #ddd;*/
     border-radius: 3px;
     z-index: 1;
+    box-shadow: 0 0 10px #ccc;
+}
+.sousuoArea1{
+    top: 200px;
+    left: 126px;
 }
 .sousuoArea>div{
     flex: 1;
@@ -90,8 +219,28 @@
 .sousuoArea>div.areaTwo ul li{
     flex: 1;
     list-style: none;
+    padding: 5px;
     color: #888;
     font-size: 13px;
+    cursor: pointer;
+}
+.sousuoArea>div.areaTwo ul li:hover{
+    background: #fff;
+}
+.sousuoArea>div.areaThree ul{
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.sousuoArea>div.areaThree ul li{
+    flex: 1;
+    list-style: none;
+    padding: 5px;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
 }
 
 /*筛选*/
@@ -203,8 +352,19 @@ input[type=checkbox]{
     box-shadow: 0 0 5px #c6eeff;
     color: #555;
 }
+.operation button:hover{
+    cursor: pointer;
+    background: #91daf9;
+    /*color: #fff;*/
+    box-shadow: 0 0 5px #c6eeff;
+}
 .operation button.del , .operation button.updata{
     background: #fecb9c;
+    box-shadow: 0 0 10px #fecb9c;
+}
+.operation button.del:hover , .operation button.updata:hover{
+    background: #f3b173;
+    /*color: #fff;*/
     box-shadow: 0 0 10px #fecb9c;
 }
 
@@ -234,8 +394,8 @@ input[type=checkbox]{
     box-shadow: 0 0 10px #888;
 }
 .pro_list .item.action{
-     background: rgba(183,229,248,.2);
- }
+    background: rgba(183,229,248,.2);
+}
 .pro_list .item img{
     width: 100%;
 }

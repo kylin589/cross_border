@@ -4,44 +4,44 @@
     <meta charset="UTF-8">
     <title>详情</title>
     <#include "/header_kuajing.html">
-    <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
-    <style>
-        .ul1 {
-            width: 100%;
-            position: relative;
-            /*margin: 10px auto;*/
-            /*overflow: hidden;*/
-            /*height: 100px;*/
-        }
+        <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
+        <style>
+            .ul1 {
+                width: 100%;
+                position: relative;
+                /*margin: 10px auto;*/
+                /*overflow: hidden;*/
+                /*height: 100px;*/
+            }
 
-        .ul1 li {
-            width: 50px;
-            height: 50px;
-            float: left;
-            list-style: none;
-            margin: 10px;
-        }
-        .ul1 li img{
-            width: 100%;
-        }
-        .ul1 li i{
-            position: relative;
-            top: -65px;
-            left: 45px;
-            color: #00a3e8;
-            display: none;
-        }
+            .ul1 li {
+                width: 50px;
+                height: 50px;
+                float: left;
+                list-style: none;
+                margin: 10px;
+            }
+            .ul1 li img{
+                width: 100%;
+            }
+            .ul1 li i{
+                position: relative;
+                top: -65px;
+                left: 45px;
+                color: #00a3e8;
+                display: none;
+            }
 
-        .ul1 li:hover {
-            border-color: #9a9fa4;
-            box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.85);
-        }
+            .ul1 li:hover {
+                border-color: #9a9fa4;
+                box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.85);
+            }
 
-        .ul1 .active {
-            border: 1px dashed red;
-        }
-    </style>
-</head>
+            .ul1 .active {
+                border: 1px dashed red;
+            }
+        </style>
+        </head>
 <body>
 <div class="box" id="step">
 
@@ -62,7 +62,7 @@
                     <h4>产品编号</h4>
                 </div>
                 <div>
-                    <span>1069613</span>
+                    <span>{{proDetails.productId}}</span>
                 </div>
             </div>
             <div class="item">
@@ -88,30 +88,25 @@
                     <h4>产品分类</h4>
                 </div>
                 <div>
-                    <input type="text" class="sousuoAreaInput" placeholder="产品分类">
+                    <input type="text" class="sousuoAreaInput" @click="typeClickINput" placeholder="产品分类" v-model="proDetails.productCategory">
                     <div class="sousuoArea">
                         <div class="areaOne">
                             <ul>
-                                <li>家用电器<span>（{{  }}）</span></li>
-                                <li>服装，鞋靴，箱包<span>（{{  }}）</span></li>
-                                <li>美妆，个护健康<span>（{{  }}）</span></li>
-                                <li>图书<span>（{{  }}）</span></li>
-                                <li>玩具，母婴，家庭会员<span>（{{  }}）</span></li>
-                                <li>食品，酒水，生鲜<span>（{{  }}）</span></li>
-                                <li>游戏，影视，乐器<span>（{{  }}）</span></li>
-                                <li>亚马逊Drive<span>（{{  }}）</span></li>
-                                <li>手机，摄影，数码<span>（{{  }}）</span></li>
-                                <li>Kindle商店<span>（{{  }}）</span></li>
-                                <li>电脑，办公<span>（{{  }}）</span></li>
-                                <li>钟表，首饰<span>（{{  }}）</span></li>
-                                <li>Fire平板电脑<span>（{{  }}）</span></li>
-                                <li>运动户外，汽车用品<span>（{{  }}）</span></li>
-                                <li>家居，厨具，家装<span>（{{  }}）</span></li>
-                                <li>亚马逊海外购<span>（{{  }}）</span></li>
-                                <li>电子配件，智能生活<span>（{{  }}）</span></li>
+                                <li v-for="categoryOneItem in categoryOneList" :data-id="categoryOneItem.categoryId" :data-pId="categoryOneItem.parentId" :data-if="categoryOneItem.ifNext" :data-val = 'categoryOneItem.categoryName' @click="clickTypeItem"> {{ categoryOneItem.categoryName }}（{{categoryOneItem.count}}）</li>
+                            </ul>
+                        </div>
+                        <div class="areaTwo" v-if="categoryTwoList.length != 0">
+                            <ul>
+                                <li v-for="categoryTwoItem in categoryTwoList" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-if="categoryTwoItem.ifNext" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
+                            </ul>
+                        </div>
+                        <div class="areaThree" v-if="categoryThreeList.length != 0">
+                            <ul>
+                                <li v-for="categoryThreeItem in categoryThreeList" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-if="categoryThreeItem.ifNext" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
                             </ul>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -121,11 +116,11 @@
                     <h4>审核状态</h4>
                 </div>
                 <div>
-                    <input type="radio" class="rdo" name="sex" checked style="">
+                    <input type="radio" class="rdo" name="sex" value="001" v-model="proDetails.auditStatus" style="">
                     <label class="rdo-text">通过</label>
-                    <input type="radio" class="rdo" name="sex">
+                    <input type="radio" class="rdo" name="sex" value="002" v-model="proDetails.auditStatus">
                     <label class="rdo-text">待审核</label>
-                    <input type="radio" class="rdo" name="sex">
+                    <input type="radio" class="rdo" name="sex" value="003" v-model="proDetails.auditStatus">
                     <label class="rdo-text">失效</label>
 
                 </div>
@@ -135,15 +130,15 @@
                     <h4>上下架</h4>
                 </div>
                 <div>
-                    <input type="radio" class="rdo" name="sex1" checked style="">
+                    <input type="radio" class="rdo" name="sex1" value="001" v-model="proDetails.shelveStatus" style="">
                     <label class="rdo-text">上架</label>
-                    <input type="radio" class="rdo" name="sex1">
+                    <input type="radio" class="rdo" name="sex1" value="002" v-model="proDetails.shelveStatus">
                     <label class="rdo-text">下架</label>
-                    <input type="radio" class="rdo" name="sex1">
+                    <input type="radio" class="rdo" name="sex1" value="003" v-model="proDetails.shelveStatus">
                     <label class="rdo-text">过滤</label>
-                    <input type="radio" class="rdo" name="sex1" style="">
+                    <input type="radio" class="rdo" name="sex1" value="004" v-model="proDetails.shelveStatus" style="">
                     <label class="rdo-text">侵权</label>
-                    <input type="radio" class="rdo" name="sex1">
+                    <input type="radio" class="rdo" name="sex1" value="005" v-model="proDetails.shelveStatus">
                     <label class="rdo-text">屏蔽</label>
                 </div>
             </div>
@@ -152,15 +147,15 @@
                     <h4>产品类型</h4>
                 </div>
                 <div>
-                    <input type="radio" class="rdo" name="sex2" checked style="">
+                    <input type="radio" class="rdo" name="sex2" value="001" v-model="proDetails.productType" style="">
                     <label class="rdo-text">重点</label>
-                    <input type="radio" class="rdo" name="sex2">
+                    <input type="radio" class="rdo" name="sex2" value="002" v-model="proDetails.productType">
                     <label class="rdo-text">原创</label>
-                    <input type="radio" class="rdo" name="sex2">
+                    <input type="radio" class="rdo" name="sex2" value="003" v-model="proDetails.productType">
                     <label class="rdo-text">海外</label>
-                    <input type="radio" class="rdo" name="sex2" style="">
+                    <input type="radio" class="rdo" name="sex2" value="004" v-model="proDetails.productType" style="">
                     <label class="rdo-text">抓取</label>
-                    <input type="radio" class="rdo" name="sex2">
+                    <input type="radio" class="rdo" name="sex2" value="005" v-model="proDetails.productType">
                     <label class="rdo-text">其他</label>
                 </div>
             </div>
@@ -171,7 +166,7 @@
                     <h4>商家信息</h4>
                 </div>
                 <div>
-                    <input type="button" value="产品页">
+                    <input type="button"  value="产品页">
                 </div>
             </div>
             <div class="item">
@@ -179,12 +174,12 @@
                     <h4>产品信息</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><label for="">厂商名称：</label><input type="text" placeholder="建议填写"></span>
-                    <span><label for="">品牌名称：</label><input type="text" placeholder="建议填写"></span>
-                    <span><label for="">厂商编号：</label><input type="text" placeholder="建议填写"></span>
-                    <span><label for="">产品来源：</label><input type="text" placeholder="建议填写"></span><br>
-                    <span><label for="">来源地址：</label><textarea>建议填写</textarea></span><br>
-                    <span><label for="">附加备注：</label><textarea>建议填写</textarea></span><br>
+                    <span><label for="">厂商名称：</label><input type="text" placeholder="厂商名称" v-model="proDetails.producerName"></span>
+                    <span><label for="">品牌名称：</label><input type="text" placeholder="品牌名称" v-model="proDetails.brandName"></span>
+                    <span><label for="">厂商编号：</label><input type="text" placeholder="厂商编号" v-model="proDetails.manufacturerNumber"></span>
+                    <span><label for="">产品来源：</label><input type="text" placeholder="产品来源" v-model="proDetails.productSource"></span><br>
+                    <span><label for="">来源地址：</label><textarea v-model="proDetails.sellerLink"></textarea></span><br>
+                    <span><label for="">附加备注：</label><textarea v-model="proDetails.productRemark"></textarea></span><br>
                 </div>
             </div>
             <div class="item">
@@ -207,102 +202,115 @@
                     <h4>成本运费</h4>
                 </div>
                 <div class="pro_inf chengben">
-                    <span><label for="">采购价格(￥)：</label><input type="text" placeholder="建议填写"></span>
-                    <span><label for="">销售价格(￥)：</label><input type="text" placeholder="建议填写"></span>
-                    <span><label for="">国内运费(￥)：</label><input type="text" placeholder="建议填写"></span><br>
-                    <span><label for="">国际运费(￥)：</label><input type="text" placeholder="建议填写"></span>
-                    <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="建议填写"></span><br>
-                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="建议填写"> * <input class="size_input" type="text" placeholder="建议填写"> * <input class="size_input" type="text" placeholder="建议填写"></span>
+                    <span><label for="">采购价格(￥)：</label><input type="text" placeholder="采购价格(￥)" v-model="proDetails.purchasePrice"></span>
+                    <span><label for="">销售价格(￥)：</label><input type="text" placeholder="销售价格(￥)" v-model="proDetails.purchasePrice"></span>
+                    <span><label for="">国内运费(￥)：</label><input type="text" placeholder="国内运费(￥)" v-model="proDetails.domesticFreight"></span><br>
+                    <span><label for="">国际运费(￥)：</label><input type="text" placeholder="国际运费(￥)" v-model="proDetails.purchasePrice"></span>
+                    <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="包装毛重(kg)" v-model="proDetails.productWeight"></span><br>
+                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength"> * <input class="size_input" type="text" placeholder="宽" v-model="proDetails.productWide"> * <input class="size_input" type="text" placeholder="高" v-model="proDetails.productHeight"></span>
                     <span><label class="">产品有电池：</label><input type="checkbox" class="rdo" name="" style=""> </span><br>
-                    <span><label for="">库存数量：</label><input type="text" placeholder="建议填写"></span>
-                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="建议填写"></span>
+                    <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" v-model="proDetails.stock"></span>
+                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" v-model="proDetails.pretreatmentDate"></span>
 
-                    <table class="tableY">
-                        <tr>
-                            <th></th>
-                            <th>美国</th>
-                            <th>加拿大</th>
-                            <th>墨西哥</th>
-                            <th>英国</th>
-                            <th>法国</th>
-                            <th>德国</th>
-                            <th>意大利</th>
-                            <th>西班牙</th>
-                            <th>日本</th>
-                        </tr>
-                        <tr>
-                            <th>运费（￥）</th>
-                            <td>{{ freightData.usa }}</td>
-                            <td>{{ freightData.canada }}</td>
-                            <td>{{ freightData.mexico }}</td>
-                            <td>{{ freightData.britain }}</td>
-                            <td>{{ freightData.france }}</td>
-                            <td>{{ freightData.germany }}</td>
-                            <td>{{ freightData.italy }}</td>
-                            <td>{{ freightData.spain }}</td>
-                            <td>{{ freightData.japan }}</td>
-                        </tr>
-                        <tr>
-                            <th>售价（￥）</th>
-                            <td>{{ freightData.usa }}</td>
-                            <td>{{ freightData.canada }}</td>
-                            <td>{{ freightData.mexico }}</td>
-                            <td>{{ freightData.britain }}</td>
-                            <td>{{ freightData.france }}</td>
-                            <td>{{ freightData.germany }}</td>
-                            <td>{{ freightData.italy }}</td>
-                            <td>{{ freightData.spain }}</td>
-                            <td>{{ freightData.japan }}</td>
-                        </tr>
-                        <tr>
-                            <th>外币</th>
-                            <td>{{ freightData.usa }}</td>
-                            <td>{{ freightData.canada }}</td>
-                            <td>{{ freightData.mexico }}</td>
-                            <td>{{ freightData.britain }}</td>
-                            <td>{{ freightData.france }}</td>
-                            <td>{{ freightData.germany }}</td>
-                            <td>{{ freightData.italy }}</td>
-                            <td>{{ freightData.spain }}</td>
-                            <td>{{ freightData.japan }}</td>
-                        </tr>
-                        <tr>
-                            <th>优化</th>
-                            <td>{{ freightData.usa }}</td>
-                            <td>{{ freightData.canada }}</td>
-                            <td>{{ freightData.mexico }}</td>
-                            <td>{{ freightData.britain }}</td>
-                            <td>{{ freightData.france }}</td>
-                            <td>{{ freightData.germany }}</td>
-                            <td>{{ freightData.italy }}</td>
-                            <td>{{ freightData.spain }}</td>
-                            <td>{{ freightData.japan }}</td>
-                        </tr>
-                        <tr>
-                            <th>最终</th>
-                            <td>{{ freightData.usa }}</td>
-                            <td>{{ freightData.canada }}</td>
-                            <td>{{ freightData.mexico }}</td>
-                            <td>{{ freightData.britain }}</td>
-                            <td>{{ freightData.france }}</td>
-                            <td>{{ freightData.germany }}</td>
-                            <td>{{ freightData.italy }}</td>
-                            <td>{{ freightData.spain }}</td>
-                            <td>{{ freightData.japan }}</td>
-                        </tr>
-                        <tr>
-                            <th>利润（￥）</th>
-                            <td>{{ freightData.usa }}</td>
-                            <td>{{ freightData.canada }}</td>
-                            <td>{{ freightData.mexico }}</td>
-                            <td>{{ freightData.britain }}</td>
-                            <td>{{ freightData.france }}</td>
-                            <td>{{ freightData.germany }}</td>
-                            <td>{{ freightData.italy }}</td>
-                            <td>{{ freightData.spain }}</td>
-                            <td>{{ freightData.japan }}</td>
-                        </tr>
-                    </table>
+                    <!--<table class="tableY">-->
+                    <!--<tr>-->
+                    <!--<th></th>-->
+                    <!--<th>美国</th>-->
+                    <!--<th>加拿大</th>-->
+                    <!--<th>墨西哥</th>-->
+                    <!--<th>英国</th>-->
+                    <!--<th>法国</th>-->
+                    <!--<th>德国</th>-->
+                    <!--<th>意大利</th>-->
+                    <!--<th>西班牙</th>-->
+                    <!--<th>日本</th>-->
+                    <!--<th>澳大利亚</th>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<th>运费（￥）</th>-->
+                    <!--<td>{{ proDetails.americanFC.freight }}</td>-->
+                    <!--<td>{{ proDetails.canadaFC.freight }}</td>-->
+                    <!--<td>{{ proDetails.mexicoFC.freight }}</td>-->
+                    <!--<td>{{ proDetails.britainFC.freight }}</td>-->
+                    <!--<td>{{ proDetails.franceFC.freight }}</td>-->
+                    <!--<td>{{ proDetails.germanyFC.freight }}</td>-->
+                    <!--<td>{{ proDetails.italyFC.freight }}</td>-->
+                    <!--<td>{{ proDetails.spainFC.freight }}</td>-->
+                    <!--<td>{{ proDetails.japanFC.freight }}</td>-->
+                    <!--<td>{{ proDetails.australiaFC.freight }}</td>-->
+
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<th>售价（￥）</th>-->
+                    <!--<td>{{ proDetails.americanFC.price }}</td>-->
+                    <!--<td>{{ proDetails.canadaFC.price }}</td>-->
+                    <!--<td>{{ proDetails.mexicoFC.price }}</td>-->
+                    <!--<td>{{ proDetails.britainFC.price }}</td>-->
+                    <!--<td>{{ proDetails.franceFC.price }}</td>-->
+                    <!--<td>{{ proDetails.germanyFC.price }}</td>-->
+                    <!--<td>{{ proDetails.italyFC.price }}</td>-->
+                    <!--<td>{{ proDetails.spainFC.price }}</td>-->
+                    <!--<td>{{ proDetails.japanFC.price }}</td>-->
+                    <!--<td>{{ proDetails.australiaFC.price }}</td>-->
+
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<th>外币</th>-->
+                    <!--<td>{{ proDetails.americanFC.foreignCurrency }}</td>-->
+                    <!--<td>{{ proDetails.canadaFC.foreignCurrency }}</td>-->
+                    <!--<td>{{ proDetails.mexicoFC.foreignCurrency }}</td>-->
+                    <!--<td>{{ proDetails.britainFC.foreignCurrency }}</td>-->
+                    <!--<td>{{ proDetails.franceFC.foreignCurrency }}</td>-->
+                    <!--<td>{{ proDetails.germanyFC.foreignCurrency }}</td>-->
+                    <!--<td>{{ proDetails.italyFC.foreignCurrency }}</td>-->
+                    <!--<td>{{ proDetails.spainFC.foreignCurrency }}</td>-->
+                    <!--<td>{{ proDetails.japanFC.foreignCurrency }}</td>-->
+                    <!--<td>{{ proDetails.australiaFC.foreignCurrency }}</td>-->
+
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<th>优化</th>-->
+                    <!--<td>{{ proDetails.americanFC.optimization }}</td>-->
+                    <!--<td>{{ proDetails.canadaFC.optimization }}</td>-->
+                    <!--<td>{{ proDetails.mexicoFC.optimization }}</td>-->
+                    <!--<td>{{ proDetails.britainFC.optimization }}</td>-->
+                    <!--<td>{{ proDetails.franceFC.optimization }}</td>-->
+                    <!--<td>{{ proDetails.germanyFC.optimization }}</td>-->
+                    <!--<td>{{ proDetails.italyFC.optimization }}</td>-->
+                    <!--<td>{{ proDetails.spainFC.optimization }}</td>-->
+                    <!--<td>{{ proDetails.japanFC.optimization }}</td>-->
+                    <!--<td>{{ proDetails.australiaFC.optimization }}</td>-->
+
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<th>最终售价</th>-->
+                    <!--<td>{{ proDetails.americanFC.finalPrice }}</td>-->
+                    <!--<td>{{ proDetails.canadaFC.finalPrice }}</td>-->
+                    <!--<td>{{ proDetails.mexicoFC.finalPrice }}</td>-->
+                    <!--<td>{{ proDetails.britainFC.finalPrice }}</td>-->
+                    <!--<td>{{ proDetails.franceFC.finalPrice }}</td>-->
+                    <!--<td>{{ proDetails.germanyFC.finalPrice }}</td>-->
+                    <!--<td>{{ proDetails.italyFC.finalPrice }}</td>-->
+                    <!--<td>{{ proDetails.spainFC.finalPrice }}</td>-->
+                    <!--<td>{{ proDetails.japanFC.finalPrice }}</td>-->
+                    <!--<td>{{ proDetails.australiaFC.finalPrice }}</td>-->
+
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<th>利润（￥）</th>-->
+                    <!--<td>{{ proDetails.americanFC.profit }}</td>-->
+                    <!--<td>{{ proDetails.canadaFC.profit }}</td>-->
+                    <!--<td>{{ proDetails.mexicoFC.profit }}</td>-->
+                    <!--<td>{{ proDetails.britainFC.profit }}</td>-->
+                    <!--<td>{{ proDetails.franceFC.profit }}</td>-->
+                    <!--<td>{{ proDetails.germanyFC.profit }}</td>-->
+                    <!--<td>{{ proDetails.italyFC.profit }}</td>-->
+                    <!--<td>{{ proDetails.spainFC.profit }}</td>-->
+                    <!--<td>{{ proDetails.japanFC.profit }}</td>-->
+                    <!--<td>{{ proDetails.australiaFC.profit }}</td>-->
+
+                    <!--</tr>-->
+                    <!--</table>-->
 
 
 
@@ -443,8 +451,11 @@
 
 
     <script src="${request.contextPath}/statics/kuajing/js/step/product/detailsProduct.js"></script>
-    <script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>
+    <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>-->
     <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
+    <script>
+
+    </script>
 </div>
 </body>
 </html>
