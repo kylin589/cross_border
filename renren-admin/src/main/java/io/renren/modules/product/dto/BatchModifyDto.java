@@ -5,6 +5,7 @@ package io.renren.modules.product.dto;
  */
 public class BatchModifyDto {
 
+    private Long[] productIds;
     /**
      * 审核状态标识
      */
@@ -120,6 +121,24 @@ public class BatchModifyDto {
      * 西班牙语介绍
      */
     private String spain;
+    //产品的内部分类
+    private String productCategory;
+
+    public String getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(String productCategory) {
+        this.productCategory = productCategory;
+    }
+
+    public Long[] getProductIds() {
+        return productIds;
+    }
+
+    public void setProductIds(Long[] productIds) {
+        this.productIds = productIds;
+    }
 
     public String getAuditStatus() {
         return auditStatus;
