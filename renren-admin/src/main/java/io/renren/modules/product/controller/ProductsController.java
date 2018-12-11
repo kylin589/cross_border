@@ -8,6 +8,7 @@ import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.product.dto.BatchModifyDto;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
+import io.renren.modules.product.vm.ChangeAuditStatusVM;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hpsf.Decimal;
@@ -109,26 +110,30 @@ public class ProductsController extends AbstractController {
     }
 
     /**
-     * @param productIds 产品id
-     * @param number     状态number，如001
-     * @param type       以什么状态进行修改，如AUDIT_STATE
+     *
      * @return R
      * @methodname: 更改产品的审核、上架、产品状态
      * @auther zjr
      * @date 2018-11-7 9:54
      */
     @RequestMapping("/changeauditstatus")
-    public R changeAuditStatus(@RequestBody Long[] productIds, String number, String type) {
+    public R changeAuditStatus(@RequestBody ChangeAuditStatusVM changeAuditStatusVM) {
+        Long[] productIds = changeAuditStatusVM.getProductIds();
+        String number = changeAuditStatusVM.getNumber();
+        String type = changeAuditStatusVM.getType();
+        System.out.println("productIds:" + productIds[0]);
+        System.out.println("number:" + number);
+        System.out.println("type:" + type);
         for (int i = 0; i < productIds.length; i++) {
             ProductsEntity entity = new ProductsEntity();
             entity.setProductId(productIds[i]);
-            if (type == "AUDIT_STATE") {
+            if ("AUDIT_STATE".equals(type)) {
                 entity.setAuditStatus(number);
             }
-            if (type == "SHELVE_STATE") {
+            if ("SHELVE_STATE".equals(type)) {
                 entity.setShelveStatus(number);
             }
-            if (type == "PRODUCT_TYPE") {
+            if ("PRODUCT_TYPE".equals(type)) {
                 entity.setProductType(number);
             }
             entity.setLastOperationTime(new Date());
