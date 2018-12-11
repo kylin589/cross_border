@@ -369,16 +369,10 @@ public class ProductsController extends AbstractController {
         if (colorid != null) {
             VariantParameterEntity colorVP = variantParameterService.selectById(colorid);
             productsEntity.setColorVP(colorVP);
-        }else {
-            VariantParameterEntity colorVP =new VariantParameterEntity();
-            productsEntity.setColorVP(colorVP);
         }
         Long sizeid = productsEntity.getSizeId();
         if (sizeid != null) {
             VariantParameterEntity sizeVP = variantParameterService.selectById(sizeid);
-            productsEntity.setSizeVP(sizeVP);
-        }else {
-            VariantParameterEntity sizeVP =new VariantParameterEntity();
             productsEntity.setSizeVP(sizeVP);
         }
         //通过产品id查出变体信息
