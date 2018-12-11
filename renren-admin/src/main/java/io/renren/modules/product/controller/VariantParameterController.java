@@ -156,5 +156,4 @@ public class VariantParameterController {
         variantParameterService.deleteById(variantParameterEntity);
         return R.ok();
     }
-
 }
