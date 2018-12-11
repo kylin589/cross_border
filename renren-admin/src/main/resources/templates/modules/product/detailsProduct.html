@@ -208,7 +208,7 @@
                     <span><label for="">国际运费(￥)：</label><input type="text" placeholder="国际运费(￥)" v-model="proDetails.purchasePrice"></span>
                     <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="包装毛重(kg)" v-model="proDetails.productWeight"></span><br>
                     <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength"> * <input class="size_input" type="text" placeholder="宽" v-model="proDetails.productWide"> * <input class="size_input" type="text" placeholder="高" v-model="proDetails.productHeight"></span>
-                    <span><label class="">产品有电池：</label><input type="checkbox" class="rdo" name="" style=""> </span><br>
+                    <span><label class="">产品有电池：</label><input type="checkbox" name="" style=""> </span><br>
                     <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" v-model="proDetails.stock"></span>
                     <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" v-model="proDetails.pretreatmentDate"></span>
 
@@ -341,13 +341,52 @@
                             <li>法语</li>
                             <li>意大利语</li>
                             <li>西班牙语</li>
+                            <li>德语</li>
+                            <li>日语</li>
                         </ul>
-                        <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea>建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea>建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea>建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea>建议填写</textarea></span><br>
+                        <div class="layui-tab-content active">
+                            <!--<span><label for="">产品标题：</label><input type="text" v-model="proDecList.productTitle"></span><br>-->
+                            <span><label for="">产品标题：</label><textarea v-model="proDecList.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDecList.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDecList.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDecList.productDescription">建议填写</textarea></span><br>
                         </div>
+                        <!--<div class="layui-tab-content">-->
+                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.britainPRE.productTitle">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.britainPRE.keyWord">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.britainPRE.keyPoints">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.britainPRE.productDescription">建议填写</textarea></span><br>-->
+                        <!--</div>-->
+                        <!--<div class="layui-tab-content">-->
+                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.francePRE.productTitle">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.francePRE.keyWord">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.francePRE.keyPoints">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.francePRE.productDescription">建议填写</textarea></span><br>-->
+                        <!--</div>-->
+                        <!--<div class="layui-tab-content">-->
+                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.italyPRE.productTitle">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.italyPRE.keyWord">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.italyPRE.keyPoints">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.italyPRE.productDescription">建议填写</textarea></span><br>-->
+                        <!--</div>-->
+                        <!--<div class="layui-tab-content">-->
+                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.spainPRE.productTitle">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.spainPRE.keyWord">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.spainPRE.keyPoints">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.spainPRE.productDescription">建议填写</textarea></span><br>-->
+                        <!--</div>-->
+                        <!--<div class="layui-tab-content">-->
+                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.germanyPRE.productTitle">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.germanyPRE.keyWord">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.germanyPRE.keyPoints">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.germanyPRE.productDescription">建议填写</textarea></span><br>-->
+                        <!--</div>-->
+                        <!--<div class="layui-tab-content">-->
+                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.japanPRE.productTitle">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints">建议填写</textarea></span><br>-->
+                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription">建议填写</textarea></span><br>-->
+                        <!--</div>-->
                     </div>
 
                 </div>

@@ -10,6 +10,8 @@ $(function () {
     $('.layui-tab-title li').click(function () {
         $('.layui-tab-title li').removeClass('layui-this');
         $(this).addClass('layui-this');
+        $('.layui-tab-content').removeClass('active');
+        $('.layui-tab-content').eq($(this).index()).addClass('active');
     })
 
     // 产品相册图片鼠标移动上去
@@ -322,11 +324,19 @@ var vm = new Vue({
         },{
             url:'../../statics/kuajing/img/img2.jpg'
         },],
-        variantList:[{
-            id:'0',
-            name:'颜色（color）',
-            type:['红色']
+        // 产品介绍列表
+        proDecList:{
+            'productTitle':'',
+            'keyWord':'',
+            'keyPoints':'',
+            'productDescription':''
         },
+        // 变体参数列表
+        variantList:[{
+                id:'0',
+                name:'颜色（color）',
+                type:['红色']
+            },
             {
                 id:'1',
                 name:'尺寸（size）',
@@ -378,6 +388,12 @@ var vm = new Vue({
                         vm.proDetails = r.productsEntity;
                         console.log('产品详情');
                         console.log(vm.proDetails);
+                        console.log(111111111);
+                        vm.proDecList = vm.proDetails.chinesePRE;
+                        console.log(vm.proDecList);
+                        // console.log(this.proDetails.chinesePRE);
+                        // console.log(this.proDetails.chinesePRE.productTitle);
+                        // console.log(this.proDetails.chinesePRE[productTitle]);
 
                     } else {
                         layer.alert(r.msg);
@@ -976,8 +992,8 @@ var vm = new Vue({
         }
     },
     created:function () {
-        console.log(this.recommend);
-        console.log(this.recommend1);
+        // console.log(this.recommend);
+        // console.log(this.recommend1);
         // this.getRecommendAll();
 
         var url = decodeURI(window.location.href);
@@ -992,6 +1008,7 @@ var vm = new Vue({
         // console.log(url);
         this.getProAlbum();
         this.getProStation();
+
 
         if(this.variantList.length == 2){
             var recommend = this.variantList[0].type;
