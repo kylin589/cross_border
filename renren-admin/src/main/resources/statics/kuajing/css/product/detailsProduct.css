@@ -64,16 +64,16 @@ form .item div:nth-child(2) .imgDiv>div i{
     cursor: pointer;
 }
 form button{
-     height: 28px;
-     padding: 0 15px;
-     border-radius: 14px;
-     border: 1.5px solid #f0f0f0;
-     background: url("../../img/create_bg.png");
-     background-size: 100% 100%;
-     color: #fff;
-     margin-right: 10px;
-     font-size: 13px;
- }
+    height: 28px;
+    padding: 0 15px;
+    border-radius: 14px;
+    border: 1.5px solid #f0f0f0;
+    background: url("../../img/create_bg.png");
+    background-size: 100% 100%;
+    color: #fff;
+    margin-right: 10px;
+    font-size: 13px;
+}
 
 form .item>div:nth-child(2) input[type=button]{
     height: 28px;
@@ -146,7 +146,7 @@ form .chengben label{
 .rdo:before {/*所有选项*/
     width: 12px;
     height: 12px; /*外圆的大小*/
-    background-color: none; /*圆环的颜色*/
+    background: #fff; /*圆环的颜色*/
     border: 1px solid #888;/*外圆的边框*/
 }
 .rdo:after {/*未选中的中点*/
@@ -185,6 +185,7 @@ form .chengben label{
 }
 .sousuoArea{
     position: absolute;
+    width: 600px;
     /*display: flex;*/
     display: none;
     background: #fff;
@@ -230,6 +231,7 @@ form .chengben label{
     list-style: none;
     color: #888;
     font-size: 13px;
+    cursor: pointer;
 }
 
 .form1 input[type=text]{
