@@ -326,7 +326,7 @@
                     <h4>产品简介</h4>
                 </div>
                 <div class="pro_inf chengben">
-                    <span><label for="">英文简称：</label><input type="text" placeholder="建议填写"></span>
+                    <span><label for="">英文简称：</label><input type="text" placeholder="建议填写" v-model="proDetails.productAbbreviations"></span>
                 </div>
             </div>
             <div class="item">
@@ -402,7 +402,7 @@
                     <span><label for="">变体参数：</label><input type="button" value="添加" @click="addVariant"></span>
                     <div class="variantName">
                         <span v-for="(item,index) in variantList">
-                            <a @click="upVariant" href="javascript:;" :data-id="item.id" @mouseover="variantName(item.id)" @mouseout="variantNamenone(item.id)">{{ item.name }}</a><i @click="delvariantName(index)" class="layui-icon layui-icon-close-fill"></i>
+                            <a @click="upVariant" href="javascript:;" :data-id="item.id" @mouseover="variantName" @mouseout="variantNamenone">{{ item.name }}</a><i @click="delvariantName(index)" class="layui-icon layui-icon-close-fill"></i>
                         </span>
                     </div>
 
@@ -411,7 +411,7 @@
                         <a href="javascript:;" v-for="list in item.type">{{ list }}</a>
                     </p>
 
-                    <table>
+                    <table v-if="recommendAll.length != 0">
                         <tr>
                             <th>序号</th>
                             <th>变体组合</th>

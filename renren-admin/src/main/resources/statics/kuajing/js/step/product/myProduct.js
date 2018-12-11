@@ -648,7 +648,7 @@ var vm = new Vue({
             error: function () {
                 layer.msg("网络故障");
             }
-        })
+        });
         this.laypage();
         this.getMyStatusList();
 
