@@ -231,50 +231,80 @@ public class ProductsController extends AbstractController {
         if (americanid != null) {
             FreightCostEntity americanFC = freightCostService.selectById(americanid);
             productsEntity.setAmericanFC(americanFC);
+        }else {
+            FreightCostEntity americanFC=new FreightCostEntity();
+            productsEntity.setAmericanFC(americanFC);
         }
         Long canadaid = productsEntity.getCanadaFreight();
         if (canadaid != null) {
             FreightCostEntity canadaFC = freightCostService.selectById(canadaid);
+            productsEntity.setCanadaFC(canadaFC);
+        }else {
+            FreightCostEntity canadaFC=new FreightCostEntity();
             productsEntity.setCanadaFC(canadaFC);
         }
         Long mexicoid = productsEntity.getMexicoFreight();
         if (mexicoid != null) {
             FreightCostEntity mexicoFC = freightCostService.selectById(mexicoid);
             productsEntity.setMexicoFC(mexicoFC);
+        }else {
+            FreightCostEntity mexicoFC=new FreightCostEntity();
+            productsEntity.setMexicoFC(mexicoFC);
         }
         Long britainid = productsEntity.getBritainFreight();
         if (britainid != null) {
             FreightCostEntity britainFC = freightCostService.selectById(britainid);
+            productsEntity.setBritainFC(britainFC);
+        }else {
+            FreightCostEntity britainFC=new FreightCostEntity();
             productsEntity.setBritainFC(britainFC);
         }
         Long franceid = productsEntity.getFranceFreight();
         if (franceid != null) {
             FreightCostEntity franceFC = freightCostService.selectById(franceid);
             productsEntity.setFranceFC(franceFC);
+        }else {
+            FreightCostEntity franceFC=new FreightCostEntity();
+            productsEntity.setFranceFC(franceFC);
         }
         Long germanyid = productsEntity.getGermanyFreight();
         if (germanyid != null) {
             FreightCostEntity germanyFC = freightCostService.selectById(germanyid);
+            productsEntity.setGermanyFC(germanyFC);
+        }else {
+            FreightCostEntity germanyFC=new FreightCostEntity();
             productsEntity.setGermanyFC(germanyFC);
         }
         Long italyid = productsEntity.getItalyFreight();
         if (italyid != null) {
             FreightCostEntity italyFC = freightCostService.selectById(italyid);
             productsEntity.setItalyFC(italyFC);
+        }else{
+            FreightCostEntity italyFC=new FreightCostEntity();
+            productsEntity.setItalyFC(italyFC);
         }
         Long spainid = productsEntity.getSpainFreight();
         if (spainid != null) {
             FreightCostEntity spainFC = freightCostService.selectById(spainid);
+            productsEntity.setSpainFC(spainFC);
+        }else{
+            FreightCostEntity spainFC=new FreightCostEntity();
             productsEntity.setSpainFC(spainFC);
         }
         Long japanid = productsEntity.getJapanFreight();
         if (japanid != null) {
             FreightCostEntity japanFC = freightCostService.selectById(japanid);
             productsEntity.setJapanFC(japanFC);
+        }else{
+            FreightCostEntity japanFC=new FreightCostEntity();
+            productsEntity.setJapanFC(japanFC);
         }
         Long australiaid = productsEntity.getAustraliaFreight();
         if (australiaid != null) {
             FreightCostEntity australiaFC = freightCostService.selectById(australiaid);
+            productsEntity.setAustraliaFC(australiaFC);
+        }else{
+            FreightCostEntity australiaFC=new FreightCostEntity();
             productsEntity.setAustraliaFC(australiaFC);
         }
         //各个国家的介绍
@@ -282,35 +312,56 @@ public class ProductsController extends AbstractController {
         if (chineseinid != null) {
             IntroductionEntity chinesePRE = introductionService.selectById(chineseinid);
             productsEntity.setChinesePRE(chinesePRE);
+        }else{
+            IntroductionEntity chinesePRE=new IntroductionEntity();
+            productsEntity.setChinesePRE(chinesePRE);
         }
         Long britaininid = productsEntity.getBritainIntroduction();
         if (britaininid != null) {
             IntroductionEntity britainPRE = introductionService.selectById(britaininid);
+            productsEntity.setBritainPRE(britainPRE);
+        }else{
+            IntroductionEntity britainPRE=new IntroductionEntity();
             productsEntity.setBritainPRE(britainPRE);
         }
         Long franceinid = productsEntity.getFranceIntroduction();
         if (franceinid != null) {
             IntroductionEntity francePRE = introductionService.selectById(franceinid);
             productsEntity.setFrancePRE(francePRE);
+        }else {
+            IntroductionEntity francePRE=new IntroductionEntity();
+            productsEntity.setFrancePRE(francePRE);
         }
         Long germanyInid = productsEntity.getGermanyIntroduction();
         if (germanyInid != null) {
             IntroductionEntity germanyPRE = introductionService.selectById(germanyInid);
+            productsEntity.setGermanyPRE(germanyPRE);
+        }else {
+            IntroductionEntity germanyPRE=new IntroductionEntity();
             productsEntity.setGermanyPRE(germanyPRE);
         }
         Long italyInid = productsEntity.getItalyIntroduction();
         if (italyInid != null) {
             IntroductionEntity italyPRE = introductionService.selectById(italyInid);
             productsEntity.setItalyPRE(italyPRE);
+        }else{
+            IntroductionEntity italyPRE=new IntroductionEntity();
+            productsEntity.setItalyPRE(italyPRE);
         }
         Long spainInid = productsEntity.getSpainIntroduction();
         if (spainInid != null) {
             IntroductionEntity spainPRE = introductionService.selectById(spainInid);
             productsEntity.setSpainPRE(spainPRE);
+        }else {
+            IntroductionEntity spainPRE=new IntroductionEntity();
+            productsEntity.setSpainPRE(spainPRE);
         }
         Long japanInid = productsEntity.getJapanIntroduction();
         if (japanInid != null) {
             IntroductionEntity japanPRE = introductionService.selectById(japanInid);
+            productsEntity.setJapanPRE(japanPRE);
+        }else{
+            IntroductionEntity japanPRE=new IntroductionEntity();
             productsEntity.setJapanPRE(japanPRE);
         }
         //颜色尺寸大小查变体
@@ -318,10 +369,16 @@ public class ProductsController extends AbstractController {
         if (colorid != null) {
             VariantParameterEntity colorVP = variantParameterService.selectById(colorid);
             productsEntity.setColorVP(colorVP);
+        }else {
+            VariantParameterEntity colorVP =new VariantParameterEntity();
+            productsEntity.setColorVP(colorVP);
         }
         Long sizeid = productsEntity.getSizeId();
         if (sizeid != null) {
             VariantParameterEntity sizeVP = variantParameterService.selectById(sizeid);
+            productsEntity.setSizeVP(sizeVP);
+        }else {
+            VariantParameterEntity sizeVP =new VariantParameterEntity();
             productsEntity.setSizeVP(sizeVP);
         }
         //通过产品id查出变体信息
@@ -339,7 +396,8 @@ public class ProductsController extends AbstractController {
      * @date: 2018/11/11 11:14
      */
     @RequestMapping("/batchmodify")
-    public R batchModify(@RequestBody Long[] productIds, @RequestBody BatchModifyDto batchModifyDto) {
+    public R batchModify( @RequestBody BatchModifyDto batchModifyDto) {
+        Long[] productIds = batchModifyDto.getProductIds();
         //循环遍历出前台传入的产品id
         System.out.println(batchModifyDto);
         for (int i = 0; i < productIds.length; i++) {
@@ -467,6 +525,46 @@ public class ProductsController extends AbstractController {
         String[] ids = s.split(",");
         productsEntity.setCategoryOneId(Long.parseLong(ids[0]));
         productsEntity.setCategoryTwoId(Long.parseLong(ids[1]));
+        FreightCostEntity americanFC =new FreightCostEntity();
+        productsEntity.setAmericanFC(americanFC);
+        FreightCostEntity canadaFC=new FreightCostEntity();
+        productsEntity.setCanadaFC(canadaFC);
+        FreightCostEntity mexicoFC=new FreightCostEntity();
+        productsEntity.setMexicoFC(mexicoFC);
+        FreightCostEntity britainFC=new FreightCostEntity();
+        productsEntity.setBritainFC(britainFC);
+        FreightCostEntity franceFC=new FreightCostEntity();
+        productsEntity.setFranceFC(franceFC);
+        FreightCostEntity germanyFC=new FreightCostEntity();
+        productsEntity.setGermanyFC(germanyFC);
+        FreightCostEntity italyFC=new FreightCostEntity();
+        productsEntity.setItalyFC(italyFC);
+        FreightCostEntity spainFC=new FreightCostEntity();
+        productsEntity.setSpainFC(spainFC);
+        FreightCostEntity japanFC=new FreightCostEntity();
+        productsEntity.setJapanFC(japanFC);
+        FreightCostEntity australiaFC=new FreightCostEntity();
+        productsEntity.setAustraliaFC(australiaFC);
+        IntroductionEntity newChinesePRE=new IntroductionEntity();
+        IntroductionEntity chinesePRE = productsEntity.getChinesePRE();
+        if (chinesePRE==null){
+        productsEntity.setChinesePRE(newChinesePRE);
+        }
+        IntroductionEntity newBritainPRE=new IntroductionEntity();
+        IntroductionEntity britainPRE = productsEntity.getBritainPRE();
+        if (britainFC==null){
+            productsEntity.setBritainPRE(newBritainPRE);
+        }
+        IntroductionEntity francePRE=new IntroductionEntity();
+        productsEntity.setFrancePRE(francePRE);
+        IntroductionEntity germanyPRE=new IntroductionEntity();
+        productsEntity.setGermanyPRE(germanyPRE);
+        IntroductionEntity italyPRE=new IntroductionEntity();
+        productsEntity.setItalyPRE(italyPRE);
+        IntroductionEntity spainPRE=new IntroductionEntity();
+        productsEntity.setSpainPRE(spainPRE);
+        IntroductionEntity japanPRE=new IntroductionEntity();
+        productsEntity.setJapanPRE(japanPRE);
         productsEntity.setCreateTime(new Date());
         productsEntity.setLastOperationTime(new Date());
         productsEntity.setCreateUserId(getUserId());
