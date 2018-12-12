@@ -43,100 +43,37 @@ window.onload = function (ev) {
     })
 }
 
-// 分页器
-layui.use('laypage', function(){
-    var laypage = layui.laypage;
-
-    //执行一个laypage实例
-    laypage.render({
-        elem: 'page', //注意，这里的 test1 是 ID，不用加 # 号
-        count: 50, //数据总数，从服务端得到
-        prev:'<i class="layui-icon layui-icon-left"></i>',
-        next:'<i class="layui-icon layui-icon-right"></i>',
-        layout:['prev', 'page', 'next','limit','skip'],
-        jump: function(obj, first){
-            //obj包含了当前分页的所有参数，比如：
-            console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
-            console.log(obj.limit); //得到每页显示的条数
-
-            //首次不执行
-            if(!first){
-                //do something
-            }
-        }
-    });
-});
 
 var vm = new Vue({
     el:'#step',
     data:{
         value9:'',
-        screenData:{
-            auditAll:234,
-            shelveAll:33,
-            typeAll:55
-        },
-        prolist:[{
-            id:'123473445',
-            country:'美国',
-            country1:'../../statics/kuajing/img/american.png',
-            orderNum:'2364256284732341',
-            imgUrl:'../../statics/kuajing/img/img1.jpg',
-            shop:'青干院三组(德国)',
-            price:123414,
-            cost:2342,
-            profit:3453534,
-            stateNum:1,
-            state:'待付款',
-            international:'YT1829821203004840',
-            domestic:'70006066684423',
-            data:'2018-10-18 08:52'
-        },{
-            id:'123473445',
-            country:'意大利',
-            country1:'../../statics/kuajing/img/italy.png',
-            orderNum:'2364256284732341',
-            imgUrl:'../../statics/kuajing/img/img2.jpg',
-            shop:'青干院三组(德国)',
-            price:123414,
-            cost:2342,
-            profit:3453534,
-            stateNum:2,
-            state:'取消',
-            international:'YT1829821203004840',
-            domestic:'70006066684423',
-            data:'2018-10-18 08:52'
-        },{
-            id:'123473445',
-            country:'美国',
-            country1:'../../statics/kuajing/img/american.png',
-            orderNum:'2364256284732341',
-            imgUrl:'../../statics/kuajing/img/img1.jpg',
-            shop:'青干院三组(德国)',
-            price:123414,
-            cost:2342,
-            profit:3453534,
-            stateNum:3,
-            state:'已付款',
-            international:'YT1829821203004840',
-            domestic:'70006066684423',
-            data:'2018-10-18 08:52'
-        },{
-            id:'123473445',
-            country:'意大利',
-            country1:'../../statics/kuajing/img/italy.png',
-            orderNum:'2364256284732341',
-            imgUrl:'../../statics/kuajing/img/img2.jpg',
-            shop:'青干院三组(德国)',
-            price:123414,
-            cost:2342,
-            profit:3453534,
-            stateNum:4,
-            state:'签收',
-            international:'YT1829821203004840',
-            domestic:'70006066684423',
-            data:'2018-10-18 08:52'
-        }],
+        //全部订单数量
+        allOrderCount:0,
+        //各状态订单个数
+        orderStateList:[],
+        //订单列表
+        prolist:[],
+        // 当前页码
+        proCurr:1,
+        // 每页数量限制
+        pageLimit:12,
+        //店铺名称
+        shopName:'',
+        //订单状态
+        orderStatus:'',
+        //订单id
+        orderId:null,
+        //亚马逊订单id
+        amazonOrderId:null,
+        //产品id
+        productId:null,
+        productSku:'',
+        productAsin:'',
+        domesticWaybill:'',
+        abroadWaybill:'',
+        startDate:'',
+        endDate:'',
         statistics:{
             orderAll:12324,
             orderNum:123,
@@ -146,7 +83,6 @@ var vm = new Vue({
             purchase:238175,
             refund:123,
             refundCost:-2378.23
-
         }
     },
     methods:{
@@ -168,6 +104,150 @@ var vm = new Vue({
 
                 }
             });
+        },
+        // 分页器
+        laypage: function () {
+            // var tempTotalCount;
+
+            // 分页器
+            layui.use('laypage', function () {
+                var laypage = layui.laypage;
+                //执行一个laypage实例
+                laypage.render({
+                    elem: 'page', //注意，这里的 test1 是 ID，不用加 # 号
+                    count: vm.totalCount, //数据总数，从服务端得到
+                    prev: '<i class="layui-icon layui-icon-left"></i>',
+                    next: '<i class="layui-icon layui-icon-right"></i>',
+                    limits: [12, 24, 30],
+                    limit: 12,
+                    layout: ['prev', 'page', 'next', 'limit', 'skip'],
+                    jump: function (obj, first) {
+                        //obj包含了当前分页的所有参数，比如：
+                        // console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                        // console.log(obj.limit); //得到每页显示的条数
+                        vm.pageLimit = obj.limit;
+                        vm.proCurr = obj.curr;
+                        $('.pro_list .item').removeClass('action');
+                        //首次不执行
+                        if (!first) {
+                            //do something
+                            vm.getOrderlist();
+                        }
+                    }
+                });
+            });
+        },
+        // 获取订单列表
+        getOrderlist:function (orderStatus) {
+
+            console.log(orderStatus);
+            this.startDate = this.value9[0];
+            this.endDate = this.value9[1];
+            console.log(this.startDate);
+            console.log(this.endDate);
+            this.orderStatus = orderStatus;
+            $.ajax({
+                url: '../../product/order/getMyList',
+                type: 'post',
+                data: {
+                    'page': this.proCurr,
+                    'limit': this.pageLimit,
+                    'shopName': this.shopName,
+                    'orderStatus':this.orderStatus,
+                    'orderId':this.orderId,
+                    'amazonOrderId':this.amazonOrderId,
+                    //产品id
+                    'productId':this.productId,
+                    'productSku':this.productSku,
+                    'productAsin':this.productAsin,
+                    'domesticWaybill':this.domesticWaybill,
+                    'abroadWaybill':this.abroadWaybill,
+                    'startDate':this.startDate,
+                    'endDate':this.endDate,
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.prolist = r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        // 获取各状态订单数量
+        getOrderStatenum:function () {
+            $.ajax({
+                url: '../../product/datadictionary/myOrderStateList',
+                type: 'get',
+                data: {},
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.allOrderCount = r.allOrderCount;
+                        for (var i=0;i<r.orderStateList.length;i++){
+                            if(r.orderStateList[i].dataContent == "待付款"){
+                                r.orderStateList[i].color = 'org';
+                            }
+                            if(r.orderStateList[i].dataContent == "已付款"){
+                                r.orderStateList[i].color = 'blue';
+                            }
+                            if(r.orderStateList[i].dataContent == "虚发货"){
+                                r.orderStateList[i].color = 'org';
+                            }
+                            if(r.orderStateList[i].dataContent == "已采购"){
+                                r.orderStateList[i].color = 'blue';
+                            }
+                            if(r.orderStateList[i].dataContent == "待发货"){
+                                r.orderStateList[i].color = 'blue';
+                            }
+                            if(r.orderStateList[i].dataContent == "待签收"){
+                                r.orderStateList[i].color = 'green';
+                            }
+                            if(r.orderStateList[i].dataContent == "入库"){
+                                r.orderStateList[i].color = 'blue';
+                            }
+                            if(r.orderStateList[i].dataContent == "国际已发货"){
+                                r.orderStateList[i].color = 'blue';
+                            }
+                            if(r.orderStateList[i].dataContent == "取消"){
+                                r.orderStateList[i].color = 'red';
+                            }
+                            if(r.orderStateList[i].dataContent == "缺货"){
+                                r.orderStateList[i].color = 'org';
+                            }
+                            if(r.orderStateList[i].dataContent == "退货"){
+                                r.orderStateList[i].color = 'red';
+                            }
+                            if(r.orderStateList[i].dataContent == "补发"){
+                                r.orderStateList[i].color = 'green';
+                            }
+                            if(r.orderStateList[i].dataContent == "问题"){
+                                r.orderStateList[i].color = 'red';
+                            }
+                        }
+                        vm.orderStateList=r.orderStateList;
+                        console.log(vm.orderStateList);
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
         }
+    },
+    created:function () {
+        this.getOrderlist('');
+        this.laypage();
+        this.getOrderStatenum();
+
     }
 })
