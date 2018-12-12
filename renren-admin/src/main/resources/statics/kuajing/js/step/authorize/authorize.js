@@ -54,9 +54,74 @@ var vm = new Vue({
             account:'****idouye@yeah.net',
             country:'法国/英国/德国/西班牙/意大利',
             date:'2018/10/15 11:25',
+        }],
+        // 国家列表
+        gjList:[{
+            shopName:'111',
+            country:'1111',
+            amazonSite:'111'
+        },{
+            shopName:'222',
+            country:'2',
+            amazonSite:'2'
+        },{
+            shopName:'3',
+            country:'3',
+            amazonSite:'3'
         }]
     },
     methods:{
+        addShouq:function () {
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#addShouq'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['400px', '400px'],
+                shadeClose: true,
+                btn: ['添加','取消'],
+                btn1: function (index) {
+                    // console.log(vm.xiugaiData);
+                    // $.ajax({
+                    //     url: '../../product/products/batchmodify',
+                    //     type: 'post',
+                    //     // data:vm.xiugaiData,
+                    //     data:JSON.stringify(vm.xiugaiData),
+                    //     contentType: "application/json",
+                    //     success: function (r) {
+                    //         console.log(r);
+                    //         if (r.code === 0) {
+                    //             layer.alert('操作成功');
+                    //
+                    //         } else {
+                    //             layer.alert(r.msg);
+                    //         }
+                    //     },
+                    //     error: function () {
+                    //         layer.msg("网络故障");
+                    //     }
+                    // })
+
+                },
+                btn2: function (index) {
+
+
+                }
+            });
+        },
+        getGjList:function () {
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#coList'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['600px', '410px'],
+                shadeClose: true,
+                btn: [],
+
+            });
+        }
+
 
     }
 

@@ -169,7 +169,7 @@ var vm = new Vue({
             $('.screen>div.shelve ul li').eq(_index).addClass('action');
             vm.shelveNumber = $('.screen>div.shelve ul li.action').eq(0).attr("data-number");
             vm.getPage();
-            vm.laypage();
+            // vm.laypage();
         },
         // 产品类型筛选
         screenfunType:function(event){
@@ -178,7 +178,7 @@ var vm = new Vue({
             $('.screen>div.type ul li').eq(_index).addClass('action');
             vm.productNumber = $('.screen>div.type ul li.action').eq(0).attr("data-number");
             vm.getPage();
-            vm.laypage();
+            // vm.laypage();
         },
         getMyStatusList:function(){
             $.get('../../product/datadictionary/mystatuslist',function (r) {
@@ -241,7 +241,7 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getPage();
+                            vm.getPage1();
                         }
                     }
                 });
@@ -249,6 +249,61 @@ var vm = new Vue({
         },
         // 获取产品列表
         getPage: function () {
+
+            var s , e;
+            console.log(this.value9)
+            if(JSON.stringify(this.value9) != 'null'){
+                console.log(true);
+                s = this.value9[0] + ' 00:00:00';
+                e = this.value9[1] + ' 23:59:59';
+            }
+            $.ajax({
+                url: '../../product/products/mylist',
+                type: 'post',
+                data: {
+                    // '_search': false,
+                    'page': this.proCurr,
+                    'limit': this.pageLimit,
+                    // 'sidx': "",
+                    // 'order': "asc",
+                    'category': this.nowProTypeId,
+                    'title': this.title,
+                    'sku': this.sku,
+                    'startDate':s,
+                    'endDate': e,
+                    'auditNumber': this.auditNumber,
+                    'shelveNumber': this.shelveNumber,
+                    'productNumber': this.productNumber,
+                    // '_': $.now()
+                },
+                dataType: 'json',
+                success: function (r) {
+                    if (r.code === 0) {
+                        // console.log(r)
+                        vm.statistics.proNum = r.proNum;
+                        vm.statistics.via = r.via;
+                        vm.statistics.variant = r.variant;
+                        vm.statistics.allVariant = r.allVariant;
+                        vm.proList = r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                        // vm.proCurr = r.page.currPage;
+                        // vm.limit = r.page.pageSize;
+                        // vm.limit = lmt;
+                        vm.laypage();
+                    } else {
+                        layer.alert(r.message);
+                    }
+
+
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+
+
+        },
+        getPage1: function () {
 
             var s , e;
             console.log(this.value9)
@@ -305,7 +360,7 @@ var vm = new Vue({
         },
         selPage:function () {
             vm.getPage();
-            vm.laypage();
+            // vm.laypage();
         },
         activePro: function (index) {
             $('.pro_list .item').eq(index).toggleClass('action');
@@ -641,32 +696,32 @@ var vm = new Vue({
 
     },
     created: function () {
-        $.ajax({
-            url: '../../product/products/gettotalcount',
-            type: 'post',
-            data: {
-                'category': this.category,
-                'title': this.title,
-                'sku': this.sku,
-                'value9': this.value9,
-                'auditNumber': this.auditNumber,
-                'shelveNumber': this.shelveNumber,
-                'productNumber': this.productNumber
-            },
-            dataType: 'json',
-            success: function (r) {
-                if (r.code === 0) {
-                    vm.totalCount = r.totalCount;
-                    // console.log(tempTotalCount);
-                } else {
-                    layer.alert(r.message);
-                }
-            },
-            error: function () {
-                layer.msg("网络故障");
-            }
-        });
-        this.laypage();
+        // $.ajax({
+        //     url: '../../product/products/gettotalcount',
+        //     type: 'post',
+        //     data: {
+        //         'category': this.category,
+        //         'title': this.title,
+        //         'sku': this.sku,
+        //         'value9': this.value9,
+        //         'auditNumber': this.auditNumber,
+        //         'shelveNumber': this.shelveNumber,
+        //         'productNumber': this.productNumber
+        //     },
+        //     dataType: 'json',
+        //     success: function (r) {
+        //         if (r.code === 0) {
+        //             vm.totalCount = r.totalCount;
+        //             // console.log(tempTotalCount);
+        //         } else {
+        //             layer.alert(r.message);
+        //         }
+        //     },
+        //     error: function () {
+        //         layer.msg("网络故障");
+        //     }
+        // });
+        // this.laypage();
         this.getMyStatusList();
 
         /*this.getAuditList();

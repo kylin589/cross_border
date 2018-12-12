@@ -12,10 +12,11 @@
 
     <p>
         <span class="layui-breadcrumb" style="visibility: visible;">
-          <a href="javascript:;">授权列表</a>
+          <a href="javascript:;">授权Amazon列表</a>
         </span>
 
-        <button class="save">添加授权</button>
+        <!--<button class="save" >添加授权</button>-->
+        <input class="save" type="button" value="添加授权" @click="addShouq">
     </p>
 
     <table>
@@ -34,13 +35,67 @@
             <td>
                 <a href="javascript:;">添加授权令牌</a>
                 <a href="javascript:;">删除</a>
-                <a href="javascript:;">国家列表</a>
+                <a href="javascript:;" @click="getGjList">国家列表</a>
             </td>
         </tr>
     </table>
 
     <!--分页-->
     <div id="page" style="text-align: center"></div>
+
+    <!--添加授权弹框-->
+    <div id="addShouq" style="display: none">
+        <h3>添加授权</h3>
+        <span>
+            <label for="">店铺别名</label>
+            <input type="text" placeholder="店铺别名">
+        </span>
+        <br>
+        <span>
+            <label for="">Amazon账号</label>
+            <input type="text" placeholder="Amazon账号">
+        </span>
+        <br>
+        <span>
+            <label for="">开户区域</label>
+            <select class="form-control" id="account_area">
+                <option value="">-- 请选择 --</option>
+                <option value="NorthAmerica">北美(North America)</option>
+                <option value="Europe">欧洲(Europe)</option>
+                <option value="Japan">日本(Japan)</option>
+              </select>
+        </span>
+        <br>
+        <span>
+            <label for="">Merchant ID</label>
+            <input type="text" placeholder="买家编号">
+        </span>
+        <br>
+        <span>
+            <label for="">授权令牌</label>
+            <input type="text" placeholder="授权令牌">
+        </span>
+
+        <p>所有的都为必填项</p>
+    </div>
+
+    <!--国家列表-->
+    <div id="coList" style="display: none">
+        <h3>国家列表</h3>
+        <table>
+            <tr>
+                <th>店铺别名</th>
+                <th>国家</th>
+                <th>站点</th>
+            </tr>
+            <tr v-for="item in gjList">
+                <td>{{item.shopName}}</td>
+                <td>{{item.country}}</td>
+                <td>{{item.amazonSite}}</td>
+            </tr>
+        </table>
+    </div>
+
 </div>
 
 <script src="${request.contextPath}/statics/kuajing/js/step/authorize/authorize.js"></script>

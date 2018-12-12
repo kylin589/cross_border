@@ -746,10 +746,10 @@ var vm = new Vue({
                     "discount": vm.proDetails.discount
                 }),
                 success: function (r) {
-                    console.log('成本运费');
+                    console.log('利润');
                     console.log(r)
                     if (r.code == 0) {
-                        console.log('成本运费成功')
+                        // console.log('成本运费成功')
                         vm.proDetails.americanFC = r.productsEntity.americanFC;
                         vm.proDetails.canadaFC = r.productsEntity.canadaFC;
                         vm.proDetails.mexicoFC = r.productsEntity.mexicoFC;
