@@ -2,6 +2,7 @@ package io.renren.modules.product.dto;
 
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
+import io.renren.modules.order.entity.RemarkEntity;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -54,6 +55,10 @@ public class OrderDTO {
      */
     private Integer orderNumber;
     /**
+     * 采购价格
+     */
+    private BigDecimal purchasePrice;
+    /**
      * 寄件信息
      */
     private ProductShipAddressEntity shipAddress;
@@ -65,6 +70,10 @@ public class OrderDTO {
      * 国际物流
      */
     // TODO: 2018/12/10
+    /**
+     * 当天汇率
+     */
+    private BigDecimal momentRate;
 
     /**
      * 订单金额（外币）
@@ -72,19 +81,27 @@ public class OrderDTO {
     private BigDecimal orderMoneyForeign;
 
     /**
-     * 国际币种
+     * 订单金额(人民币)
      */
-
+    private BigDecimal orderMoney;
     /**
      * Amazon佣金（外币）
      */
     private BigDecimal amazonCommissionForeign;
     /**
+     * Amazon佣金（人民币）
+     */
+    private BigDecimal amazonCommission;
+    /**
      * 到账金额（外币）
      */
     private BigDecimal accountMoneyForeign;
     /**
-     * 国际运费
+     * 到账金额（人民币）
+     */
+    private BigDecimal accountMoney;
+    /**
+     * 运费
      */
     private BigDecimal interFreight;
     /**
@@ -99,19 +116,221 @@ public class OrderDTO {
      * 退货费用
      */
     private BigDecimal returnCost;
+
     /**
-     * 国内物流单号
+     * 备注列表
      */
-    private String domesticWaybill;
+    private List<RemarkEntity> remarkList;
     /**
-     * 国外物流单号
+     * 操作日志列表
      */
-    private String abroadWaybill;
+    private List<RemarkEntity> logList;
 
+    public Long getOrderId() {
+        return orderId;
+    }
 
-    private Long userId;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
 
-    private Long deptId;
-    //更新时间
-    private Date updateTime;
+    public String getAmazonOrderId() {
+        return amazonOrderId;
+    }
+
+    public void setAmazonOrderId(String amazonOrderId) {
+        this.amazonOrderId = amazonOrderId;
+    }
+
+    public Date getBuyDate() {
+        return buyDate;
+    }
+
+    public void setBuyDate(Date buyDate) {
+        this.buyDate = buyDate;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public String getOrderState() {
+        return orderState;
+    }
+
+    public void setOrderState(String orderState) {
+        this.orderState = orderState;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getProductSku() {
+        return productSku;
+    }
+
+    public void setProductSku(String productSku) {
+        this.productSku = productSku;
+    }
+
+    public String getProductAsin() {
+        return productAsin;
+    }
+
+    public void setProductAsin(String productAsin) {
+        this.productAsin = productAsin;
+    }
+
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public ProductShipAddressEntity getShipAddress() {
+        return shipAddress;
+    }
+
+    public void setShipAddress(ProductShipAddressEntity shipAddress) {
+        this.shipAddress = shipAddress;
+    }
+
+    public List<DomesticLogisticsEntity> getDomesticLogisticsList() {
+        return domesticLogisticsList;
+    }
+
+    public void setDomesticLogisticsList(List<DomesticLogisticsEntity> domesticLogisticsList) {
+        this.domesticLogisticsList = domesticLogisticsList;
+    }
+
+    public BigDecimal getMomentRate() {
+        return momentRate;
+    }
+
+    public void setMomentRate(BigDecimal momentRate) {
+        this.momentRate = momentRate;
+    }
+
+    public BigDecimal getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(BigDecimal purchasePrice) {
+        this.purchasePrice = purchasePrice;
+    }
+
+    public BigDecimal getOrderMoneyForeign() {
+        return orderMoneyForeign;
+    }
+
+    public void setOrderMoneyForeign(BigDecimal orderMoneyForeign) {
+        this.orderMoneyForeign = orderMoneyForeign;
+    }
+
+    public BigDecimal getOrderMoney() {
+        return orderMoney;
+    }
+
+    public void setOrderMoney(BigDecimal orderMoney) {
+        this.orderMoney = orderMoney;
+    }
+
+    public BigDecimal getAmazonCommissionForeign() {
+        return amazonCommissionForeign;
+    }
+
+    public void setAmazonCommissionForeign(BigDecimal amazonCommissionForeign) {
+        this.amazonCommissionForeign = amazonCommissionForeign;
+    }
+
+    public BigDecimal getAmazonCommission() {
+        return amazonCommission;
+    }
+
+    public void setAmazonCommission(BigDecimal amazonCommission) {
+        this.amazonCommission = amazonCommission;
+    }
+
+    public BigDecimal getAccountMoneyForeign() {
+        return accountMoneyForeign;
+    }
+
+    public void setAccountMoneyForeign(BigDecimal accountMoneyForeign) {
+        this.accountMoneyForeign = accountMoneyForeign;
+    }
+
+    public BigDecimal getAccountMoney() {
+        return accountMoney;
+    }
+
+    public void setAccountMoney(BigDecimal accountMoney) {
+        this.accountMoney = accountMoney;
+    }
+
+    public BigDecimal getInterFreight() {
+        return interFreight;
+    }
+
+    public void setInterFreight(BigDecimal interFreight) {
+        this.interFreight = interFreight;
+    }
+
+    public BigDecimal getPlatformCommissions() {
+        return platformCommissions;
+    }
+
+    public void setPlatformCommissions(BigDecimal platformCommissions) {
+        this.platformCommissions = platformCommissions;
+    }
+
+    public BigDecimal getOrderProfit() {
+        return orderProfit;
+    }
+
+    public void setOrderProfit(BigDecimal orderProfit) {
+        this.orderProfit = orderProfit;
+    }
+
+    public BigDecimal getReturnCost() {
+        return returnCost;
+    }
+
+    public void setReturnCost(BigDecimal returnCost) {
+        this.returnCost = returnCost;
+    }
+
+    public List<RemarkEntity> getRemarkList() {
+        return remarkList;
+    }
+
+    public void setRemarkList(List<RemarkEntity> remarkList) {
+        this.remarkList = remarkList;
+    }
+
+    public List<RemarkEntity> getLogList() {
+        return logList;
+    }
+
+    public void setLogList(List<RemarkEntity> logList) {
+        this.logList = logList;
+    }
 }
