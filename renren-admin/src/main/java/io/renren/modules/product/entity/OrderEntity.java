@@ -66,6 +66,14 @@ public class OrderEntity implements Serializable {
 	 */
 	private Integer orderNumber;
 	/**
+	 * 当天汇率
+	 */
+	private BigDecimal momentRate;
+	/**
+	 * 采购价格
+	 */
+	private BigDecimal purchasePrice;
+	/**
 	 * 订单金额
 	 */
 	private BigDecimal orderMoney;
@@ -236,6 +244,23 @@ public class OrderEntity implements Serializable {
 	public Integer getOrderNumber() {
 		return orderNumber;
 	}
+
+	public BigDecimal getMomentRate() {
+		return momentRate;
+	}
+
+	public void setMomentRate(BigDecimal momentRate) {
+		this.momentRate = momentRate;
+	}
+
+	public BigDecimal getPurchasePrice() {
+		return purchasePrice;
+	}
+
+	public void setPurchasePrice(BigDecimal purchasePrice) {
+		this.purchasePrice = purchasePrice;
+	}
+
 	/**
 	 * 设置：订单金额
 	 */

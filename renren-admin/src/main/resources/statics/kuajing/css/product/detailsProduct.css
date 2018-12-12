@@ -406,3 +406,9 @@ table tr td input[type=button].all{
     color: #00a3e8;
 }
 
+.layui-tab-content{
+    display: none;
+}
+.layui-tab-content.active{
+    display: block;
+}
