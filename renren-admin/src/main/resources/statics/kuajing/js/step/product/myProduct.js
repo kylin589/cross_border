@@ -486,7 +486,7 @@ var vm = new Vue({
                         $.ajax({
                             url: '../../product/products/batchmodify',
                             type: 'post',
-                            data:vm.xiugaiData,
+                            data:JSON.stringify(vm.xiugaiData),
                             contentType: "application/json",
                             success: function (r) {
                                 console.log(r);
@@ -595,14 +595,14 @@ var vm = new Vue({
             console.log(t);
             $.ajax({
                 url: '../../product/products/changeauditstatus',
-                type: 'get',
-                data:{
-                    'productIds':JSON.stringify(vm.activeProlist),
-                    'number':n,
-                    'type':t
-                },
-                dataType: 'json',
-                // contentType: "application/json",
+                type: 'post',
+                data:JSON.stringify({
+                    'productIds':vm.activeProlist,
+                    'number':'001',
+                    'type':'SHELVE_STATE'
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
@@ -648,7 +648,7 @@ var vm = new Vue({
             error: function () {
                 layer.msg("网络故障");
             }
-        })
+        });
         this.laypage();
         this.getMyStatusList();
 

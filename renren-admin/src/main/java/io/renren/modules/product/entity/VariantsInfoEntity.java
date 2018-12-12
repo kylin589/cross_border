@@ -52,6 +52,8 @@ public class VariantsInfoEntity implements Serializable {
      * 变体图片路径（按顺序以逗号隔开）
      */
     private String imageUrl;
+
+
     /**
      * 获取：产品ID
      */
