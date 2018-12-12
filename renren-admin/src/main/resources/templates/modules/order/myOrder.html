@@ -16,17 +16,18 @@
 
     <!--搜索区域-->
     <div class="search1">
-        <input type="text" class="sousuoAreaInput" placeholder="产品类目">
-        <input type="text" placeholder="标题">
-        <input type="text" placeholder="SKU">
-        <input type="text" class="sousuoAreaInput" placeholder="产品类目">
-        <input type="text" placeholder="标题">
-        <input type="text" placeholder="SKU">
-        <input type="text" class="sousuoAreaInput" placeholder="产品类目">
-        <input type="text" placeholder="标题">
-        <input type="text" placeholder="SKU">
+        <input type="text" class="sousuoAreaInput" placeholder="店铺名称" v-model="shopName">
+        <input type="text" placeholder="订单id" v-model="orderId">
+        <input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">
+        <input type="text" class="sousuoAreaInput" placeholder="关联产品id" v-model="productId">
+        <input type="text" placeholder="产品SKU" v-model="productSku">
+        <input type="text" placeholder="产品asin码" v-model="productAsin">
+        <input type="text" class="sousuoAreaInput" placeholder="国内物流单号" v-model="domesticWaybill">
+        <input type="text" placeholder="国际物流单号" v-model="abroadWaybill">
         <div style="display: inline-block;">
             <el-date-picker
+                    value-format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd"
                     v-model="value9"
                     type="daterange"
                     start-placeholder="开始日期"
@@ -35,27 +36,15 @@
             </el-date-picker>
         </div>
 
-        <button class="sousuo">搜索</button>
+        <button class="sousuo" @click="getOrderlist('')">搜索</button>
 
     </div>
     <!--筛选区域-->
     <div class="screen">
         <div class="audit">
-            <span class="red">全部 <span>{{ screenData.orderAll }}</span></span>
+            <li class="red" @click="getOrderlist('')">全部 <span>({{ allOrderCount }})</span></li>
             <ul>
-                <li class="org">待付款<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="blue">已付款<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="org">虚发货<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="blue">已采购<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="blue">待发货<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="green">待签收<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="blue">入库<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="blue">国际已发货<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="red">取消<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="org">缺货<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="red">退货<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="green">补发<span>（{{ screenData.auditAll }}）</span></li>
-                <li class="red">问题<span>（{{ screenData.auditAll }}）</span></li>
+                <li  v-for="item in orderStateList" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
             </ul>
         </div>
 
@@ -94,30 +83,45 @@
             <th>下单时间</th>
         </tr>
         <tr v-for = 'item in prolist'>
-            <td>{{ item.id }}<br/><span class="brSpan"><img :src="item.country1" alt=""> {{ item.country }}</span></td>
-            <td class="imgtd"><img :src="item.imgUrl" alt=""></td>
-            <td><a href="orderDetails.html">{{ item.orderNum }}</a> <br/><span class="brSpan"><img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt=""> {{ item.shop }} <img
-                    src="" alt=""> {{ item.country }}</span></td>
-            <td>{{ item.price }}</td>
-            <td>{{ item.cost }}</td>
-            <td>{{ item.profit }}</td>
-            <td>
-                <span v-if="item.stateNum == 1" class="org">
-                    {{ item.state }}
-                </span>
-                <span v-if="item.stateNum == 2" class="red">
-                    {{ item.state }}
-                </span>
-                <span v-if="item.stateNum == 3" class="bule">
-                    {{ item.state }}
-                </span>
-                <span v-if="item.stateNum == 4" class="bule1">
-                    {{ item.state }}
+            <td>{{ item.orderId }}<br/><span class="brSpan"><img src="../../statics/kuajing/img/american.png" alt=""> {{ item.country }}</span></td>
+            <td class="imgtd"><img src="../../statics/kuajing/img/img1.jpg" alt=""></td>
+            <td><a href="orderDetails.html">{{ item.amazonOrderId }}</a> <br/>
+                <span class="brSpan">
+                    <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
+                    {{ item.shopName }}
+                    <span v-if="item.countryCode == 'US'">美国</span>
+                    <span v-if="item.countryCode == 'JP'">日本</span>
+                    <span v-if="item.countryCode == 'ES'">西班牙</span>
+                    <span v-if="item.countryCode == 'GB'">英国</span>
+                    <span v-if="item.countryCode == 'IT'">意大利</span>
+                    <span v-if="item.countryCode == 'DE'">德国</span>
+                    <span v-if="item.countryCode == 'BR'">巴西</span>
+                    <span v-if="item.countryCode == 'CA'">加拿大</span>
+                    <span v-if="item.countryCode == 'MX'">墨西哥</span>
+                    <span v-if="item.countryCode == 'AU'">澳大利亚</span>
+
                 </span>
             </td>
-            <td>{{ item.international }}</td>
-            <td>{{ item.domestic }}</td>
-            <td>{{ item.data }}</td>
+            <td>{{ item.orderMoney }}</td>
+            <td>{{ item.purchasePrice }}</td>
+            <td>{{ item.orderProfit }}</td>
+            <td>
+                <span v-if="(item.orderState == '待付款')||(item.orderState == '虚发货')||(item.orderState == '缺货')" class="org">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '取消'||item.orderState == '退货'||item.orderState == '问题'" class="red">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '已付款'||item.orderState == '已采购'||item.orderState == '待发货'||item.orderState == '入库'||item.orderState == '国际已发货'" class="bule">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '待签收'||item.orderState == '补发'" class="bule1">
+                    {{ item.orderState }}
+                </span>
+            </td>
+            <td>{{ item.abroadWaybill }}</td>
+            <td>{{ item.domesticWaybill }}</td>
+            <td>{{ item.buyDate }}</td>
         </tr>
     </table>
 
