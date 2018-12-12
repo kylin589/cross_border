@@ -148,7 +148,7 @@ public class ImageAddressController extends AbstractController {
      * @date: 2018/11/6 15:54
      */
     @RequestMapping("/imageinfo")
-    public R imageinfo(Long productId) throws Exception {
+    public R imageinfo(@RequestParam Long productId) throws Exception {
         List<ImageAddressEntity> imageInfo = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "0"));
         return R.ok().put("imageInfo", imageInfo);
     }
@@ -161,7 +161,7 @@ public class ImageAddressController extends AbstractController {
      * @date: 2018/11/6 15:53
      */
     @RequestMapping("/updateimage")
-    public R updateimage(Long[] imageIds) {
+    public R updateimage(@RequestBody Long[] imageIds) {
         for (int i = 0; i < imageIds.length; i++) {
             ImageAddressEntity addressEntity = imageAddressService.selectById(imageIds[i]);
             addressEntity.setIsDeleted("1");
@@ -180,7 +180,7 @@ public class ImageAddressController extends AbstractController {
      * @date: 2018/11/7 14:32
      */
     @RequestMapping("/querydeleteimage")
-    public R isdeleteList(Long productId) {
+    public R isdeleteList(@RequestParam Long productId) {
         List<ImageAddressEntity> isdeleteList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "1"));
         return R.ok().put("isdeleteList", isdeleteList);
     }
@@ -193,7 +193,7 @@ public class ImageAddressController extends AbstractController {
      * @date: 2018/11/7 14:32
      */
     @RequestMapping("/recoverdelete")
-    public R recoverdelete(Long[] imageIds) {
+    public R recoverdelete(@RequestBody Long[] imageIds) {
         for (int i = 0; i < imageIds.length; i++) {
             ImageAddressEntity addressEntity = imageAddressService.selectById(imageIds[i]);
             addressEntity.setIsDeleted("0");
@@ -212,7 +212,7 @@ public class ImageAddressController extends AbstractController {
      * @date: 2018/11/7 15:21
      */
     @RequestMapping("/deleteimage")
-    public R deleteimage(Long[] imageIds) {
+    public R deleteimage(@RequestBody Long[] imageIds) {
         for (int i = 0; i < imageIds.length; i++) {
             ImageAddressEntity addressEntity = imageAddressService.selectById(imageIds[i]);
             // 文件上传后是保存在本地的路径
