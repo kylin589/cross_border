@@ -7,7 +7,6 @@ public enum COUNTY {
     ES,            // 西班牙
     GB,            // 英国
     IT,             // 意大利
-    TR,            // 土耳其
     DE,             // 德国
     BR,             // 巴西
     CA,             // 加拿大
