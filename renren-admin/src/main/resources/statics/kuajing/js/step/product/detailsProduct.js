@@ -8,6 +8,7 @@ $(function () {
 
     // 语言选项卡
     $('.layui-tab-title li').click(function () {
+        console.log(111111);
         $('.layui-tab-title li').removeClass('layui-this');
         $(this).addClass('layui-this');
         $('.layui-tab-content').removeClass('active');
@@ -285,7 +286,120 @@ var vm = new Vue({
         // 产品id
         id:null,
         // 产品详情
-        proDetails:{},
+        proDetails:{
+            "americanFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "canadaFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "mexicoFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "britainFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "franceFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "germanyFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "italyFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "spainFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "japanFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "australiaFC": {
+                "freight": "",
+                "price": "",
+                "foreignCurrency": "",
+                "optimization": "",
+                "finalPrice": ""
+            },
+            "chinesePRE": {
+                "productTitle": "",
+                "keyWord": "",
+                "keyPoints": "",
+                "productDescription": ""
+            },
+            "britainPRE": {
+                "productTitle": "",
+                "keyWord": "",
+                "keyPoints": "",
+                "productDescription": ""
+            },
+            "francePRE": {
+                "productTitle": "",
+                "keyWord": "",
+                "keyPoints": "",
+                "productDescription": ""
+            },
+            "germanyPRE": {
+                "productTitle": "",
+                "keyWord": "",
+                "keyPoints": "",
+                "productDescription": ""
+            },
+            "italyPRE": {
+                "productTitle": "",
+                "keyWord": "",
+                "keyPoints": "",
+                "productDescription": ""
+            },
+            "spainPRE": {
+                "productTitle": "",
+                "keyWord": "",
+                "keyPoints": "",
+                "productDescription": ""
+            },
+            "japanPRE": {
+                "productTitle": "",
+                "keyWord": "",
+                "keyPoints": "",
+                "productDescription": ""
+            },
+        },
         // 成本运费
         costFreight:{},
         // 产品相册
@@ -399,6 +513,28 @@ var vm = new Vue({
                                 type:vm.proDetails.sizeVP.paramsValue.split(',')
                             })
                         }
+
+
+
+                        vm.proDetails.variantsInfos.forEach(function (t,i) {
+                            vm.recommendAll.push({
+                                id:i,
+                                name:t.variantCombination,
+                                img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
+                                    '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                                sku:t.variantSku,
+                                addPrice:t.variantAddPrice,
+                                stock:t.variantStock,
+                                code:t.eanCode
+
+
+                            })
+                        })
+                        setTimeout(function(){ vm.drapImg(); }, 3000);
+
+                        console.log('运费')
+                        console.log(vm.proDetails.americanFC.freight)
+
                         // console.log(this.proDetails.chinesePRE);
                         // console.log(this.proDetails.chinesePRE.productTitle);
                         // console.log(this.proDetails.chinesePRE[productTitle]);
@@ -553,20 +689,80 @@ var vm = new Vue({
 
 
         },
-        // 获取成本运费
+        // 成本运费
         getcostFreight:function () {
             $.ajax({
                 type: 'post',
                 url: '../../product/products/costFreight',
                 contentType: "application/json",
-                data: this.id,
+                data: JSON.stringify({
+                    "productId": vm.id,
+                    "purchasePrice": vm.proDetails.purchasePrice,
+                    "productWeight": vm.proDetails.productWeight,
+                    "productLength": vm.proDetails.productLength,
+                    "productWide": vm.proDetails.productWide,
+                    "productHeight": vm.proDetails.productHeight,
+                    "domesticFreight": vm.proDetails.domesticFreight,
+                    "discount": vm.proDetails.discount
+                }),
                 success: function (r) {
                     console.log('成本运费');
                     console.log(r)
                     if (r.code == 0) {
-                        this.costFreight = r.categoryOneList;
+                        console.log('成本运费成功')
+                        vm.proDetails.americanFC = r.productsEntity.americanFC;
+                        vm.proDetails.canadaFC = r.productsEntity.canadaFC;
+                        vm.proDetails.mexicoFC = r.productsEntity.mexicoFC;
+                        vm.proDetails.britainFC = r.productsEntity.britainFC;
+                        vm.proDetails.franceFC = r.productsEntity.franceFC;
+                        vm.proDetails.germanyFC = r.productsEntity.germanyFC;
+                        vm.proDetails.italyFC = r.productsEntity.italyFC;
+                        vm.proDetails.spainFC = r.productsEntity.spainFC;
+                        vm.proDetails.japanFC = r.productsEntity.japanFC;
+                        vm.proDetails.australiaFC = r.productsEntity.australiaFC;
+                        // this.costFreight = r.categoryOneList;
 
-                        console.log(vm.categoryOneList)
+                        // console.log(vm.categoryOneList)
+                    } else {
+                        alert(r.msg);
+                    }
+                }
+            });
+        },
+        // 刷新 利润，利润率
+        lirFunc:function () {
+            $.ajax({
+                type: 'post',
+                url: '../../product/products/refresh',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "productId": vm.id,
+                    "purchasePrice": vm.proDetails.purchasePrice,
+                    "productWeight": vm.proDetails.productWeight,
+                    "productLength": vm.proDetails.productLength,
+                    "productWide": vm.proDetails.productWide,
+                    "productHeight": vm.proDetails.productHeight,
+                    "domesticFreight": vm.proDetails.domesticFreight,
+                    "discount": vm.proDetails.discount
+                }),
+                success: function (r) {
+                    console.log('成本运费');
+                    console.log(r)
+                    if (r.code == 0) {
+                        console.log('成本运费成功')
+                        vm.proDetails.americanFC = r.productsEntity.americanFC;
+                        vm.proDetails.canadaFC = r.productsEntity.canadaFC;
+                        vm.proDetails.mexicoFC = r.productsEntity.mexicoFC;
+                        vm.proDetails.britainFC = r.productsEntity.britainFC;
+                        vm.proDetails.franceFC = r.productsEntity.franceFC;
+                        vm.proDetails.germanyFC = r.productsEntity.germanyFC;
+                        vm.proDetails.italyFC = r.productsEntity.italyFC;
+                        vm.proDetails.spainFC = r.productsEntity.spainFC;
+                        vm.proDetails.japanFC = r.productsEntity.japanFC;
+                        vm.proDetails.australiaFC = r.productsEntity.australiaFC;
+                        // this.costFreight = r.categoryOneList;
+
+                        // console.log(vm.categoryOneList)
                     } else {
                         alert(r.msg);
                     }
@@ -627,7 +823,6 @@ var vm = new Vue({
                     console.log(_typeName);
                     console.log(_typeName.split(','));
                     // _typeName.join(',');
-
                     if(_id == '0'){
                         type = 'color'
                     }else {
@@ -659,8 +854,9 @@ var vm = new Vue({
                                     })
                                 }else if(vm.variantList.length == 1){
                                     if(vm.variantList[0].id == _id){
-                                        var arr = vm.variantList[i].type.concat(_typeName.split(','));
-                                        vm.variantList[i].type = arr;
+                                        var arr = vm.variantList[0].type= _typeName.split(',');
+                                        // var arr = vm.variantList[0].type.concat(_typeName.split(','));
+                                        vm.variantList[0].type = arr;
                                         // vm.variantList[i].type.push(_typeName.join(','))
                                     }else {
                                         vm.variantList.push({
@@ -673,7 +869,8 @@ var vm = new Vue({
                                 }else {
                                     for(var i = 0;i<vm.variantList.length;i++){
                                         if(vm.variantList[i].id == _id){
-                                            var arr = vm.variantList[i].type.concat(_typeName.split(','));
+                                            // var arr = vm.variantList[i].type.concat(_typeName.split(','));
+                                            var arr = vm.variantList[i].type= _typeName.split(',');
                                             vm.variantList[i].type = arr;
                                             // vm.variantList[i].type.push(_typeName.join(','))
                                         }
@@ -693,6 +890,8 @@ var vm = new Vue({
                                         paramsValue:_typeName
                                     }
                                 }
+
+                                vm.getrecommendAll();
 
 
                                 layer.msg("变体添加成功");
@@ -756,6 +955,7 @@ var vm = new Vue({
         variantNamenone:function (event) {
             $(event.target).next().css('visibility','hidden');
         },
+        // 删除变体参数
         delvariantName:function (index) {
             console.log(index);
             var _id = $('.variantName a').eq(index).attr('data-id');
@@ -797,6 +997,7 @@ var vm = new Vue({
                             layer.confirm('确定删除改参数吗？', function(index){
                                 //do something
                                 vm.variantList.splice(_index,1);
+                                vm.getrecommendAll();
 
                                 layer.close(index);
                                 layer.msg('删除成功');
@@ -834,6 +1035,7 @@ var vm = new Vue({
                             layer.confirm('确定删除改参数吗？', function(index){
                                 //do something
                                 vm.variantList.splice(_index,1);
+                                vm.getrecommendAll();
 
                                 layer.close(index);
                                 layer.msg('删除成功');
@@ -848,6 +1050,7 @@ var vm = new Vue({
             }
 
         },
+        // 修改变体参数
         upVariant:function () {
             layer.open({
                 type: 1,
@@ -865,24 +1068,114 @@ var vm = new Vue({
                     var reg = new RegExp( '，' , "g" )
                     var str = _typeName.replace(reg,',');
                     _typeName = str;
-                    console.log(_typeName.split(','));
-                    // _typeName.join(',');
-                    if(vm.variantList.length == 0){
-                        vm.variantList.push({
-                            id:_id,
-                            name:_name,
-                            type:_typeName.split(',')
-                        })
+
+
+                    var type = '';
+                    var id;
+                    if(_id == '0'){
+                        type = 'color';
+                        id = vm.proDetails.colorVP.paramsId;
                     }else {
-                        for(var i = 0;i<vm.variantList.length;i++){
-                            if(vm.variantList[i].id == _id){
-                                var arr = vm.variantList[i].type.concat(_typeName.split(','));
-                                vm.variantList[i].type = arr;
-                                // vm.variantList[i].type.push(_typeName.join(','))
+                        type = 'size';
+                        id = vm.proDetails.sizeVP.paramsId
+                    }
+
+
+                    $.ajax({
+                        type: 'post',
+                        url: '../../product/variantparameter/update',
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            'paramsId':id,
+                            'paramsType':type,
+                            'paramsValue':_typeName
+                        }),
+                        success: function (r) {
+                            console.log('修改变体');
+                            console.log(r)
+                            if (r.code == 0) {
+                                // this.costFreight = r.categoryOneList;
+
+                                console.log(vm.variantList);
+
+                                if(vm.variantList.length == 0){
+                                    vm.variantList.push({
+                                        id:_id,
+                                        name:_name,
+                                        type:_typeName.split(',')
+                                    })
+                                }else if(vm.variantList.length == 1){
+                                    if(vm.variantList[0].id == _id){
+                                        var arr = vm.variantList[0].type = _typeName.split(',');
+                                        vm.variantList[0].type = arr;
+                                        // vm.variantList[i].type.push(_typeName.join(','))
+                                    }else {
+                                        vm.variantList.push({
+                                            id:_id,
+                                            name:_name,
+                                            type:_typeName.split(',')
+                                        })
+                                    }
+
+                                }else {
+                                    for(var i = 0;i<vm.variantList.length;i++){
+                                        if(vm.variantList[i].id == _id){
+                                            var arr = vm.variantList[i].type = _typeName.split(',');
+                                            vm.variantList[i].type = arr;
+                                            // vm.variantList[i].type.push(_typeName.join(','))
+                                        }
+                                    }
+                                }
+
+                                if(_id == '0'){
+                                    vm.proDetails.colorVP = {
+                                        paramsId:id,
+                                        paramsType:'color',
+                                        paramsValue:_typeName
+                                    }
+                                }else {
+                                    vm.proDetails.sizeVP = {
+                                        paramsId:id,
+                                        paramsType:'color',
+                                        paramsValue:_typeName
+                                    }
+                                }
+
+                                vm.getrecommendAll();
+
+
+                                layer.msg("变体修改成功");
+                            } else {
+                                alert(r.msg);
                             }
                         }
-                    }
-                    console.log(vm.variantList);
+                    });
+
+
+
+
+
+
+
+
+                    // console.log(_typeName.split(','));
+                    // _typeName.join(',');
+                    // if(vm.variantList.length == 0){
+                    //     vm.variantList.push({
+                    //         id:_id,
+                    //         name:_name,
+                    //         type:_typeName.split(',')
+                    //     })
+                    // }else {
+                    //     for(var i = 0;i<vm.variantList.length;i++){
+                    //         if(vm.variantList[i].id == _id){
+                    //             var arr = vm.variantList[i].type.concat(_typeName.split(','));
+                    //             vm.variantList[i].type = arr;
+                    //             // vm.variantList[i].type.push(_typeName.join(','))
+                    //         }
+                    //     }
+                    // }
+                    // console.log(vm.variantList);
                     layer.close(index);
 
                 },
@@ -1116,16 +1409,22 @@ var vm = new Vue({
         getrecommendAll:function () {
             this.recommendAll = [];
             vm.proDetails.variantsInfos = [];
+
             if(this.variantList.length == 2){
                 var recommend = this.variantList[0].type;
                 var recommend1 = this.variantList[1].type;
 
                 for(var i = 0;i<recommend.length;i++){
                     for(var j = 0;j<recommend1.length;j++){
-                        this.recommendAll.push({
+                        vm.recommendAll.push({
+                            id:i+j,
                             name:recommend[i]+'*'+recommend1[j],
                             img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-                                '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
+                                '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                            sku:'',
+                            addPrice:'',
+                            stock:'',
+                            code:''
                         });
 
                         vm.proDetails.variantsInfos.push({
@@ -1145,16 +1444,21 @@ var vm = new Vue({
             }else if(this.variantList.length == 1){
                 var recommend = this.variantList[0].type;
                 for(var i = 0;i<recommend.length;i++){
-                    this.recommendAll.push({
+                    vm.recommendAll.push({
+                        id:i,
                         name:recommend[i],
-                        img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
+                        img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                        sku:'',
+                        addPrice:'',
+                        stock:'',
+                        code:''
                     });
 
                     vm.proDetails.variantsInfos.push({
                         variantId:null,
                         productId:vm.id,
-                        variantSort:i+j,
-                        variantCombination:recommend[i]+'*'+recommend1[j],
+                        variantSort:i,
+                        variantCombination:recommend[i],
                         variantSku:'',
                         variantAddPrice:null,
                         variantStock:null,
@@ -1170,31 +1474,76 @@ var vm = new Vue({
         },
         // 修改保存
         savePro:function () {
-            $.ajax({
-                type: 'post',
-                url: '../../product/variantparameter/delete',
-                contentType: "application/json",
-                data: {
-                    'productId':vm.id,
-                    'variantParameter':{
-                        'paramsId':vm.proDetails.sizeVP.paramsId,
-                        'paramsType':vm.proDetails.sizeVP.paramsType,
-                        'paramsValue':vm.proDetails.sizeVP.paramsValue,
-                    }
-                },
-                success: function (r) {
-                    console.log('删除变体');
-                    console.log(r)
-                    if (r.code == 0) {
 
-                        console.log('删除变体成功')
-                    } else {
-                        alert(r.msg);
+            vm.recommendAll.forEach(function (t,i) {
+                vm.proDetails.variantsInfos[i].variantId = i;
+                vm.proDetails.variantsInfos[i].eanCode = t.code;
+                vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
+                vm.proDetails.variantsInfos[i].variantSku = t.sku;
+                vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+            })
+
+            // vm.proDetails.variantsInfos.eanCode = vm.recommendAll.code;
+            // vm.proDetails.variantsInfos.variantAddPrice = vm.recommendAll.addPrice;
+            // vm.proDetails.variantsInfos.variantSku = vm.recommendAll.sku;
+            // vm.proDetails.variantsInfos.variantStock = vm.recommendAll.stock;
+            console.log(vm.proDetails.variantsInfos);
+
+
+
+            layer.confirm('确定修改吗？', function(index){
+
+
+
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                $.ajax({
+                    type: 'post',
+                    url: '../../product/products/modifyproduct',
+                    contentType: "application/json",
+                    data: JSON.stringify(vm.proDetails),
+                    success: function (r) {
+                        console.log('修改产品');
+                        console.log(r);
+                        console.log(vm.proDetails);
+                        if (r.code == 0) {
+                            layer.close(index);
+
+                            window.location.href = document.referrer;
+
+                        } else {
+                            alert(r.msg);
+                        }
                     }
-                }
+                });
+
+
+
             });
-        }
+
+
+
+        },
+        // 删除变体列表某条数据
+        delVariantList:function (event) {
+            var _index = $(event.target).attr('data-index');
+            $(event.target).parent().parent().remove();
+            var delId;
+            console.log(vm.recommendAll);
+            for(var i = 0;i<vm.recommendAll.length;i++){
+                if(vm.recommendAll[i].id == _index){
+                    delId = i;
+                    // return
+                }
+            }
+            vm.recommendAll.splice(delId,1);
+            vm.proDetails.variantsInfos.splice(delId,1);
+            console.log(vm.proDetails.variantsInfos);
+
+        },
     },
+
     created:function () {
         // console.log(this.recommend);
         // console.log(this.recommend1);
@@ -1215,28 +1564,30 @@ var vm = new Vue({
         this.getProStation();
 
 
-        if(this.variantList.length == 2){
-            var recommend = this.variantList[0].type;
-            var recommend1 = this.variantList[1].type;
 
-            for(var i = 0;i<recommend.length;i++){
-                for(var j = 0;j<recommend1.length;j++){
-                    this.recommendAll.push({
-                        name:recommend[i]+'*'+recommend1[j],
-                        img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-                            '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
-                    });
-                }
-            }
-        }else if(this.variantList.length == 1){
-            var recommend = this.variantList[0].type;
-            for(var i = 0;i<recommend.length;i++){
-                this.recommendAll.push({
-                    name:recommend[i],
-                    img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
-                });
-            }
-        }
+
+        // if(this.variantList.length == 2){
+        //     var recommend = this.variantList[0].type;
+        //     var recommend1 = this.variantList[1].type;
+        //
+        //     for(var i = 0;i<recommend.length;i++){
+        //         for(var j = 0;j<recommend1.length;j++){
+        //             this.recommendAll.push({
+        //                 name:recommend[i]+'*'+recommend1[j],
+        //                 img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
+        //                     '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
+        //             });
+        //         }
+        //     }
+        // }else if(this.variantList.length == 1){
+        //     var recommend = this.variantList[0].type;
+        //     for(var i = 0;i<recommend.length;i++){
+        //         this.recommendAll.push({
+        //             name:recommend[i],
+        //             img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
+        //         });
+        //     }
+        // }
 
 
         // this.recommend.forEach(function (value) {
@@ -1247,7 +1598,7 @@ var vm = new Vue({
         //         });
         //     })
         // })
-        console.log(this.recommendAll);
+        // console.log(this.recommendAll);
     }
 
 })

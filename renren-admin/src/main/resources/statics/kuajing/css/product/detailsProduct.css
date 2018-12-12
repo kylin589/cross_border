@@ -11,9 +11,8 @@ form>p{
     background: #f2f2f2;
     z-index: 2;
 }
-button.save{
-    float: right;
-    margin-right: 20px;
+form>p>input.save{
+
 }
 
 form .form_item{
@@ -63,7 +62,8 @@ form .item div:nth-child(2) .imgDiv>div i{
     display: none;
     cursor: pointer;
 }
-form button{
+form>p>input.save{
+    float: right;
     height: 28px;
     padding: 0 15px;
     border-radius: 14px;
@@ -71,8 +71,28 @@ form button{
     background: url("../../img/create_bg.png");
     background-size: 100% 100%;
     color: #fff;
+    /*margin-right: 10px;*/
+    font-size: 13px;
+
+    margin-right: 20px;
+}
+
+form .item>div:nth-child(2)>a.link{
+    display: inline-block;
+    height: 28px;
+    padding: 0 15px;
+    border-radius: 16px;
+    color: #555;
+    border: 1.5px solid #00a3e8;
+    background: none;
     margin-right: 10px;
     font-size: 13px;
+}
+form .item>div:nth-child(2)>a.link:hover , form .item>div:nth-child(2)>a.link:active {
+    border: 1.5px solid #fff;
+    background: url("../../img/create_bg.png");
+    background-size: 100% 100%;
+    color: #fff;
 }
 
 form .item>div:nth-child(2) input[type=button]{
@@ -93,6 +113,7 @@ form .item>div:nth-child(2) input[type=button]:hover , form .item>div:nth-child(
 }
 form .item>div:nth-child(2) input[type=text] , form .item>div:nth-child(2) select , form .item>div:nth-child(2) textarea{
     height: 28px;
+    width: 250px;
     border: 1px solid #d8dce5;
     border-radius: 4px;
     padding-left: 6px;
@@ -124,7 +145,7 @@ form .pro_inf label:before{
     margin-right: 5px;
 }
 form .pro_inf .size_input{
-    width: 60px;
+    width: 60px!important;
 }
 form .chengben label{
     display: inline-block;
@@ -334,13 +355,14 @@ table tr{
     display: flex;
 }
 table tr th,table tr td{
-    width: 100px;
+    flex:1;
+    /*width: 100px;*/
 }
 table tr th:nth-child(8),table tr td:nth-child(8){
-    width: 130px;
+    /*width: 130px;*/
 }
 table tr th:nth-child(7),table tr td:nth-child(7){
-    width: 70px;
+    /*width: 70px;*/
 }
 table tr th:first-child,table tr td:first-child{
     width: 50px;
@@ -352,6 +374,7 @@ table tr th,table tr td{
     padding: 4px 8px;
     border-bottom: 1px solid #f0f0f0;
     font-size: 13px;
+    /* vertical-align: middle; */
 }
 table tr th{
     background: #f0f0f0;

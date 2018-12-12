@@ -118,7 +118,9 @@
 }
 /*搜索*/
 .search1{
-    overflow: hidden;
+    /* overflow: hidden; */
+    padding-right: 200px;
+    position: relative;
 }
 .search1 input{
     height: 35px;
@@ -126,6 +128,8 @@
     border-radius: 4px;
     padding-left: 6px;
     margin-right: 10px;
+    /* border-bottom: 18px; */
+    margin-bottom: 10px;
 }
 .search1 select{
     height: 35px;
@@ -144,7 +148,10 @@
     cursor: pointer;
 }
 .search1 .create{
-    float: right;
+    /* float: right; */
+    position: absolute;
+    top: 0;
+    right: 0;
     margin-right: 10px;
     padding: 0 15px;
     height: 35px;
@@ -154,6 +161,9 @@
     background: url("../../img/create_bg.png");
     background-size: 100% 100%;
     cursor: pointer;
+}
+.search1 .create1{
+    right:96px;
 }
 .search1 .create:hover{
     /*box-shadow: 0 0 20px #ccc;*/
@@ -168,8 +178,8 @@
 }
 .sousuoArea{
     position: absolute;
-    top:47px;
-    left:10px;
+    top: 38px;
+    left: 1px;
     width: 510px;
     /*display: flex;*/
     display: none;

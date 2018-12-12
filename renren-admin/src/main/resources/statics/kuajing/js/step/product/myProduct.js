@@ -105,7 +105,7 @@ var vm = new Vue({
         // category: '',
         title: '',
         sku: '',
-        value9: '',
+        value9: null,
         // 审核状态个数
         auditNumber: '',
         // 上架状态个数
@@ -121,7 +121,7 @@ var vm = new Vue({
         // 当前所选分类
         nowproTypearr:[],
         nowProType:'',
-        // nowProTypeId:'',
+        nowProTypeId:'',
         // 选中产品ip数组
         activeProlist:[],
         // 批量修改产品分类
@@ -132,14 +132,14 @@ var vm = new Vue({
             "auditStatus": "",
             "shelveStatus": "",
             "productType": "",
-            "categoryThreeId": "",
+            "categoryThreeId": null,
             "producerName": "",
             "manufacturerNumber": "",
             "brandName": "",
-            "productWeight": "",
-            "productLength": "",
-            "productWide": "",
-            "productHeight": "",
+            "productWeight": null,
+            "productLength": null,
+            "productWide": null,
+            "productHeight": null,
             "productTitleQ": "",
             "productTitleH": "",
             "keyWord": "",
@@ -160,6 +160,8 @@ var vm = new Vue({
             $('.screen>div.audit ul li').eq(_index).addClass('action');
             vm.auditNumber = $('.screen>div.audit ul li.action').eq(0).attr("data-number");
             vm.getPage();
+            console.log(vm.totalCount)
+            vm.laypage();
         },
         // 上架状态筛选
         screenfunShelve:function(event){
@@ -168,6 +170,7 @@ var vm = new Vue({
             $('.screen>div.shelve ul li').eq(_index).addClass('action');
             vm.shelveNumber = $('.screen>div.shelve ul li.action').eq(0).attr("data-number");
             vm.getPage();
+            vm.laypage();
         },
         // 产品类型筛选
         screenfunType:function(event){
@@ -176,6 +179,7 @@ var vm = new Vue({
             $('.screen>div.type ul li').eq(_index).addClass('action');
             vm.productNumber = $('.screen>div.type ul li.action').eq(0).attr("data-number");
             vm.getPage();
+            vm.laypage();
         },
         getMyStatusList:function(){
             $.get('../../product/datadictionary/mystatuslist',function (r) {
@@ -246,7 +250,14 @@ var vm = new Vue({
         },
         // 获取产品列表
         getPage: function () {
-            // console.log(vm.value9);
+
+            var s , e;
+            console.log(this.value9)
+            if(JSON.stringify(this.value9) != 'null'){
+                console.log(true);
+                s = this.value9[0] + ' 00:00:00';
+                e = this.value9[1] + ' 23:59:59';
+            }
             $.ajax({
                 url: '../../product/products/mylist',
                 type: 'post',
@@ -259,8 +270,8 @@ var vm = new Vue({
                     'category': this.nowProTypeId,
                     'title': this.title,
                     'sku': this.sku,
-                    'startDate':this.value9[0],
-                    'endDate': this.value9[1],
+                    'startDate':s,
+                    'endDate': e,
                     'auditNumber': this.auditNumber,
                     'shelveNumber': this.shelveNumber,
                     'productNumber': this.productNumber,
@@ -279,7 +290,7 @@ var vm = new Vue({
                         // vm.proCurr = r.page.currPage;
                         // vm.limit = r.page.pageSize;
                         // vm.limit = lmt;
-                        vm.laypage();
+                        // vm.laypage();
                     } else {
                         layer.alert(r.message);
                     }
@@ -292,6 +303,10 @@ var vm = new Vue({
             });
 
 
+        },
+        selPage:function () {
+            vm.getPage();
+            vm.laypage();
         },
         activePro: function (index) {
             $('.pro_list .item').eq(index).toggleClass('action');
@@ -416,6 +431,7 @@ var vm = new Vue({
                 }
             }else {
                 vm.nowproTypearr[2] = $(event.target).attr('data-val');
+                vm.nowProTypeId = id;
 
                 vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1] + '/' + vm.nowproTypearr[2];
                 $('.sousuoArea').css('display','none');
@@ -429,8 +445,8 @@ var vm = new Vue({
             console.log($('.pro_list .item'));
             console.log(activeProList);
             for(var i = 0;i<activeProList.length;i++){
-                vm.activeProlist.push(activeProList.eq(i).attr('data-id'));
-                // vm.activeProlist.push(parseInt(activeProList.eq(i).attr('data-id')));
+                // vm.activeProlist.push(activeProList.eq(i).attr('data-id'));
+                vm.activeProlist.push(parseInt(activeProList.eq(i).attr('data-id')));
             }
         },
         // 批量删除
@@ -469,6 +485,7 @@ var vm = new Vue({
             vm.getProIDs();
             console.log(JSON.stringify(vm.activeProlist));
             vm.xiugaiData.productIds = vm.activeProlist;
+            console.log(vm.xiugaiData);
             if(vm.activeProlist.length == 0){
                 layer.alert('请选择要修改的产品');
             }else {
@@ -486,6 +503,7 @@ var vm = new Vue({
                         $.ajax({
                             url: '../../product/products/batchmodify',
                             type: 'post',
+                            // data:vm.xiugaiData,
                             data:JSON.stringify(vm.xiugaiData),
                             contentType: "application/json",
                             success: function (r) {
