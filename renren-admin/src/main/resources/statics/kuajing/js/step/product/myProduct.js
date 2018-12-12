@@ -160,7 +160,6 @@ var vm = new Vue({
             $('.screen>div.audit ul li').eq(_index).addClass('action');
             vm.auditNumber = $('.screen>div.audit ul li.action').eq(0).attr("data-number");
             vm.getPage();
-            console.log(vm.totalCount)
             vm.laypage();
         },
         // 上架状态筛选
