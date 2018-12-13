@@ -1,0 +1,56 @@
+/*定时上传弹框*/
+#timeUp h3{
+    margin: 10px;
+    color: #00a3e8;
+    font-weight: bold;
+}
+#timeUp>span{
+    display: inline-block;
+    margin-bottom: 15px;
+    line-height: 28px;
+    margin: 15px 0 10px 20px;
+}
+#timeUp>span>input, #addOrder>span>select{
+    height: 28px;
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    padding-left: 6px;
+    margin-right: 10px;
+}
+#timeUp>span label{
+    display: inline-block;
+    width: 90px;
+}
+#timeUp>span label:before{
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    background: -webkit-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: -moz-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: linear-gradient(to bottom, #1e9fff , #63e3f0);
+    margin-right: 5px;
+}
+#timeUp>p{
+    padding: 0 0 0 40px;
+    color: #ea9a9a;
+    font-size: 13px;
+}
+#timeUp>button {
+    margin-left: 20px;
+    background: none;
+    border: 0;
+    color: #00a3e8;
+    cursor: pointer;
+}
+#timeUp>button:hover{
+    opacity: .9;
+}
+#timeUp>p{
+    padding-left: 20px;
+    color: #666;
+    font-size: 13px;
+    letter-spacing: 1px;
+    margin-top: 6px;
+    font-weight: bold;
+}

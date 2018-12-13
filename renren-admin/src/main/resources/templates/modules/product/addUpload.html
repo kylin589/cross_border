@@ -5,6 +5,7 @@
     <title>添加上传</title>
     <#include "/header_kuajing.html">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
+    <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/addUpload.css" media="all">
     <style>
         .pro_inf>span>p,
         .pro_inf>p{
@@ -58,7 +59,7 @@
             </span>
 
             <input type="button" class="save" value="立即上传" />
-            <input type="button" class="save" value="定时上传" />
+            <input type="button" class="save" value="定时上传" @click="timeUpFunc" />
             <!--<button class="save">定时上传</button>-->
         </p>
 
@@ -394,6 +395,36 @@
             </div>
         </div>
 
+        <!--定时上传弹框-->
+        <div id="timeUp" style="display: none">
+            <h3>定时上传</h3>
+            <span>
+                <label for="">国家</label>
+                <select class="form-control" id="account_area">
+                    <option value="">-- 请选择 --</option>
+                    <option value="NorthAmerica">北美(North America)</option>
+                    <option value="Europe">欧洲(Europe)</option>
+                    <option value="Japan">日本(Japan)</option>
+                  </select>
+            </span>
+            <br>
+            <span>
+                <label for="">选择时间</label>
+                <el-date-picker
+                        value-format="yyyy-MM-dd hh:mm:ss"
+                        format="yyyy-MM-dd"
+                        v-model="value9"
+                        type="daterange"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        default-value="">
+                </el-date-picker>
+            </span>
+            <br>
+            <button> <i class="layui-icon layui-icon-fonts-code"></i> 转换</button>
+            <!--<p>2018-10-11 22:00:00</p>-->
+            <p>{{ changeTime }}</p>
+        </div>
 
     </form>
 

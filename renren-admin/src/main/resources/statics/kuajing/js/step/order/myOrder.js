@@ -19,28 +19,28 @@ window.onload = function (ev) {
         vm.addOrder();
     })
 
-    // 鼠标移入图片放大
-    $('table tr td.imgtd img').mouseover(function () {
-        console.log(111111);
-        var _src = $(this).attr('src');
-        console.log(_src);
-        var _top = $(this).offset().top + 25 - 150;
-        var _left = $(this).offset().left;
-        var _width = $(this).width();
-        var left = _left + _width;
-        var img = $('<img class="bigImg" >');
-        img.attr('src',_src);
-        $('.bigImgDiv').css({
-            'display':'inline-block',
-            'top': _top+'px',
-            'left':left+'px',
-        });
-        $('.bigImgDiv').append(img);
-    })
-    $('table tr td.imgtd img').mouseout(function () {
-        $('img.bigImg').remove();
-        $('.bigImgDiv').css('display','none');
-    })
+    // // 鼠标移入图片放大
+    // $('table tr td.imgtd img').mouseover(function () {
+    //     console.log(111111);
+    //     var _src = $(this).attr('src');
+    //     console.log(_src);
+    //     var _top = $(this).offset().top + 25 - 150;
+    //     var _left = $(this).offset().left;
+    //     var _width = $(this).width();
+    //     var left = _left + _width;
+    //     var img = $('<img class="bigImg" >');
+    //     img.attr('src',_src);
+    //     $('.bigImgDiv').css({
+    //         'display':'inline-block',
+    //         'top': _top+'px',
+    //         'left':left+'px',
+    //     });
+    //     $('.bigImgDiv').append(img);
+    // })
+    // $('table tr td.imgtd img').mouseout(function () {
+    //     $('img.bigImg').remove();
+    //     $('.bigImgDiv').css('display','none');
+    // })
 }
 
 
@@ -242,6 +242,28 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             });
+        },
+        // 鼠标移入图片放大
+        imgMouover:function (event) {
+            console.log(111111);
+            var _src = $(event.target).attr('src');
+            console.log(_src);
+            var _top = $(event.target).offset().top + 25 - 150;
+            var _left = $(event.target).offset().left;
+            var _width = $(event.target).width();
+            var left = _left + _width;
+            var img = $('<img class="bigImg" >');
+            img.attr('src',_src);
+            $('.bigImgDiv').css({
+                'display':'inline-block',
+                'top': _top+'px',
+                'left':left+'px',
+            });
+            $('.bigImgDiv').append(img);
+        },
+        imgMouout:function () {
+            $('img.bigImg').remove();
+            $('.bigImgDiv').css('display','none');
         }
     },
     created:function () {

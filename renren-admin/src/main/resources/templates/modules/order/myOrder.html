@@ -84,7 +84,7 @@
         </tr>
         <tr v-for = 'item in prolist'>
             <td>{{ item.orderId }}<br/><span class="brSpan"><img src="../../statics/kuajing/img/american.png" alt=""> {{ item.country }}</span></td>
-            <td class="imgtd"><img src="../../statics/kuajing/img/img1.jpg" alt=""></td>
+            <td class="imgtd"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
             <td><a href="orderDetails.html">{{ item.amazonOrderId }}</a> <br/>
                 <span class="brSpan">
                     <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">

@@ -45,6 +45,7 @@ layui.use('laypage', function(){
 var vm = new Vue({
     el:'#step',
     data:{
+        value9:null,
         marketplace:[{
             value:3116,
             country:'IT',
@@ -142,7 +143,9 @@ var vm = new Vue({
             value:'手表Uhren'
         }],
         arr:[],
-        arr2:[]
+        arr2:[],
+        // 转换时间
+        changeTime:''
     },
     methods:{
         fenleiTankuang:function () {
@@ -215,6 +218,45 @@ var vm = new Vue({
                 vm.fenlei(bol,id);
             })
             // this.fenlei();
+        },
+        // 定时上传
+        timeUpFunc:function () {
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#timeUp'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['530px', '330px'],
+                shadeClose: true,
+                btn: ['上传','取消'],
+                btn1: function (index) {
+                    // console.log(vm.xiugaiData);
+                    // $.ajax({
+                    //     url: '../../product/products/batchmodify',
+                    //     type: 'post',
+                    //     // data:vm.xiugaiData,
+                    //     data:JSON.stringify(vm.xiugaiData),
+                    //     contentType: "application/json",
+                    //     success: function (r) {
+                    //         console.log(r);
+                    //         if (r.code === 0) {
+                    //             layer.alert('操作成功');
+                    //
+                    //         } else {
+                    //             layer.alert(r.msg);
+                    //         }
+                    //     },
+                    //     error: function () {
+                    //         layer.msg("网络故障");
+                    //     }
+                    // })
+
+                },
+                btn2: function (index) {
+
+
+                }
+            });
         }
     }
 })
