@@ -29,13 +29,13 @@
         </tr>
         <tr v-for="item in authorizeList">
             <td>{{ item.shopName }}</td>
-            <td>{{ item.account }}</td>
+            <td>{{ item.amazonAccount }}</td>
             <td>{{ item.country }}</td>
-            <td>{{ item.date }}</td>
+            <td>{{ item.createTime }}</td>
             <td>
                 <a href="javascript:;">添加授权令牌</a>
-                <a href="javascript:;">删除</a>
-                <a href="javascript:;" @click="getGjList">国家列表</a>
+                <a href="javascript:;" @click="getdelete(item.grantId)">删除</a>
+                <a href="javascript:;" @click="getGjList(item.grantId)">国家列表</a>
             </td>
         </tr>
     </table>
@@ -48,32 +48,33 @@
         <h3>添加授权</h3>
         <span>
             <label for="">店铺别名</label>
-            <input type="text" placeholder="店铺别名">
+            <input type="text" placeholder="店铺别名" v-model="shopName">
         </span>
         <br>
         <span>
             <label for="">Amazon账号</label>
-            <input type="text" placeholder="Amazon账号">
+            <input type="text" placeholder="Amazon账号" v-model="amazonAccount">
         </span>
         <br>
         <span>
             <label for="">开户区域</label>
-            <select class="form-control" id="account_area">
+            <select class="form-control" id="account_area" v-model="area">
                 <option value="">-- 请选择 --</option>
-                <option value="NorthAmerica">北美(North America)</option>
-                <option value="Europe">欧洲(Europe)</option>
-                <option value="Japan">日本(Japan)</option>
+                <option value="0">北美(North America)</option>
+                <option value="1">欧洲(Europe)</option>
+                <option value="2">日本(Japan)</option>
+                <option value="3">澳大利亚(Australia)</option>
               </select>
         </span>
         <br>
         <span>
             <label for="">Merchant ID</label>
-            <input type="text" placeholder="买家编号">
+            <input type="text" placeholder="买家编号" v-model="merchantId">
         </span>
         <br>
         <span>
             <label for="">授权令牌</label>
-            <input type="text" placeholder="授权令牌">
+            <input type="text" placeholder="授权令牌" v-model="grantToken">
         </span>
 
         <p>所有的都为必填项</p>
