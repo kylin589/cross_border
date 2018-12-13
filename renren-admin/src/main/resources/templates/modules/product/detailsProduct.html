@@ -191,10 +191,10 @@
                 </div>
                 <div>
                     <select name="" id="" style="width: 90px">
-                        <option value="1">UPC</option>
-                        <option value="2">ENA</option>
+                        <option value="1">ENA</option>
+                        <option value="2">UPC</option>
                     </select>
-                    <input type="text" placeholder="UPC/ENA">
+                    <input type="text" placeholder="UPC/ENA" v-model="proDetails.eanCode">
 
                 </div>
             </div>
@@ -231,16 +231,16 @@
                     </tr>
                     <tr>
                     <th>运费（￥）</th>
-                    <td>{{ proDetails.americanFC.freight }}</td>
-                    <td>{{ proDetails.canadaFC.freight }}</td>
-                    <td>{{ proDetails.mexicoFC.freight }}</td>
-                    <td>{{ proDetails.britainFC.freight }}</td>
-                    <td>{{ proDetails.franceFC.freight }}</td>
-                    <td>{{ proDetails.germanyFC.freight }}</td>
-                    <td>{{ proDetails.italyFC.freight }}</td>
-                    <td>{{ proDetails.spainFC.freight }}</td>
-                    <td>{{ proDetails.japanFC.freight }}</td>
-                    <td>{{ proDetails.australiaFC.freight }}</td>
+                    <td>{{ proDetails.americanFC.freight }} （{{proDetails.americanFC.type}}）</td>
+                    <td>{{ proDetails.canadaFC.freight }} （{{proDetails.canadaFC.type}}）</td>
+                    <td>{{ proDetails.mexicoFC.freight }} （{{proDetails.mexicoFC.type}}）</td>
+                    <td>{{ proDetails.britainFC.freight }} （{{proDetails.britainFC.type}}）</td>
+                    <td>{{ proDetails.franceFC.freight }} （{{proDetails.franceFC.type}}）</td>
+                    <td>{{ proDetails.germanyFC.freight }} （{{proDetails.germanyFC.type}}）</td>
+                    <td>{{ proDetails.italyFC.freight }} （{{proDetails.italyFC.type}}）</td>
+                    <td>{{ proDetails.spainFC.freight }} （{{proDetails.spainFC.type}}）</td>
+                    <td>{{ proDetails.japanFC.freight }} （{{proDetails.japanFC.type}}）</td>
+                    <td>{{ proDetails.australiaFC.freight }} （{{proDetails.australiaFC.type}}）</td>
 
                     </tr>
                     <tr>
@@ -301,16 +301,16 @@
                     </tr>
                     <tr>
                     <th>利润（￥）</th>
-                    <td>{{ proDetails.americanFC.profit }}</td>
-                    <td>{{ proDetails.canadaFC.profit }}</td>
-                    <td>{{ proDetails.mexicoFC.profit }}</td>
-                    <td>{{ proDetails.britainFC.profit }}</td>
-                    <td>{{ proDetails.franceFC.profit }}</td>
-                    <td>{{ proDetails.germanyFC.profit }}</td>
-                    <td>{{ proDetails.italyFC.profit }}</td>
-                    <td>{{ proDetails.spainFC.profit }}</td>
-                    <td>{{ proDetails.japanFC.profit }}</td>
-                    <td>{{ proDetails.australiaFC.profit }}</td>
+                    <td>{{ proDetails.americanFC.profit }} ({{proDetails.americanFC.profitRate}}) </td>
+                    <td>{{ proDetails.canadaFC.profit }} ({{proDetails.canadaFC.profitRate}}) </td>
+                    <td>{{ proDetails.mexicoFC.profit }} ({{proDetails.mexicoFC.profitRate}}) </td>
+                    <td>{{ proDetails.britainFC.profit }} ({{proDetails.britainFC.profitRate}}) </td>
+                    <td>{{ proDetails.franceFC.profit }} ({{proDetails.franceFC.profitRate}}) </td>
+                    <td>{{ proDetails.germanyFC.profit }} ({{proDetails.germanyFC.profitRate}}) </td>
+                    <td>{{ proDetails.italyFC.profit }} ({{proDetails.italyFC.profitRate}}) </td>
+                    <td>{{ proDetails.spainFC.profit }} ({{proDetails.spainFC.profitRate}}) </td>
+                    <td>{{ proDetails.japanFC.profit }} ({{proDetails.japanFC.profitRate}}) </td>
+                    <td>{{ proDetails.australiaFC.profit }} ({{proDetails.australiaFC.profitRate}}) </td>
 
                     </tr>
                     </table>
@@ -413,7 +413,7 @@
                         <a href="javascript:;" v-for="list in item.type">{{ list }}</a>
                     </p>
 
-                    <table v-if="recommendAll.length != 0">
+                    <table class="tableV" v-if="recommendAll.length != 0">
                         <tr>
                             <th>序号</th>
                             <th>变体组合</th>

@@ -37,8 +37,10 @@
                     <span><label for="">SKU：</label><span>{{ orderDetails.sku }}</span></span>
                     <span><label for="">ASIN：</label><span>{{ orderDetails.asin }}</span></span>
                     <span><label for="">数量：</label><span>{{ orderDetails.num }}</span></span>
-                    <span><label for="">采购价（￥）：</label><span>{{ orderDetails.price }}</span></span>
-                    <span><label for="">销售单号：</label><span>{{ orderDetails.xiaoshouNum }}</span></span>
+                    <!--<span><label for="">采购价（￥）：</label><span>{{ orderDetails.price }}</span></span>-->
+                    <span><label for="">亚马逊单号：</label><span>{{ orderDetails.xiaoshouNum }}</span></span>
+                    <input v-if="orderDetails.state == '虚发货'" class="yiCaigou" type="button" value="已采购">
+                    <input v-if="orderDetails.state == '待发货'" class="yiFahuo" type="button" value="已发货">
                 </div>
             </div>
             
@@ -165,8 +167,8 @@
                             <li>操作日志</li>
                         </ul>
                         <div class="layui-tab-content action">
-                            <ul>
-                                <li v-for="item in remark"><span>{{ item.title }}</span><span>{{ item.con }}</span></li>
+                            <ul class="operationLog">
+                                <li v-for="item in remark"><span>{{ item.title }}</span><span>{{ item.name }}</span><span>{{ item.con }}</span></li>
                             </ul>
                             <textarea placeholder="留言备注" style="margin-bottom: 10px"></textarea>
                             <br>
@@ -181,7 +183,7 @@
                         </div>
                         <div class="layui-tab-content">
                             <ul class="operationLog">
-                                <li v-for="item in operationLog"><span>{{ item.date }}</span><span>{{ item.con }}</span></li>
+                                <li v-for="item in operationLog"><span>{{ item.date }}</span><span>{{ item.name }}</span><span>{{ item.con }}</span></li>
                             </ul>
 
                         </div>

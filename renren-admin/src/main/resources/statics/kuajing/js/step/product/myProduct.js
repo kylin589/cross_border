@@ -149,7 +149,15 @@ var vm = new Vue({
             "productDescriptionQ": "",
             "productDescriptionH": "",
             "productCategory":"",
-        }
+        },
+        // 采集产品分类
+        caijiTypeList:[],
+        caijiNowType:'',
+        caijiThreeId:null,
+        caijiUrl:'',
+        caijiProgress:0,
+        caijiProgressIf:false
+
     },
     methods: {
         // 筛选
@@ -160,7 +168,7 @@ var vm = new Vue({
             $('.screen>div.audit ul li').eq(_index).addClass('action');
             vm.auditNumber = $('.screen>div.audit ul li.action').eq(0).attr("data-number");
             vm.getPage();
-            vm.laypage();
+            // vm.laypage();
         },
         // 上架状态筛选
         screenfunShelve:function(event){
@@ -691,7 +699,176 @@ var vm = new Vue({
 
 
         },
+        // 点击采集弹框分类输入框展示一级分类
+        typeClickINput2:function (event) {
+            // var _top = $(event.target)
+            console.log($('.sousuoArea'));
+            $('.sousuoArea2').css({
+                'display':'flex',
+            })
+            vm.getProTypeOne();
 
+            // 点击分类框元素外部隐藏元素
+            $(document).click(function(){
+                $(".sousuoArea").hide();
+            });
+            // 点击分类框元素时阻止事件冒泡
+            $(".sousuoArea").click(function(event){
+                event.stopPropagation();
+            });
+            // 点击分类输入框时阻止事件冒泡
+            $('.sousuoAreaInput').click(function(event){
+                event.stopPropagation();
+            })
+
+        },
+        // 点击每个分类展示下一级或者直接选中1
+        clickTypeItem2:function (event) {
+            // $(event.target)
+            var pId = $(event.target).attr('data-pid');
+            var id = $(event.target).attr('data-id');
+            if($(event.target).attr('data-if') == 'true'){
+                if($(event.target).attr('data-pid') == '0'){
+                    vm.categoryThreeList = [];
+                    $.ajax({
+                        type: 'get',
+                        url: '../../product/category/querycategorybyparentid',
+                        contentType: "application/json",
+                        data: {categoryId:id},
+                        success: function (r) {
+                            if (r.code == 0) {
+                                vm.categoryTwoList = r.categoryList;
+                                vm.caijiTypeList[0] = $(event.target).attr('data-val');
+                                console.log(vm.categoryTwoList)
+                            } else {
+                                alert(r.msg);
+                            }
+                        }
+                    });
+                }else if($(event.target).attr('data-pid') != '0'){
+                    vm.categoryThreeList = [];
+                    $.ajax({
+                        type: 'get',
+                        url: '../../product/category/querycategorybyparentid',
+                        contentType: "application/json",
+                        data: {categoryId:id},
+                        success: function (r) {
+                            if (r.code == 0) {
+                                vm.categoryThreeList = r.categoryList;
+                                vm.caijiTypeList[1] = $(event.target).attr('data-val');
+                                console.log(vm.categoryThreeList)
+                            } else {
+                                alert(r.msg);
+                            }
+                        }
+                    });
+                }
+            }else {
+
+                vm.caijiTypeList[2] = $(event.target).attr('data-val');
+                vm.caijiNowType = vm.caijiTypeList[0] + '/' + vm.caijiTypeList[1] + '/' + vm.caijiTypeList[2];
+                vm.caijiThreeId = parseInt(id);
+                $('.sousuoArea').css('display','none');
+            }
+
+
+        },
+        // 采集产品弹框
+        caijiProFunc:function () {
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#caijiCreate'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['700px', '340px'],
+                shadeClose: true,
+                btn: ['采集','取消'],
+                btn1: function (index) {
+                    // console.log(vm.xiugaiData);
+                    console.log(vm.caijiUrl)
+                    console.log(vm.caijiThreeId);
+                    vm.caijiProgressIf = true;
+                    var timer = setInterval(function () {
+                        if(vm.caijiProgress<= 70){
+                            vm.caijiProgress += 10;
+                        }else {
+
+                            setTimeout(timer);
+                            // vm.caijiProgress = '';
+                        }
+
+                    },1000);
+                    $.ajax({
+                        url: 'http://192.168.0.104:5000/getCollectionInfo',
+                        type: 'post',
+                        // data:vm.xiugaiData,
+                        data:{
+                            url:vm.caijiUrl,
+                            category_three_id:vm.caijiThreeId
+                        },
+                        // contentType: "application/json",
+                        success: function (r) {
+                            // console.log(r);
+                            if (r.code === 0) {
+                                console.log(r);
+                                vm.caijiProgress = 100;
+                                vm.caijiProgressIf = false;
+                                vm.caijiProgress = 0;
+
+                                $.ajax({
+                                    url: '../../product/products/collectproduct',
+                                    type: 'get',
+                                    // data:vm.xiugaiData,
+                                    data:JSON.stringify({
+                                        productId:r.product_id
+                                    }),
+                                    contentType: "application/json",
+                                    success: function (r) {
+                                        // console.log(r);
+                                        if (r.code === 0) {
+                                            console.log(r);
+                                            layer.alert('操作成功');
+                                            vm.getPage();
+                                        } else {
+
+
+                                            layer.alert(r.msg);
+                                        }
+                                    },
+                                    error: function () {
+
+                                        layer.msg("网络故障");
+                                    }
+                                })
+
+                                layer.alert('操作成功');
+
+                            } else {
+                                setTimeout(timer);
+                                vm.caijiProgressIf = false;
+                                vm.caijiProgress = 0;
+                                layer.alert(r.msg);
+                            }
+                        },
+                        error: function () {
+                            setTimeout(timer);
+                            vm.caijiProgressIf = false;
+                            vm.caijiProgress = 0;
+                            layer.msg("网络故障1111");
+                        }
+                    })
+
+                },
+                btn2: function (index) {
+
+
+                }
+            });
+        },
+        // 原创
+        createPro:function () {
+            window.location.href="createPro.html";
+        }
 
 
     },
@@ -728,7 +905,7 @@ var vm = new Vue({
         this.getPutawayList();
         this.getProductTypeList();*/
         // this.getQueryCategoryOne();
-        this.getPage(1, this.pageLimit);
+        this.getPage();
 
 
     }

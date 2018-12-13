@@ -51,8 +51,8 @@
 
         <button class="sousuo" @click="selPage()">搜索</button>
 
-        <button class="create">原创产品</button>
-        <button class="create create1">采集产品</button>
+        <button class="create" @click="createPro">原创产品</button>
+        <button class="create create1" @click="caijiProFunc">采集产品</button>
 
     </div>
     <!--筛选区域-->
@@ -245,6 +245,53 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!--采集产品分类-->
+    <div id="caijiCreate" style="display: none">
+        <h3>采集产品</h3>
+
+        <div class="form_item">
+            <div class="item">
+                <div>
+                    <h4>采集网址</h4>
+                </div>
+                <div>
+                    <input type="text" class="" placeholder="采集网址" v-model="caijiUrl" style="width: 200px">
+                </div>
+            </div>
+        </div>
+
+        <div class="form_item">
+            <div class="item">
+                <div>
+                    <h4>产品分类</h4>
+                </div>
+                <div>
+                    <input type="text" class="sousuoAreaInput" placeholder="产品类目" v-model="caijiNowType" @click="typeClickINput2">
+                    <div class="sousuoArea sousuoArea2">
+                        <div class="areaOne">
+                            <ul>
+                                <li v-for="categoryOneItem in categoryOneList" :data-id="categoryOneItem.categoryId" :data-pId="categoryOneItem.parentId" :data-if="categoryOneItem.ifNext" :data-val = 'categoryOneItem.categoryName' @click="clickTypeItem2"> {{ categoryOneItem.categoryName }}（{{categoryOneItem.count}}）</li>
+                            </ul>
+                        </div>
+                        <div class="areaTwo" v-if="categoryTwoList.length != 0">
+                            <ul>
+                                <li v-for="categoryTwoItem in categoryTwoList" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-if="categoryTwoItem.ifNext" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem2"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
+                            </ul>
+                        </div>
+                        <div class="areaThree" v-if="categoryThreeList.length != 0">
+                            <ul>
+                                <li v-for="categoryThreeItem in categoryThreeList" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-if="categoryThreeItem.ifNext" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem2"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-left: 36px;width: calc(100% - 36px);">
+            <el-progress v-if="caijiProgressIf" :percentage="caijiProgress"></el-progress>
         </div>
 
 

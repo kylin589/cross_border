@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>详情</title>
+    <title>原创产品</title>
     <#include "/header_kuajing.html">
         <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
         <style>
@@ -50,10 +50,10 @@
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
               <a href="javascript:window.location.href = document.referrer;">我的产品 / </a>
-              <a><cite>产品详情</cite></a>
+              <a><cite>原创产品</cite></a>
             </span>
 
-            <!--<input type="button" class="save" @click="savePro" value="保存并提交" />-->
+            <input type="button" class="save" @click="createSava" value="保存并提交" />
         </p>
 
         <div class="form_item">
@@ -79,9 +79,9 @@
                         </div>
 
                     </div>
-                    <!--<input type="button" value="选中文件">-->
-                    <!--<input type="button" value="开始上传">-->
-                    <!--<input type="button" class="proStation" value="图片回收站">-->
+                    <input type="button" value="选中文件">
+                    <input type="button" value="开始上传">
+                    <input type="button" class="proStation" value="图片回收站">
                 </div>
             </div>
             <div class="item">
@@ -89,25 +89,24 @@
                     <h4>产品分类</h4>
                 </div>
                 <div>
-                    <input type="text" class="sousuoAreaInput" placeholder="产品分类" v-model="proDetails.productCategory" readonly>
-                    <!--<input type="text" class="sousuoAreaInput" @click="typeClickINput" placeholder="产品分类" v-model="proDetails.productCategory">-->
-                    <!--<div class="sousuoArea">-->
-                        <!--<div class="areaOne">-->
-                            <!--<ul>-->
-                                <!--<li v-for="categoryOneItem in categoryOneList" :data-id="categoryOneItem.categoryId" :data-pId="categoryOneItem.parentId" :data-if="categoryOneItem.ifNext" :data-val = 'categoryOneItem.categoryName' @click="clickTypeItem"> {{ categoryOneItem.categoryName }}（{{categoryOneItem.count}}）</li>-->
-                            <!--</ul>-->
-                        <!--</div>-->
-                        <!--<div class="areaTwo" v-if="categoryTwoList.length != 0">-->
-                            <!--<ul>-->
-                                <!--<li v-for="categoryTwoItem in categoryTwoList" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-if="categoryTwoItem.ifNext" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>-->
-                            <!--</ul>-->
-                        <!--</div>-->
-                        <!--<div class="areaThree" v-if="categoryThreeList.length != 0">-->
-                            <!--<ul>-->
-                                <!--<li v-for="categoryThreeItem in categoryThreeList" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-if="categoryThreeItem.ifNext" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>-->
-                            <!--</ul>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                    <input type="text" class="sousuoAreaInput" @click="typeClickINput" placeholder="产品分类" v-model="proDetails.productCategory">
+                    <div class="sousuoArea">
+                        <div class="areaOne">
+                            <ul>
+                                <li v-for="categoryOneItem in categoryOneList" :data-id="categoryOneItem.categoryId" :data-pId="categoryOneItem.parentId" :data-if="categoryOneItem.ifNext" :data-val = 'categoryOneItem.categoryName' @click="clickTypeItem"> {{ categoryOneItem.categoryName }}（{{categoryOneItem.count}}）</li>
+                            </ul>
+                        </div>
+                        <div class="areaTwo" v-if="categoryTwoList.length != 0">
+                            <ul>
+                                <li v-for="categoryTwoItem in categoryTwoList" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-if="categoryTwoItem.ifNext" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
+                            </ul>
+                        </div>
+                        <div class="areaThree" v-if="categoryThreeList.length != 0">
+                            <ul>
+                                <li v-for="categoryThreeItem in categoryThreeList" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-if="categoryThreeItem.ifNext" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
+                            </ul>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -118,11 +117,11 @@
                     <h4>审核状态</h4>
                 </div>
                 <div>
-                    <input type="radio" class="rdo" name="sex" value="001" v-model="proDetails.auditStatus" style="" disabled>
+                    <input type="radio" class="rdo" name="sex" value="001" v-model="proDetails.auditStatus" style="">
                     <label class="rdo-text">通过</label>
-                    <input type="radio" class="rdo" name="sex" value="002" v-model="proDetails.auditStatus" disabled>
+                    <input type="radio" class="rdo" name="sex" value="002" v-model="proDetails.auditStatus">
                     <label class="rdo-text">待审核</label>
-                    <input type="radio" class="rdo" name="sex" value="003" v-model="proDetails.auditStatus" disabled>
+                    <input type="radio" class="rdo" name="sex" value="003" v-model="proDetails.auditStatus">
                     <label class="rdo-text">失效</label>
 
                 </div>
@@ -132,15 +131,15 @@
                     <h4>上下架</h4>
                 </div>
                 <div>
-                    <input type="radio" class="rdo" name="sex1" value="001" v-model="proDetails.shelveStatus" disabled style="">
+                    <input type="radio" class="rdo" name="sex1" value="001" v-model="proDetails.shelveStatus" style="">
                     <label class="rdo-text">上架</label>
-                    <input type="radio" class="rdo" name="sex1" value="002" v-model="proDetails.shelveStatus" disabled>
+                    <input type="radio" class="rdo" name="sex1" value="002" v-model="proDetails.shelveStatus">
                     <label class="rdo-text">下架</label>
-                    <input type="radio" class="rdo" name="sex1" value="003" v-model="proDetails.shelveStatus" disabled>
+                    <input type="radio" class="rdo" name="sex1" value="003" v-model="proDetails.shelveStatus">
                     <label class="rdo-text">过滤</label>
-                    <input type="radio" class="rdo" name="sex1" value="004" v-model="proDetails.shelveStatus" disabled style="">
+                    <input type="radio" class="rdo" name="sex1" value="004" v-model="proDetails.shelveStatus" style="">
                     <label class="rdo-text">侵权</label>
-                    <input type="radio" class="rdo" name="sex1" value="005" v-model="proDetails.shelveStatus" disabled>
+                    <input type="radio" class="rdo" name="sex1" value="005" v-model="proDetails.shelveStatus">
                     <label class="rdo-text">屏蔽</label>
                 </div>
             </div>
@@ -149,15 +148,15 @@
                     <h4>产品类型</h4>
                 </div>
                 <div>
-                    <input type="radio" class="rdo" name="sex2" value="001" v-model="proDetails.productType" disabled style="">
+                    <input type="radio" class="rdo" name="sex2" value="001" v-model="proDetails.productType" style="">
                     <label class="rdo-text">重点</label>
-                    <input type="radio" class="rdo" name="sex2" value="002" v-model="proDetails.productType" disabled>
+                    <input type="radio" class="rdo" name="sex2" value="002" v-model="proDetails.productType">
                     <label class="rdo-text">原创</label>
-                    <input type="radio" class="rdo" name="sex2" value="003" v-model="proDetails.productType" disabled>
+                    <input type="radio" class="rdo" name="sex2" value="003" v-model="proDetails.productType">
                     <label class="rdo-text">海外</label>
-                    <input type="radio" class="rdo" name="sex2" value="004" v-model="proDetails.productType" disabled style="">
+                    <input type="radio" class="rdo" name="sex2" value="004" v-model="proDetails.productType" style="">
                     <label class="rdo-text">抓取</label>
-                    <input type="radio" class="rdo" name="sex2" value="005" v-model="proDetails.productType" disabled>
+                    <input type="radio" class="rdo" name="sex2" value="005" v-model="proDetails.productType">
                     <label class="rdo-text">其他</label>
                 </div>
             </div>
@@ -168,8 +167,9 @@
                     <h4>商家信息</h4>
                 </div>
                 <div>
+                    <input type="text" placeholder="商家url" v-model="proDetails.sellerLink">
                     <!--<a href="https://item.taobao.com/auction/noitem.htm?itemid=555499628050&catid=0&spm=a230r.1.14.228.26d354e7HweDWt&ns=1&abbucket=19#detail" target="_blank"> 产品页 </a>-->
-                    <a class="link" :href="proDetails.sellerLink" target="_blank"> 产品页 </a>
+                    <!--<a class="link" :href="proDetails.sellerLink" target="_blank"> 产品页 </a>-->
                     <!--<input type="button"  value="产品页">-->
                 </div>
             </div>
@@ -178,12 +178,12 @@
                     <h4>产品信息</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><label for="">厂商名称：</label><input type="text" placeholder="厂商名称" v-model="proDetails.producerName" readonly></span>
-                    <span><label for="">品牌名称：</label><input type="text" placeholder="品牌名称" v-model="proDetails.brandName" readonly></span>
-                    <span><label for="">厂商编号：</label><input type="text" placeholder="厂商编号" v-model="proDetails.manufacturerNumber" readonly></span>
-                    <span><label for="">产品来源：</label><input type="text" placeholder="产品来源" v-model="proDetails.productSource" readonly></span><br>
-                    <span><label for="">来源地址：</label><textarea v-model="proDetails.sellerLink" readonly></textarea></span><br>
-                    <span><label for="">附加备注：</label><textarea v-model="proDetails.productRemark" readonly></textarea></span><br>
+                    <span><label for="">厂商名称：</label><input type="text" placeholder="厂商名称" v-model="proDetails.producerName"></span>
+                    <span><label for="">品牌名称：</label><input type="text" placeholder="品牌名称" v-model="proDetails.brandName"></span>
+                    <span><label for="">厂商编号：</label><input type="text" placeholder="厂商编号" v-model="proDetails.manufacturerNumber"></span>
+                    <span><label for="">产品来源：</label><input type="text" placeholder="产品来源" v-model="proDetails.productSource"></span><br>
+                    <span><label for="">来源地址：</label><textarea v-model="proDetails.sellerLink"></textarea></span><br>
+                    <span><label for="">附加备注：</label><textarea v-model="proDetails.productRemark"></textarea></span><br>
                 </div>
             </div>
             <div class="item">
@@ -195,7 +195,7 @@
                         <option value="1">UPC</option>
                         <option value="2">ENA</option>
                     </select>
-                    <input type="text" placeholder="UPC/ENA" readonly>
+                    <input type="text" placeholder="UPC/ENA">
 
                 </div>
             </div>
@@ -206,20 +206,19 @@
                     <h4>成本运费</h4>
                 </div>
                 <div class="pro_inf chengben">
-                    <span><label for="">采购价格(￥)：</label><input type="text" placeholder="采购价格(￥)" v-model="proDetails.purchasePrice" readonly @change="getcostFreight"></span>
-                    <span><label for="">国内运费(￥)：</label><input type="text" placeholder="国内运费(￥)" v-model="proDetails.domesticFreight" readonly @change="getcostFreight"></span>
-                    <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="包装毛重(kg)" v-model="proDetails.productWeight" readonly @change="getcostFreight"></span><br>
-                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength" readonly @change="getcostFreight"> * <input class="size_input" type="text" placeholder="宽" readonly v-model="proDetails.productWide" @change="getcostFreight"> * <input class="size_input" type="text" readonly placeholder="高" v-model="proDetails.productHeight" @change="getcostFreight"></span>
-                    <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" readonly v-model="proDetails.stock" @change="getcostFreight"></span>
-                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" readonly v-model="proDetails.pretreatmentDate" @change="getcostFreight"></span>
+                    <span><label for="">采购价格(￥)：</label><input type="text" placeholder="采购价格(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>
+                    <span><label for="">国内运费(￥)：</label><input type="text" placeholder="国内运费(￥)" v-model="proDetails.domesticFreight" @change="getcostFreight"></span>
+                    <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="包装毛重(kg)" v-model="proDetails.productWeight" @change="getcostFreight"></span><br>
+                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength" @change="getcostFreight"> * <input class="size_input" type="text" placeholder="宽" v-model="proDetails.productWide" @change="getcostFreight"> * <input class="size_input" type="text" placeholder="高" v-model="proDetails.productHeight" @change="getcostFreight"></span>
+                    <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" v-model="proDetails.stock" @change="getcostFreight"></span>
+                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" v-model="proDetails.pretreatmentDate" @change="getcostFreight"></span>
                     <!--<span><label for="">销售价格(￥)：</label><input type="text" placeholder="销售价格(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>-->
                     <!--<span><label for="">国际运费(￥)：</label><input type="text" placeholder="国际运费(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>-->
                     <!--<span><label class="">产品有电池：</label><input type="checkbox" name="" style="" @change="getcostFreight"> </span><br>-->
 
                     <table class="tableY"  v-if="JSON.stringify(proDecList) != '{}'">
                         <tr>
-                            <th style=""> </th>
-                            <!--<th style="color: #00b1e5;font-size: 10px;" @click="lirFunc"> <i style="font-size: 10px" class="layui-icon layui-icon-refresh"></i> 获取利润 </th>-->
+                            <th style="color: #00b1e5;font-size: 10px;" @click="lirFunc"> <i style="font-size: 10px" class="layui-icon layui-icon-refresh"></i> 获取利润 </th>
                             <th>美国</th>
                             <th>加拿大</th>
                             <th>墨西哥</th>
@@ -331,7 +330,7 @@
                     <h4>产品简介</h4>
                 </div>
                 <div class="pro_inf chengben">
-                    <span><label for="">英文简称：</label><input type="text" placeholder="建议填写" v-model="proDetails.productAbbreviations" readonly></span>
+                    <span><label for="">英文简称：</label><input type="text" placeholder="建议填写" v-model="proDetails.productAbbreviations"></span>
                 </div>
             </div>
             <div class="item">
@@ -350,46 +349,46 @@
                             <li>日语</li>
                         </ul>
                         <div class="layui-tab-content active">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.chinesePRE.productTitle" readonly>建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.chinesePRE.keyWord" readonly>建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.chinesePRE.keyPoints" readonly>建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.chinesePRE.productDescription" readonly>建议填写</textarea></span><br>
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.chinesePRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.chinesePRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.chinesePRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.chinesePRE.productDescription">建议填写</textarea></span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.britainPRE.productTitle" readonly>建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.britainPRE.keyWord" readonly>建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.britainPRE.keyPoints" readonly>建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.britainPRE.productDescription" readonly>建议填写</textarea></span><br>
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.britainPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.britainPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.britainPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.britainPRE.productDescription">建议填写</textarea></span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.francePRE.productTitle" readonly>建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.francePRE.keyWord" readonly>建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.francePRE.keyPoints" readonly>建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.francePRE.productDescription" readonly>建议填写</textarea></span><br>
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.francePRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.francePRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.francePRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.francePRE.productDescription">建议填写</textarea></span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.italyPRE.productTitle" readonly>建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.italyPRE.keyWord" readonly>建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.italyPRE.keyPoints" readonly>建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.italyPRE.productDescription" readonly>建议填写</textarea></span><br>
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.italyPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.italyPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.italyPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.italyPRE.productDescription">建议填写</textarea></span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.spainPRE.productTitle" readonly>建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.spainPRE.keyWord" readonly>建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.spainPRE.keyPoints" readonly>建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.spainPRE.productDescription" readonly>建议填写</textarea></span><br>
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.spainPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.spainPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.spainPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.spainPRE.productDescription">建议填写</textarea></span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.germanyPRE.productTitle" readonly>建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.germanyPRE.keyWord" readonly>建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.germanyPRE.keyPoints" readonly>建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.germanyPRE.productDescription" readonly>建议填写</textarea></span><br>
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.germanyPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.germanyPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.germanyPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.germanyPRE.productDescription">建议填写</textarea></span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.japanPRE.productTitle" readonly>建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord" readonly>建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints" readonly>建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription" readonly>建议填写</textarea></span><br>
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.japanPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription">建议填写</textarea></span><br>
                         </div>
                     </div>
 
@@ -403,13 +402,10 @@
                     <h4>规格变体</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><label for="">变体参数：</label>
-                        <!--<input type="button" value="添加" @click="addVariant">-->
-                    </span>
+                    <span><label for="">变体参数：</label><input type="button" value="添加" @click="addVariant"></span>
                     <div class="variantName">
                         <span v-for="(item,index) in variantList">
-                            <a href="javascript:;" :data-id="item.id">{{ item.name }}</a><i class="layui-icon layui-icon-close-fill"></i>
-                            <!--<a @click="upVariant" href="javascript:;" :data-id="item.id" @mouseover="variantName" @mouseout="variantNamenone">{{ item.name }}</a><i @click="delvariantName(index)" class="layui-icon layui-icon-close-fill"></i>-->
+                            <a @click="upVariant" href="javascript:;" :data-id="item.id" @mouseover="variantName" @mouseout="variantNamenone">{{ item.name }}</a><i @click="delvariantName(index)" class="layui-icon layui-icon-close-fill"></i>
                         </span>
                     </div>
 
@@ -426,19 +422,19 @@
                             <th>加价（人民币）</th>
                             <th>库存</th>
                             <th>UPC/EAN</th>
-                            <!--<th>操作</th>-->
-                            <!--<th>选择图片</th>-->
+                            <th>操作</th>
+                            <th>选择图片</th>
                             <th>已选图片</th>
                         </tr>
                         <tr v-for="(item,index) in recommendAll" :data-index="item.id">
                             <td>{{ index }}</td>
                             <td>{{ item.name }}</td>
-                            <td><input type="text" v-model="item.sku" readonly="readonly"></td>
-                            <td><input type="text" v-model="item.addPrice" readonly="readonly"></td>
-                            <td><input type="text" v-model="item.stock" readonly="readonly"></td>
-                            <td><input type="text" v-model="item.code" readonly="readonly"></td>
-                            <!--<td><input type="button" class="del" :data-index="item.id" value="删除" @click="delVariantList" readonly="readonly"></td>-->
-                            <!--<td><input type="button" class="chan" value="选择图片"> <input type="button" class="all" value="一键添加" readonly="readonly"></td>-->
+                            <td><input type="text" v-model="item.sku"></td>
+                            <td><input type="text" v-model="item.addPrice"></td>
+                            <td><input type="text" v-model="item.stock"></td>
+                            <td><input type="text" v-model="item.code"></td>
+                            <td><input type="button" class="del" :data-index="item.id" value="删除" @click="delVariantList"></td>
+                            <td><input type="button" class="chan" value="选择图片"> <input type="button" class="all" value="一键添加"></td>
                             <td>
                                 <ul class="ul1">
                                     <li v-for="img in item.img">
@@ -496,7 +492,7 @@
     </form>
 
 
-    <script src="${request.contextPath}/statics/kuajing/js/step/product/detailsProduct1.js"></script>
+    <script src="${request.contextPath}/statics/kuajing/js/step/product/createPro.js"></script>
     <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>-->
     <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
     <script>

@@ -352,10 +352,10 @@ table{
     width: 100%;
 }
 table tr{
-    display: flex;
+    /*display: flex;*/
 }
 table tr th,table tr td{
-    flex:1;
+    /*flex:1;*/
     /*width: 100px;*/
 }
 table tr th:nth-child(8),table tr td:nth-child(8){
@@ -364,7 +364,7 @@ table tr th:nth-child(8),table tr td:nth-child(8){
 table tr th:nth-child(7),table tr td:nth-child(7){
     /*width: 70px;*/
 }
-table tr th:first-child,table tr td:first-child{
+table.tableY tr th:first-child,table.tableY tr td:first-child{
     width: 50px;
 }
 table tr th:last-child,table tr td:last-child{
@@ -399,12 +399,17 @@ table tr td input[type=button]:hover{
 }
 table tr td input[type=button].del{
     color: #ff4a3d!important;
+    text-align: left;
 }
 table tr td input[type=button].chan{
     color: #00a3e8!important;
+    text-align: left;
+    width: 60px!important;
 }
 table tr td input[type=button].all{
     color: #ff6d29!important;
+    text-align: left;
+    width: 60px!important;
 }
 
 
@@ -428,10 +433,41 @@ table tr td input[type=button].all{
 .tableY tr:nth-child(7) th , .tableY tr:nth-child(7) td{
     color: #00a3e8;
 }
+table.tableY tr{
+    display: flex;
+}
+table.tableY tr th,table.tableY tr td{
+    flex: 1;
+}
 
 .layui-tab-content{
     display: none;
 }
 .layui-tab-content.active{
     display: block;
+}
+
+.tableV tr{
+    display: flex;
+}
+.tableV tr th , .tableV tr td{
+    width: 110px;
+}
+.tableV tr th:last-child , .tableV tr td:last-child{
+    flex: 1;
+}
+.tableV tr th:nth-child(1) , .tableV tr td:nth-child(1){
+    width: 50px;
+}
+.tableV tr th:nth-child(2) , .tableV tr td:nth-child(2){
+    width: 90px;
+}
+.tableV tr th:nth-child(7) , .tableV tr td:nth-child(7){
+    width: 60px;
+}
+.tableV tr th:nth-child(8) , .tableV tr td:nth-child(8){
+    width: 150px;
+}
+.tableV tr td input{
+    width: 90px!important;
 }

@@ -241,16 +241,24 @@ form div.details table tr td{
 form div.details table tr.two th , form div.details table tr.two td{
     color: #666;
 }
-
+.operationLog li{
+    margin-bottom: 6px;
+}
 .operationLog li span:nth-child(1){
     display: inline-block;
     width: 120px;
-    color: #666;
+    color: #00a3e8;
     font-size: 14px;
 
 }
 .operationLog li span:nth-child(2){
-    color: #444;
+    display: inline-block;
+    width: 100px;
+    color: #666;
+}
+.operationLog li span:nth-child(3){
+    /*width: 100px;*/
+    color: #666;
 }
 
 /*搜索分类*/
@@ -412,4 +420,14 @@ input.edit:hover ,input.noedit:hover,input.edit:active ,input.noedit:active{
     background: none!important;
     border: 0!important;
     color: #00a3e8!important;
+}
+
+.yiCaigou{
+    position: absolute;
+    right:20px;
+}
+
+.yiFahuo{
+    position: absolute;
+    right:20px;
 }
