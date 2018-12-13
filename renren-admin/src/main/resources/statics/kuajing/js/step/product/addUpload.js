@@ -1,147 +1,58 @@
 $(function () {
     $('.inner-content-div2').slimScroll({
-        height: '370px' //设置显示的高度
+        height: '270px' //设置显示的高度
     });
-
-    $('.changeType').focus(function () {
-        vm.fenleiTankuang();
-    })
-    
-
-
 })
 
 window.onload = function () {
 
 
 }
+var html1 = $('<div class="qita"></div>');
+var html2 = $('<div class="some-content-related-div" style="width: 100%;margin: 0 auto;"></div>');
+var html3 = $('<div class="inner-content-div2"></div>');
+var ul = $('<ul></ul>');
+//分类item
+var fenlItem = Vue.extend({
+    name: 'fenl-item',
+    props:{item:{}},
+    template:[
+        '<div class="qita">',
+        '<div class="some-content-related-div" style="width: 100%;margin: 0 auto;">',
+        '<div class="inner-content-div2">',
+        '<ul>',
+        '<li v-for="item in leven1" :id="item.id">{{ item.value }}</li>',
+        '</ul>',
+        '</div>',
+        '</div>',
+        '</div>',
+    ].join('')
 
-
-// 分页器
-layui.use('laypage', function(){
-    var laypage = layui.laypage;
-
-    //执行一个laypage实例
-    laypage.render({
-        elem: 'page', //注意，这里的 test1 是 ID，不用加 # 号
-        count: 50, //数据总数，从服务端得到
-        prev:'<i class="layui-icon layui-icon-left"></i>',
-        next:'<i class="layui-icon layui-icon-right"></i>',
-        layout:['prev', 'page', 'next','limit','skip'],
-        jump: function(obj, first){
-            //obj包含了当前分页的所有参数，比如：
-            console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
-            console.log(obj.limit); //得到每页显示的条数
-
-            //首次不执行
-            if(!first){
-                //do something
-            }
-        }
-    });
 });
+//注册菜单组件
+Vue.component('fenlItem',fenlItem);
+
 
 
 var vm = new Vue({
     el:'#step',
     data:{
         value9:null,
-        marketplace:[{
-            value:3116,
-            country:'IT',
-            language:'意大利语',
-            currency:'欧元',
-            name:'baijing(意大利)'
-        },{
-            value:3115,
-            country:'ES',
-            language:'西班牙语',
-            currency:'欧元',
-            name:'baijing(西班牙)'
-        },{
-            value:3114,
-            country:'DE',
-            language:'德语',
-            currency:'欧元',
-            name:'baijing(德国)'
-        },{
-            value:3113,
-            country:'UK',
-            language:'英语',
-            currency:'英镑',
-            name:'baijing(英国)'
-        },{
-            value:3112,
-            country:'FR',
-            language:'法语',
-            currency:'欧元',
-            name:'baijing(法国)'
-        }],
-        leven1:[{
-            ifTwo:'true',
-            id:111,
-            value:'厨房预算Küche & Haushalt'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'商业工业科学Gewerbe, Industrie & Wi'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'电子照片Elektronik & Foto'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'手表Uhren'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'厨房预算Küche & Haushalt'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'商业工业科学Gewerbe, Industrie & Wi'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'电子照片Elektronik & Foto'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'手表Uhren'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'厨房预算Küche & Haushalt'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'商业工业科学Gewerbe, Industrie & Wi'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'电子照片Elektronik & Foto'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'手表Uhren'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'厨房预算Küche & Haushalt'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'商业工业科学Gewerbe, Industrie & Wi'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'电子照片Elektronik & Foto'
-        },{
-            ifTwo:'true',
-            id:111,
-            value:'手表Uhren'
-        }],
+        startId: null,
+        endId: null,
+        uploadIds:[],
+        grantShopId: 0,
+        isAttribute: 0,
+        grantShop:null,
+        amazonCategoryId: 0,
+        amazonCategory: null,
+        amazonTemplateId: 0,
+        amazonTemplate: null,
+        operateItem: [],
+        marketplace:[],
+        shopinfo:{
+        },
+        leven:[],
         arr:[],
         arr2:[],
         // 转换时间
@@ -149,14 +60,15 @@ var vm = new Vue({
     },
     methods:{
         fenleiTankuang:function () {
-            var con = $('.fenleiCon');
-            $('#fenleiTankuang div.con').append(con);
-            $('.fenleiCon ul li').click(function () {
-                var id = $(this).attr('data-id');
-                var bol = $(this).attr('data-ifTwo');
-                vm.fenlei(bol,id);
-                vm.fenlei();
-            })
+            // var con = $('.fenleiCon');
+            // $('#fenleiTankuang div.con').append(con);
+            // $('.fenleiCon ul li').click(function () {
+            //     var id = $(this).attr('data-id');
+            //     var bol = $(this).attr('data-ifTwo');
+            //     vm.fenlei(bol,id);
+            //     vm.fenlei();
+            // })
+            // vm.amazonOneCategory();
 
             // 分类弹框
             layer.open({
@@ -164,7 +76,7 @@ var vm = new Vue({
                 title: false,
                 content: $('#fenleiTankuang'), //这里content是一个普通的String
                 skin: 'openClass',
-                area: ['800px', '500px'],
+                area: ['800px', '400px'],
                 shadeClose: true,
                 btn: ['确定','取消'],
                 btn1: function (index) {
@@ -177,48 +89,7 @@ var vm = new Vue({
                 }
             });
         },
-        fenlei:function (bol,id) {
 
-
-            if(bol == 'true'){
-                // ajax
-
-                // arr赋值
-
-                var data = vm.arr;
-            }
-
-
-            var data = vm.leven1;
-            // 分类弹框
-            var html1 = $('<div class="qita"></div>');
-            var html2 = $('<div class="some-content-related-div" style="width: 100%;margin: 0 auto;"></div>');
-            var html3 = $('<div class="inner-content-div2"></div>');
-            var ul = $('<ul></ul>');
-            var _html = '';
-            // data.forEach(function (index,item) {
-            //     _html = '<li id="'+item.id+'">'+item.value+'</li>';
-            // })
-            for(var i = 0;i<data.length;i++){
-                var index = i;
-                _html += '<li id="'+data[index].id+'">'+data[index].value+'</li>';
-            }
-            ul.append(_html);
-            html3.append(ul);
-            html2.append(html3);
-            html1.append(html2);
-            $('#fenleiTankuang div.con').append(html1);
-            $('.inner-content-div2').slimScroll({
-                height: '370px' //设置显示的高度
-            });
-            $('.inner-content-div2 ul li').click(function () {
-                $(this).parent().parent().parent().parent().parent().nextAll().remove();
-                var id = $(this).attr('data-id');
-                var bol = $(this).attr('data-ifTwo');
-                vm.fenlei(bol,id);
-            })
-            // this.fenlei();
-        },
         // 定时上传
         timeUpFunc:function () {
             layer.open({
@@ -230,26 +101,6 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['上传','取消'],
                 btn1: function (index) {
-                    // console.log(vm.xiugaiData);
-                    // $.ajax({
-                    //     url: '../../product/products/batchmodify',
-                    //     type: 'post',
-                    //     // data:vm.xiugaiData,
-                    //     data:JSON.stringify(vm.xiugaiData),
-                    //     contentType: "application/json",
-                    //     success: function (r) {
-                    //         console.log(r);
-                    //         if (r.code === 0) {
-                    //             layer.alert('操作成功');
-                    //
-                    //         } else {
-                    //             layer.alert(r.msg);
-                    //         }
-                    //     },
-                    //     error: function () {
-                    //         layer.msg("网络故障");
-                    //     }
-                    // })
 
                 },
                 btn2: function (index) {
@@ -257,6 +108,116 @@ var vm = new Vue({
 
                 }
             });
+        },
+        //立即上传
+        addUpload:function () {
+            $.ajax({
+                url: '../../product/upload/addUpload',
+                type: 'post',
+                data: {
+                    'startId': this.startId,
+                    'endId': this.endId,
+                    'uploadIds': this.uploadIds,
+                    'grantShopId': this.grantShopId,
+                    'isAttribute': this.isAttribute,
+                    'grantShop':this.grantShop,
+                    'amazonCategoryId': this.amazonCategoryId,
+                    'amazonCategory': this.amazonCategory,
+                    'amazonTemplateId': this.amazonTemplateId,
+                    'amazonTemplate': this.amazonTemplate,
+                    'operateItem': this.operateItem,
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                    } else {
+                        layer.alert(r.message);
+                    }
+
+
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        //授权店铺
+        getmarketplace:function () {
+            $.ajax({
+                url: '../../amazon/amazongrantshop/myShopList',
+                type: 'get',
+                data: {
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.marketplace = r.shopList;
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        //亚马逊一级分类
+        amazonOneCategory:function () {
+            // console.log(this.shopinfo.region);
+            if (this.shopinfo.region!=undefined) {
+
+                $.ajax({
+                    url: '../../product/amazoncategory/amazonOneCategory',
+                    type: 'post',
+                    data: {
+                        region:this.shopinfo.region
+                    },
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.leven = [];
+                            vm.leven.push(r.amazonCategoryEntityList);
+                            console.log(vm.leven);
+                            vm.fenleiTankuang();
+                        } else {
+                            layer.alert(r.message);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            }else {
+                layer.msg("请选择店铺");
+            }
+
+        },
+        // 子级分类
+        amazonItemCategory:function (event) {
+            var _index = $(event.target).attr('data-index');
+            var index = parseInt(_index) + 1;
+            vm.leven.splice(index);
+
+            vm.leven.push([{
+                'amazonCategoryId':0,
+                'ifNext':true,
+                'displayName':'分类1111'
+            },{
+                'amazonCategoryId':0,
+                'ifNext':true,
+                'displayName':'分类222'
+            },{
+                'amazonCategoryId':0,
+                'ifNext':true,
+                'displayName':'分类333'
+            }])
         }
+    },
+    created:function () {
+        this.getmarketplace();
+
     }
 })
