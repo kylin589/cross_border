@@ -210,21 +210,18 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      */
     @Override
     public Map<String, Object> queryRecyclingPage(Map<String, Object> params, Long userId) {
+
         // 分类传过来的是三级分类的id
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
         // 时间是：value9
-        String value9 = (String) params.get("value9");
-        System.out.println("value9:" + value9);
+        //String value9 = (String) params.get("value9");
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
-        startDate = "";
-        endDate = "";
-
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
                 .like(StringUtils.isNotBlank(title), "product_title", title)
@@ -241,12 +238,12 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
         PageUtils pageUtils = new PageUtils(page);
         List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
-        for (int i = 0; i < list.size(); i++) {
+       /* for (int i = 0; i < list.size(); i++) {
             ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
             imageAddressEntity.setImageId(list.get(i).getMainImageId());
             imageAddressEntity = imageAddressService.selectById(imageAddressEntity);
             list.get(i).setMainImageUrl(imageAddressEntity.getImageUrl());
-        }
+        }*/
         pageUtils.setList(list);
         // 产品数量
         int proCount = this.selectCount(wrapper);
