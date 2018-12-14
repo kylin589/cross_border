@@ -64,6 +64,12 @@ public interface ConstantDictionary {
          * AMAZON获取到的订单状态
          */
         String[] AMAZON_ORDER_STATE = {ORDER_STATE_PENDING, ORDER_STATE_UNSHIPPED, ORDER_STATE_SHIPPED};
+        /**
+         * 特殊的订单状态
+         */
+        String[] SPECIAL_ORDER_STATE = {
+                ORDER_STATE_CANCELED,ORDER_STATE_RETURN,ORDER_STATE_PROBLEM
+        };
     }
 
     /**
