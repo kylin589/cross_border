@@ -5,6 +5,7 @@
     <title>添加上传</title>
     <#include "/header_kuajing.html">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
+    <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/addUpload.css" media="all">
     <style>
         .pro_inf>span>p,
         .pro_inf>p{
@@ -23,7 +24,7 @@
         #fenleiTankuang div.con{
             display: flex;
             padding: 30px 10px 10px 10px;
-            height: 400px;
+            height: 300px;
         }
         #fenleiTankuang div.con>div{
             flex: 1;
@@ -43,6 +44,9 @@
         form>.fenleiCon{
             display: none;
         }
+        .dingsClass{
+            z-index:20000000!important;
+        }
 
     </style>
 </head>
@@ -57,8 +61,9 @@
               <a><cite>添加上传</cite></a>
             </span>
 
-            <button class="save">立即上传</button>
-            <button class="save">定时上传</button>
+            <input type="button" class="save" value="立即上传" @click="addUpload"/>
+            <input type="button" class="save" value="定时上传" @click="timeUpFunc" />
+            <!--<button class="save">定时上传</button>-->
         </p>
 
         <div class="form_item">
@@ -68,11 +73,11 @@
                 </div>
                 <div class="pro_inf daochu">
                     <span>
-                        <label for="">开始编号：</label><input type="text" placeholder="建议填写">
+                        <label for="">开始编号：</label><input type="text" placeholder="建议填写" v-model="startId">
                         <p>产品编号都是递增的，本次要导出产品起始编号</p>
                     </span> &nbsp;&nbsp;&nbsp;&nbsp;
                     <span>
-                        <label for="">结束编号：</label><input type="text" placeholder="建议填写">
+                        <label for="">结束编号：</label><input type="text" placeholder="建议填写" v-model="endId">
                         <p>要导出产品的结束编号，结束编号起始编号</p>
                     </span>
                 </div>
@@ -84,8 +89,8 @@
                     <h4>产品ID</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><textarea placeholder="产品ID"></textarea></span><br>
-                    <p>填写产品ID后（都好隔开），将只上传填写的ID列表，不填写则上传其他条件的筛选出的产品</p>
+                    <span><textarea placeholder="产品ID" v-model="uploadIds"></textarea></span><br>
+                    <p>填写产品ID后（逗号隔开），将只上传填写的ID列表，不填写则上传其他条件的筛选出的产品</p>
                 </div>
             </div>
         </div>
@@ -96,10 +101,10 @@
                     <h4>授权店铺</h4>
                 </div>
                 <div class="pro_inf">
-                    <select name="marketplace" id="marketplace" class="form-control" style="width: 200px">
+                    <select name="marketplace" id="marketplace" class="form-control" style="width: 200px" v-model="shopinfo">
                         <option value="">选择</option>
-                        <option v-for="item in marketplace" :value="item.value" :data-country="item.country" data-region="eu" :data-language="item.language" :data-currency="item.currency">
-                            {{ item.name }}
+                        <option v-for="item in marketplace" :value="item">
+                            {{ item.shopName }}
                         </option>
                     </select>
                     <span></span>
@@ -128,8 +133,8 @@
                     <h4>选择分类</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><input type="text" class="changeType" placeholder="--选择--"></span>
-                    <button>历史选择</button>
+                    <span><input type="text" class="changeType" placeholder="--选择--" @click="amazonOneCategory"></span>
+                    <input type="button" value="历史选择" />
                     <p></p>
                 </div>
             </div>
@@ -140,7 +145,7 @@
                 <div class="pro_inf">
                     <span>
                         <select name="cat_type_file" id="cat_type_file" class="form-control" style="width:400px;;">
-                            <option value=""> -- 选择 -- </option>
+                            <option value="" > -- 选择 -- </option>
                             <option data-region="eu" value="Sports.SportingGoods.json" style="display: none;">体育/体育用品 Sports.SportingGoods</option>
                             <option data-region="na" value="Sports.SportingGoods.json">体育/体育用品 Sports.SportingGoods</option>
                             <option data-region="na" value="Outdoors.OutdoorRecreationProduct.json">户外/户外娱乐产品 Outdoors.OutdoorRecreationProduct</option>
@@ -377,22 +382,50 @@
         <!--分类弹框-->
         <div id="fenleiTankuang" style="">
             <div class="con">
-
-            </div>
-
-        </div>
-
-        <div class="fenleiCon">
-            <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
-                <div class="inner-content-div2">
-                    <!--要加滚动条的具体内容-->
-                    <ul>
-                        <li v-for='item in leven1' :id="item.id">{{ item.value }}</li>
-                    </ul>
+                <div class="fenleiCon" v-for="(item,index) in leven">
+                    <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
+                        <div class="inner-content-div2">
+                            <!--要加滚动条的具体内容-->
+                            <ul>
+                                <li v-for='list in item' :data-index="index" :id="list.amazonCategoryId" :data-if="list.ifNext" @click="amazonItemCategory">{{ list.displayName }}</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
 
+
+
+        <!--定时上传弹框-->
+        <div id="timeUp" style="display: none">
+            <h3>定时上传</h3>
+            <span>
+                <label for="">国家</label>
+                <select class="form-control" id="account_area">
+                    <option value="">-- 请选择 --</option>
+                    <option value="NorthAmerica">北美(North America)</option>
+                    <option value="Europe">欧洲(Europe)</option>
+                    <option value="Japan">日本(Japan)</option>
+                  </select>
+            </span>
+            <br>
+            <span>
+                <label for="">选择时间</label>
+                <el-date-picker
+                        v-model="value9"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        popper-class="dingsClass"
+                >
+                </el-date-picker>
+            </span>
+            <br>
+            <button> <i class="layui-icon layui-icon-fonts-code"></i> 转换</button>
+            <!--<p>2018-10-11 22:00:00</p>-->
+            <p>{{ changeTime }}</p>
+        </div>
 
     </form>
 

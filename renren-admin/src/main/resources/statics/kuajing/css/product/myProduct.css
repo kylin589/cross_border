@@ -106,6 +106,71 @@
     margin-right: 5px;
 }
 
+/*采集*/
+#caijiCreate h3 {
+    margin: 10px;
+    color: #00a3e8;
+    font-weight: bold;
+}
+#caijiCreate .form_item{
+    /*margin-bottom: 18px;*/
+    padding: 10px 36px;
+}
+#caijiCreate .item{
+    display: flex;
+    margin-bottom: 14px;
+}
+#caijiCreate .item>div:nth-child(1){
+    width: 110px;
+}
+#caijiCreate .item>div:nth-child(1) h4{
+    font-weight: bold;
+    color: #666;
+}
+#caijiCreate .item>div:nth-child(2){
+    flex: 1;
+}
+#caijiCreate .item>div:nth-child(2) input[type=text]{
+    height: 28px;
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    padding-left: 6px;
+    margin-right: 10px;
+}
+#caijiCreate .item>div:nth-child(2) textarea{
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    color: #999;
+    height: 80px;
+    width: 300px;
+    padding:10px;
+    vertical-align: text-top;
+}
+#caijiCreate .item>div:nth-child(2) .pro_inf span{
+    display: inline-block;
+    margin: 0 10px 15px 0;
+}
+
+#caijiCreate .item>div:nth-child(2) .pro_inf label{
+    display: inline-block;
+    width: 103px;
+    line-height: 28px;
+    color: #444;
+    padding-left: 5px;
+}
+#caijiCreate .item>div:nth-child(2) .pro_inf label:before{
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    background: -webkit-linear-gradient(bottom, #1e9fff , #63e3f0); /* Safari 5.1 - 6.0 *
+    background: -o-linear-gradient(right,  #29c5db , #63abf0); /* Opera 11.1 - 12.0 */
+    background: -moz-linear-gradient(bottom, #1e9fff , #63e3f0); /* Firefox 3.6 - 15 */
+    background: linear-gradient(to bottom,  #1e9fff , #63e3f0); /* 标准的语法 */
+    margin-right: 5px;
+}
+
+
 .size_input{
     width: 50px;
 }
@@ -118,14 +183,18 @@
 }
 /*搜索*/
 .search1{
-    overflow: hidden;
+    /* overflow: hidden; */
+    padding-right: 200px;
+    position: relative;
 }
-.search1 input{
+.search1>input{
     height: 35px;
     border: 1px solid #d8dce5;
     border-radius: 4px;
     padding-left: 6px;
     margin-right: 10px;
+    /* border-bottom: 18px; */
+    margin-bottom: 10px;
 }
 .search1 select{
     height: 35px;
@@ -144,7 +213,10 @@
     cursor: pointer;
 }
 .search1 .create{
-    float: right;
+    /* float: right; */
+    position: absolute;
+    top: 0;
+    right: 0;
     margin-right: 10px;
     padding: 0 15px;
     height: 35px;
@@ -154,6 +226,9 @@
     background: url("../../img/create_bg.png");
     background-size: 100% 100%;
     cursor: pointer;
+}
+.search1 .create1{
+    right:96px;
 }
 .search1 .create:hover{
     /*box-shadow: 0 0 20px #ccc;*/
@@ -168,8 +243,8 @@
 }
 .sousuoArea{
     position: absolute;
-    top:47px;
-    left:10px;
+    top: 38px;
+    left: 1px;
     width: 510px;
     /*display: flex;*/
     display: none;
@@ -180,8 +255,13 @@
     box-shadow: 0 0 10px #ccc;
 }
 .sousuoArea1{
-    top: 200px;
-    left: 126px;
+    top: 205px;
+    left: 146px;
+}
+.sousuoArea2{
+    /*width: 400px;*/
+    top: 148px;
+    left: 146px;
 }
 .sousuoArea>div{
     flex: 1;

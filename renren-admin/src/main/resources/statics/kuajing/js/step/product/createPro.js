@@ -287,137 +287,186 @@ var vm = new Vue({
         id:null,
         // 产品详情
         proDetails:{
+            "productId": 0,
+            "mainImageId": 0,
+            "mainImageUrl": "",
+            "categoryThreeId": 0,
+            "productCategory": "",
+            "auditStatus": "",
+            "shelveStatus": "",
+            "productType": "",
+            "producerName": "",
+            "brandName": "",
+            "manufacturerNumber": "",
+            "productSku": "",
+            "productSource": "",
+            "sellerLink": "",
+            "productRemark": "",
+            "eanCode": "",
+            "upcCode": "",
+            "purchasePrice": 0,
+            "productWeight": 0,
+            "productLength": 0,
+            "productWide": 0,
+            "productHeight": 0,
+            "domesticFreight": 0,
+            "discount": 0,
+            "stock": 0,
+            "pretreatmentDate": 0,
+            "productAbbreviations": "",
             "americanFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'type':'',
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "canadaFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'type':'',
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "mexicoFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'type':'',
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "britainFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'type':'',
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "franceFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'type':'',
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "germanyFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'type':'',
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "italyFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'type':'',
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "spainFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'type':'',
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "japanFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'type':'',
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "australiaFC": {
-                "freight": "",
-                "price": "",
-                "foreignCurrency": "",
-                "optimization": "",
-                "finalPrice": "",
-                'profitRate':''
+                "freight": 0,
+                "price": 0,
+                "foreignCurrency": 0,
+                "optimization": 0,
+                "finalPrice": 0,
+                "profit": 0,
+                "type": "",
+                "profitRate": ""
             },
             "chinesePRE": {
-                "productTitle": "",
-                "keyWord": "",
-                "keyPoints": "",
-                "productDescription": ""
+                "productTitle": ' ',
+                "keyWord": ' ',
+                "keyPoints": ' ',
+                "productDescription": ' '
             },
             "britainPRE": {
-                "productTitle": "",
-                "keyWord": "",
-                "keyPoints": "",
-                "productDescription": ""
+                "productTitle": 'null',
+                "keyWord": 'null',
+                "keyPoints": 'null',
+                "productDescription": 'null'
             },
             "francePRE": {
-                "productTitle": "",
-                "keyWord": "",
-                "keyPoints": "",
-                "productDescription": ""
+                "productTitle": 'null',
+                "keyWord": 'null',
+                "keyPoints": 'null',
+                "productDescription": 'null'
             },
             "germanyPRE": {
-                "productTitle": "",
-                "keyWord": "",
-                "keyPoints": "",
-                "productDescription": ""
+                "productTitle": 'null',
+                "keyWord": 'null',
+                "keyPoints": 'null',
+                "productDescription": 'null'
             },
             "italyPRE": {
-                "productTitle": "",
-                "keyWord": "",
-                "keyPoints": "",
-                "productDescription": ""
+                "productTitle": 'null',
+                "keyWord": 'null',
+                "keyPoints": 'null',
+                "productDescription": 'null'
             },
             "spainPRE": {
-                "productTitle": "",
-                "keyWord": "",
-                "keyPoints": "",
-                "productDescription": ""
+                "productTitle": 'null',
+                "keyWord": 'null',
+                "keyPoints": 'null',
+                "productDescription": 'null'
             },
             "japanPRE": {
-                "productTitle": "",
-                "keyWord": "",
-                "keyPoints": "",
-                "productDescription": ""
+                "productTitle": 'null',
+                "keyWord": 'null',
+                "keyPoints": 'null',
+                "productDescription": 'null'
             },
+            "variantsInfos": [
+                // {
+                //     "variantSort": 0,
+                //     "variantCombination": "",
+                //     "variantSku": "",
+                //     "variantAddPrice": 0,
+                //     "variantStock": 0,
+                //     "eanCode": "",
+                //     "imageUrl": ""
+                // }
+            ]
         },
         // 成本运费
         costFreight:{},
@@ -497,66 +546,22 @@ var vm = new Vue({
 
     },
     methods:{
-        // 获取产品详情
-        getProDetails:function () {
+        // 获取产品id
+        getProId:function () {
             $.ajax({
-                url: '../../product/products/productdetails',
+                url: '../../product/products/getproductid',
                 type: 'get',
-                data: {
-                    'productId': this.id
-                },
+                // data: ,
                 dataType: 'json',
                 success: function (r) {
                     // console.log(r);
                     if (r.code === 0) {
+                        console.log('原创成功');
+                        console.log(r);
 
-                        vm.proDetails = r.productsEntity;
-                        console.log('产品详情');
-                        console.log(vm.proDetails);
-                        console.log(111111111);
-                        vm.proDecList = vm.proDetails.chinesePRE;
-                        console.log(vm.proDecList);
-                        console.log(JSON.stringify(vm.proDetails.colorVP) == 'null');
-                        console.log(typeof(vm.proDetails.colorVP));
-                        if(JSON.stringify(vm.proDetails.colorVP) != 'null'){
-                            vm.variantList.push({
-                                id:0,
-                                name:'颜色（color）',
-                                type:vm.proDetails.colorVP.paramsValue.split(',')
-                            })
-                        }
-                        if(JSON.stringify(vm.proDetails.sizeVP) != 'null'){
-                            vm.variantList.push({
-                                id:1,
-                                name:'尺寸（size）',
-                                type:vm.proDetails.sizeVP.paramsValue.split(',')
-                            })
-                        }
+                        vm.proDetails.productId = r.productId;
+                        vm.id = r.productId;
 
-
-
-                        vm.proDetails.variantsInfos.forEach(function (t,i) {
-                            vm.recommendAll.push({
-                                id:i,
-                                name:t.variantCombination,
-                                img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-                                    '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
-                                sku:t.variantSku,
-                                addPrice:t.variantAddPrice,
-                                stock:t.variantStock,
-                                code:t.eanCode
-
-
-                            })
-                        })
-                        setTimeout(function(){ vm.drapImg(); }, 3000);
-
-                        console.log('运费')
-                        console.log(vm.proDetails.americanFC.freight)
-
-                        // console.log(this.proDetails.chinesePRE);
-                        // console.log(this.proDetails.chinesePRE.productTitle);
-                        // console.log(this.proDetails.chinesePRE[productTitle]);
 
                     } else {
                         layer.alert(r.msg);
@@ -1473,8 +1478,8 @@ var vm = new Vue({
             setTimeout(function(){ vm.drapImg(); }, 3000);
 
         },
-        // 修改保存
-        savePro:function () {
+        // 原创保存
+        createSava:function () {
 
             vm.recommendAll.forEach(function (t,i) {
                 vm.proDetails.variantsInfos[i].variantId = i;
@@ -1483,29 +1488,44 @@ var vm = new Vue({
                 vm.proDetails.variantsInfos[i].variantSku = t.sku;
                 vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
             })
-
-            // vm.proDetails.variantsInfos.eanCode = vm.recommendAll.code;
-            // vm.proDetails.variantsInfos.variantAddPrice = vm.recommendAll.addPrice;
-            // vm.proDetails.variantsInfos.variantSku = vm.recommendAll.sku;
-            // vm.proDetails.variantsInfos.variantStock = vm.recommendAll.stock;
             console.log(vm.proDetails.variantsInfos);
 
+            $.ajax({
+                type: 'get',
+                url: '../../product/introduction/translate',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    'productTitle':vm.proDetails.chinesePRE.productTitle,
+                    'keyWord':vm.proDetails.chinesePRE.keyWord,
+                    'keyPoints':vm.proDetails.chinesePRE.keyPoints,
+                    'productDescription':vm.proDetails.chinesePRE.productDescription,
+                }),
+                success: function (r) {
+                    console.log('保存产品');
+                    console.log(r);
+                    console.log(vm.proDetails);
+                    if (r.code == 0) {
+                        layer.close(index);
 
+                        // window.location.href = document.referrer;
 
-            layer.confirm('确定修改吗？', function(index){
+                    } else {
+                        alert(r.msg);
+                    }
+                }
+            });
 
-
-
+            layer.confirm('确定保存吗？', function(index){
                 var index = layer.load();
                 var index = layer.load(1); //换了种风格
                 var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                 $.ajax({
                     type: 'post',
-                    url: '../../product/products/modifyproduct',
+                    url: '../../product/products/originalproduct',
                     contentType: "application/json",
                     data: JSON.stringify(vm.proDetails),
                     success: function (r) {
-                        console.log('修改产品');
+                        console.log('保存产品');
                         console.log(r);
                         console.log(vm.proDetails);
                         if (r.code == 0) {
@@ -1550,56 +1570,24 @@ var vm = new Vue({
         // console.log(this.recommend1);
         // this.getRecommendAll();
 
-        var url = decodeURI(window.location.href);
-        var argsIndex = url.split("?id=");
-        var id = argsIndex[1];
-        // console.log(id)
-        this.id = parseInt(id);
+        // var url = decodeURI(window.location.href);
+        // var argsIndex = url.split("?id=");
+        // var id = argsIndex[1];
+        // // console.log(id)
+        // this.id = parseInt(id);
         // console.log(this.id);
-        this.getProDetails();
+        this.getProId();
         // this.getcostFreight();
         // this.getVariant();
 
         // console.log(url);
-        this.getProAlbum();
-        this.getProStation();
+        // this.getProAlbum();
+        // this.getProStation();
 
 
 
 
-        // if(this.variantList.length == 2){
-        //     var recommend = this.variantList[0].type;
-        //     var recommend1 = this.variantList[1].type;
-        //
-        //     for(var i = 0;i<recommend.length;i++){
-        //         for(var j = 0;j<recommend1.length;j++){
-        //             this.recommendAll.push({
-        //                 name:recommend[i]+'*'+recommend1[j],
-        //                 img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-        //                     '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
-        //             });
-        //         }
-        //     }
-        // }else if(this.variantList.length == 1){
-        //     var recommend = this.variantList[0].type;
-        //     for(var i = 0;i<recommend.length;i++){
-        //         this.recommendAll.push({
-        //             name:recommend[i],
-        //             img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
-        //         });
-        //     }
-        // }
 
-
-        // this.recommend.forEach(function (value) {
-        //     this.recommend1.forEach(function (value2) {
-        //         this.recommendAll.push({
-        //             name:value+'*'+value2,
-        //             img:[]
-        //         });
-        //     })
-        // })
-        // console.log(this.recommendAll);
     }
 
 })

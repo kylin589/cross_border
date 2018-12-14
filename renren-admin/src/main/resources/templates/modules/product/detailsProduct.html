@@ -53,7 +53,7 @@
               <a><cite>产品详情</cite></a>
             </span>
 
-            <button class="save">保存并提交</button>
+            <input type="button" class="save" @click="savePro" value="保存并提交" />
         </p>
 
         <div class="form_item">
@@ -73,6 +73,7 @@
                     <!--图片区域-->
                     <div class="imgDiv">
                         <div v-for="(item,index) in proAlbum" :data-index="index" @mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)">
+                            <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
                             <img :src="item.url" alt="" class="imgItem">
                             <i class="layui-icon layui-icon-close-fill imgDel"></i>
                         </div>
@@ -166,7 +167,9 @@
                     <h4>商家信息</h4>
                 </div>
                 <div>
-                    <input type="button"  value="产品页">
+                    <!--<a href="https://item.taobao.com/auction/noitem.htm?itemid=555499628050&catid=0&spm=a230r.1.14.228.26d354e7HweDWt&ns=1&abbucket=19#detail" target="_blank"> 产品页 </a>-->
+                    <a class="link" :href="proDetails.sellerLink" target="_blank"> 产品页 </a>
+                    <!--<input type="button"  value="产品页">-->
                 </div>
             </div>
             <div class="item">
@@ -187,11 +190,11 @@
                     <h4>产品码</h4>
                 </div>
                 <div>
-                    <select name="" id="">
-                        <option value="1">UPC</option>
-                        <option value="2">ENA</option>
+                    <select name="" id="" style="width: 90px">
+                        <option value="1">ENA</option>
+                        <option value="2">UPC</option>
                     </select>
-                    <input type="text" placeholder="UPC/ENA">
+                    <input type="text" placeholder="UPC/ENA" v-model="proDetails.eanCode">
 
                 </div>
             </div>
@@ -202,115 +205,115 @@
                     <h4>成本运费</h4>
                 </div>
                 <div class="pro_inf chengben">
-                    <span><label for="">采购价格(￥)：</label><input type="text" placeholder="采购价格(￥)" v-model="proDetails.purchasePrice"></span>
-                    <span><label for="">销售价格(￥)：</label><input type="text" placeholder="销售价格(￥)" v-model="proDetails.purchasePrice"></span>
-                    <span><label for="">国内运费(￥)：</label><input type="text" placeholder="国内运费(￥)" v-model="proDetails.domesticFreight"></span><br>
-                    <span><label for="">国际运费(￥)：</label><input type="text" placeholder="国际运费(￥)" v-model="proDetails.purchasePrice"></span>
-                    <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="包装毛重(kg)" v-model="proDetails.productWeight"></span><br>
-                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength"> * <input class="size_input" type="text" placeholder="宽" v-model="proDetails.productWide"> * <input class="size_input" type="text" placeholder="高" v-model="proDetails.productHeight"></span>
-                    <span><label class="">产品有电池：</label><input type="checkbox" name="" style=""> </span><br>
-                    <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" v-model="proDetails.stock"></span>
-                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" v-model="proDetails.pretreatmentDate"></span>
+                    <span><label for="">采购价格(￥)：</label><input type="text" placeholder="采购价格(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>
+                    <span><label for="">国内运费(￥)：</label><input type="text" placeholder="国内运费(￥)" v-model="proDetails.domesticFreight" @change="getcostFreight"></span>
+                    <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="包装毛重(kg)" v-model="proDetails.productWeight" @change="getcostFreight"></span><br>
+                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength" @change="getcostFreight"> * <input class="size_input" type="text" placeholder="宽" v-model="proDetails.productWide" @change="getcostFreight"> * <input class="size_input" type="text" placeholder="高" v-model="proDetails.productHeight" @change="getcostFreight"></span>
+                    <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" v-model="proDetails.stock" @change="getcostFreight"></span>
+                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" v-model="proDetails.pretreatmentDate" @change="getcostFreight"></span>
+                    <!--<span><label for="">销售价格(￥)：</label><input type="text" placeholder="销售价格(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>-->
+                    <!--<span><label for="">国际运费(￥)：</label><input type="text" placeholder="国际运费(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>-->
+                    <!--<span><label class="">产品有电池：</label><input type="checkbox" name="" style="" @change="getcostFreight"> </span><br>-->
 
-                    <!--<table class="tableY">-->
-                    <!--<tr>-->
-                    <!--<th></th>-->
-                    <!--<th>美国</th>-->
-                    <!--<th>加拿大</th>-->
-                    <!--<th>墨西哥</th>-->
-                    <!--<th>英国</th>-->
-                    <!--<th>法国</th>-->
-                    <!--<th>德国</th>-->
-                    <!--<th>意大利</th>-->
-                    <!--<th>西班牙</th>-->
-                    <!--<th>日本</th>-->
-                    <!--<th>澳大利亚</th>-->
-                    <!--</tr>-->
-                    <!--<tr>-->
-                    <!--<th>运费（￥）</th>-->
-                    <!--<td>{{ proDetails.americanFC.freight }}</td>-->
-                    <!--<td>{{ proDetails.canadaFC.freight }}</td>-->
-                    <!--<td>{{ proDetails.mexicoFC.freight }}</td>-->
-                    <!--<td>{{ proDetails.britainFC.freight }}</td>-->
-                    <!--<td>{{ proDetails.franceFC.freight }}</td>-->
-                    <!--<td>{{ proDetails.germanyFC.freight }}</td>-->
-                    <!--<td>{{ proDetails.italyFC.freight }}</td>-->
-                    <!--<td>{{ proDetails.spainFC.freight }}</td>-->
-                    <!--<td>{{ proDetails.japanFC.freight }}</td>-->
-                    <!--<td>{{ proDetails.australiaFC.freight }}</td>-->
+                    <table class="tableY"  v-if="JSON.stringify(proDecList) != '{}'">
+                    <tr>
+                    <th style="color: #00b1e5;font-size: 10px;" @click="lirFunc"> <i style="font-size: 10px" class="layui-icon layui-icon-refresh"></i> 获取利润 </th>
+                    <th>美国</th>
+                    <th>加拿大</th>
+                    <th>墨西哥</th>
+                    <th>英国</th>
+                    <th>法国</th>
+                    <th>德国</th>
+                    <th>意大利</th>
+                    <th>西班牙</th>
+                    <th>日本</th>
+                    <th>澳大利亚</th>
+                    </tr>
+                    <tr>
+                    <th>运费（￥）</th>
+                    <td>{{ proDetails.americanFC.freight }} （{{proDetails.americanFC.type}}）</td>
+                    <td>{{ proDetails.canadaFC.freight }} （{{proDetails.canadaFC.type}}）</td>
+                    <td>{{ proDetails.mexicoFC.freight }} （{{proDetails.mexicoFC.type}}）</td>
+                    <td>{{ proDetails.britainFC.freight }} （{{proDetails.britainFC.type}}）</td>
+                    <td>{{ proDetails.franceFC.freight }} （{{proDetails.franceFC.type}}）</td>
+                    <td>{{ proDetails.germanyFC.freight }} （{{proDetails.germanyFC.type}}）</td>
+                    <td>{{ proDetails.italyFC.freight }} （{{proDetails.italyFC.type}}）</td>
+                    <td>{{ proDetails.spainFC.freight }} （{{proDetails.spainFC.type}}）</td>
+                    <td>{{ proDetails.japanFC.freight }} （{{proDetails.japanFC.type}}）</td>
+                    <td>{{ proDetails.australiaFC.freight }} （{{proDetails.australiaFC.type}}）</td>
 
-                    <!--</tr>-->
-                    <!--<tr>-->
-                    <!--<th>售价（￥）</th>-->
-                    <!--<td>{{ proDetails.americanFC.price }}</td>-->
-                    <!--<td>{{ proDetails.canadaFC.price }}</td>-->
-                    <!--<td>{{ proDetails.mexicoFC.price }}</td>-->
-                    <!--<td>{{ proDetails.britainFC.price }}</td>-->
-                    <!--<td>{{ proDetails.franceFC.price }}</td>-->
-                    <!--<td>{{ proDetails.germanyFC.price }}</td>-->
-                    <!--<td>{{ proDetails.italyFC.price }}</td>-->
-                    <!--<td>{{ proDetails.spainFC.price }}</td>-->
-                    <!--<td>{{ proDetails.japanFC.price }}</td>-->
-                    <!--<td>{{ proDetails.australiaFC.price }}</td>-->
+                    </tr>
+                    <tr>
+                    <th>售价（￥）</th>
+                    <td>{{ proDetails.americanFC.price }}</td>
+                    <td>{{ proDetails.canadaFC.price }}</td>
+                    <td>{{ proDetails.mexicoFC.price }}</td>
+                    <td>{{ proDetails.britainFC.price }}</td>
+                    <td>{{ proDetails.franceFC.price }}</td>
+                    <td>{{ proDetails.germanyFC.price }}</td>
+                    <td>{{ proDetails.italyFC.price }}</td>
+                    <td>{{ proDetails.spainFC.price }}</td>
+                    <td>{{ proDetails.japanFC.price }}</td>
+                    <td>{{ proDetails.australiaFC.price }}</td>
 
-                    <!--</tr>-->
-                    <!--<tr>-->
-                    <!--<th>外币</th>-->
-                    <!--<td>{{ proDetails.americanFC.foreignCurrency }}</td>-->
-                    <!--<td>{{ proDetails.canadaFC.foreignCurrency }}</td>-->
-                    <!--<td>{{ proDetails.mexicoFC.foreignCurrency }}</td>-->
-                    <!--<td>{{ proDetails.britainFC.foreignCurrency }}</td>-->
-                    <!--<td>{{ proDetails.franceFC.foreignCurrency }}</td>-->
-                    <!--<td>{{ proDetails.germanyFC.foreignCurrency }}</td>-->
-                    <!--<td>{{ proDetails.italyFC.foreignCurrency }}</td>-->
-                    <!--<td>{{ proDetails.spainFC.foreignCurrency }}</td>-->
-                    <!--<td>{{ proDetails.japanFC.foreignCurrency }}</td>-->
-                    <!--<td>{{ proDetails.australiaFC.foreignCurrency }}</td>-->
+                    </tr>
+                    <tr>
+                    <th>外币</th>
+                    <td>{{ proDetails.americanFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.canadaFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.mexicoFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.britainFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.franceFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.germanyFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.italyFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.spainFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.japanFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.australiaFC.foreignCurrency }}</td>
 
-                    <!--</tr>-->
-                    <!--<tr>-->
-                    <!--<th>优化</th>-->
-                    <!--<td>{{ proDetails.americanFC.optimization }}</td>-->
-                    <!--<td>{{ proDetails.canadaFC.optimization }}</td>-->
-                    <!--<td>{{ proDetails.mexicoFC.optimization }}</td>-->
-                    <!--<td>{{ proDetails.britainFC.optimization }}</td>-->
-                    <!--<td>{{ proDetails.franceFC.optimization }}</td>-->
-                    <!--<td>{{ proDetails.germanyFC.optimization }}</td>-->
-                    <!--<td>{{ proDetails.italyFC.optimization }}</td>-->
-                    <!--<td>{{ proDetails.spainFC.optimization }}</td>-->
-                    <!--<td>{{ proDetails.japanFC.optimization }}</td>-->
-                    <!--<td>{{ proDetails.australiaFC.optimization }}</td>-->
+                    </tr>
+                    <tr>
+                    <th>优化</th>
+                    <td>{{ proDetails.americanFC.optimization }}</td>
+                    <td>{{ proDetails.canadaFC.optimization }}</td>
+                    <td>{{ proDetails.mexicoFC.optimization }}</td>
+                    <td>{{ proDetails.britainFC.optimization }}</td>
+                    <td>{{ proDetails.franceFC.optimization }}</td>
+                    <td>{{ proDetails.germanyFC.optimization }}</td>
+                    <td>{{ proDetails.italyFC.optimization }}</td>
+                    <td>{{ proDetails.spainFC.optimization }}</td>
+                    <td>{{ proDetails.japanFC.optimization }}</td>
+                    <td>{{ proDetails.australiaFC.optimization }}</td>
 
-                    <!--</tr>-->
-                    <!--<tr>-->
-                    <!--<th>最终售价</th>-->
-                    <!--<td>{{ proDetails.americanFC.finalPrice }}</td>-->
-                    <!--<td>{{ proDetails.canadaFC.finalPrice }}</td>-->
-                    <!--<td>{{ proDetails.mexicoFC.finalPrice }}</td>-->
-                    <!--<td>{{ proDetails.britainFC.finalPrice }}</td>-->
-                    <!--<td>{{ proDetails.franceFC.finalPrice }}</td>-->
-                    <!--<td>{{ proDetails.germanyFC.finalPrice }}</td>-->
-                    <!--<td>{{ proDetails.italyFC.finalPrice }}</td>-->
-                    <!--<td>{{ proDetails.spainFC.finalPrice }}</td>-->
-                    <!--<td>{{ proDetails.japanFC.finalPrice }}</td>-->
-                    <!--<td>{{ proDetails.australiaFC.finalPrice }}</td>-->
+                    </tr>
+                    <tr>
+                    <th>最终售价</th>
+                    <td>{{ proDetails.americanFC.finalPrice }}</td>
+                    <td>{{ proDetails.canadaFC.finalPrice }}</td>
+                    <td>{{ proDetails.mexicoFC.finalPrice }}</td>
+                    <td>{{ proDetails.britainFC.finalPrice }}</td>
+                    <td>{{ proDetails.franceFC.finalPrice }}</td>
+                    <td>{{ proDetails.germanyFC.finalPrice }}</td>
+                    <td>{{ proDetails.italyFC.finalPrice }}</td>
+                    <td>{{ proDetails.spainFC.finalPrice }}</td>
+                    <td>{{ proDetails.japanFC.finalPrice }}</td>
+                    <td>{{ proDetails.australiaFC.finalPrice }}</td>
 
-                    <!--</tr>-->
-                    <!--<tr>-->
-                    <!--<th>利润（￥）</th>-->
-                    <!--<td>{{ proDetails.americanFC.profit }}</td>-->
-                    <!--<td>{{ proDetails.canadaFC.profit }}</td>-->
-                    <!--<td>{{ proDetails.mexicoFC.profit }}</td>-->
-                    <!--<td>{{ proDetails.britainFC.profit }}</td>-->
-                    <!--<td>{{ proDetails.franceFC.profit }}</td>-->
-                    <!--<td>{{ proDetails.germanyFC.profit }}</td>-->
-                    <!--<td>{{ proDetails.italyFC.profit }}</td>-->
-                    <!--<td>{{ proDetails.spainFC.profit }}</td>-->
-                    <!--<td>{{ proDetails.japanFC.profit }}</td>-->
-                    <!--<td>{{ proDetails.australiaFC.profit }}</td>-->
+                    </tr>
+                    <tr>
+                    <th>利润（￥）</th>
+                    <td>{{ proDetails.americanFC.profit }} ({{proDetails.americanFC.profitRate}}) </td>
+                    <td>{{ proDetails.canadaFC.profit }} ({{proDetails.canadaFC.profitRate}}) </td>
+                    <td>{{ proDetails.mexicoFC.profit }} ({{proDetails.mexicoFC.profitRate}}) </td>
+                    <td>{{ proDetails.britainFC.profit }} ({{proDetails.britainFC.profitRate}}) </td>
+                    <td>{{ proDetails.franceFC.profit }} ({{proDetails.franceFC.profitRate}}) </td>
+                    <td>{{ proDetails.germanyFC.profit }} ({{proDetails.germanyFC.profitRate}}) </td>
+                    <td>{{ proDetails.italyFC.profit }} ({{proDetails.italyFC.profitRate}}) </td>
+                    <td>{{ proDetails.spainFC.profit }} ({{proDetails.spainFC.profitRate}}) </td>
+                    <td>{{ proDetails.japanFC.profit }} ({{proDetails.japanFC.profitRate}}) </td>
+                    <td>{{ proDetails.australiaFC.profit }} ({{proDetails.australiaFC.profitRate}}) </td>
 
-                    <!--</tr>-->
-                    <!--</table>-->
+                    </tr>
+                    </table>
 
 
 
@@ -345,48 +348,47 @@
                             <li>日语</li>
                         </ul>
                         <div class="layui-tab-content active">
-                            <!--<span><label for="">产品标题：</label><input type="text" v-model="proDecList.productTitle"></span><br>-->
-                            <span><label for="">产品标题：</label><textarea v-model="proDecList.productTitle">建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDecList.keyWord">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDecList.keyPoints">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDecList.productDescription">建议填写</textarea></span><br>
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.chinesePRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.chinesePRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.chinesePRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.chinesePRE.productDescription">建议填写</textarea></span><br>
                         </div>
-                        <!--<div class="layui-tab-content">-->
-                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.britainPRE.productTitle">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.britainPRE.keyWord">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.britainPRE.keyPoints">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.britainPRE.productDescription">建议填写</textarea></span><br>-->
-                        <!--</div>-->
-                        <!--<div class="layui-tab-content">-->
-                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.francePRE.productTitle">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.francePRE.keyWord">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.francePRE.keyPoints">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.francePRE.productDescription">建议填写</textarea></span><br>-->
-                        <!--</div>-->
-                        <!--<div class="layui-tab-content">-->
-                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.italyPRE.productTitle">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.italyPRE.keyWord">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.italyPRE.keyPoints">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.italyPRE.productDescription">建议填写</textarea></span><br>-->
-                        <!--</div>-->
-                        <!--<div class="layui-tab-content">-->
-                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.spainPRE.productTitle">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.spainPRE.keyWord">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.spainPRE.keyPoints">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.spainPRE.productDescription">建议填写</textarea></span><br>-->
-                        <!--</div>-->
-                        <!--<div class="layui-tab-content">-->
-                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.germanyPRE.productTitle">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.germanyPRE.keyWord">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.germanyPRE.keyPoints">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.germanyPRE.productDescription">建议填写</textarea></span><br>-->
-                        <!--</div>-->
-                        <!--<div class="layui-tab-content">-->
-                            <!--<span><label for="">产品标题：</label><textarea v-model="proDetails.japanPRE.productTitle">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints">建议填写</textarea></span><br>-->
-                            <!--<span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription">建议填写</textarea></span><br>-->
-                        <!--</div>-->
+                        <div class="layui-tab-content">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.britainPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.britainPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.britainPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.britainPRE.productDescription">建议填写</textarea></span><br>
+                        </div>
+                        <div class="layui-tab-content">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.francePRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.francePRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.francePRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.francePRE.productDescription">建议填写</textarea></span><br>
+                        </div>
+                        <div class="layui-tab-content">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.italyPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.italyPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.italyPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.italyPRE.productDescription">建议填写</textarea></span><br>
+                        </div>
+                        <div class="layui-tab-content">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.spainPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.spainPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.spainPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.spainPRE.productDescription">建议填写</textarea></span><br>
+                        </div>
+                        <div class="layui-tab-content">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.germanyPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.germanyPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.germanyPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.germanyPRE.productDescription">建议填写</textarea></span><br>
+                        </div>
+                        <div class="layui-tab-content">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.japanPRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription">建议填写</textarea></span><br>
+                        </div>
                     </div>
 
                 </div>
@@ -411,7 +413,7 @@
                         <a href="javascript:;" v-for="list in item.type">{{ list }}</a>
                     </p>
 
-                    <table v-if="recommendAll.length != 0">
+                    <table class="tableV" v-if="recommendAll.length != 0">
                         <tr>
                             <th>序号</th>
                             <th>变体组合</th>
@@ -423,14 +425,14 @@
                             <th>选择图片</th>
                             <th>已选图片</th>
                         </tr>
-                        <tr v-for="(item,index) in recommendAll">
+                        <tr v-for="(item,index) in recommendAll" :data-index="item.id">
                             <td>{{ index }}</td>
                             <td>{{ item.name }}</td>
-                            <td><input type="text"></td>
-                            <td><input type="text"></td>
-                            <td><input type="text"></td>
-                            <td><input type="text"></td>
-                            <td><input type="button" class="del" value="删除"></td>
+                            <td><input type="text" v-model="item.sku"></td>
+                            <td><input type="text" v-model="item.addPrice"></td>
+                            <td><input type="text" v-model="item.stock"></td>
+                            <td><input type="text" v-model="item.code"></td>
+                            <td><input type="button" class="del" :data-index="item.id" value="删除" @click="delVariantList"></td>
                             <td><input type="button" class="chan" value="选择图片"> <input type="button" class="all" value="一键添加"></td>
                             <td>
                                 <ul class="ul1">

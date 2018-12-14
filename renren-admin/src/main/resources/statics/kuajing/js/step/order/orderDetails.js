@@ -99,7 +99,7 @@ var vm = new Vue({
             num:1,
             value:1,
             price:1234,
-            state:'同步成功 未发货',
+            state:'虚发货',
             xiaoshouNum:'123213',
             shop:'baijing(德国)',
             orderdetails:{
@@ -108,6 +108,7 @@ var vm = new Vue({
 
             }
         },
+
         guojilogistics:[{
             value:1,
             name:'中美专线(特惠)[USZXR]'
@@ -125,17 +126,21 @@ var vm = new Vue({
             date:'2018-10-26'
         },
         remark:[{
-            title:'dskus',
-            con:'shdgbsidvbl'
+            title:'2018-10-11',
+            name:'小明',
+            con:'深刻搭街坊世界杯s'
         }],
         operationLog:[{
             date:'2018-10-28',
+            name:'小明',
             con:'时间发货：深刻搭街坊世界杯s'
         },{
             date:'2018-10-28',
+            name:'小明',
             con:'时间发货：深刻搭街坊世界杯s'
         },{
             date:'2018-10-28',
+            name:'小明',
             con:'时间发货：深刻搭街坊世界杯s'
         }],
         addyundanhao:'123424',
