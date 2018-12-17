@@ -1,6 +1,6 @@
 package io.renren.modules.product.dao;
 
-import io.renren.modules.product.entity.OrderStatisticsEneity;
+import io.renren.modules.product.entity.OrderStatisticsEntity;
 import io.renren.modules.product.entity.OrderEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,5 +16,6 @@ import java.util.Map;
  */
 public interface OrderDao extends BaseMapper<OrderEntity> {
     int updateState(@Param("orderId")Long orderId, @Param("orderState")String orderState, @Param("orderStatus")String orderStatus);
-    OrderStatisticsEneity statisticsOrderCounts(@Param("params") Map<String, Object> map);
+    int updateAbnormalState(@Param("orderIds")Long[] orderIds, @Param("abnormalState")String abnormalState, @Param("abnormalStatus")String abnormalStatus);
+    OrderStatisticsEntity statisticsOrderCounts(@Param("params") Map<String, Object> map);
 }

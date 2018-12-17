@@ -48,7 +48,7 @@ public class SysDeptController extends AbstractController {
 	 * 列表
 	 */
 	@RequestMapping("/list")
-	@RequiresPermissions("sys:dept:list")
+//	@RequiresPermissions("sys:dept:list")
 	public List<SysDeptEntity> list(){
 		List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>());
 
@@ -106,7 +106,7 @@ public class SysDeptController extends AbstractController {
 	 * 信息
 	 */
 	@RequestMapping("/info/{deptId}")
-	@RequiresPermissions("sys:dept:info")
+//	@RequiresPermissions("sys:dept:info")
 	public R info(@PathVariable("deptId") Long deptId){
 		SysDeptEntity dept = sysDeptService.selectById(deptId);
 		
@@ -117,7 +117,7 @@ public class SysDeptController extends AbstractController {
 	 * 保存
 	 */
 	@RequestMapping("/save")
-	@RequiresPermissions("sys:dept:save")
+//	@RequiresPermissions("sys:dept:save")
 	public R save(@RequestBody SysDeptEntity dept){
 		sysDeptService.insert(dept);
 		
@@ -128,10 +128,10 @@ public class SysDeptController extends AbstractController {
 	 * 修改
 	 */
 	@RequestMapping("/update")
-	@RequiresPermissions("sys:dept:update")
+//	@RequiresPermissions("sys:dept:update")
 	public R update(@RequestBody SysDeptEntity dept){
 		sysDeptService.updateById(dept);
-		
+
 		return R.ok();
 	}
 	

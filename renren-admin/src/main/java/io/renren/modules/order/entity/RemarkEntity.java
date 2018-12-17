@@ -31,9 +31,13 @@ public class RemarkEntity implements Serializable {
 	 */
 	private String remark;
 	/**
-	 * 操作人
+	 * 用户id
 	 */
 	private Long userId;
+	/**
+	 * 操作人
+	 */
+	private String userName;
 	/**
 	 * 操作时间
 	 */

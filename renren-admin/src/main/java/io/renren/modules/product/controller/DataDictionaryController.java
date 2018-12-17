@@ -1,5 +1,6 @@
 package io.renren.modules.product.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -205,14 +206,18 @@ public class DataDictionaryController extends AbstractController {
     @RequestMapping("/myOrderStateList")
     public R myOrderStateList() {
         List<DataDictionaryEntity> orderStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "AMAZON_ORDER_STATE").orderBy(true, "data_sort", true));
+        List<DataDictionaryEntity> abnormalStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "ORDER_ABNORMAL_STATE").orderBy(true, "data_sort", true));
         //定义一个变量 全部的总和
-        int allOrderCount = 0;
+        int allOrderCount = orderService.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",getUserId()));
         for (DataDictionaryEntity orderState : orderStateList) {
             int orderCount = orderService.selectCount(new EntityWrapper<OrderEntity>().eq("order_status",orderState.getDataNumber()).eq("user_id",getUserId()));
             orderState.setCount(orderCount);
-            //产品类型分类每个类型的总数进行相加
-            allOrderCount += orderCount;
         }
+        for(DataDictionaryEntity abnormalState : abnormalStateList){
+            int orderCount = orderService.selectCount(new EntityWrapper<OrderEntity>().eq("abnormal_status",abnormalState.getDataNumber()).eq("user_id",getUserId()));
+            abnormalState.setCount(orderCount);
+        }
+        orderStateList.addAll(abnormalStateList);
         return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
     }
     /**
@@ -224,14 +229,35 @@ public class DataDictionaryController extends AbstractController {
     @RequestMapping("/allOrderStateList")
     public R allOrderStateList() {
         List<DataDictionaryEntity> orderStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "AMAZON_ORDER_STATE").orderBy(true, "data_sort", true));
+        List<DataDictionaryEntity> abnormalStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "ORDER_ABNORMAL_STATE").orderBy(true, "data_sort", true));
         //定义一个变量 全部的总和
-        int allOrderCount = 0;
+        int allOrderCount = orderService.selectCount(new EntityWrapper<OrderEntity>().eq(getDeptId()!=1L,"dept_id",getDeptId()));
         for (DataDictionaryEntity orderState : orderStateList) {
             int orderCount = orderService.selectCount(new EntityWrapper<OrderEntity>().eq("order_status",orderState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()));
             orderState.setCount(orderCount);
-            //产品类型分类每个类型的总数进行相加
-            allOrderCount += orderCount;
         }
+        for (DataDictionaryEntity abnormalState : abnormalStateList) {
+            int orderCount = orderService.selectCount(new EntityWrapper<OrderEntity>().eq("abnormal_status",abnormalState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()));
+            abnormalState.setCount(orderCount);
+        }
+        orderStateList.addAll(abnormalStateList);
         return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
+    }
+    /**
+     * @methodname: myOrderStateList 所有订单状态获取
+     * @return: io.renren.common.utils.R
+     * @auther: wdh
+     * @date: 2018/12/3 10:02
+     */
+    @RequestMapping("/getAbnormalStateList")
+    public R getAbnormalStateList() {
+        DataDictionaryEntity normal = new DataDictionaryEntity();
+        normal.setDataNumber("Normal");
+        normal.setDataContent("正常");
+        List<DataDictionaryEntity> abnormalStateList = new ArrayList<>();
+        abnormalStateList.add(normal);
+        List<DataDictionaryEntity> abnormalStateList1 = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "ORDER_ABNORMAL_STATE").orderBy(true, "data_sort", true));
+        abnormalStateList.addAll(abnormalStateList1);
+        return R.ok().put("abnormalStateList", abnormalStateList);
     }
 }

@@ -34,10 +34,9 @@ public interface OrderService extends IService<OrderEntity> {
      * 修改状态
      */
     boolean updateState(Long orderId, String orderState);
-
     /**
-     * 查询详情
+     * 修改异常状态
      */
-    OrderEntity queryInfoById(Long orderId);
+    boolean updateAbnormalState(Long[] orderIds, String abnormalStatus, String abnormalState);
 }
 

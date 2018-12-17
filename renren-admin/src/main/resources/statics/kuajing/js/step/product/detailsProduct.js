@@ -1532,6 +1532,12 @@ var vm = new Vue({
             console.log(vm.proDetails.variantsInfos);
 
         },
+        // 返回
+        returnFunc:function () {
+            layer.confirm('确定返回吗？',function () {
+                window.location.href = document.referrer;
+            })
+        }
     },
 
     created:function () {

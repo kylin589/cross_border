@@ -78,7 +78,22 @@ form>p>input.save{
     /*margin-right: 10px;*/
     font-size: 13px;
 
-    margin-right: 20px;
+    margin-right: 10px;
+}
+
+form>p>input.return{
+    float: right;
+    height: 28px;
+    padding: 0 15px;
+    border-radius: 14px;
+    border: 1.5px solid #f0f0f0;
+    background: url("../../img/create_bg.png");
+    background-size: 100% 100%;
+    color: #fff;
+    /*margin-right: 10px;*/
+    font-size: 13px;
+
+    margin-right: 26px;
 }
 
 form .item>div:nth-child(2)>a.link{

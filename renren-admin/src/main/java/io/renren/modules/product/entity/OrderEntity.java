@@ -1,6 +1,5 @@
 package io.renren.modules.product.entity;
 
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
@@ -41,6 +40,14 @@ public class OrderEntity implements Serializable {
 	 * 订单状态
 	 */
 	private String orderState;
+	/**
+	 * 异常状态标识
+	 */
+	private String abnormalStatus;
+	/**
+	 * 订单异常状态
+	 */
+	private String abnormalState;
 	/**
 	 * 国家代码
 	 */
@@ -114,7 +121,9 @@ public class OrderEntity implements Serializable {
 	private Long userId;
 
 	private Long deptId;
-	//更新时间
+	/**
+	 * 更新时间
+	 */
 	private Date updateTime;
 
 	/**
@@ -177,6 +186,22 @@ public class OrderEntity implements Serializable {
 
 	public void setOrderState(String orderState) {
 		this.orderState = orderState;
+	}
+
+	public String getAbnormalStatus() {
+		return abnormalStatus;
+	}
+
+	public void setAbnormalStatus(String abnormalStatus) {
+		this.abnormalStatus = abnormalStatus;
+	}
+
+	public String getAbnormalState() {
+		return abnormalState;
+	}
+
+	public void setAbnormalState(String abnormalState) {
+		this.abnormalState = abnormalState;
 	}
 
 	public String getCountryCode() {

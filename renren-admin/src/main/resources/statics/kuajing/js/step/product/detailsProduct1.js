@@ -549,10 +549,21 @@ var vm = new Vue({
 
                             })
                         })
-                        // setTimeout(function(){ vm.drapImg(); }, 3000);
+                        setTimeout(function(){
+                            for(var nn = 0;nn<$('.ul1').length;nn++){
+                                var _index = nn;
+                                var aLi = $(".ul1").eq(_index).find('li');
+                                var aLiLast = $(".ul1").eq(_index).find('li:last-child');
 
-                        console.log('运费')
-                        console.log(vm.proDetails.americanFC.freight)
+                                var _height = aLiLast[0].offsetTop+60;
+                                aLiLast.parent().css('height',_height+'px');
+                                aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+
+                            }
+                        }, 1000);
+
+                        // console.log('运费')
+                        // console.log(vm.proDetails.americanFC.freight)
 
                         // console.log(this.proDetails.chinesePRE);
                         // console.log(this.proDetails.chinesePRE.productTitle);
@@ -1193,49 +1204,49 @@ var vm = new Vue({
                 var aLi = $(".ul1").eq(_index).find('li');
                 var aLiLast = $(".ul1").eq(_index).find('li:last-child');
                 // console.log(aLiLast);
-                var disX = 0;
-                var disY = 0;
-                var minZindex = 1;
-                var aPos = [];
-                for(var i = 0; i < aLi.length; i++) {
-                    var t = aLi[i].offsetTop;
-                    var l = aLi[i].offsetLeft;
-                    aLi[i].style.top = t + "px";
-                    aLi[i].style.left = l + "px";
-                    aPos[i] = {
-                        left: l,
-                        top: t
-                    };
-                    aLi[i].index = i;
-                }
-                for(var i = 0; i < aLi.length; i++) {
-                    aLi[i].style.position = "absolute";
-                    aLi[i].style.margin = 0;
-                    setDrag(aLi[i],aLi);
-                }
+                // var disX = 0;
+                // var disY = 0;
+                // var minZindex = 1;
+                // var aPos = [];
+                // for(var i = 0; i < aLi.length; i++) {
+                //     var t = aLi[i].offsetTop;
+                //     var l = aLi[i].offsetLeft;
+                //     aLi[i].style.top = t + "px";
+                //     aLi[i].style.left = l + "px";
+                //     aPos[i] = {
+                //         left: l,
+                //         top: t
+                //     };
+                //     aLi[i].index = i;
+                // }
+                // for(var i = 0; i < aLi.length; i++) {
+                //     aLi[i].style.position = "absolute";
+                //     aLi[i].style.margin = 0;
+                //     setDrag(aLi[i],aLi);
+                // }
                 var _height = aLiLast[0].offsetTop+60;
                 // console.log(_height);
                 aLiLast.parent().css('height',_height+'px');
                 aLiLast.parent().parent().siblings().css('line-height',_height+'px')
 
-                aLi.mouseover(function () {
-                    $(this).find('i').css('display','inline-block');
-                    $(this).find('i').mouseover(function () {
-                        $(this).css('display','inline-block');
-                    })
-                    $(this).find('i').mouseout(function () {
-                        $(this).css('display','none');
-                    })
-                })
-                aLi.mouseout(function () {
-                    $(this).find('i').css('display','none');
-                    $(this).find('i').mouseover(function () {
-                        $(this).css('display','inline-block');
-                    })
-                    $(this).find('i').mouseout(function () {
-                        $(this).css('display','none');
-                    })
-                })
+                // aLi.mouseover(function () {
+                //     $(this).find('i').css('display','inline-block');
+                //     $(this).find('i').mouseover(function () {
+                //         $(this).css('display','inline-block');
+                //     })
+                //     $(this).find('i').mouseout(function () {
+                //         $(this).css('display','none');
+                //     })
+                // })
+                // aLi.mouseout(function () {
+                //     $(this).find('i').css('display','none');
+                //     $(this).find('i').mouseover(function () {
+                //         $(this).css('display','inline-block');
+                //     })
+                //     $(this).find('i').mouseout(function () {
+                //         $(this).css('display','none');
+                //     })
+                // })
             }
             //拖拽
             function setDrag(obj,all) {

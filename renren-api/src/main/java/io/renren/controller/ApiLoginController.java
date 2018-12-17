@@ -52,4 +52,15 @@ public class ApiLoginController {
         return R.ok();
     }
 
+    /**
+     * 测试接口
+     */
+    @PostMapping("/test")
+    public R test(String oofayOrderData, Long userdean, Long timestamp, String asin){
+        System.out.println("oofayOrderData:" + oofayOrderData);
+        System.out.println("userdean:" + userdean);
+        System.out.println("timestamp:" + timestamp);
+        System.out.println("asin:" + asin);
+        return R.ok();
+    }
 }
