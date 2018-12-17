@@ -253,7 +253,7 @@ public class ProductsController extends AbstractController {
         freightCostService.insert(australiaFC);
         productsEntity.setAustraliaFreight(australiaFC.getFreightCostId());
         productsEntity.setAustraliaFC(australiaFC);
-        productsService.insert(productsEntity);
+        productsService.updateById(productsEntity);
         return R.ok().put("productsEntity", productsEntity);
     }
 
