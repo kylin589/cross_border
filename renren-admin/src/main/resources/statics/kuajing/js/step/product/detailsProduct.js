@@ -422,19 +422,7 @@ var vm = new Vue({
         // 成本运费
         costFreight:{},
         // 产品相册
-        proAlbum:[{
-            id:'0',
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            id:'0',
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            id:'0',
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            id:'0',
-            url:'../../statics/kuajing/img/img2.jpg'
-        }],
+        proAlbum:[],
         // 产品回收站
         proStation:[{
             url:'../../statics/kuajing/img/img1.jpg'
@@ -605,6 +593,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('产品相册');
                         console.log(r);
+                        vm.proAlbum = r.imageInfo;
 
                     } else {
                         layer.alert(r.msg);

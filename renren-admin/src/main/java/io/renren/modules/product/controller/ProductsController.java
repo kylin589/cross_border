@@ -3,23 +3,19 @@ package io.renren.modules.product.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
-import io.renren.modules.amazon.util.COUNTY;
-import io.renren.modules.amazon.util.ConstantDictionary;
+
 import io.renren.modules.product.dto.BatchModifyDto;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
 import io.renren.modules.product.vm.ChangeAuditStatusVM;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hpsf.Decimal;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.logging.XMLFormatter;
 
 
 /**
@@ -48,6 +44,8 @@ public class ProductsController extends AbstractController {
     private FreightPriceService freightPriceService;
     @Autowired
     private AmazonRateService amazonRateService;
+    @Autowired
+    private ImageAddressService imageAddressService;
 
     private static final String US = "US";//美国
     private static final String CA = "CA";//加拿大
@@ -162,6 +160,7 @@ public class ProductsController extends AbstractController {
         return R.ok();
     }
 
+
     /**
      * @return R里包括SKU结果。
      * @methodname 生成SKU
@@ -197,7 +196,65 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/getproductid")
     public R getProductId() {
         Long productId = productsService.getNewProductId(getUserId());
-        return R.ok().put("productId", productId);
+        ProductsEntity productsEntity = productsService.selectById(productId);
+        //美国运费
+        FreightCostEntity americanFC = new FreightCostEntity();
+        freightCostService.insert(americanFC);
+        productsEntity.setAmericanFreight(americanFC.getFreightCostId());
+        productsEntity.setAmericanFC(americanFC);
+
+        // 加拿大运费
+        FreightCostEntity canadaFC = new FreightCostEntity();
+        freightCostService.insert(canadaFC);
+        productsEntity.setCanadaFreight(canadaFC.getFreightCostId());
+        productsEntity.setCanadaFC(canadaFC);
+        // 墨西哥运费
+        FreightCostEntity mexicoFC = new FreightCostEntity();
+        freightCostService.insert(mexicoFC);
+        productsEntity.setMexicoFreight(mexicoFC.getFreightCostId());
+        productsEntity.setMexicoFC(mexicoFC);
+
+        //英国运费
+        FreightCostEntity britainFC = new FreightCostEntity();
+        freightCostService.insert(britainFC);
+        productsEntity.setBritainFreight(britainFC.getFreightCostId());
+        productsEntity.setBritainFC(britainFC);
+
+        // 法国运费
+        FreightCostEntity franceFC = new FreightCostEntity();
+        freightCostService.insert(franceFC);
+        productsEntity.setFranceFreight(franceFC.getFreightCostId());
+        productsEntity.setFranceFC(franceFC);
+
+        // 德国运费
+        FreightCostEntity germanyFC = new FreightCostEntity();
+        freightCostService.insert(germanyFC);
+        productsEntity.setGermanyFreight(germanyFC.getFreightCostId());
+        productsEntity.setGermanyFC(germanyFC);
+
+        //意大利运费
+        FreightCostEntity italyFC = new FreightCostEntity();
+        freightCostService.insert(italyFC);
+        productsEntity.setItalyFreight(italyFC.getFreightCostId());
+        productsEntity.setItalyFC(italyFC);
+
+        //西班牙运费
+        FreightCostEntity spainFC = new FreightCostEntity();
+        freightCostService.insert(spainFC);
+        productsEntity.setSpainFreight(spainFC.getFreightCostId());
+        productsEntity.setSpainFC(spainFC);
+        // 日本运费
+        FreightCostEntity japanFC = new FreightCostEntity();
+        freightCostService.insert(japanFC);
+        productsEntity.setJapanFreight(japanFC.getFreightCostId());
+        productsEntity.setJapanFC(japanFC);
+        //澳大利亚运费
+        FreightCostEntity australiaFC = new FreightCostEntity();
+        freightCostService.insert(australiaFC);
+        productsEntity.setAustraliaFreight(australiaFC.getFreightCostId());
+        productsEntity.setAustraliaFC(australiaFC);
+        productsService.updateById(productsEntity);
+        return R.ok().put("productsEntity", productsEntity);
     }
 
     /**
@@ -521,6 +578,12 @@ public class ProductsController extends AbstractController {
         String[] ids = s.split(",");
         productsEntity.setCategoryOneId(Long.parseLong(ids[0]));
         productsEntity.setCategoryTwoId(Long.parseLong(ids[1]));
+        //根据主图片的id查出主图片的url
+        Long mainImageId = productsEntity.getMainImageId();
+        ImageAddressEntity imageAddressEntity = imageAddressService.selectById(mainImageId);
+        String imageUrl = imageAddressEntity.getImageUrl();
+        productsEntity.setMainImageUrl(imageUrl);
+
         FreightCostEntity americanFC = new FreightCostEntity();
         productsEntity.setAmericanFC(americanFC);
         FreightCostEntity canadaFC = new FreightCostEntity();
@@ -570,6 +633,50 @@ public class ProductsController extends AbstractController {
     }
 
     /**
+     * @methodname: cancelOriginal 取消原创产品
+     * @param: []
+     * @return: io.renren.common.utils.R
+     * @auther: jhy
+     * @date: 2018/12/15 16:26
+     */
+    @RequestMapping("/cancelOriginal")
+    public R cancelOriginal(Long productId) {
+        ProductsEntity productsEntity = productsService.selectById(productId);
+        Long americanid = productsEntity.getAmericanFreight();
+        freightCostService.deleteById(americanid);
+
+        Long canadaid = productsEntity.getCanadaFreight();
+        freightCostService.deleteById(canadaid);
+
+        Long mexicoid = productsEntity.getMexicoFreight();
+        freightCostService.deleteById(mexicoid);
+
+        Long britainid = productsEntity.getBritainFreight();
+        freightCostService.deleteById(britainid);
+
+        Long franceid = productsEntity.getFranceFreight();
+        freightCostService.deleteById(franceid);
+
+        Long germanyid = productsEntity.getGermanyFreight();
+        freightCostService.deleteById(germanyid);
+
+        Long italyid = productsEntity.getItalyFreight();
+        freightCostService.deleteById(italyid);
+
+        Long spainid = productsEntity.getSpainFreight();
+        freightCostService.deleteById(spainid);
+
+        Long japanid = productsEntity.getJapanFreight();
+        freightCostService.deleteById(japanid);
+
+        Long australiaid = productsEntity.getAustraliaFreight();
+        freightCostService.deleteById(australiaid);
+
+        productsService.deleteById(productId);
+        return R.ok();
+    }
+
+    /**
      * @methodname: originalProduct 原创产品
      * @param: [products]
      * @return: io.renren.common.utils.R
@@ -587,47 +694,44 @@ public class ProductsController extends AbstractController {
         products.setCategoryThreeId(Long.parseLong(id[2]));
         //美国运费
         FreightCostEntity americanFC = products.getAmericanFC();
-        freightCostService.insert(americanFC);
-        products.setAmericanFreight(americanFC.getFreightCostId());
+        freightCostService.updateById(americanFC);
 
         // 加拿大运费
         FreightCostEntity canadaFC = products.getCanadaFC();
-        freightCostService.insert(canadaFC);
-        products.setCanadaFreight(canadaFC.getFreightCostId());
+        freightCostService.updateById(canadaFC);
+
         // 墨西哥运费
         FreightCostEntity mexicoFC = products.getMexicoFC();
-        freightCostService.insert(mexicoFC);
-        products.setMexicoFreight(mexicoFC.getFreightCostId());
+        freightCostService.updateById(mexicoFC);
+
         //英国运费
         FreightCostEntity britainFC = products.getBritainFC();
-        freightCostService.insert(britainFC);
-        products.setBritainFreight(britainFC.getFreightCostId());
+        freightCostService.updateById(britainFC);
 
         // 法国运费
         FreightCostEntity franceFC = products.getFranceFC();
-        freightCostService.insert(franceFC);
-        products.setFranceFreight(franceFC.getFreightCostId());
+        freightCostService.updateById(franceFC);
 
         // 德国运费
         FreightCostEntity germanyFC = products.getGermanyFC();
-        freightCostService.insert(germanyFC);
-        products.setGermanyFreight(germanyFC.getFreightCostId());
+        freightCostService.updateById(germanyFC);
+
         //意大利运费
         FreightCostEntity italyFC = products.getItalyFC();
-        freightCostService.insert(italyFC);
-        products.setItalyFreight(italyFC.getFreightCostId());
+        freightCostService.updateById(italyFC);
+
         //西班牙运费
         FreightCostEntity spainFC = products.getSpainFC();
-        freightCostService.insert(spainFC);
-        products.setSpainFreight(spainFC.getFreightCostId());
+        freightCostService.updateById(spainFC);
+
         // 日本运费
         FreightCostEntity japanFC = products.getJapanFC();
-        freightCostService.insert(japanFC);
-        products.setJapanFreight(japanFC.getFreightCostId());
+        freightCostService.updateById(japanFC);
+
         //澳大利亚运费
         FreightCostEntity australiaFC = products.getAustraliaFC();
-        freightCostService.insert(australiaFC);
-        products.setAustraliaFreight(australiaFC.getFreightCostId());
+        freightCostService.updateById(australiaFC);
+
 
         //中文介绍
         IntroductionEntity chinesePRE = products.getChinesePRE();
@@ -682,8 +786,9 @@ public class ProductsController extends AbstractController {
             for (VariantsInfoEntity variantsInfoEntity : variantsInfosList) {
                 variantsInfoEntity.setProductId(products.getProductId());
             }
+            variantsInfoService.insertBatch(variantsInfosList);
         }
-        variantsInfoService.insertBatch(variantsInfosList);
+
         //根据产品id进行更新
         productsService.updateById(products);
         return R.ok();
@@ -819,6 +924,7 @@ public class ProductsController extends AbstractController {
         }
         //英文介绍
         IntroductionEntity britainPRE = products.getBritainPRE();
+        System.out.println("=========================" + britainPRE);
         if (britainPRE != null) {
             if (britainPRE.getIntroductionId() != null) {
                 introductionService.updateById(britainPRE);
@@ -928,13 +1034,11 @@ public class ProductsController extends AbstractController {
         //国内运费
         BigDecimal domesticFreight = productsEntity.getDomesticFreight();
         //折扣系数
-        Double discount = productsEntity.getDiscount();
-        BigDecimal discountBig = new BigDecimal(discount);
+        BigDecimal discount = productsEntity.getDiscount();
         //计算成本计算先把产品采购价格和国内运费相加
         BigDecimal sum = purchasePrice.add(domesticFreight);
         //根据长宽高计算出来重量
         Double weight = calculatedWeight(productLength, productWide, productHeight);
-
         if (productWeight != 0 || weight != 0) {
             //体积重量大于实际重量的必须按体积重量计收资费
             //长宽高计算出来重量和输入的产品重量做比较
@@ -950,7 +1054,7 @@ public class ProductsController extends AbstractController {
                     //美国成本价格=采购价格+国内物流+国际物流价格
                     BigDecimal americanCost = americanFreight.add(sum);
                     //计算出美国售价，外币，优化信息
-                    americanFC = priceInfo(americanCost, americanFC, USD, discountBig);
+                    americanFC = priceInfo(americanCost, americanFC, USD, discount);
                     productsEntity.setAmericanFC(americanFC);
                 } else {
                     //计算出美国运费
@@ -960,7 +1064,7 @@ public class ProductsController extends AbstractController {
                     //美国成本价格=采购价格+国内物流+国际物流价格
                     BigDecimal americanCost = americanFreight.add(sum);
                     //计算出美国售价，外币，优化信息
-                    americanFC = priceInfo(americanCost, americanFC, USD, discountBig);
+                    americanFC = priceInfo(americanCost, americanFC, USD, discount);
                 }
 
 
@@ -971,13 +1075,13 @@ public class ProductsController extends AbstractController {
                     canadaFC = calculateFreight(productWeight, canadaFC, CA);
                     BigDecimal canadaFreight = canadaFC.getFreight();
                     BigDecimal canadaCost = canadaFreight.add(sum);
-                    canadaFC = priceInfo(canadaCost, canadaFC, CAD, discountBig);
+                    canadaFC = priceInfo(canadaCost, canadaFC, CAD, discount);
                     productsEntity.setCanadaFC(canadaFC);
                 } else {
                     canadaFC = calculateFreight(productWeight, canadaFC, CA);
                     BigDecimal canadaFreight = canadaFC.getFreight();
                     BigDecimal canadaCost = canadaFreight.add(sum);
-                    canadaFC = priceInfo(canadaCost, canadaFC, CAD, discountBig);
+                    canadaFC = priceInfo(canadaCost, canadaFC, CAD, discount);
                 }
 
 
@@ -988,13 +1092,13 @@ public class ProductsController extends AbstractController {
                     mexicoFC = calculateFreight(productWeight, mexicoFC, MX);
                     BigDecimal mexicoFreight = mexicoFC.getFreight();
                     BigDecimal mexicoCost = mexicoFreight.add(sum);
-                    mexicoFC = priceInfo(mexicoCost, mexicoFC, MXN, discountBig);
+                    mexicoFC = priceInfo(mexicoCost, mexicoFC, MXN, discount);
                     productsEntity.setMexicoFC(mexicoFC);
                 } else {
                     mexicoFC = calculateFreight(productWeight, mexicoFC, MX);
                     BigDecimal mexicoFreight = mexicoFC.getFreight();
                     BigDecimal mexicoCost = mexicoFreight.add(sum);
-                    mexicoFC = priceInfo(mexicoCost, mexicoFC, MXN, discountBig);
+                    mexicoFC = priceInfo(mexicoCost, mexicoFC, MXN, discount);
                 }
 
 
@@ -1005,14 +1109,14 @@ public class ProductsController extends AbstractController {
                     britainFC = calculateFreight(productWeight, britainFC, GB);
                     BigDecimal britainFreight = britainFC.getFreight();
                     BigDecimal britainCost = britainFreight.add(sum);
-                    britainFC = priceInfo(britainCost, britainFC, GBP, discountBig);
+                    britainFC = priceInfo(britainCost, britainFC, GBP, discount);
                     productsEntity.setBritainFC(britainFC);
 
                 } else {
                     britainFC = calculateFreight(productWeight, britainFC, GB);
                     BigDecimal britainFreight = britainFC.getFreight();
                     BigDecimal britainCost = britainFreight.add(sum);
-                    britainFC = priceInfo(britainCost, britainFC, GBP, discountBig);
+                    britainFC = priceInfo(britainCost, britainFC, GBP, discount);
                 }
                 // 法国运费
                 FreightCostEntity franceFC = productsEntity.getFranceFC();
@@ -1021,14 +1125,14 @@ public class ProductsController extends AbstractController {
                     franceFC = calculateFreight(productWeight, franceFC, FR);
                     BigDecimal franceFreight = franceFC.getFreight();
                     BigDecimal franceCost = franceFreight.add(sum);
-                    franceFC = priceInfo(franceCost, franceFC, EUR, discountBig);
+                    franceFC = priceInfo(franceCost, franceFC, EUR, discount);
                     productsEntity.setFranceFC(franceFC);
 
                 } else {
                     franceFC = calculateFreight(productWeight, franceFC, FR);
                     BigDecimal franceFreight = franceFC.getFreight();
                     BigDecimal franceCost = franceFreight.add(sum);
-                    franceFC = priceInfo(franceCost, franceFC, EUR, discountBig);
+                    franceFC = priceInfo(franceCost, franceFC, EUR, discount);
                 }
 
                 // 德国运费
@@ -1038,13 +1142,13 @@ public class ProductsController extends AbstractController {
                     germanyFC = calculateFreight(productWeight, germanyFC, DE);
                     BigDecimal germanyFreight = germanyFC.getFreight();
                     BigDecimal germanyCost = germanyFreight.add(sum);
-                    germanyFC = priceInfo(germanyCost, germanyFC, EUR, discountBig);
+                    germanyFC = priceInfo(germanyCost, germanyFC, EUR, discount);
                     productsEntity.setGermanyFC(germanyFC);
                 } else {
                     germanyFC = calculateFreight(productWeight, germanyFC, DE);
                     BigDecimal germanyFreight = germanyFC.getFreight();
                     BigDecimal germanyCost = germanyFreight.add(sum);
-                    germanyFC = priceInfo(germanyCost, germanyFC, EUR, discountBig);
+                    germanyFC = priceInfo(germanyCost, germanyFC, EUR, discount);
                 }
 
 
@@ -1055,14 +1159,14 @@ public class ProductsController extends AbstractController {
                     italyFC = calculateFreight(productWeight, italyFC, IT);
                     BigDecimal italyFreight = italyFC.getFreight();
                     BigDecimal italyCost = italyFreight.add(sum);
-                    italyFC = priceInfo(italyCost, italyFC, EUR, discountBig);
+                    italyFC = priceInfo(italyCost, italyFC, EUR, discount);
                     productsEntity.setItalyFC(italyFC);
 
                 } else {
                     italyFC = calculateFreight(productWeight, italyFC, IT);
                     BigDecimal italyFreight = italyFC.getFreight();
                     BigDecimal italyCost = italyFreight.add(sum);
-                    italyFC = priceInfo(italyCost, italyFC, EUR, discountBig);
+                    italyFC = priceInfo(italyCost, italyFC, EUR, discount);
                 }
 
 
@@ -1073,13 +1177,13 @@ public class ProductsController extends AbstractController {
                     spainFC = calculateFreight(productWeight, spainFC, ES);
                     BigDecimal spainFreight = spainFC.getFreight();
                     BigDecimal spainCost = spainFreight.add(sum);
-                    spainFC = priceInfo(spainCost, spainFC, EUR, discountBig);
+                    spainFC = priceInfo(spainCost, spainFC, EUR, discount);
                     productsEntity.setSpainFC(spainFC);
                 } else {
                     spainFC = calculateFreight(productWeight, spainFC, ES);
                     BigDecimal spainFreight = spainFC.getFreight();
                     BigDecimal spainCost = spainFreight.add(sum);
-                    spainFC = priceInfo(spainCost, spainFC, EUR, discountBig);
+                    spainFC = priceInfo(spainCost, spainFC, EUR, discount);
 
                 }
 
@@ -1091,14 +1195,14 @@ public class ProductsController extends AbstractController {
                     japanFC = calculateFreight(productWeight, japanFC, JP);
                     BigDecimal japanFreight = japanFC.getFreight();
                     BigDecimal japanCost = japanFreight.add(sum);
-                    japanFC = priceInfo(japanCost, japanFC, JPY, discountBig);
+                    japanFC = priceInfo(japanCost, japanFC, JPY, discount);
                     productsEntity.setJapanFC(japanFC);
 
                 } else {
                     japanFC = calculateFreight(productWeight, japanFC, JP);
                     BigDecimal japanFreight = japanFC.getFreight();
                     BigDecimal japanCost = japanFreight.add(sum);
-                    japanFC = priceInfo(japanCost, japanFC, JPY, discountBig);
+                    japanFC = priceInfo(japanCost, japanFC, JPY, discount);
                 }
 
 
@@ -1109,14 +1213,14 @@ public class ProductsController extends AbstractController {
                     australiaFC = calculateFreight(productWeight, australiaFC, AU);
                     BigDecimal australiaFreight = australiaFC.getFreight();
                     BigDecimal australiaCost = australiaFreight.add(sum);
-                    australiaFC = priceInfo(australiaCost, australiaFC, AUD, discountBig);
+                    australiaFC = priceInfo(australiaCost, australiaFC, AUD, discount);
                     productsEntity.setAustraliaFC(australiaFC);
 
                 } else {
                     australiaFC = calculateFreight(productWeight, australiaFC, AU);
                     BigDecimal australiaFreight = australiaFC.getFreight();
                     BigDecimal australiaCost = australiaFreight.add(sum);
-                    australiaFC = priceInfo(australiaCost, australiaFC, AUD, discountBig);
+                    australiaFC = priceInfo(australiaCost, australiaFC, AUD, discount);
                 }
 
             } else {
@@ -1131,7 +1235,7 @@ public class ProductsController extends AbstractController {
                     //美国成本价格=采购价格+国内物流+国际物流价格
                     BigDecimal americanCost = americanFreight.add(sum);
                     //计算出美国售价，外币，优化信息
-                    americanFC = priceInfo(americanCost, americanFC, USD, discountBig);
+                    americanFC = priceInfo(americanCost, americanFC, USD, discount);
                     productsEntity.setAmericanFC(americanFC);
                 } else {
                     //计算出美国运费
@@ -1141,7 +1245,7 @@ public class ProductsController extends AbstractController {
                     //美国成本价格=采购价格+国内物流+国际物流价格
                     BigDecimal americanCost = americanFreight.add(sum);
                     //计算出美国售价，外币，优化信息
-                    americanFC = priceInfo(americanCost, americanFC, USD, discountBig);
+                    americanFC = priceInfo(americanCost, americanFC, USD, discount);
                 }
 
 
@@ -1152,13 +1256,13 @@ public class ProductsController extends AbstractController {
                     canadaFC = calculateFreight(weight, canadaFC, CA);
                     BigDecimal canadaFreight = canadaFC.getFreight();
                     BigDecimal canadaCost = canadaFreight.add(sum);
-                    canadaFC = priceInfo(canadaCost, canadaFC, CAD, discountBig);
+                    canadaFC = priceInfo(canadaCost, canadaFC, CAD, discount);
                     productsEntity.setCanadaFC(canadaFC);
                 } else {
                     canadaFC = calculateFreight(weight, canadaFC, CA);
                     BigDecimal canadaFreight = canadaFC.getFreight();
                     BigDecimal canadaCost = canadaFreight.add(sum);
-                    canadaFC = priceInfo(canadaCost, canadaFC, CAD, discountBig);
+                    canadaFC = priceInfo(canadaCost, canadaFC, CAD, discount);
                 }
 
 
@@ -1169,13 +1273,13 @@ public class ProductsController extends AbstractController {
                     mexicoFC = calculateFreight(weight, mexicoFC, MX);
                     BigDecimal mexicoFreight = mexicoFC.getFreight();
                     BigDecimal mexicoCost = mexicoFreight.add(sum);
-                    mexicoFC = priceInfo(mexicoCost, mexicoFC, MXN, discountBig);
+                    mexicoFC = priceInfo(mexicoCost, mexicoFC, MXN, discount);
                     productsEntity.setMexicoFC(mexicoFC);
                 } else {
                     mexicoFC = calculateFreight(weight, mexicoFC, MX);
                     BigDecimal mexicoFreight = mexicoFC.getFreight();
                     BigDecimal mexicoCost = mexicoFreight.add(sum);
-                    mexicoFC = priceInfo(mexicoCost, mexicoFC, MXN, discountBig);
+                    mexicoFC = priceInfo(mexicoCost, mexicoFC, MXN, discount);
                 }
 
 
@@ -1186,14 +1290,14 @@ public class ProductsController extends AbstractController {
                     britainFC = calculateFreight(weight, britainFC, GB);
                     BigDecimal britainFreight = britainFC.getFreight();
                     BigDecimal britainCost = britainFreight.add(sum);
-                    britainFC = priceInfo(britainCost, britainFC, GBP, discountBig);
+                    britainFC = priceInfo(britainCost, britainFC, GBP, discount);
                     productsEntity.setBritainFC(britainFC);
 
                 } else {
                     britainFC = calculateFreight(weight, britainFC, GB);
                     BigDecimal britainFreight = britainFC.getFreight();
                     BigDecimal britainCost = britainFreight.add(sum);
-                    britainFC = priceInfo(britainCost, britainFC, GBP, discountBig);
+                    britainFC = priceInfo(britainCost, britainFC, GBP, discount);
                 }
                 // 法国运费
                 FreightCostEntity franceFC = productsEntity.getFranceFC();
@@ -1202,14 +1306,14 @@ public class ProductsController extends AbstractController {
                     franceFC = calculateFreight(weight, franceFC, FR);
                     BigDecimal franceFreight = franceFC.getFreight();
                     BigDecimal franceCost = franceFreight.add(sum);
-                    franceFC = priceInfo(franceCost, franceFC, EUR, discountBig);
+                    franceFC = priceInfo(franceCost, franceFC, EUR, discount);
                     productsEntity.setFranceFC(franceFC);
 
                 } else {
                     franceFC = calculateFreight(weight, franceFC, FR);
                     BigDecimal franceFreight = franceFC.getFreight();
                     BigDecimal franceCost = franceFreight.add(sum);
-                    franceFC = priceInfo(franceCost, franceFC, EUR, discountBig);
+                    franceFC = priceInfo(franceCost, franceFC, EUR, discount);
                 }
 
                 // 德国运费
@@ -1219,13 +1323,13 @@ public class ProductsController extends AbstractController {
                     germanyFC = calculateFreight(weight, germanyFC, DE);
                     BigDecimal germanyFreight = germanyFC.getFreight();
                     BigDecimal germanyCost = germanyFreight.add(sum);
-                    germanyFC = priceInfo(germanyCost, germanyFC, EUR, discountBig);
+                    germanyFC = priceInfo(germanyCost, germanyFC, EUR, discount);
                     productsEntity.setGermanyFC(germanyFC);
                 } else {
                     germanyFC = calculateFreight(weight, germanyFC, DE);
                     BigDecimal germanyFreight = germanyFC.getFreight();
                     BigDecimal germanyCost = germanyFreight.add(sum);
-                    germanyFC = priceInfo(germanyCost, germanyFC, EUR, discountBig);
+                    germanyFC = priceInfo(germanyCost, germanyFC, EUR, discount);
                 }
 
 
@@ -1236,14 +1340,14 @@ public class ProductsController extends AbstractController {
                     italyFC = calculateFreight(weight, italyFC, IT);
                     BigDecimal italyFreight = italyFC.getFreight();
                     BigDecimal italyCost = italyFreight.add(sum);
-                    italyFC = priceInfo(italyCost, italyFC, EUR, discountBig);
+                    italyFC = priceInfo(italyCost, italyFC, EUR, discount);
                     productsEntity.setItalyFC(italyFC);
 
                 } else {
                     italyFC = calculateFreight(weight, italyFC, IT);
                     BigDecimal italyFreight = italyFC.getFreight();
                     BigDecimal italyCost = italyFreight.add(sum);
-                    italyFC = priceInfo(italyCost, italyFC, EUR, discountBig);
+                    italyFC = priceInfo(italyCost, italyFC, EUR, discount);
                 }
 
 
@@ -1254,14 +1358,13 @@ public class ProductsController extends AbstractController {
                     spainFC = calculateFreight(weight, spainFC, ES);
                     BigDecimal spainFreight = spainFC.getFreight();
                     BigDecimal spainCost = spainFreight.add(sum);
-                    spainFC = priceInfo(spainCost, spainFC, EUR, discountBig);
+                    spainFC = priceInfo(spainCost, spainFC, EUR, discount);
                     productsEntity.setSpainFC(spainFC);
                 } else {
                     spainFC = calculateFreight(weight, spainFC, ES);
                     BigDecimal spainFreight = spainFC.getFreight();
                     BigDecimal spainCost = spainFreight.add(sum);
-                    spainFC = priceInfo(spainCost, spainFC, EUR, discountBig);
-
+                    spainFC = priceInfo(spainCost, spainFC, EUR, discount);
                 }
 
 
@@ -1272,14 +1375,14 @@ public class ProductsController extends AbstractController {
                     japanFC = calculateFreight(weight, japanFC, JP);
                     BigDecimal japanFreight = japanFC.getFreight();
                     BigDecimal japanCost = japanFreight.add(sum);
-                    japanFC = priceInfo(japanCost, japanFC, JPY, discountBig);
+                    japanFC = priceInfo(japanCost, japanFC, JPY, discount);
                     productsEntity.setJapanFC(japanFC);
 
                 } else {
                     japanFC = calculateFreight(weight, japanFC, JP);
                     BigDecimal japanFreight = japanFC.getFreight();
                     BigDecimal japanCost = japanFreight.add(sum);
-                    japanFC = priceInfo(japanCost, japanFC, JPY, discountBig);
+                    japanFC = priceInfo(japanCost, japanFC, JPY, discount);
                 }
 
 
@@ -1290,14 +1393,14 @@ public class ProductsController extends AbstractController {
                     australiaFC = calculateFreight(weight, australiaFC, AU);
                     BigDecimal australiaFreight = australiaFC.getFreight();
                     BigDecimal australiaCost = australiaFreight.add(sum);
-                    australiaFC = priceInfo(australiaCost, australiaFC, AUD, discountBig);
+                    australiaFC = priceInfo(australiaCost, australiaFC, AUD, discount);
                     productsEntity.setAustraliaFC(australiaFC);
 
                 } else {
                     australiaFC = calculateFreight(weight, australiaFC, AU);
                     BigDecimal australiaFreight = australiaFC.getFreight();
                     BigDecimal australiaCost = australiaFreight.add(sum);
-                    australiaFC = priceInfo(australiaCost, australiaFC, AUD, discountBig);
+                    australiaFC = priceInfo(australiaCost, australiaFC, AUD, discount);
                 }
             }
             return R.ok().put("productsEntity", productsEntity);
@@ -1306,78 +1409,78 @@ public class ProductsController extends AbstractController {
             FreightCostEntity americanFC = productsEntity.getAmericanFC();
             if (americanFC == null) {
                 americanFC = new FreightCostEntity();
-                americanFC = priceInfo(sum, americanFC, USD, discountBig);
+                americanFC = priceInfo(sum, americanFC, USD, discount);
                 productsEntity.setAmericanFC(americanFC);
             } else {
                 //计算出美国售价，外币，优化信息
-                americanFC = priceInfo(sum, americanFC, USD, discountBig);
+                americanFC = priceInfo(sum, americanFC, USD, discount);
             }
             // 加拿大运费
             FreightCostEntity canadaFC = productsEntity.getCanadaFC();
             if (canadaFC == null) {
                 canadaFC = new FreightCostEntity();
-                canadaFC = priceInfo(sum, canadaFC, CAD, discountBig);
+                canadaFC = priceInfo(sum, canadaFC, CAD, discount);
                 productsEntity.setCanadaFC(canadaFC);
             } else {
-                canadaFC = priceInfo(sum, canadaFC, CAD, discountBig);
+                canadaFC = priceInfo(sum, canadaFC, CAD, discount);
             }
 
             // 墨西哥运费
             FreightCostEntity mexicoFC = productsEntity.getMexicoFC();
             if (mexicoFC == null) {
                 mexicoFC = new FreightCostEntity();
-                mexicoFC = priceInfo(sum, mexicoFC, MXN, discountBig);
+                mexicoFC = priceInfo(sum, mexicoFC, MXN, discount);
                 productsEntity.setMexicoFC(mexicoFC);
             } else {
-                mexicoFC = priceInfo(sum, mexicoFC, MXN, discountBig);
+                mexicoFC = priceInfo(sum, mexicoFC, MXN, discount);
             }
             //英国运费
             FreightCostEntity britainFC = productsEntity.getBritainFC();
             if (britainFC == null) {
                 britainFC = new FreightCostEntity();
-                britainFC = priceInfo(sum, britainFC, GBP, discountBig);
+                britainFC = priceInfo(sum, britainFC, GBP, discount);
                 productsEntity.setBritainFC(britainFC);
             } else {
-                britainFC = priceInfo(sum, britainFC, GBP, discountBig);
+                britainFC = priceInfo(sum, britainFC, GBP, discount);
             }
 
             // 法国运费
             FreightCostEntity franceFC = productsEntity.getFranceFC();
             if (franceFC == null) {
                 franceFC = new FreightCostEntity();
-                franceFC = priceInfo(sum, franceFC, EUR, discountBig);
+                franceFC = priceInfo(sum, franceFC, EUR, discount);
                 productsEntity.setFranceFC(franceFC);
             } else {
-                franceFC = priceInfo(sum, franceFC, EUR, discountBig);
+                franceFC = priceInfo(sum, franceFC, EUR, discount);
             }
             // 德国运费
             FreightCostEntity germanyFC = productsEntity.getGermanyFC();
             if (germanyFC == null) {
                 germanyFC = new FreightCostEntity();
-                germanyFC = priceInfo(sum, germanyFC, EUR, discountBig);
+                germanyFC = priceInfo(sum, germanyFC, EUR, discount);
                 productsEntity.setGermanyFC(germanyFC);
             } else {
-                germanyFC = priceInfo(sum, germanyFC, EUR, discountBig);
+                germanyFC = priceInfo(sum, germanyFC, EUR, discount);
             }
 
             //意大利运费
             FreightCostEntity italyFC = productsEntity.getItalyFC();
             if (italyFC == null) {
                 italyFC = new FreightCostEntity();
-                italyFC = priceInfo(sum, italyFC, EUR, discountBig);
+                italyFC = priceInfo(sum, italyFC, EUR, discount);
                 productsEntity.setItalyFC(italyFC);
             } else {
-                italyFC = priceInfo(sum, italyFC, EUR, discountBig);
+                italyFC = priceInfo(sum, italyFC, EUR, discount);
             }
 
             //西班牙运费
             FreightCostEntity spainFC = productsEntity.getSpainFC();
             if (spainFC == null) {
                 spainFC = new FreightCostEntity();
-                spainFC = priceInfo(sum, spainFC, EUR, discountBig);
+                spainFC = priceInfo(sum, spainFC, EUR, discount);
                 productsEntity.setSpainFC(spainFC);
             } else {
-                spainFC = priceInfo(sum, spainFC, EUR, discountBig);
+                spainFC = priceInfo(sum, spainFC, EUR, discount);
             }
 
 
@@ -1385,10 +1488,10 @@ public class ProductsController extends AbstractController {
             FreightCostEntity japanFC = productsEntity.getJapanFC();
             if (japanFC == null) {
                 japanFC = new FreightCostEntity();
-                japanFC = priceInfo(sum, japanFC, JPY, discountBig);
+                japanFC = priceInfo(sum, japanFC, JPY, discount);
                 productsEntity.setJapanFC(japanFC);
             } else {
-                japanFC = priceInfo(sum, japanFC, JPY, discountBig);
+                japanFC = priceInfo(sum, japanFC, JPY, discount);
             }
 
 
@@ -1396,10 +1499,10 @@ public class ProductsController extends AbstractController {
             FreightCostEntity australiaFC = productsEntity.getAustraliaFC();
             if (australiaFC == null) {
                 australiaFC = new FreightCostEntity();
-                australiaFC = priceInfo(sum, australiaFC, AUD, discountBig);
+                australiaFC = priceInfo(sum, australiaFC, AUD, discount);
                 productsEntity.setAustraliaFC(australiaFC);
             } else {
-                australiaFC = priceInfo(sum, australiaFC, AUD, discountBig);
+                australiaFC = priceInfo(sum, australiaFC, AUD, discount);
             }
 
             return R.ok().put("productsEntity", productsEntity);
@@ -1416,7 +1519,7 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/refresh")
     public R refresh(@RequestBody ProductsEntity productsEntity) {
         //减去亚马逊15%
-        BigDecimal temp = new BigDecimal(0.85);
+        BigDecimal temp = new BigDecimal("0.85");
         //美国汇率
         BigDecimal americanRate = getRate(USD);
         //产品采购价格
@@ -1638,12 +1741,12 @@ public class ProductsController extends AbstractController {
     }
 
     //计算售价的信息
-    public FreightCostEntity priceInfo(BigDecimal cost, FreightCostEntity freightCostEntity, String rateCode, BigDecimal discountBig) {
-        BigDecimal bigDecimal = new BigDecimal(0.45);
+    public FreightCostEntity priceInfo(BigDecimal cost, FreightCostEntity freightCostEntity, String rateCode, BigDecimal discount) {
+        BigDecimal bigDecimal = new BigDecimal("0.45");
         //计算出售价
         BigDecimal sellingPrice = cost.divide(bigDecimal, 2, BigDecimal.ROUND_HALF_UP);//四舍五入
         //售价乘折扣系数
-        BigDecimal sellingPriceX = sellingPrice.multiply(discountBig).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal sellingPriceX = sellingPrice.multiply(discount);
         freightCostEntity.setPrice(sellingPriceX);
         //获取国家的汇率
         AmazonRateEntity amazonRateEntity = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code", rateCode));
@@ -1652,7 +1755,7 @@ public class ProductsController extends AbstractController {
         //外币
         BigDecimal foreignCurrency = cost.divide(multiply, 2, BigDecimal.ROUND_HALF_UP);//四舍五入
         //外币乘折扣系数
-        BigDecimal foreignCurrencyX = foreignCurrency.multiply(discountBig).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal foreignCurrencyX = foreignCurrency.multiply(discount).setScale(2, BigDecimal.ROUND_HALF_UP);
         freightCostEntity.setForeignCurrency(foreignCurrencyX);
         //优化
         String foreignCurrencyString = foreignCurrency.toString();//外币变成字符串

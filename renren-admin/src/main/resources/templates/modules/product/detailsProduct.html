@@ -74,7 +74,7 @@
                     <div class="imgDiv">
                         <div v-for="(item,index) in proAlbum" :data-index="index" @mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)">
                             <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
-                            <img :src="item.url" alt="" class="imgItem">
+                            <img :src="item.imageUrl" alt="" class="imgItem" :data-con="item">
                             <i class="layui-icon layui-icon-close-fill imgDel"></i>
                         </div>
 
@@ -181,6 +181,9 @@
                     <span><label for="">品牌名称：</label><input type="text" placeholder="品牌名称" v-model="proDetails.brandName"></span>
                     <span><label for="">厂商编号：</label><input type="text" placeholder="厂商编号" v-model="proDetails.manufacturerNumber"></span>
                     <span><label for="">产品来源：</label><input type="text" placeholder="产品来源" v-model="proDetails.productSource"></span><br>
+                    <span><label for="">内部SKU：</label><input type="text" placeholder="内部SKU" v-model="proDetails.productSku"></span>
+                    <input type="button" value="一键修正">
+                    <br>
                     <span><label for="">来源地址：</label><textarea v-model="proDetails.sellerLink"></textarea></span><br>
                     <span><label for="">附加备注：</label><textarea v-model="proDetails.productRemark"></textarea></span><br>
                 </div>

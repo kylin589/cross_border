@@ -166,7 +166,7 @@ var vm = new Vue({
             // vm.laypage();
         },
         getMyStatusList:function(){
-            $.get('../../product/datadictionary/mystatuslist',function (r) {
+            $.get('../../product/datadictionary/mystatuslist?del=1',function (r) {
                 vm.audit.auditList = r.auditList;
                 vm.audit.auditCounts = r.auditCounts;
                 vm.putaway.putawayList = r.putawayList;
@@ -221,9 +221,12 @@ var vm = new Vue({
             $.ajax({
                 url: '../../product/productrecycling/list',
                 type: 'post',
-                data: JSON.stringify({
+                data: {
+                    // '_search': false,
                     'page': this.proCurr,
                     'limit': this.pageLimit,
+                    // 'sidx': "",
+                    // 'order': "asc",
                     'category': this.nowProTypeId,
                     'title': this.title,
                     'sku': this.sku,
@@ -232,11 +235,10 @@ var vm = new Vue({
                     'auditNumber': this.auditNumber,
                     'shelveNumber': this.shelveNumber,
                     'productNumber': this.productNumber,
-                }),
-                contentType: "application/json",
-                // dataType: 'json',
+                    // '_': $.now()
+                },
+                dataType: 'json',
                 success: function (r) {
-                    console.log(r);
                     if (r.code === 0) {
                         // console.log(r)
                         vm.statistics.proNum = r.proNum;
@@ -250,7 +252,7 @@ var vm = new Vue({
                         // vm.limit = lmt;
                         vm.laypage();
                     } else {
-                        layer.alert(r.msg);
+                        layer.alert(r.message);
                     }
 
 
@@ -724,7 +726,35 @@ var vm = new Vue({
 
 
         },
+        // 一键恢复
+        recoveryFunc:function () {
+            vm.getProIDs();
+            if(vm.activeProlist.length == 0){
+                layer.alert('请选择要恢复的产品');
+            }else{
+                $.ajax({
+                    url: '../../product/productrecycling/restore',
+                    type: 'get',
+                    data:JSON.stringify(vm.activeProlist)
+                    // 'productIds': JSON.stringify(vm.activeProlist)
+                    ,
+                    contentType: "application/json",
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            layer.alert('操作成功');
+                            // vm.getPage();
 
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                })
+            }
+        }
 
 
     },

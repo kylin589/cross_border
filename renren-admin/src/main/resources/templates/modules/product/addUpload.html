@@ -89,7 +89,7 @@
                     <h4>产品ID</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><textarea placeholder="产品ID" v-model="uploadIds"></textarea></span><br>
+                    <span><textarea placeholder="产品ID" v-model="uploadIdsstr"></textarea></span><br>
                     <p>填写产品ID后（逗号隔开），将只上传填写的ID列表，不填写则上传其他条件的筛选出的产品</p>
                 </div>
             </div>
@@ -115,14 +115,14 @@
                 <div>
                     <h4>更新选项</h4>
                 </div>
-                <div class="pro_inf check" id="">
+                <div class="pro_inf check" id="operateItem">
 
-                    <span><input type="checkbox" class="input_check" id="check3"> 全部</span>
-                    <span><input type="checkbox" class="input_check"> 基本信息</span>
-                    <span><input type="checkbox" class="input_check"> 关系</span>
-                    <span><input type="checkbox" class="input_check"> 图片</span>
-                    <span><input type="checkbox" class="input_check"> 库存</span>
-                    <span><input type="checkbox" class="input_check"> 价格</span>
+                    <span><input type="checkbox" class="input_check" id="check3" value="all" v-model="inputche[0]"> 全部</span>
+                    <span><input type="checkbox" class="input_check" value="0" v-model="inputche[1]"> 基本信息</span>
+                    <span><input type="checkbox" class="input_check" value="1" v-model="inputche[2]"> 关系</span>
+                    <span><input type="checkbox" class="input_check" value="2" v-model="inputche[3]"> 图片</span>
+                    <span><input type="checkbox" class="input_check" value="3" v-model="inputche[4]"> 库存</span>
+                    <span><input type="checkbox" class="input_check" value="4" v-model="inputche[5]"> 价格</span>
                     <p>如果只更新产品信息，则不需要选中上面选项</p>
                 </div>
             </div>
@@ -133,7 +133,7 @@
                     <h4>选择分类</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><input type="text" class="changeType" placeholder="--选择--" @click="amazonOneCategory"></span>
+                    <span><input type="text" class="changeType" placeholder="--选择--" @click="amazonOneCategory" v-model="amazonCategory"></span>
                     <input type="button" value="历史选择" />
                     <p></p>
                 </div>
@@ -387,7 +387,7 @@
                         <div class="inner-content-div2">
                             <!--要加滚动条的具体内容-->
                             <ul>
-                                <li v-for='list in item' :data-index="index" :id="list.amazonCategoryId" :data-if="list.ifNext" @click="amazonItemCategory">{{ list.displayName }}</li>
+                                <li v-for='list in item' :data-index="index" :id="list.amazonCategoryId" :data-if="list.ifNext" @click="amazonItemCategory(list)">{{ list.displayName }}</li>
                             </ul>
                         </div>
                     </div>
@@ -403,17 +403,14 @@
             <h3>定时上传</h3>
             <span>
                 <label for="">国家</label>
-                <select class="form-control" id="account_area">
-                    <option value="">-- 请选择 --</option>
-                    <option value="NorthAmerica">北美(North America)</option>
-                    <option value="Europe">欧洲(Europe)</option>
-                    <option value="Japan">日本(Japan)</option>
-                  </select>
+                <span>{{shopinfo.grantCounty}}</span>
             </span>
             <br>
             <span>
                 <label for="">选择时间</label>
                 <el-date-picker
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        format="yyyy-MM-dd HH:mm:ss"
                         v-model="value9"
                         type="datetime"
                         placeholder="选择日期时间"
@@ -422,7 +419,7 @@
                 </el-date-picker>
             </span>
             <br>
-            <button> <i class="layui-icon layui-icon-fonts-code"></i> 转换</button>
+            <span style="color:#00a3e8" @click="timeZoneConversion"> <i class="layui-icon layui-icon-fonts-code"></i> 转换</span>
             <!--<p>2018-10-11 22:00:00</p>-->
             <p>{{ changeTime }}</p>
         </div>

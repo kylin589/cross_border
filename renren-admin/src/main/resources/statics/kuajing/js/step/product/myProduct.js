@@ -294,6 +294,7 @@ var vm = new Vue({
                         vm.statistics.allVariant = r.allVariant;
                         vm.proList = r.page.list;
                         vm.totalCount = r.page.totalCount;
+                        console.log(vm.proList);
                         // vm.proCurr = r.page.currPage;
                         // vm.limit = r.page.pageSize;
                         // vm.limit = lmt;
