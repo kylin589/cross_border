@@ -45,12 +45,16 @@ form .item div:nth-child(2) .imgDiv>div{
     position: relative;
     display: inline-block;
     margin-right: 10px;
+    width: 130px;
+    height: 130px;
     margin-bottom: 10px;
     background: #000;
     border-radius: 3px;
+    overflow: hidden;
 }
 form .item div:nth-child(2) .imgDiv img{
     width: 130px;
+    /* height: 130px; */
     border-radius: 3px;
 }
 form .item div:nth-child(2) .imgDiv>div i{

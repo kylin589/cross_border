@@ -86,28 +86,30 @@ var vm = new Vue({
         }
     },
     methods:{
-        addOrder:function () {
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#addOrder'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['400px', '220px'],
-                shadeClose: true,
-                btn: ['添加','取消'],
-                btn1: function (index) {
-
-
-                },
-                btn2: function (index) {
-
-
-                }
-            });
-        },
+        // addOrder:function () {
+        //     layer.open({
+        //         type: 1,
+        //         title: false,
+        //         content: $('#addOrder'), //这里content是一个普通的String
+        //         skin: 'openClass',
+        //         area: ['400px', '220px'],
+        //         shadeClose: true,
+        //         btn: ['添加','取消'],
+        //         btn1: function (index) {
+        //
+        //
+        //         },
+        //         btn2: function (index) {
+        //
+        //
+        //         }
+        //     });
+        // },
         // 分页器
         laypage: function () {
             // var tempTotalCount;
+
+            // console.log(vm.allOrderCount);
 
             // 分页器
             layui.use('laypage', function () {
@@ -171,6 +173,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         vm.prolist = r.page.list;
                         vm.allOrderCount = r.page.totalCount;
+                        console.log(vm.allOrderCount)
                         vm.laypage();
                     } else {
                         layer.alert(r.msg);
