@@ -96,31 +96,31 @@ public class ProductsEntity implements Serializable {
     /**
      * 采购价格
      */
-    private BigDecimal purchasePrice;
+    private BigDecimal purchasePrice=new BigDecimal("0.00");
     /**
      * 产品重量
      */
-    private Double productWeight;
+    private Double productWeight = 0.00;
     /**
      * 产品长度
      */
-    private Double productLength;
+    private Double productLength = 0.00;
     /**
      * 产品宽度
      */
-    private Double productWide;
+    private Double productWide = 0.00;
     /**
      * 产品高度
      */
-    private Double productHeight;
+    private Double productHeight = 0.00;
     /**
      * 国内运费
      */
-    private BigDecimal domesticFreight;
+    private BigDecimal domesticFreight=new BigDecimal("0.00");
     /**
      * 折扣系数
      */
-    private Double discount;
+    private BigDecimal discount = new BigDecimal("1.00");
     /**
      * 美国运费id
      */
@@ -893,14 +893,14 @@ public class ProductsEntity implements Serializable {
     /**
      * 设置：折扣系数
      */
-    public void setDiscount(Double discount) {
+    public void setDiscount(BigDecimal discount) {
         this.discount = discount;
     }
 
     /**
      * 获取：折扣系数
      */
-    public Double getDiscount() {
+    public BigDecimal getDiscount() {
         return discount;
     }
 
@@ -1294,5 +1294,87 @@ public class ProductsEntity implements Serializable {
      */
     public Long getLastOperationUserId() {
         return lastOperationUserId;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductsEntity{" +
+                "productId=" + productId +
+                ", categoryOneId=" + categoryOneId +
+                ", categoryTwoId=" + categoryTwoId +
+                ", categoryThreeId=" + categoryThreeId +
+                ", productCategory='" + productCategory + '\'' +
+                ", auditStatus='" + auditStatus + '\'' +
+                ", shelveStatus='" + shelveStatus + '\'' +
+                ", productType='" + productType + '\'' +
+                ", mainImageId=" + mainImageId +
+                ", producerName='" + producerName + '\'' +
+                ", brandName='" + brandName + '\'' +
+                ", manufacturerNumber='" + manufacturerNumber + '\'' +
+                ", productSku='" + productSku + '\'' +
+                ", productSource='" + productSource + '\'' +
+                ", sellerLink='" + sellerLink + '\'' +
+                ", productRemark='" + productRemark + '\'' +
+                ", eanCode='" + eanCode + '\'' +
+                ", upcCode='" + upcCode + '\'' +
+                ", purchasePrice=" + purchasePrice +
+                ", productWeight=" + productWeight +
+                ", productLength=" + productLength +
+                ", productWide=" + productWide +
+                ", productHeight=" + productHeight +
+                ", domesticFreight=" + domesticFreight +
+                ", discount=" + discount +
+                ", americanFreight=" + americanFreight +
+                ", canadaFreight=" + canadaFreight +
+                ", mexicoFreight=" + mexicoFreight +
+                ", britainFreight=" + britainFreight +
+                ", franceFreight=" + franceFreight +
+                ", germanyFreight=" + germanyFreight +
+                ", italyFreight=" + italyFreight +
+                ", spainFreight=" + spainFreight +
+                ", japanFreight=" + japanFreight +
+                ", australiaFreight=" + australiaFreight +
+                ", stock=" + stock +
+                ", pretreatmentDate=" + pretreatmentDate +
+                ", productAbbreviations='" + productAbbreviations + '\'' +
+                ", productTitle='" + productTitle + '\'' +
+                ", chineseIntroduction=" + chineseIntroduction +
+                ", britainIntroduction=" + britainIntroduction +
+                ", franceIntroduction=" + franceIntroduction +
+                ", germanyIntroduction=" + germanyIntroduction +
+                ", italyIntroduction=" + italyIntroduction +
+                ", spainIntroduction=" + spainIntroduction +
+                ", japanIntroduction=" + japanIntroduction +
+                ", colorId=" + colorId +
+                ", sizeId=" + sizeId +
+                ", isDeleted=" + isDeleted +
+                ", createTime=" + createTime +
+                ", createUserId=" + createUserId +
+                ", lastOperationTime=" + lastOperationTime +
+                ", lastOperationUserId=" + lastOperationUserId +
+                ", deptId=" + deptId +
+                ", americanFC=" + americanFC +
+                ", canadaFC=" + canadaFC +
+                ", mexicoFC=" + mexicoFC +
+                ", britainFC=" + britainFC +
+                ", franceFC=" + franceFC +
+                ", germanyFC=" + germanyFC +
+                ", italyFC=" + italyFC +
+                ", spainFC=" + spainFC +
+                ", japanFC=" + japanFC +
+                ", australiaFC=" + australiaFC +
+                ", chinesePRE=" + chinesePRE +
+                ", britainPRE=" + britainPRE +
+                ", francePRE=" + francePRE +
+                ", germanyPRE=" + germanyPRE +
+                ", italyPRE=" + italyPRE +
+                ", spainPRE=" + spainPRE +
+                ", japanPRE=" + japanPRE +
+                ", colorVP=" + colorVP +
+                ", sizeVP=" + sizeVP +
+                ", images=" + images +
+                ", variantsInfos=" + variantsInfos +
+                ", mainImageUrl='" + mainImageUrl + '\'' +
+                '}';
     }
 }

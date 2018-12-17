@@ -1,8 +1,6 @@
 package io.renren.modules.product.controller;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -11,12 +9,14 @@ import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.logistics.service.DomesticLogisticsService;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
+import io.renren.modules.order.entity.RemarkEntity;
 import io.renren.modules.order.service.ProductShipAddressService;
+import io.renren.modules.order.service.RemarkService;
 import io.renren.modules.product.dto.OrderDTO;
+import io.renren.modules.product.vm.OrderVM;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.renren.modules.product.entity.OrderEntity;
 import io.renren.modules.product.service.OrderService;
-import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 
 
@@ -45,6 +44,8 @@ public class OrderController extends AbstractController{
     private ProductShipAddressService productShipAddressService;
     @Autowired
     private DomesticLogisticsService domesticLogisticsService;
+    @Autowired
+    private RemarkService remarkService;
     /**
      * 我的订单
      */
@@ -69,7 +70,7 @@ public class OrderController extends AbstractController{
      */
     @RequestMapping("/getOrderInfo")
     public R getOrderInfo(@RequestParam(value = "orderId") Long orderId){
-        OrderEntity orderEntity = orderService.queryInfoById(orderId);
+        OrderEntity orderEntity = orderService.selectById(orderId);
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setOrderId(orderId);
         orderDTO.setAmazonOrderId(orderEntity.getAmazonOrderId());
@@ -77,6 +78,11 @@ public class OrderController extends AbstractController{
         String orderStatus = orderEntity.getOrderStatus();
         orderDTO.setOrderStatus(orderStatus);
         orderDTO.setOrderState(orderEntity.getOrderState());
+
+        String abnormalStatus = orderEntity.getAbnormalStatus();
+        orderDTO.setAbnormalStatus(abnormalStatus);
+        orderDTO.setAbnormalState(orderEntity.getAbnormalState());
+
         orderDTO.setShopName(orderEntity.getShopName());
         orderDTO.setProductId(orderEntity.getProductId());
         orderDTO.setProductSku(orderEntity.getProductSku());
@@ -94,42 +100,83 @@ public class OrderController extends AbstractController{
         // TODO: 2018/12/11 国际物流
         BigDecimal momentRate = orderEntity.getMomentRate();
         orderDTO.setMomentRate(momentRate);
-        //判断订单状态
-        if(!Arrays.asList(ConstantDictionary.OrderStateCode.SPECIAL_ORDER_STATE).contains(orderStatus)){
+        //判断订单异常状态——不属于退货
+        if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
+            //国际已发货
             if(ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED.equals(orderStatus)){
-                // TODO: 2018/12/13 国际已发货
-            }else{
                 //获取订单金额（外币）
                 BigDecimal orderMoneyForeign = orderEntity.getOrderMoney();
                 //设置订单金额（外币）
                 orderDTO.setOrderMoneyForeign(orderMoneyForeign);
                 //设置订单金额（人民币：外币*当时汇率）
-                orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate));
+                orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
                 //获取Amazon佣金（外币）
                 BigDecimal amazonCommissionForeign = orderEntity.getAmazonCommission();
                 //订单表保存数据
                 //设置Amazon佣金（外币）
                 orderDTO.setAmazonCommissionForeign(amazonCommissionForeign);
                 //设置Amazon佣金（人民币：外币*当时汇率）
-                orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate));
-            }
-        }
-        //获取订单金额（外币）
-        BigDecimal orderMoneyForeign = orderEntity.getOrderMoney();
-        //设置订单金额（外币）
-        orderDTO.setOrderMoneyForeign(orderMoneyForeign);
-        //设置订单金额（人民币：外币*当时汇率）
-        orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate));
-        //获取Amazon佣金（外币）
-        BigDecimal amazonCommissionForeign = orderEntity.getAmazonCommission();
-        //订单表保存数据
-        //设置Amazon佣金（外币）
-        orderDTO.setAmazonCommissionForeign(amazonCommissionForeign);
-        //设置Amazon佣金（人民币：外币*当时汇率）
-        orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate));
-        //
+                orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                //到账金额
+                BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
+                orderDTO.setAccountMoneyForeign(accountMoneyForeign);
+                orderDTO.setAccountMoney(accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                //采购价
+                BigDecimal purchasePrice = orderEntity.getPurchasePrice();
+                orderDTO.setPurchasePrice(purchasePrice);
+                // TODO: 2018/12/15  国际运费()\平台佣金(platformCommissions)\利润(orderProfit)
+            }else {
+                //属于取消订单不处理
+                if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(orderStatus)){
 
-        return R.ok();
+                }else{
+                    //不属于取消订单
+                    //获取订单金额（外币）
+                    BigDecimal orderMoneyForeign = orderEntity.getOrderMoney();
+                    //设置订单金额（外币）
+                    orderDTO.setOrderMoneyForeign(orderMoneyForeign);
+                    //设置订单金额（人民币：外币*当时汇率）
+                    orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                    //获取Amazon佣金（外币）
+                    BigDecimal amazonCommissionForeign = orderEntity.getAmazonCommission();
+                    //设置Amazon佣金（外币）
+                    orderDTO.setAmazonCommissionForeign(amazonCommissionForeign);
+                    //设置Amazon佣金（人民币：外币*当时汇率）
+                    orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                    //到账金额
+                    BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
+                    orderDTO.setAccountMoneyForeign(accountMoneyForeign);
+                    orderDTO.setAccountMoney(accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                }
+            }
+        }else{
+            //退货
+            //获取订单金额（外币）
+            BigDecimal orderMoneyForeign = orderEntity.getOrderMoney();
+            orderDTO.setOrderMoneyForeign(orderMoneyForeign);
+            orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+            //获取Amazon佣金（外币）
+            BigDecimal amazonCommissionForeign = orderEntity.getAmazonCommission();
+            orderDTO.setAmazonCommissionForeign(amazonCommissionForeign);
+            orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+            //到账金额
+            BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
+            orderDTO.setAccountMoneyForeign(accountMoneyForeign);
+            orderDTO.setAccountMoney(accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+            //平台佣金设置为0.00
+            orderDTO.setPlatformCommissions(new BigDecimal(0.00));
+            //TODO: 国际运费
+            //退货费用
+            BigDecimal returnCost = orderEntity.getReturnCost();
+            orderDTO.setReturnCost(returnCost);
+            //利润
+            accountMoneyForeign.multiply(momentRate).subtract(returnCost).setScale(2,BigDecimal.ROUND_HALF_UP);
+        }
+        List<RemarkEntity> remarkList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","reamrk").eq("order_id",orderId));
+        List<RemarkEntity> logList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","log").eq("order_id",orderId));
+        orderDTO.setRemarkList(remarkList);
+        orderDTO.setLogList(logList);
+        return R.ok().put("orderDTO",orderDTO);
     }
 
     /**
@@ -150,7 +197,8 @@ public class OrderController extends AbstractController{
     @RequiresPermissions("product:order:update")
     public R update(@RequestBody OrderEntity order){
         ValidatorUtils.validateEntity(order);
-        orderService.updateAllColumnById(order);//全部更新
+        //全部更新
+        orderService.updateAllColumnById(order);
         
         return R.ok();
     }
@@ -167,15 +215,25 @@ public class OrderController extends AbstractController{
     }
 
     /**
-     * 修改状态
+     * 修改订单状态
      */
     @RequestMapping("/updateState")
-    public R updateState(@RequestParam Long orderId, @RequestParam String orderState){
-        boolean flag = orderService.updateState(orderId,orderState);
+    public R updateState(@RequestBody OrderVM orderVM){
+        boolean flag = orderService.updateState(orderVM.getOrderId(),orderVM.getOrderState());
         if(flag){
             return R.ok();
         }
         return R.error();
     }
-
+    /**
+     * 修改订单异常状态
+     */
+    @RequestMapping("/updateAbnormalState")
+    public R updateAbnormalState(@RequestBody OrderVM orderVM){
+        boolean flag = orderService.updateAbnormalState(orderVM.getOrderIds(), orderVM.getAbnormalStatus(), orderVM.getAbnormalState());
+        if(flag){
+            return R.ok();
+        }
+        return R.error();
+    }
 }

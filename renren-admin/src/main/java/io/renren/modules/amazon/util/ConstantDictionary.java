@@ -62,16 +62,23 @@ public interface ConstantDictionary {
         String ORDER_STATE_PROBLEM = "Problem";
         /**
          * AMAZON获取到的订单状态
+         * 待付款、已付款、虚发货
          */
         String[] AMAZON_ORDER_STATE = {ORDER_STATE_PENDING, ORDER_STATE_UNSHIPPED, ORDER_STATE_SHIPPED};
         /**
-         * 特殊的订单状态
+         * 订单异常状态
+         * 缺货、退货、补发、问题
          */
-        String[] SPECIAL_ORDER_STATE = {
-                ORDER_STATE_CANCELED,ORDER_STATE_RETURN,ORDER_STATE_PROBLEM
+        String[] ORDER_ABNORMAL_STATE = {
+                ORDER_STATE_SHORTAGE, ORDER_STATE_RETURN, ORDER_STATE_REPLACEMENT, ORDER_STATE_PROBLEM
         };
     }
+    /**
+     * 异常状态
+     */
+    public interface AbnormalStateCode {
 
+    }
     /**
      * 币种代码
      */

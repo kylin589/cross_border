@@ -3,7 +3,7 @@ package io.renren.modules.product.service.impl;
 import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.logistics.service.DomesticLogisticsService;
 import io.renren.modules.product.entity.DataDictionaryEntity;
-import io.renren.modules.product.entity.OrderStatisticsEneity;
+import io.renren.modules.product.entity.OrderStatisticsEntity;
 import io.renren.modules.product.service.DataDictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         String shopName = (String) params.get("shopName");
         //状态标识
         String orderStatus = (String) params.get("orderStatus");
+        //异常状态标识
+        String abnormalStatus = (String) params.get("abnormalStatus");
         //订单id
         String orderIdStr = (String) params.get("orderId");
         Long orderId = 0L;
@@ -66,6 +68,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         EntityWrapper<OrderEntity> wrapper = new EntityWrapper<OrderEntity>();
         wrapper.like(StringUtils.isNotBlank(shopName), "shop_name", shopName)
                 .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus)
                 .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
                 .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
                 .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
@@ -84,7 +87,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         PageUtils pageUtils = new PageUtils(page);
         Map<String, Object> condition = new HashMap<>(1);
         condition.put("userId",userId);
-        OrderStatisticsEneity orderCounts = baseMapper.statisticsOrderCounts(condition);
+        OrderStatisticsEntity orderCounts = baseMapper.statisticsOrderCounts(condition);
         //退货数
         int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
         orderCounts.setReturnCounts(returnCounts);
@@ -145,7 +148,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 wrapper
         );
         PageUtils pageUtils = new PageUtils(page);
-        OrderStatisticsEneity orderCounts = new OrderStatisticsEneity();
+        OrderStatisticsEntity orderCounts = new OrderStatisticsEntity();
         Map<String, Object> condition = new HashMap<>(1);
         if(deptId == 1){
             //总公司
@@ -183,9 +186,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
-    public OrderEntity queryInfoById(Long orderId) {
-
-        return null;
+    public boolean updateAbnormalState(Long[] orderIds, String abnormalStatus, String abnormalState) {
+        int flag = 0;
+        if("Normal".equals(abnormalStatus)){
+            flag = baseMapper.updateAbnormalState(orderIds,null,null);
+        }else{
+            flag = baseMapper.updateAbnormalState(orderIds,abnormalState,abnormalStatus);
+        }
+        if(flag != 0){
+            return true;
+        }
+        return false;
     }
 }
 
