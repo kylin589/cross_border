@@ -72,35 +72,35 @@ public class OrderEntity implements Serializable {
 	/**
 	 * 采购价格
 	 */
-	private BigDecimal purchasePrice;
+	private BigDecimal purchasePrice = new BigDecimal(0.00);
 	/**
 	 * 订单金额
 	 */
-	private BigDecimal orderMoney;
+	private BigDecimal orderMoney = new BigDecimal(0.00);
 	/**
 	 * Amazon佣金
 	 */
-	private BigDecimal amazonCommission;
+	private BigDecimal amazonCommission = new BigDecimal(0.00);
 	/**
 	 * 到账金额
 	 */
-	private BigDecimal accountMoney;
+	private BigDecimal accountMoney = new BigDecimal(0.00);
 	/**
 	 * 国际运费
 	 */
-	private BigDecimal interFreight;
+	private BigDecimal interFreight = new BigDecimal(0.00);
 	/**
 	 * 平台佣金
 	 */
-	private BigDecimal platformCommissions;
+	private BigDecimal platformCommissions = new BigDecimal(0.00);
 	/**
 	 * 利润
 	 */
-	private BigDecimal orderProfit;
+	private BigDecimal orderProfit = new BigDecimal(0.00);
 	/**
 	 * 退货费用
 	 */
-	private BigDecimal returnCost;
+	private BigDecimal returnCost = new BigDecimal(0.00);
 	/**
 	 * 国内物流单号
 	 */

@@ -95,7 +95,25 @@ public class OrderController extends AbstractController{
         BigDecimal momentRate = orderEntity.getMomentRate();
         orderDTO.setMomentRate(momentRate);
         //判断订单状态
-//        if(orderStatus.equals(ConstantDictionary.OrderStateCode))
+        if(!Arrays.asList(ConstantDictionary.OrderStateCode.SPECIAL_ORDER_STATE).contains(orderStatus)){
+            if(ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED.equals(orderStatus)){
+                // TODO: 2018/12/13 国际已发货
+            }else{
+                //获取订单金额（外币）
+                BigDecimal orderMoneyForeign = orderEntity.getOrderMoney();
+                //设置订单金额（外币）
+                orderDTO.setOrderMoneyForeign(orderMoneyForeign);
+                //设置订单金额（人民币：外币*当时汇率）
+                orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate));
+                //获取Amazon佣金（外币）
+                BigDecimal amazonCommissionForeign = orderEntity.getAmazonCommission();
+                //订单表保存数据
+                //设置Amazon佣金（外币）
+                orderDTO.setAmazonCommissionForeign(amazonCommissionForeign);
+                //设置Amazon佣金（人民币：外币*当时汇率）
+                orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate));
+            }
+        }
         //获取订单金额（外币）
         BigDecimal orderMoneyForeign = orderEntity.getOrderMoney();
         //设置订单金额（外币）
