@@ -1295,4 +1295,86 @@ public class ProductsEntity implements Serializable {
     public Long getLastOperationUserId() {
         return lastOperationUserId;
     }
+
+    @Override
+    public String toString() {
+        return "ProductsEntity{" +
+                "productId=" + productId +
+                ", categoryOneId=" + categoryOneId +
+                ", categoryTwoId=" + categoryTwoId +
+                ", categoryThreeId=" + categoryThreeId +
+                ", productCategory='" + productCategory + '\'' +
+                ", auditStatus='" + auditStatus + '\'' +
+                ", shelveStatus='" + shelveStatus + '\'' +
+                ", productType='" + productType + '\'' +
+                ", mainImageId=" + mainImageId +
+                ", producerName='" + producerName + '\'' +
+                ", brandName='" + brandName + '\'' +
+                ", manufacturerNumber='" + manufacturerNumber + '\'' +
+                ", productSku='" + productSku + '\'' +
+                ", productSource='" + productSource + '\'' +
+                ", sellerLink='" + sellerLink + '\'' +
+                ", productRemark='" + productRemark + '\'' +
+                ", eanCode='" + eanCode + '\'' +
+                ", upcCode='" + upcCode + '\'' +
+                ", purchasePrice=" + purchasePrice +
+                ", productWeight=" + productWeight +
+                ", productLength=" + productLength +
+                ", productWide=" + productWide +
+                ", productHeight=" + productHeight +
+                ", domesticFreight=" + domesticFreight +
+                ", discount=" + discount +
+                ", americanFreight=" + americanFreight +
+                ", canadaFreight=" + canadaFreight +
+                ", mexicoFreight=" + mexicoFreight +
+                ", britainFreight=" + britainFreight +
+                ", franceFreight=" + franceFreight +
+                ", germanyFreight=" + germanyFreight +
+                ", italyFreight=" + italyFreight +
+                ", spainFreight=" + spainFreight +
+                ", japanFreight=" + japanFreight +
+                ", australiaFreight=" + australiaFreight +
+                ", stock=" + stock +
+                ", pretreatmentDate=" + pretreatmentDate +
+                ", productAbbreviations='" + productAbbreviations + '\'' +
+                ", productTitle='" + productTitle + '\'' +
+                ", chineseIntroduction=" + chineseIntroduction +
+                ", britainIntroduction=" + britainIntroduction +
+                ", franceIntroduction=" + franceIntroduction +
+                ", germanyIntroduction=" + germanyIntroduction +
+                ", italyIntroduction=" + italyIntroduction +
+                ", spainIntroduction=" + spainIntroduction +
+                ", japanIntroduction=" + japanIntroduction +
+                ", colorId=" + colorId +
+                ", sizeId=" + sizeId +
+                ", isDeleted=" + isDeleted +
+                ", createTime=" + createTime +
+                ", createUserId=" + createUserId +
+                ", lastOperationTime=" + lastOperationTime +
+                ", lastOperationUserId=" + lastOperationUserId +
+                ", deptId=" + deptId +
+                ", americanFC=" + americanFC +
+                ", canadaFC=" + canadaFC +
+                ", mexicoFC=" + mexicoFC +
+                ", britainFC=" + britainFC +
+                ", franceFC=" + franceFC +
+                ", germanyFC=" + germanyFC +
+                ", italyFC=" + italyFC +
+                ", spainFC=" + spainFC +
+                ", japanFC=" + japanFC +
+                ", australiaFC=" + australiaFC +
+                ", chinesePRE=" + chinesePRE +
+                ", britainPRE=" + britainPRE +
+                ", francePRE=" + francePRE +
+                ", germanyPRE=" + germanyPRE +
+                ", italyPRE=" + italyPRE +
+                ", spainPRE=" + spainPRE +
+                ", japanPRE=" + japanPRE +
+                ", colorVP=" + colorVP +
+                ", sizeVP=" + sizeVP +
+                ", images=" + images +
+                ", variantsInfos=" + variantsInfos +
+                ", mainImageUrl='" + mainImageUrl + '\'' +
+                '}';
+    }
 }

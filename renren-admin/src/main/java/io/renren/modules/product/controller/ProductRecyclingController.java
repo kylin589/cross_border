@@ -3,6 +3,7 @@ package io.renren.modules.product.controller;
 import io.renren.common.utils.R;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.service.ProductsService;
+import io.renren.modules.product.vm.ProductIdsVM;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,18 +49,19 @@ public class ProductRecyclingController extends AbstractController {
     }
 
     /**
-     * @param productIds 产品id
-     * @return R
+     * @param
+     * @return R productIdsVM
      * @methodname 产品一键恢复
      * 把is_deleted从1该为0
      * @auther zjr
      * @date 2018-11-7 9:59
      */
     @RequestMapping("/restore")
-    public R restore(@RequestBody String[] productIds) {
+    public R restore(@RequestBody ProductIdsVM productIdsVM) {
+        Long[] productIds = productIdsVM.getProductIds();
         for (int i = 0; i < productIds.length; i++) {
             ProductsEntity entity = new ProductsEntity();
-            entity.setProductId(Long.valueOf(productIds[i]));
+            entity.setProductId(productIds[i]);
             entity.setIsDeleted(0);
             entity.setLastOperationTime(new Date());
             entity.setLastOperationUserId(getUserId());
@@ -82,17 +84,17 @@ public class ProductRecyclingController extends AbstractController {
     }
 
     /**
-     * @methodname: delete 删除
+     * @methodname: delete 彻底删除
      * @param: [productIds] 产品id数组
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/11/8 21:22
      */
-    @RequestMapping("/delete")
-    @RequiresPermissions("product:productrecycling:delete")
-    public R delete(@RequestBody Long[] productIds) {
+    @RequestMapping("/batchdelete")
+    //@RequiresPermissions("product:productrecycling:delete")
+    public R delete(@RequestBody ProductIdsVM productIdsVM) {
+        Long[] productIds = productIdsVM.getProductIds();
         productsService.deleteBatchIds(Arrays.asList(productIds));
-
         return R.ok();
     }
 }

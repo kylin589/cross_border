@@ -197,6 +197,63 @@ public class ProductsController extends AbstractController {
     public R getProductId() {
         Long productId = productsService.getNewProductId(getUserId());
         ProductsEntity productsEntity = productsService.selectById(productId);
+        //美国运费
+        FreightCostEntity americanFC = new FreightCostEntity();
+        freightCostService.insert(americanFC);
+        productsEntity.setAmericanFreight(americanFC.getFreightCostId());
+        productsEntity.setAmericanFC(americanFC);
+
+        // 加拿大运费
+        FreightCostEntity canadaFC = new FreightCostEntity();
+        freightCostService.insert(canadaFC);
+        productsEntity.setCanadaFreight(canadaFC.getFreightCostId());
+        productsEntity.setCanadaFC(canadaFC);
+        // 墨西哥运费
+        FreightCostEntity mexicoFC = new FreightCostEntity();
+        freightCostService.insert(mexicoFC);
+        productsEntity.setMexicoFreight(mexicoFC.getFreightCostId());
+        productsEntity.setMexicoFC(mexicoFC);
+
+        //英国运费
+        FreightCostEntity britainFC = new FreightCostEntity();
+        freightCostService.insert(britainFC);
+        productsEntity.setBritainFreight(britainFC.getFreightCostId());
+        productsEntity.setBritainFC(britainFC);
+
+        // 法国运费
+        FreightCostEntity franceFC = new FreightCostEntity();
+        freightCostService.insert(franceFC);
+        productsEntity.setFranceFreight(franceFC.getFreightCostId());
+        productsEntity.setFranceFC(franceFC);
+
+        // 德国运费
+        FreightCostEntity germanyFC = new FreightCostEntity();
+        freightCostService.insert(germanyFC);
+        productsEntity.setGermanyFreight(germanyFC.getFreightCostId());
+        productsEntity.setGermanyFC(germanyFC);
+
+        //意大利运费
+        FreightCostEntity italyFC = new FreightCostEntity();
+        freightCostService.insert(italyFC);
+        productsEntity.setItalyFreight(italyFC.getFreightCostId());
+        productsEntity.setItalyFC(italyFC);
+
+        //西班牙运费
+        FreightCostEntity spainFC = new FreightCostEntity();
+        freightCostService.insert(spainFC);
+        productsEntity.setSpainFreight(spainFC.getFreightCostId());
+        productsEntity.setSpainFC(spainFC);
+        // 日本运费
+        FreightCostEntity japanFC = new FreightCostEntity();
+        freightCostService.insert(japanFC);
+        productsEntity.setJapanFreight(japanFC.getFreightCostId());
+        productsEntity.setJapanFC(japanFC);
+        //澳大利亚运费
+        FreightCostEntity australiaFC = new FreightCostEntity();
+        freightCostService.insert(australiaFC);
+        productsEntity.setAustraliaFreight(australiaFC.getFreightCostId());
+        productsEntity.setAustraliaFC(australiaFC);
+        productsService.insert(productsEntity);
         return R.ok().put("productsEntity", productsEntity);
     }
 
@@ -584,6 +641,37 @@ public class ProductsController extends AbstractController {
      */
     @RequestMapping("/cancelOriginal")
     public R cancelOriginal(Long productId) {
+        ProductsEntity productsEntity = productsService.selectById(productId);
+        Long americanid = productsEntity.getAmericanFreight();
+        freightCostService.deleteById(americanid);
+
+        Long canadaid = productsEntity.getCanadaFreight();
+        freightCostService.deleteById(canadaid);
+
+        Long mexicoid = productsEntity.getMexicoFreight();
+        freightCostService.deleteById(mexicoid);
+
+        Long britainid = productsEntity.getBritainFreight();
+        freightCostService.deleteById(britainid);
+
+        Long franceid = productsEntity.getFranceFreight();
+        freightCostService.deleteById(franceid);
+
+        Long germanyid = productsEntity.getGermanyFreight();
+        freightCostService.deleteById(germanyid);
+
+        Long italyid = productsEntity.getItalyFreight();
+        freightCostService.deleteById(italyid);
+
+        Long spainid = productsEntity.getSpainFreight();
+        freightCostService.deleteById(spainid);
+
+        Long japanid = productsEntity.getJapanFreight();
+        freightCostService.deleteById(japanid);
+
+        Long australiaid = productsEntity.getAustraliaFreight();
+        freightCostService.deleteById(australiaid);
+
         productsService.deleteById(productId);
         return R.ok();
     }
@@ -606,60 +694,43 @@ public class ProductsController extends AbstractController {
         products.setCategoryThreeId(Long.parseLong(id[2]));
         //美国运费
         FreightCostEntity americanFC = products.getAmericanFC();
-        freightCostService.insert(americanFC);
-        products.setAmericanFreight(americanFC.getFreightCostId());
-
+        freightCostService.updateById(americanFC);
 
         // 加拿大运费
         FreightCostEntity canadaFC = products.getCanadaFC();
-        freightCostService.insert(canadaFC);
-        products.setCanadaFreight(canadaFC.getFreightCostId());
+        freightCostService.updateById(canadaFC);
 
         // 墨西哥运费
         FreightCostEntity mexicoFC = products.getMexicoFC();
-        freightCostService.insert(mexicoFC);
-        products.setMexicoFreight(mexicoFC.getFreightCostId());
-
+        freightCostService.updateById(mexicoFC);
 
         //英国运费
         FreightCostEntity britainFC = products.getBritainFC();
-        freightCostService.insert(britainFC);
-        products.setBritainFreight(britainFC.getFreightCostId());
-
+        freightCostService.updateById(britainFC);
 
         // 法国运费
         FreightCostEntity franceFC = products.getFranceFC();
-        freightCostService.insert(franceFC);
-        products.setFranceFreight(franceFC.getFreightCostId());
-
+        freightCostService.updateById(franceFC);
 
         // 德国运费
         FreightCostEntity germanyFC = products.getGermanyFC();
-        freightCostService.insert(germanyFC);
-        products.setGermanyFreight(germanyFC.getFreightCostId());
-
+        freightCostService.updateById(germanyFC);
 
         //意大利运费
         FreightCostEntity italyFC = products.getItalyFC();
-        freightCostService.insert(italyFC);
-        products.setItalyFreight(italyFC.getFreightCostId());
-
+        freightCostService.updateById(italyFC);
 
         //西班牙运费
         FreightCostEntity spainFC = products.getSpainFC();
-        freightCostService.insert(spainFC);
-        products.setSpainFreight(spainFC.getFreightCostId());
-
+        freightCostService.updateById(spainFC);
 
         // 日本运费
         FreightCostEntity japanFC = products.getJapanFC();
-        freightCostService.insert(japanFC);
-        products.setJapanFreight(japanFC.getFreightCostId());
+        freightCostService.updateById(japanFC);
 
         //澳大利亚运费
         FreightCostEntity australiaFC = products.getAustraliaFC();
-        freightCostService.insert(australiaFC);
-        products.setAustraliaFreight(australiaFC.getFreightCostId());
+        freightCostService.updateById(australiaFC);
 
 
         //中文介绍
@@ -853,6 +924,7 @@ public class ProductsController extends AbstractController {
         }
         //英文介绍
         IntroductionEntity britainPRE = products.getBritainPRE();
+        System.out.println("=========================" + britainPRE);
         if (britainPRE != null) {
             if (britainPRE.getIntroductionId() != null) {
                 introductionService.updateById(britainPRE);
