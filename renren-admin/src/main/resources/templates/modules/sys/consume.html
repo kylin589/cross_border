@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>消费记录</title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<#if shiro.hasPermission("sys:consume:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("sys:consume:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("sys:consume:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">公司id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.deptId" placeholder="公司id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">公司名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.deptName" placeholder="公司名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">操作人id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.userId" placeholder="操作人id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">操作人</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.userName" placeholder="操作人"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">类型（服务费、物流费）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.type" placeholder="类型（服务费、物流费）"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">订单id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.orderId" placeholder="订单id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">金额</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.money" placeholder="金额"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">消费前余额</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.beforeBalance" placeholder="消费前余额"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">消费后余额</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.afterBalance" placeholder="消费后余额"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">运单号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.abroadWaybill" placeholder="运单号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">操作时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="consume.createTime" placeholder="操作时间"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/consume.js?_${.now?long}"></script>
+</body>
+</html>

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  * @Date: 2018/12/6 13:56
  * @Description:
  */
-public class OrderStatisticsEneity {
+public class OrderStatisticsEntity {
     //订单数量
     private int orderCounts;
     //总金额

@@ -35,6 +35,14 @@ public class OrderDTO {
      */
     private String orderState;
     /**
+     * 订单异常状态标识
+     */
+    private String abnormalStatus;
+    /**
+     * 订单异常状态
+     */
+    private String abnormalState;
+    /**
      * 店铺名称(店铺+国家）
      */
     private String shopName;
@@ -69,7 +77,7 @@ public class OrderDTO {
     /**
      * 国际物流
      */
-    // TODO: 2018/12/10
+    // TODO: 2018/12/10 国际物流
     /**
      * 当天汇率
      */
@@ -164,6 +172,22 @@ public class OrderDTO {
 
     public void setOrderState(String orderState) {
         this.orderState = orderState;
+    }
+
+    public String getAbnormalStatus() {
+        return abnormalStatus;
+    }
+
+    public void setAbnormalStatus(String abnormalStatus) {
+        this.abnormalStatus = abnormalStatus;
+    }
+
+    public String getAbnormalState() {
+        return abnormalState;
+    }
+
+    public void setAbnormalState(String abnormalState) {
+        this.abnormalState = abnormalState;
     }
 
     public String getShopName() {

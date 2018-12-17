@@ -1,14 +1,20 @@
 $(function () {
     $("#jqGrid").jqGrid({
-        url: baseURL + 'product/introduction/list',
+        url: baseURL + 'sys/consume/list',
         datatype: "json",
         colModel: [			
-			{ label: 'introductionId', name: 'introductionId', index: 'introduction_id', width: 50, key: true },
-			{ label: '国家代码', name: 'country', index: 'country', width: 80 }, 			
-			{ label: '产品标题', name: 'productTitle', index: 'product_title', width: 80 }, 			
-			{ label: '关键词', name: 'keyWord', index: 'key_word', width: 80 }, 			
-			{ label: '要点说明', name: 'keyPoints', index: 'key_points', width: 80 }, 			
-			{ label: '产品描述', name: 'productDescription', index: 'product_description', width: 80 }			
+			{ label: 'companyConsumeId', name: 'companyConsumeId', index: 'company_consume_id', width: 50, key: true },
+			{ label: '公司id', name: 'deptId', index: 'dept_id', width: 80 }, 			
+			{ label: '公司名称', name: 'deptName', index: 'dept_name', width: 80 }, 			
+			{ label: '操作人id', name: 'userId', index: 'user_id', width: 80 }, 			
+			{ label: '操作人', name: 'userName', index: 'user_name', width: 80 }, 			
+			{ label: '类型（服务费、物流费）', name: 'type', index: 'type', width: 80 }, 			
+			{ label: '订单id', name: 'orderId', index: 'order_id', width: 80 }, 			
+			{ label: '金额', name: 'money', index: 'money', width: 80 }, 			
+			{ label: '消费前余额', name: 'beforeBalance', index: 'before_balance', width: 80 }, 			
+			{ label: '消费后余额', name: 'afterBalance', index: 'after_balance', width: 80 }, 			
+			{ label: '运单号', name: 'abroadWaybill', index: 'abroad_waybill', width: 80 }, 			
+			{ label: '操作时间', name: 'createTime', index: 'create_time', width: 80 }			
         ],
 		viewrecords: true,
         height: 385,
@@ -42,7 +48,7 @@ var vm = new Vue({
 	data:{
 		showList: true,
 		title: null,
-		introduction: {}
+		consume: {}
 	},
 	methods: {
 		query: function () {
@@ -51,25 +57,25 @@ var vm = new Vue({
 		add: function(){
 			vm.showList = false;
 			vm.title = "新增";
-			vm.introduction = {};
+			vm.consume = {};
 		},
 		update: function (event) {
-			var introductionId = getSelectedRow();
-			if(introductionId == null){
+			var companyConsumeId = getSelectedRow();
+			if(companyConsumeId == null){
 				return ;
 			}
 			vm.showList = false;
             vm.title = "修改";
             
-            vm.getInfo(introductionId)
+            vm.getInfo(companyConsumeId)
 		},
 		saveOrUpdate: function (event) {
-			var url = vm.introduction.introductionId == null ? "product/introduction/save" : "product/introduction/update";
+			var url = vm.consume.companyConsumeId == null ? "sys/consume/save" : "sys/consume/update";
 			$.ajax({
 				type: "POST",
 			    url: baseURL + url,
                 contentType: "application/json",
-			    data: JSON.stringify(vm.introduction),
+			    data: JSON.stringify(vm.consume),
 			    success: function(r){
 			    	if(r.code === 0){
 						alert('操作成功', function(index){
@@ -82,26 +88,17 @@ var vm = new Vue({
 			});
 		},
 		del: function (event) {
-			var introductionIds = getSelectedRows();
-			if(introductionIds == null){
+			var companyConsumeIds = getSelectedRows();
+			if(companyConsumeIds == null){
 				return ;
 			}
-			var data1 = {
-				"orderIds" : ["1","2"],
-                "abnormalStatus": "Normal",
-                "abnormalState": "正常"
-			};
-            /*var data1 = {
-                "orderIds" : "1",
-                "orderState": "待签收"
-            };*/
+			
 			confirm('确定要删除选中的记录？', function(){
 				$.ajax({
 					type: "POST",
-				    url: baseURL + "product/order/updateAbnormalState",
+				    url: baseURL + "sys/consume/delete",
                     contentType: "application/json",
-				    data: JSON.stringify(data1),
-				    // data: data1,
+				    data: JSON.stringify(companyConsumeIds),
 				    success: function(r){
 						if(r.code == 0){
 							alert('操作成功', function(index){
@@ -114,9 +111,9 @@ var vm = new Vue({
 				});
 			});
 		},
-		getInfo: function(introductionId){
-			$.get(baseURL + "product/introduction/info/"+introductionId, function(r){
-                vm.introduction = r.introduction;
+		getInfo: function(companyConsumeId){
+			$.get(baseURL + "sys/consume/info/"+companyConsumeId, function(r){
+                vm.consume = r.consume;
             });
 		},
 		reload: function (event) {
