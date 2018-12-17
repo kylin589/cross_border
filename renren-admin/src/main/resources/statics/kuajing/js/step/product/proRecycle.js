@@ -732,27 +732,32 @@ var vm = new Vue({
             if(vm.activeProlist.length == 0){
                 layer.alert('请选择要恢复的产品');
             }else{
-                $.ajax({
-                    url: '../../product/productrecycling/restore',
-                    type: 'get',
-                    data:JSON.stringify(vm.activeProlist)
-                    // 'productIds': JSON.stringify(vm.activeProlist)
-                    ,
-                    contentType: "application/json",
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-                            layer.alert('操作成功');
-                            // vm.getPage();
+                layer.confirm('确定恢复所选产品吗？', function(index){
+                    // console.log(vm.activeProlist);
+                    $.ajax({
+                        url: '../../product/productrecycling/restore',
+                        type: 'get',
+                        data:JSON.stringify(vm.activeProlist)
+                        // 'productIds': JSON.stringify(vm.activeProlist)
+                        ,
+                        contentType: "application/json",
+                        success: function (r) {
+                            console.log(r);
+                            if (r.code === 0) {
+                                layer.msg('操作成功');
+                                // vm.getPage();
 
-                        } else {
-                            layer.alert(r.msg);
+                            } else {
+                                layer.alert(r.msg);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
                         }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                })
+                    })
+
+                });
+
             }
         }
 

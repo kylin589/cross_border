@@ -42,8 +42,16 @@
     <!--筛选区域-->
     <div class="screen">
         <div class="audit">
-            <li class="red" @click="getOrderlist('')">全部 <span>({{ allOrderCount }})</span></li>
+            <span>订单状态</span>
             <ul>
+                <li class="red active" @click="getOrderlist('')">全部 <span>({{ allOrderCount }})</span></li>
+                <li  v-for="item in orderStateList" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
+            </ul>
+        </div>
+        <div class="audit">
+            <span>异常状态</span>
+            <ul>
+                <li class="red active" @click="getOrderlist('')">全部 <span>({{ allOrderCount }})</span></li>
                 <li  v-for="item in orderStateList" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
             </ul>
         </div>

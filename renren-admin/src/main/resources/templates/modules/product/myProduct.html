@@ -60,16 +60,16 @@
         <div class="audit">
             <span>审核状态</span>
             <ul>
-                <li class="action"  @click="screenfunAudit" data-index="0">全部<span>（{{ audit.auditCounts }}）</span></li>
+                <li class="action"  @click="screenfunAudit" data-index="0">全部<span data-index="0">（{{ audit.auditCounts }}）</span></li>
                 <li v-for="(auditItem,index) in audit.auditList" :data-number="auditItem.dataNumber" @click="screenfunAudit" :data-index="index+1">
-                    {{ auditItem.dataContent }}<span :data-index="index">（{{ auditItem.count }}）</span>
+                    {{ auditItem.dataContent }}<span :data-index="index+1">（{{ auditItem.count }}）</span>
                 </li>
             </ul>
         </div>
         <div class="shelve">
             <span>上架状态</span>
             <ul>
-                <li class="action" @click="screenfunShelve" data-index="0">全部<span>（{{ putaway.putawayCounts }}）</span></li>
+                <li class="action" @click="screenfunShelve" data-index="0">全部<span data-index="0">（{{ putaway.putawayCounts }}）</span></li>
                 <li v-for="(putawayItem,index) in putaway.putawayList" :data-number="putawayItem.dataNumber" @click="screenfunShelve" :data-index="index+1">
                     {{ putawayItem.dataContent }}<span :data-index="index+1">（{{ putawayItem.count }}）</span>
                 </li>
@@ -78,7 +78,7 @@
         <div class="type">
             <span>产品类型</span>
             <ul>
-                <li class="action" @click="screenfunType" data-index="0">全部<span>（{{ productType.productTypeCounts }}）</span></li>
+                <li class="action" @click="screenfunType" data-index="0">全部<span data-index="0">（{{ productType.productTypeCounts }}）</span></li>
                 <li v-for="(productTypeItem,index) in productType.productTypeList" :data-number="productTypeItem.dataNumber" @click="screenfunType" :data-index="index+1">
                     {{ productTypeItem.dataContent }}<span :data-index="index+1">（{{ productTypeItem.count }}）</span>
                 </li>
@@ -111,8 +111,10 @@
     <div class="pro_list" data-click="true">
         <div v-for="(item,index) in proList" class="item" :data-id="item.productId" @click="activePro(index)">
             <!--<img src="${request.contextPath}/statics/kuajing/img/img1.jpg">-->
-            <img :src="item.mainImageUrl">
-            <h3><a :href="'detailsProduct.html?id='+item.productId">{{ item.productTitle }}</a></h3>
+            <img v-if="JSON.stringify(item.mainImageUrl) != 'null'" :src="item.mainImageUrl">
+            <img v-if="JSON.stringify(item.mainImageUrl) == 'null'" src="${request.contextPath}/statics/kuajing/img/img1.jpg">
+            <h3 v-if="JSON.stringify(item.productTitle) != 'null' "><a :href="'detailsProduct.html?id='+item.productId">{{ item.productTitle }}</a></h3>
+            <h3 v-if="JSON.stringify(item.productTitle) == 'null' "><a :href="'detailsProduct.html?id='+item.productId">产品标题</a></h3>
             <div class="footer">
                 <p>时间：{{ item.createTime }}</p>
                 <p>编号：{{ item.productId }}</p>
