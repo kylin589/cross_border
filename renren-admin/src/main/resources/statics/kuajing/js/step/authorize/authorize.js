@@ -20,7 +20,8 @@ var vm = new Vue({
         amazonAccount:'',
         area:'',
         merchantId:'',
-        grantToken:''
+        grantToken:'',
+        amazonGrant:{}
     },
     methods:{
         addShouq:function () {
@@ -74,6 +75,7 @@ var vm = new Vue({
                 }
             });
         },
+        //国家列表
         getGjList:function (grantId) {
             layer.open({
                 type: 1,
@@ -163,23 +165,67 @@ var vm = new Vue({
         },
         //删除
         getdelete:function (grantId) {
+
             vm.grantIds.push(grantId);
-            console.log(this.grantIds);
-            $.ajax({
-                url: '../../amazon/amazongrant/delete',
-                type: 'post',
-                data: JSON.stringify(this.grantIds),
-                contentType: "application/json",
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        vm.getauthorizeList();
-                    } else {
-                        layer.alert(r.msg);
+            console.log(vm.grantIds)
+            layer.confirm('确定删除吗？', function(index){
+                $.ajax({
+                    url: '../../amazon/amazongrant/delete',
+                    type: 'post',
+                    data: JSON.stringify(vm.grantIds),
+                    contentType: "application/json",
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.grantIds = [];
+                            layer.close(index);
+                            vm.getauthorizeList();
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
                     }
+                });
+            });
+
+        },
+        //添加授权令牌
+        addShouqlingpan:function(item){
+            vm.amazonGrant = item;
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#addShouqlingpan'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['400px', '400px'],
+                shadeClose: true,
+                btn: ['确定','取消'],
+                btn1: function (index) {
+                    $.ajax({
+                        url: '../../amazon/amazongrant/update',
+                        type: 'get',
+                        data: {
+                            amazonGrant:vm.amazonGrant
+                        },
+                        dataType: 'json',
+                        success: function (r) {
+                            console.log(r);
+                            if (r.code === 0) {
+                                layer.close(index)
+                            } else {
+                                layer.alert(r.msg);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
+                        }
+                    });
                 },
-                error: function () {
-                    layer.msg("网络故障");
+                btn2: function (index) {
+
+
                 }
             });
         }
