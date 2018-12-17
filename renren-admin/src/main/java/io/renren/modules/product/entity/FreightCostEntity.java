@@ -26,27 +26,27 @@ public class FreightCostEntity implements Serializable {
 	/**
 	 * 运费
 	 */
-	private BigDecimal freight;
+	private BigDecimal freight=new BigDecimal("0.00");
 	/**
 	 * 售价
 	 */
-	private BigDecimal price;
+	private BigDecimal price=new BigDecimal("0.00");
 	/**
 	 * 外币
 	 */
-	private BigDecimal foreignCurrency;
+	private BigDecimal foreignCurrency=new BigDecimal("0.00");
 	/**
 	 * 优化
 	 */
-	private BigDecimal optimization;
+	private BigDecimal optimization=new BigDecimal("0.00");
 	/**
 	 * 最终售价
 	 */
-	private BigDecimal finalPrice;
+	private BigDecimal finalPrice=new BigDecimal("0.00");
 	/**
 	 * 利润
 	 */
-	private BigDecimal profit;
+	private BigDecimal profit=new BigDecimal("0.00");
 
 	/**
 	 *产品类型（大包，小包）
@@ -56,8 +56,7 @@ public class FreightCostEntity implements Serializable {
 	/**
 	 *利润率
 	 */
-	private String profitRate;
-
+	private String profitRate="0.00%";
 
 	public String getProfitRate() {
 		return profitRate;

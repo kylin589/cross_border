@@ -96,31 +96,31 @@ public class ProductsEntity implements Serializable {
     /**
      * 采购价格
      */
-    private BigDecimal purchasePrice;
+    private BigDecimal purchasePrice=new BigDecimal("0.00");
     /**
      * 产品重量
      */
-    private Double productWeight;
+    private Double productWeight = 0.00;
     /**
      * 产品长度
      */
-    private Double productLength;
+    private Double productLength = 0.00;
     /**
      * 产品宽度
      */
-    private Double productWide;
+    private Double productWide = 0.00;
     /**
      * 产品高度
      */
-    private Double productHeight;
+    private Double productHeight = 0.00;
     /**
      * 国内运费
      */
-    private BigDecimal domesticFreight;
+    private BigDecimal domesticFreight=new BigDecimal("0.00");
     /**
      * 折扣系数
      */
-    private Double discount;
+    private BigDecimal discount = new BigDecimal("1.00");
     /**
      * 美国运费id
      */
@@ -893,14 +893,14 @@ public class ProductsEntity implements Serializable {
     /**
      * 设置：折扣系数
      */
-    public void setDiscount(Double discount) {
+    public void setDiscount(BigDecimal discount) {
         this.discount = discount;
     }
 
     /**
      * 获取：折扣系数
      */
-    public Double getDiscount() {
+    public BigDecimal getDiscount() {
         return discount;
     }
 
