@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的订单</title>
+    <#include "/header_kuajing.html">
+        <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/order/myOrder.css" media="all">
+        <style>
+            .layui-col-md3{
+                width: 20%;
+            }
+        </style>
+        </head>
+<body>
+<div class="box" id="step">
+
+    <!--搜索区域-->
+    <div class="search1">
+        <input type="text" class="sousuoAreaInput" placeholder="店铺名称" v-model="shopName">
+        <input type="text" placeholder="订单id" v-model="orderId">
+        <input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">
+        <input type="text" class="sousuoAreaInput" placeholder="关联产品id" v-model="productId">
+        <input type="text" placeholder="产品SKU" v-model="productSku">
+        <input type="text" placeholder="产品asin码" v-model="productAsin">
+        <input type="text" class="sousuoAreaInput" placeholder="国内物流单号" v-model="domesticWaybill">
+        <input type="text" placeholder="国际物流单号" v-model="abroadWaybill">
+        <div style="display: inline-block;">
+            <el-date-picker
+                    value-format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd"
+                    v-model="value9"
+                    type="daterange"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    default-value="">
+            </el-date-picker>
+        </div>
+
+        <button class="sousuo" @click="getOrderlist('')">搜索</button>
+
+    </div>
+    <!--筛选区域-->
+    <div class="screen">
+        <div class="audit">
+            <li class="red" @click="getOrderlist('')">全部 <span>({{ allOrderCount }})</span></li>
+            <ul>
+                <li  v-for="item in orderStateList" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
+            </ul>
+        </div>
+
+    </div>
+
+
+
+    <!--操作区域-->
+    <div class="operation">
+        <!--<button class="addBtn"><i class="layui-icon layui-icon-add-1"></i> 添加订单</button>-->
+
+        <!--统计-->
+        <div class="statistics" style="width: 100%">
+            核算订单数: <span>{{ statistics.orderNum }}</span>
+            总金额: <span>{{ statistics.allPrice }}</span>
+            利润: <span>{{ statistics.profit }}</span>
+            运费: <span>{{ statistics.freight }}</span>
+            采购: <span>{{ statistics.purchase }}</span>
+            退款数: <span>{{ statistics.refund }}</span>
+            退款成本: <span>{{ statistics.refundCost }}</span>
+        </div>
+    </div>
+
+
+
+    <table>
+        <tr>
+            <th>订单号</th>
+            <th>图片</th>
+            <th>亚马逊单号</th>
+            <th>金额</th>
+            <th>成本（￥）</th>
+            <th>利润（￥）</th>
+            <th>状态</th>
+            <th>国际运单</th>
+            <th>国内运单</th>
+            <th>下单时间</th>
+        </tr>
+        <tr v-for = 'item in prolist'>
+            <td>{{ item.orderId }}<br/><span class="brSpan"><img src="../../statics/kuajing/img/american.png" alt=""> {{ item.country }}</span></td>
+            <td class="imgtd"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
+            <td><a href="orderDetails.html">{{ item.amazonOrderId }}</a> <br/>
+                <span class="brSpan">
+                    <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
+                    {{ item.shopName }}
+                    <span v-if="item.countryCode == 'US'">美国</span>
+                    <span v-if="item.countryCode == 'JP'">日本</span>
+                    <span v-if="item.countryCode == 'ES'">西班牙</span>
+                    <span v-if="item.countryCode == 'GB'">英国</span>
+                    <span v-if="item.countryCode == 'IT'">意大利</span>
+                    <span v-if="item.countryCode == 'DE'">德国</span>
+                    <span v-if="item.countryCode == 'BR'">巴西</span>
+                    <span v-if="item.countryCode == 'CA'">加拿大</span>
+                    <span v-if="item.countryCode == 'MX'">墨西哥</span>
+                    <span v-if="item.countryCode == 'AU'">澳大利亚</span>
+
+                </span>
+            </td>
+            <td>{{ item.orderMoney }}</td>
+            <td>{{ item.purchasePrice }}</td>
+            <td>{{ item.orderProfit }}</td>
+            <td>
+                <span v-if="(item.orderState == '待付款')||(item.orderState == '虚发货')||(item.orderState == '缺货')" class="org">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '取消'||item.orderState == '退货'||item.orderState == '问题'" class="red">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '已付款'||item.orderState == '已采购'||item.orderState == '待发货'||item.orderState == '入库'||item.orderState == '国际已发货'" class="bule">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '待签收'||item.orderState == '补发'" class="bule1">
+                    {{ item.orderState }}
+                </span>
+            </td>
+            <td>{{ item.abroadWaybill }}</td>
+            <td>{{ item.domesticWaybill }}</td>
+            <td>{{ item.buyDate }}</td>
+        </tr>
+    </table>
+
+
+    <!--分页-->
+    <div id="page" style="text-align: center"></div>
+
+    <!--<div id="addOrder" style="display: none">-->
+        <!--<h3>添加订单</h3>-->
+        <!--<span>-->
+            <!--<label for="">选择店铺</label>-->
+            <!--<select class="form-control" id="order_marketplace_id">-->
+                <!--<option value="">&#45;&#45; 请选择 &#45;&#45;</option>-->
+                <!--<option value="3116">baijing(意大利)</option>-->
+                <!--<option value="3115">baijing(西班牙)</option>-->
+                <!--<option value="3114">baijing(德国)</option>-->
+                <!--<option value="3113">baijing(英国)</option>-->
+                <!--<option value="3112">baijing(法国)</option>-->
+            <!--</select>-->
+        <!--</span>-->
+        <!--<br>-->
+        <!--<span>-->
+            <!--<label for="">Amazon订单ID</label>-->
+            <!--<input type="text" placeholder="Amazon订单ID">-->
+        <!--</span>-->
+    <!--</div>-->
+
+</div>
+
+<div class="bigImgDiv"></div>
+
+<script src="${request.contextPath}/statics/kuajing/js/step/order/allOrder.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
+<!--<script src="${request.contextPath}/statics/kuajing/js/step/product/tuozhaiduoxuan.js"></script>-->
+</body>
+</html>
