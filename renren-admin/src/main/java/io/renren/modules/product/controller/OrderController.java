@@ -102,8 +102,8 @@ public class OrderController extends AbstractController{
         orderDTO.setMomentRate(momentRate);
         //判断订单异常状态——不属于退货
         if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
-            //国际已发货
-            if(ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED.equals(orderStatus)){
+            //国际已发货、已完成订单
+            if(ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED.equals(orderStatus) || ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH.equals(orderStatus)){
                 //获取订单金额（外币）
                 BigDecimal orderMoneyForeign = orderEntity.getOrderMoney();
                 //设置订单金额（外币）

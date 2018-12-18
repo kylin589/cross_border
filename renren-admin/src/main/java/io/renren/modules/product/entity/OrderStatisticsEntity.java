@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * @Description:
  */
 public class OrderStatisticsEntity {
-    //订单数量
+    //核算订单数量
     private int orderCounts;
     //总金额
     private BigDecimal orderMoney;

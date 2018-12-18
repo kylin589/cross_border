@@ -61,14 +61,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
 	@Override
 	@DataFilter(subDept = true, user = false)
-	public PageUtils queryPage(Map<String, Object> params) {
+	public PageUtils queryPage(Map<String, Object> params, Long deptId) {
 		String username = (String)params.get("username");
-
+		EntityWrapper<SysUserEntity> wrapper = new EntityWrapper<SysUserEntity>();
+		wrapper.like(StringUtils.isNotBlank(username),"username", username)
+				.eq(deptId != 1L,"dept_id",deptId)
+				.addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String)params.get(Constant.SQL_FILTER));
 		Page<SysUserEntity> page = this.selectPage(
 			new Query<SysUserEntity>(params).getPage(),
-			new EntityWrapper<SysUserEntity>()
-				.like(StringUtils.isNotBlank(username),"username", username)
-				.addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String)params.get(Constant.SQL_FILTER))
+			wrapper
 		);
 
 		for(SysUserEntity sysUserEntity : page.getRecords()){
@@ -117,13 +118,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
     }
 
 	@Override
-	public LinkedHashSet<Long> selectUserCollection(Long deptId) {
-		LinkedHashSet<Long> ret = new LinkedHashSet();
-		List<SysUserEntity> userList = this.selectList(new EntityWrapper<SysUserEntity>().eq("dept_id",deptId));
-		for(SysUserEntity user : userList){
-			ret.add(user.getUserId());
+	public List<SysUserEntity> selectUserList(Long deptId) {
+		List<SysUserEntity> userList = new ArrayList<>();
+		if(deptId != 1L){
+			userList = this.selectList(new EntityWrapper<SysUserEntity>().eq("dept_id",deptId));
+		}else{
+			userList = this.selectList(new EntityWrapper<SysUserEntity>());
 		}
-		return ret;
+		return userList;
 	}
 
 }

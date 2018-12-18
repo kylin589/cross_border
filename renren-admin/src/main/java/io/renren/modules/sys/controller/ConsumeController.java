@@ -3,6 +3,7 @@ package io.renren.modules.sys.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,12 @@ public class ConsumeController {
     private ConsumeService consumeService;
 
     /**
-     * 列表
+     * 消费列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("sys:consume:list")
+//    @RequiresPermissions("sys:consume:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = consumeService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 

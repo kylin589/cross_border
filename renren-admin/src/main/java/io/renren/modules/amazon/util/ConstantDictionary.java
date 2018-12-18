@@ -41,6 +41,10 @@ public interface ConstantDictionary {
          */
         String ORDER_STATE_INTLSHIPPED = "IntlShipped";
         /**
+         * 国际已发货
+         */
+        String ORDER_STATE_FINISH = "IntlShipped";
+        /**
          * 取消订单
          */
         String ORDER_STATE_CANCELED = "Canceled";
@@ -71,6 +75,13 @@ public interface ConstantDictionary {
          */
         String[] ORDER_ABNORMAL_STATE = {
                 ORDER_STATE_SHORTAGE, ORDER_STATE_RETURN, ORDER_STATE_REPLACEMENT, ORDER_STATE_PROBLEM
+        };
+        /**
+         * 未结算状态
+         * 虚发货、已采购、待发货、待签收、入库
+         */
+        String[] UNLIQUIDATED_ORDER_STATE = {
+                ORDER_STATE_SHIPPED, ORDER_STATE_PURCHASED, ORDER_STATE_TOBESHIPPED, ORDER_STATE_WAITINGRECEIPT, ORDER_STATE_WAREHOUSING
         };
     }
     /**

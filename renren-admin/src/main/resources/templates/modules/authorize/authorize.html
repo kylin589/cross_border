@@ -33,7 +33,7 @@
             <td>{{ item.country }}</td>
             <td>{{ item.createTime }}</td>
             <td>
-                <a href="javascript:;">添加授权令牌</a>
+                <a href="javascript:;" @click="addShouqlingpan(item)">添加授权令牌</a>
                 <a href="javascript:;" @click="getdelete(item.grantId)">删除</a>
                 <a href="javascript:;" @click="getGjList(item.grantId)">国家列表</a>
             </td>
@@ -79,7 +79,39 @@
 
         <p>所有的都为必填项</p>
     </div>
+    <!--添加授权弹框令牌-->
+    <div id="addShouqlingpan" style="display: none">
+        <h3>添加授权令牌</h3>
+        <span>
+            <label for="">店铺别名</label>
+            <span style="margin: 0;">{{amazonGrant.shopName}}</span>
+        </span>
+        <br>
+        <span>
+            <label for="">Amazon账号</label>
+            <span style="margin: 0;">{{amazonGrant.amazonAccount}}</span>
+        </span>
+        <br>
+        <span>
+            <label for="">开户区域</label>
+            <span style="margin: 0;" v-if="amazonGrant.area==0">北美</span>
+            <span style="margin: 0;" v-if="amazonGrant.area==1">欧洲</span>
+            <span style="margin: 0;" v-if="amazonGrant.area==2">日本</span>
+            <span style="margin: 0;" v-if="amazonGrant.area==3">澳大利亚</span>
+        </span>
+        <br>
+        <span>
+            <label for="">Merchant ID</label>
+            <span style="margin: 0;">{{amazonGrant.merchantId}}</span>
+        </span>
+        <br>
+        <span>
+            <label for="">授权令牌</label>
+            <input type="text" placeholder="授权令牌" v-model="amazonGrant.grantToken">
+        </span>
 
+        <p>所有的都为必填项</p>
+    </div>
     <!--国家列表-->
     <div id="coList" style="display: none">
         <h3>国家列表</h3>

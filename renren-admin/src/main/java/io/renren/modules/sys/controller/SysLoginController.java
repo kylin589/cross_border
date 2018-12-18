@@ -17,9 +17,15 @@
 package io.renren.modules.sys.controller;
 
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import io.renren.common.utils.R;
+import io.renren.modules.amazon.util.ConstantDictionary;
+import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.product.service.OrderService;
+import io.renren.modules.sys.entity.SysDeptEntity;
+import io.renren.modules.sys.service.SysDeptService;
 import io.renren.modules.sys.shiro.ShiroUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -34,6 +40,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 /**
  * 登录相关
@@ -43,10 +50,14 @@ import java.io.IOException;
  * @date 2016年11月10日 下午1:15:31
  */
 @Controller
-public class SysLoginController {
+public class SysLoginController extends AbstractController{
 	@Autowired
 	private Producer producer;
-	
+	@Autowired
+	private SysDeptService deptService;
+	@Autowired
+	private OrderService orderService;
+
 	@RequestMapping("captcha.jpg")
 	public void captcha(HttpServletResponse response)throws IOException {
         response.setHeader("Cache-Control", "no-store, no-cache");
@@ -87,7 +98,29 @@ public class SysLoginController {
 		}catch (AuthenticationException e) {
 			return R.error("账户验证失败");
 		}
-	    
+
+		SysDeptEntity dept = deptService.selectById(getDeptId());
+		//未发货订单
+		int unshippedNumber = orderService.selectCount(
+				new EntityWrapper<OrderEntity>().in("order_status", ConstantDictionary.OrderStateCode.UNLIQUIDATED_ORDER_STATE)
+												.ne("abnormal_status",ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN)
+		);
+		dept.setUnshippedNumber(unshippedNumber);
+		//未结算订单数(国际已发货)
+		int unliquidatedNumber = orderService.selectCount(
+				new EntityWrapper<OrderEntity>().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED)
+		);
+		dept.setUnliquidatedNumber(unliquidatedNumber);
+		//预计费用
+		BigDecimal estimatedCost = new BigDecimal(unshippedNumber * 50);
+		dept.setEstimatedCost(estimatedCost);
+		//可用余额
+		BigDecimal availableBalance = dept.getBalance().subtract(estimatedCost).setScale(2,BigDecimal.ROUND_HALF_UP);
+		dept.setAvailableBalance(availableBalance);
+		//预计还可生成单数
+		int estimatedOrder = availableBalance.divide(new BigDecimal(50),0,BigDecimal.ROUND_HALF_DOWN).intValue();
+		dept.setEstimatedOrder(estimatedOrder);
+		deptService.updateById(dept);
 		return R.ok();
 	}
 	
