@@ -25,23 +25,23 @@ public class IntroductionEntity implements Serializable {
 	/**
 	 * 国家代码
 	 */
-	private String country;
+	private String country=" ";
 	/**
 	 * 产品标题
 	 */
-	private String productTitle;
+	private String productTitle=" ";
 	/**
 	 * 关键词
 	 */
-	private String keyWord;
+	private String keyWord=" ";
 	/**
 	 * 要点说明
 	 */
-	private String keyPoints;
+	private String keyPoints=" ";
 	/**
 	 * 产品描述
 	 */
-	private String productDescription;
+	private String productDescription=" ";
 
 	/**
 	 * 设置：产品介绍id

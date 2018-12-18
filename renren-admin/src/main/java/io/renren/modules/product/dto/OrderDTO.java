@@ -109,7 +109,7 @@ public class OrderDTO {
      */
     private BigDecimal accountMoney;
     /**
-     * 运费
+     * s
      */
     private BigDecimal interFreight;
     /**
