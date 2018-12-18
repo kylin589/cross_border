@@ -5,6 +5,7 @@
     <title>详情</title>
     <#include "/header_kuajing.html">
         <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
+        <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/admin.css" media="all">
         <style>
             .ul1 {
                 width: 100%;
@@ -66,6 +67,23 @@
                 padding: 8px 10px;
                 border-bottom: 1px solid #f0f0f0;
             }
+            .xf{
+                display: inline-block;
+                height: 28px;
+                padding: 0 15px;
+                border-radius: 14px;
+                color: #555;
+                border: 1.5px solid #00a3e8;
+                background: none;
+                margin-right: 10px;
+                font-size: 13px;
+            }
+            .xf:hover{
+                border: 1.5px solid #fff;
+                background: url("../../statics/kuajing/img/create_bg.png");
+                background-size: 100% 100%;
+                color: #fff;
+            }
         </style>
         </head>
 <body>
@@ -75,7 +93,7 @@
     <form>
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
-              <a href="javascript:window.location.href = document.referrer;">公司列表 / </a>
+              <a href="javascript:window.location.href = document.referrer;">公司列表</a>
               <a><cite>详情修改</cite></a>
             </span>
             <input type="button" class="return" @click="returnFunc" value="返回" />
@@ -110,7 +128,7 @@
                 <div>
                     <h4>金额信息</h4>
                 </div>
-                <div class="pro_inf">
+                <div class="pro_inf layui-this">
                     <span><label for="">平台佣金点数：</label><input type="text" placeholder="平台佣金点数" v-model="couDetails.companyPoints"></span>
                     <br>
                     <span><label for="">余额：</label>{{couDetails.balance}}</span><br>
@@ -118,8 +136,10 @@
                     <p style="color: #999;margin-bottom: 10px">可用余额：{{couDetails.availableBalance}}&nbsp;&nbsp;&nbsp;&nbsp;未结算运单数：{{couDetails.unliquidatedNumber}}&nbsp;&nbsp;&nbsp;&nbsp;未发货订单数：{{couDetails.unshippedNumber}}&nbsp;&nbsp;&nbsp;&nbsp;预计费用：{{couDetails.estimatedCost}}   预计还可生成： {{couDetails.estimatedOrder}}单</p>
 
                     <input type="button" value="充值记录" @click="chongzhiFunc">
-                    <input type="button" value="消费记录" @click="xiaofFunc">
-
+                    <!--<input type="button" value="消费记录" @click="xiaofFunc">-->
+                    <!--<a href="deptXiaof.html">消费记录</a>-->
+                    <!--<a :href="'deptXiaof.html?id='+id">消费记录</a>-->
+                    <a class="xf" :lay-href="'modules/sys/deptXiaof.html?id='+id" layadmin-event="message" lay-text="消费记录">消费记录</a>
                 </div>
             </div>
 
@@ -128,6 +148,7 @@
 
 
     </form>
+
 
     <!--充值记录弹框-->
     <div id="chongzhi" style="display: none;">
@@ -151,12 +172,18 @@
 
     </div>
 
-    <script src="${request.contextPath}/statics/js/modules/sys/deptDetails.js"></script>
-    <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>-->
-    <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
-    <script>
 
-    </script>
 </div>
+<script src="${request.contextPath}/statics/js/modules/sys/deptDetails.js"></script>
+<!--<script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>-->
+<script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/layui.js?t=1"></script>
+<script>
+    layui.config({
+        base: '${request.contextPath}/statics/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index','console');
+</script>
 </body>
 </html>

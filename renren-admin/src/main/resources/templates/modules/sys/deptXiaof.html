@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消费记录</title>
+    <#include "/header_kuajing.html">
+        <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/authorize/authorize.css" media="all">
+        <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/myProduct.css" media="all">
+        </head>
+<body>
+
+<div class="box" id="step">
+
+    <p>
+        <span class="layui-breadcrumb" style="visibility: visible;">
+          <a href="javascript:;">消费记录</a>
+        </span>
+
+        <!--<button class="save" >添加授权</button>-->
+        <!--<input class="save" type="button" value="添加授权" @click="addShouq">-->
+    </p>
+
+    <div class="search1" style="margin-top: 30px">
+        <el-select v-model="typeValue" placeholder="请选择消费类型">
+            <el-option
+                    v-for="item in type"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.name">
+            </el-option>
+        </el-select>
+        <input type="text" placeholder="订单ID" v-model="couDetails.orderId">
+        <input type="text" placeholder="用户ID" v-model="couDetails.userId">
+
+
+        <button class="sousuo" @click="getauthorizeList()">搜索</button>
+
+
+
+    </div>
+
+    <table style="margin-top: 20px">
+        <tr>
+            <th>编号</th>
+            <th>公司</th>
+            <th>操作人</th>
+            <th>类型</th>
+            <th>订单ID</th>
+            <th>金额</th>
+            <th>消费前</th>
+            <th>消费后</th>
+            <th>运单号</th>
+            <th>时间</th>
+        </tr>
+        <tr v-for="item in xiaofList">
+            <td>{{ item.companyRechargeId }}</td>
+            <td>{{ item.deptName }}</td>
+            <td>{{ item.userName }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.orderId }}</td>
+            <td>{{ item.money }}</td>
+            <td>{{ item.beforeBalance }}</td>
+            <td>{{ item.afterBalance }}</td>
+            <td>{{ item.abroadWaybill }}</td>
+            <td>{{ item.createTime }}</td>
+            <td>
+
+            </td>
+        </tr>
+    </table>
+
+    <!--分页-->
+    <div id="page" style="text-align: center"></div>
+
+
+
+
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/deptXiaof.js"></script>
+</body>
+</html>

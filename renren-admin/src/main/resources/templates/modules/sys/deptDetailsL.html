@@ -49,6 +49,40 @@
                 display: inline-block;
                 width: 120px;
             }
+            #chongzhi h3{
+                margin: 10px;
+                color: #00a3e8;
+                font-weight: bold;
+            }
+            #chongzhi table{
+                width: calc(100% - 32px);
+                margin: 10px 16px;
+            }
+            #chongzhi table tr th{
+                padding: 6px 10px;
+                background: #f0f0f0;
+            }
+            #chongzhi table tr td{
+                padding: 8px 10px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            .xf{
+                display: inline-block;
+                height: 28px;
+                padding: 0 15px;
+                border-radius: 14px;
+                color: #555;
+                border: 1.5px solid #00a3e8;
+                background: none;
+                margin-right: 10px;
+                font-size: 13px;
+            }
+            .xf:hover{
+                border: 1.5px solid #fff;
+                background: url("../../img/create_bg.png");
+                background-size: 100% 100%;
+                color: #fff;
+            }
         </style>
         </head>
 <body>
@@ -99,7 +133,10 @@
                     <span><label for="">余额：</label>{{couDetails.balance}}</span><br>
                     <span><label for="">单数：</label>{{couDetails.unliquidatedNumber}}</span><br>
                     <p style="color: #999">可用余额：{{couDetails.availableBalance}}&nbsp;&nbsp;&nbsp;&nbsp;未结算运单数：{{couDetails.unliquidatedNumber}}&nbsp;&nbsp;&nbsp;&nbsp;未发货订单数：{{couDetails.unshippedNumber}}&nbsp;&nbsp;&nbsp;&nbsp;预计费用：{{couDetails.estimatedCost}}   预计还可生成： {{couDetails.estimatedOrder}}单</p>
-
+                    <input type="button" value="充值记录" @click="chongzhiFunc">
+                    <!--<input type="button" value="消费记录" @click="xiaofFunc">-->
+                    <!--<a href="deptXiaof.html">消费记录</a>-->
+                    <a class="xf" :lay-href="'modules/sys/deptXiaof.html?id='+id" layadmin-event="message" lay-text="消费记录">消费记录</a>
                 </div>
             </div>
 
@@ -108,14 +145,41 @@
 
 
     </form>
+    <!--充值记录弹框-->
+    <div id="chongzhi" style="display: none;">
+        <h3>充值记录</h3>
+        <table>
+            <tr>
+                <th>充值人员</th>
+                <th>充值类型</th>
+                <th>充值金额</th>
+                <th>充值时间</th>
+                <th>备注</th>
+            </tr>
+            <tr v-for="item in chongzhiList">
+                <td>{{item.userName}}</td>
+                <td>{{item.type}}</td>
+                <td>{{item.money}}</td>
+                <td>{{item.rechargeTime}}</td>
+                <td>{{item.remark}}</td>
+            </tr>
+        </table>
+
+    </div>
 
 
-    <script src="${request.contextPath}/statics/js/modules/sys/deptDetails.js"></script>
-    <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>-->
-    <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
-    <script>
 
-    </script>
 </div>
+<script src="${request.contextPath}/statics/js/modules/sys/deptDetails.js"></script>
+<!--<script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>-->
+<script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/layui.js?t=1"></script>
+<script>
+    layui.config({
+        base: '${request.contextPath}/statics/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index','console');
+</script>
 </body>
 </html>

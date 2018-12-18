@@ -107,16 +107,16 @@ var vm = new Vue({
             $.ajax({
                 url: '../../sys/recharge/list',
                 type: 'get',
-                data:vm.id,
-                dataType:'json',
-                // data:JSON.stringify(vm.xiugaiData),
-                // contentType: "application/json",
+                // data:vm.id,
+                // dataType:'json',
+                data:{deptId:vm.id},
+                contentType: "application/json",
                 success: function (r) {
                     console.log('充值记录');
                     console.log(r);
                     if (r.code === 0) {
-                        layer.msg('修改成功');
-
+                        // layer.msg('修改成功');
+                        vm.chongzhiList = r.list;
                     } else {
                         layer.alert(r.msg);
                     }
@@ -147,7 +147,7 @@ var vm = new Vue({
         },
         // 消费记录
         xiaofFunc:function () {
-            // window.location.href = ''
+            window.location.href = ''
         },
         // 返回
         returnFunc:function () {
