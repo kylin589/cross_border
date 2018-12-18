@@ -6,38 +6,39 @@ window.onload = function (ev) {
 
     $('.okEdit input[type=text]').attr('disabled','true');
     $('.okEdit textarea').attr('disabled','true');
-    $('input.edit').click(function () {
-        if($(this).val() == '编辑'){
-            $(this).val('保存');
-            $(this).parent().parent().find('input').removeAttr("disabled");
-            $(this).parent().parent().find('textarea').removeAttr("disabled");
-            $(this).parent().parent().find('input[type=text]').css('border','1px solid #d8dce5');
-            $(this).parent().parent().find('input.noedit').css('display','inline-block');
-            if($(this).parent().parent().find('.logistics').length!=0){
-                $(this).parent().parent().find('.logistics').attr('data-ok','false');
-            }
-        }else {
-            $(this).val('编辑');
-            $(this).parent().parent().find('input[type=text]').attr('disabled','true');
-            $(this).parent().parent().find('textarea').attr('disabled','true');
-            $(this).parent().parent().find('input[type=text]').css('border','1px solid transparent');
-            $(this).parent().parent().find('input.noedit').css('display','none');
-            if($(this).parent().parent().find('.logistics').length!=0){
-                $(this).parent().parent().find('.logistics').attr('data-ok','true');
-            }
-        }
-
-    })
-    $('input.noedit').click(function () {
-        $(this).prev().val('编辑');
-        $(this).parent().parent().find('input[type=text]').attr('disabled','true');
-        $(this).parent().parent().find('textarea').attr('disabled','true');
-        $(this).parent().parent().find('input[type=text]').css('border','1px solid transparent');
-        $(this).parent().parent().find('input.noedit').css('display','none');
-        if($(this).parent().parent().find('.logistics').length!=0){
-            $(this).parent().parent().find('.logistics').attr('data-ok','true');
-        }
-    })
+    // $('input.edit').click(function () {
+    //     console.log($(this).val());
+    //     if($(this).val() == '编辑'){
+    //         $(this).val('保存');
+    //         $(this).parent().parent().find('input').removeAttr("disabled");
+    //         $(this).parent().parent().find('textarea').removeAttr("disabled");
+    //         $(this).parent().parent().find('input[type=text]').css('border','1px solid #d8dce5');
+    //         $(this).parent().parent().find('input.noedit').css('display','inline-block');
+    //         if($(this).parent().parent().find('.logistics').length!=0){
+    //             $(this).parent().parent().find('.logistics').attr('data-ok','false');
+    //         }
+    //     }else {
+    //         $(this).val('编辑');
+    //         $(this).parent().parent().find('input[type=text]').attr('disabled','true');
+    //         $(this).parent().parent().find('textarea').attr('disabled','true');
+    //         $(this).parent().parent().find('input[type=text]').css('border','1px solid transparent');
+    //         $(this).parent().parent().find('input.noedit').css('display','none');
+    //         if($(this).parent().parent().find('.logistics').length!=0){
+    //             $(this).parent().parent().find('.logistics').attr('data-ok','true');
+    //         }
+    //     }
+    //
+    // })
+    // $('input.noedit').click(function () {
+    //     $(this).prev().val('编辑');
+    //     $(this).parent().parent().find('input[type=text]').attr('disabled','true');
+    //     $(this).parent().parent().find('textarea').attr('disabled','true');
+    //     $(this).parent().parent().find('input[type=text]').css('border','1px solid transparent');
+    //     $(this).parent().parent().find('input.noedit').css('display','none');
+    //     if($(this).parent().parent().find('.logistics').length!=0){
+    //         $(this).parent().parent().find('.logistics').attr('data-ok','true');
+    //     }
+    // })
 
     // 选项卡
     $('.layui-tab-title li').click(function () {
@@ -91,24 +92,12 @@ window.onload = function (ev) {
 var vm = new Vue({
     el:'#step',
     data:{
+        orderid:null,
         orderDetails:{
-            imgUrl:'../../statics/kuajing/img/img1.jpg',
-            dec:'SHASHA Vorhänge 3D 2 Panel Eyelet Ring Top Anti-UV-Thermal Blackout Print Persönlichkeit Vorhänge, Einschließlich Haken und Premium Roman Ringe - Azure Sternenhimmel,W360cmH270cm',
-            sku:'BAI-SHASHA-1397653-10 ',
-            asin:'ygfyggvuh',
-            num:1,
-            value:1,
-            price:1234,
-            state:'虚发货',
-            xiaoshouNum:'123213',
-            shop:'baijing(德国)',
-            orderdetails:{
-                rate:0.223,
-                price:123
-
-            }
         },
-
+        waybill:[],
+        domesticLogisticsId:null,
+        price:[],
         guojilogistics:[{
             value:1,
             name:'中美专线(特惠)[USZXR]'
@@ -146,18 +135,7 @@ var vm = new Vue({
         addyundanhao:'123424',
         addzhuizonghao:'34564',
         logistics:{
-            express:'百事快递',
-            expressNum:'1233434453',
-            logisticsInf:[{
-                con:'【太原市】 【太原长亲分部】 的张金光（15110338639） 正在第1次派件, 请保持电话畅通,并耐心等待',
-                date:'2018-10-11'
-            },{
-                con:'【金华市】 【兰溪】（0579-88903278） 的 兰溪市场部 （13357033008） 已揽收',
-                date:'2018-10-11',
-            },{
-                con:'【金华市】 快件离开 【兰溪】 发往 【太原中转】',
-                date:'2018-10-11',
-            }]
+
         }
     },
     methods:{
@@ -200,6 +178,133 @@ var vm = new Vue({
 
                 }
             });
+        },
+        //获取订单详情
+        getOrderInfo:function () {
+            console.log(this.orderid);
+            $.ajax({
+                url: '../../product/order/getOrderInfo',
+                type: 'get',
+                data: {
+                    orderId:this.orderid
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('订单详情');
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.orderDetails = r.orderDTO;
+                        for (var i=0;i<vm.orderDetails.domesticLogisticsList.length;i++){
+                            vm.waybill.push(vm.orderDetails.domesticLogisticsList[i].waybill);
+                            vm.price.push(vm.orderDetails.purchasePrice);
+                        }
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        //编辑修改
+        edit:function (domesticLogisticsId,index) {
+            console.log(index);
+            if($(event.target).val() == '编辑'){
+                $(event.target).val('保存');
+                $(event.target).parent().parent().find('input').removeAttr("disabled");
+                $(event.target).parent().parent().find('textarea').removeAttr("disabled");
+                $(event.target).parent().parent().find('input[type=text]').css('border','1px solid #d8dce5');
+                $(event.target).parent().parent().find('input.noedit').css('display','inline-block');
+                if($(event.target).parent().parent().find('.logistics').length!=0){
+                    $(event.target).parent().parent().find('.logistics').attr('data-ok','false');
+                }
+            }else {
+                $(event.target).val('编辑');
+                $(event.target).parent().parent().find('input[type=text]').attr('disabled','true');
+                $(event.target).parent().parent().find('textarea').attr('disabled','true');
+                $(event.target).parent().parent().find('input[type=text]').css('border','1px solid transparent');
+                $(event.target).parent().parent().find('input.noedit').css('display','none');
+                if($(event.target).parent().parent().find('.logistics').length!=0){
+                    $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
+                }
+                $.ajax({
+                    url: '../../domestic/updateLogistics',
+                    type: 'post',
+                    data: {
+                        orderId:this.orderId,
+                        waybill:this.waybill[index],
+                        domesticLogisticsId:domesticLogisticsId,
+                        price:this.price[index],
+                    },
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            }
+        },
+        //取消修改
+        noedit:function (event) {
+            $(event.target).prev().val('编辑');
+            $(event.target).parent().parent().find('input[type=text]').attr('disabled','true');
+            $(event.target).parent().parent().find('textarea').attr('disabled','true');
+            $(event.target).parent().parent().find('input[type=text]').css('border','1px solid transparent');
+            $(event.target).parent().parent().find('input.noedit').css('display','none');
+            if($(event.target).parent().parent().find('.logistics').length!=0){
+                $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
+            }
+        },
+        //物流信息
+        queryLogistic:function (waybill) {
+            console.log(waybill);
+            $.ajax({
+                url: '../../domestic/queryLogistic',
+                type: 'get',
+                data: {
+                    waybill:waybill,
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.logistics = r.data;
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+            if($(event.target).attr('data-ok') == 'true'){
+                console.log(111)
+                var _val = $(event.target).val();
+                var _top = $(event.target).offset().top;
+                var _left = $(event.target).offset().left - 130;
+                var _height = $(event.target).height();
+                var top = _top + _height-8;
+                $('.logisticsDiv').css({
+                    'display':'inline-block',
+                    'top':top+'px',
+                    'left':_left+'px'
+                })
+            }
         }
+    },
+    created:function () {
+        var url = decodeURI(window.location.href);
+        var argsIndex = url.split("?orderid=");
+        var orderid = argsIndex[1];
+        this.orderid = parseInt(orderid);
+        console.log(url);
+        this.getOrderInfo();
     }
 })
