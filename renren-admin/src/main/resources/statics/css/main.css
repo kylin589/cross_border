@@ -1,7 +1,7 @@
 html { overflow-x:hidden; }
 .content-header {
-	position: relative;
-	padding: 0 0 3px 8px
+    position: relative;
+    padding: 0 0 3px 8px
 }
 
 .content-header>.breadcrumb {
@@ -21,34 +21,80 @@ html { overflow-x:hidden; }
 }
 
 [v-cloak] {
-  display: none;
+    display: none;
+}
+#rrapp{
+    background: #f0f0f0;
+}
+#rrapp>div{
+    /*margin: 10px;*/
+    /*background: #fff;*/
+    /*border-radius: 3px;*/
+    padding: 10px;
 }
 
 .grid-btn{
-	margin-bottom:12px;
+    padding: 10px;
+    background: #fff;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    margin-bottom:12px;
 }
 .grid-btn .btn{
-	margin-right:10px;
+    margin-right:10px;
+    border-radius: 14px;
+    padding: 4px 18px;
+    color: #444;
+}
+/*删除按钮*/
+.grid-btn .btn.del{
+    background: #fdc1b0;
+    box-shadow: 0 0 10px #feaa9c;
+}
+/*新增按钮*/
+.grid-btn .btn.add{
+    background: #a2d8f9;
+    box-shadow: 0 0 10px #c6eeff;
+}
+/*修改按钮*/
+.grid-btn .btn.up{
+    background: #fbcaa7;
+    box-shadow: 0 0 10px #fecb9c;
+}
+/*删除按钮*/
+.grid-btn .btn.del:hover{
+    background: #fe8060;
+    /*box-shadow: 0 0 10px #fecb9c;*/
+}
+/*新增按钮*/
+.grid-btn .btn.add:hover{
+    background: #60b9ff;
+    /*box-shadow: 0 0 10px #c6eeff;*/
+}
+/*修改按钮*/
+.grid-btn .btn.up:hover{
+    background: #fe996a;
+    /*box-shadow: 0 0 10px #fecb9c;*/
 }
 .pointer{cursor: pointer;}
 
 .ml-10 { margin-left:0 !important; }
 @media (min-width: 768px) {
-	.ml-10 { margin-left:10px !important; }
-	.col-sm-10 {width: 70%;padding-left: 0px;}
-	.col-sm-2 {width: 24%;}
+    .ml-10 { margin-left:10px !important; }
+    .col-sm-10 {width: 70%;padding-left: 0px;}
+    .col-sm-2 {width: 24%;}
 }
 tbody > tr > th {font-weight: normal; }
 .panel .table { margin:0 0; }
 .panel .pagination { margin:0; }
 .panel-default>.panel-heading {background-color: #f5f5f5;}
 .row{
-	border-top: 1px solid #ddd;
-	margin:0;
-	padding:20px 2px 0px 2px;
+    border-top: 1px solid #ddd;
+    margin:0;
+    padding:20px 2px 0px 2px;
 }
 .col-xs-6{padding-left: 0px;padding-right: 0px;}
 .form-horizontal .form-group {margin-left:0px;margin-right:0px;}
 .form-horizontal{
-	width:550px;padding-top:20px;
+    width:550px;padding-top:20px;
 }

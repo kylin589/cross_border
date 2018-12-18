@@ -559,8 +559,8 @@ var vm = new Vue({
                         console.log('原创成功');
                         console.log(r);
 
-                        vm.proDetails.productId = r.productId;
-                        vm.id = r.productId;
+                        vm.proDetails = r.productsEntity;
+                        vm.id = r.productsEntity.productId;
 
 
                     } else {
@@ -1563,6 +1563,39 @@ var vm = new Vue({
             console.log(vm.proDetails.variantsInfos);
 
         },
+        // 原创返回
+        returnYuanc:function () {
+            layer.confirm('确定取消原创吗？',function () {
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                $.ajax({
+                    url: '../../product/products/cancelOriginal',
+                    type: 'get',
+                    data:{productId:vm.id}
+                    // 'productIds': JSON.stringify(vm.activeProlist)
+                    ,
+                    dataType: 'json',
+                    // contentType: "application/json",
+                    // contentType: "application/json",
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            layer.msg('取消成功');
+                            layer.close(index);
+                            // vm.getPage();
+                            window.location.href = document.referrer;
+
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                })
+            })
+        }
     },
 
     created:function () {

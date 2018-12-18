@@ -31,15 +31,14 @@ var vm = new Vue({
                 ztree = $.fn.zTree.init($("#deptTree"), setting, r.deptList);
                 var node = ztree.getNodeByParam("deptId", vm.dept.parentId);
                 ztree.selectNode(node);
+                console.log('公司');
+                console.log(node);
 
                 vm.dept.parentName = node.name;
             })
         },
         add: function(){
-            vm.showList = false;
-            vm.title = "新增";
-            vm.dept = {parentName:null,parentId:0,orderNum:0};
-            vm.getDept();
+            window.location.href = 'deptCreate.html';
         },
         update: function () {
             var deptId = getDeptId();
@@ -47,13 +46,15 @@ var vm = new Vue({
                 return ;
             }
 
-            $.get(baseURL + "sys/dept/info/"+deptId, function(r){
-                vm.showList = false;
-                vm.title = "修改";
-                vm.dept = r.dept;
+            window.location.href = 'deptDetails.html?id=' + deptId;
 
-                vm.getDept();
-            });
+            // $.get(baseURL + "sys/dept/info/"+deptId, function(r){
+            //     vm.showList = false;
+            //     vm.title = "修改";
+            //     vm.dept = r.dept;
+            //
+            //     vm.getDept();
+            // });
         },
         del: function () {
             var deptId = getDeptId();
@@ -120,7 +121,8 @@ var vm = new Vue({
         reload: function () {
             vm.showList = true;
             Dept.table.refresh();
-        }
+        },
+
     }
 });
 
@@ -136,12 +138,29 @@ var Dept = {
 Dept.initColumn = function () {
     var columns = [
         {field: 'selectItem', radio: true},
-        {title: '公司ID', field: 'deptId', visible: false, align: 'center', valign: 'middle', width: '80px'},
+        {title: '编号', field: 'deptId', visible: false, align: 'center', valign: 'middle', width: '80px'},
         {title: '公司名称', field: 'name', align: 'center', valign: 'middle', sortable: true, width: '180px'},
-        {title: '上级公司', field: 'parentName', align: 'center', valign: 'middle', sortable: true, width: '100px'}]
+        {title: '上级公司', field: 'parentName', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        {title: 'SKU', field: 'companySku', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        {title: '联系人', field: 'companyPerson', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        {title: '联系方式', field: 'companyTel', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        {title: '余额', field: 'balance', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        // {title: '新余额', field: 'parentName', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        {title: '最近更新', field: 'updateTime', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        {title: '创建时间', field: 'createTime', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        {title: '操作', field: 'deptId', align: 'center', valign: 'middle', sortable: true, width: '100px',formatter: function(value, options, row){
+            console.log(value)
+            return '<span class="label label-success" onclick="aa('+value.deptId+')" style="cursor:pointer;">查看</span>'
+
+        }}
+        ]
     return columns;
 };
 
+// 查看详情
+function aa(a) {
+    window.location.href = 'deptDetailsL.html?id=' + a;
+}
 
 function getDeptId () {
     var selected = $('#deptTable').bootstrapTreeTable('getSelections');
@@ -158,6 +177,7 @@ $(function () {
     $.get(baseURL + "sys/dept/info", function(r){
         var colunms = Dept.initColumn();
         var table = new TreeTable(Dept.id, baseURL + "sys/dept/list", colunms);
+
         table.setRootCodeValue(r.deptId);
         table.setExpandColumn(2);
         table.setIdField("deptId");
@@ -166,5 +186,6 @@ $(function () {
         table.setExpandAll(false);
         table.init();
         Dept.table = table;
+        console.log(table);
     });
 });

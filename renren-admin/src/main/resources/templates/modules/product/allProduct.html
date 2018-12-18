@@ -16,7 +16,20 @@
     <!--搜索区域-->
     <div class="search1" style="padding: 0">
 
-        <el-select v-model="allYUanGValue" placeholder="请选择">
+        <#if shiro.hasPermission("sys:dept:list")>
+            <el-select v-model="allGongsiValue" filterable @change="getManList" placeholder="请选择公司">
+                <el-option
+                        v-for="item in allGongsi"
+                        :key="item.deptId"
+                        :label="item.name"
+                        :value="item.deptId"
+                >
+                </el-option>
+            </el-select>
+        </#if>
+
+
+        <el-select v-model="allYUanGValue" placeholder="请选择员工">
             <el-option
                     v-for="item in allYUanG"
                     :key="item.id"
@@ -25,7 +38,7 @@
             </el-option>
         </el-select>
 
-        <input type="text" class="sousuoAreaInput" placeholder="产品类目" v-model="nowProType" @click="typeClickINput">
+        <input type="text" class="sousuoAreaInput" placeholder="产品类目" v-model="nowProType" @click="typeClickINput" style="left: 400px">
         <div class="sousuoArea">
             <div class="areaOne">
                 <ul>

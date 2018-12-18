@@ -1,5 +1,26 @@
 window.onload = function () {
-
+    // 筛选区域
+    // $('.screen>div.audit ul li').click(function () {
+    //     $('.screen>div.audit ul li').removeClass('action');
+    //     $(this).addClass('action');
+    //     vm.auditNumber = $('.screen>div.audit ul li.action').eq(0).attr("data-number");
+    //     vm.getPage(1, 30);
+    //     vm.laypage();
+    // });
+    // $('.screen>div.shelve ul li').click(function () {
+    //     $('.screen>div.shelve ul li').removeClass('action');
+    //     $(this).addClass('action');
+    //     vm.shelveNumber = $('.screen>div.shelve ul li.action').eq(0).attr("data-number");
+    //     vm.getPage(1, 30);
+    //     vm.laypage();
+    // });
+    // $('.screen>div.type ul li').click(function () {
+    //     $('.screen>div.type ul li').removeClass('action');
+    //     $(this).addClass('action');
+    //     vm.productNumber = $('.screen>div.type ul li.action').eq(0).attr("data-number");
+    //     vm.getPage(1, 30);
+    //     vm.laypage();
+    // });
     // 全选
     $('.radiobox').click(function () {
         if ($('.radiobox').attr("data-checked") == 'true') {
@@ -134,6 +155,28 @@ var vm = new Vue({
         caijiNowType:'',
         caijiThreeId:null,
         caijiUrl:'',
+        caijiProgress:0,
+        caijiProgressIf:false,
+        // 所有员工
+        allYUanG:[{
+            id:1,
+            name:'员工1'
+        },{
+            id:2,
+            name:'员工2'
+        },{
+            id:3,
+            name:'员工3'
+        },{
+            id:4,
+            name:'员工4'
+        },{
+            id:5,
+            name:'员工5'
+        }],
+        // 所选员工的value
+        allYUanGValue:'',
+        allYUanGValue1:'',
 
     },
     methods: {
@@ -145,7 +188,7 @@ var vm = new Vue({
             $('.screen>div.audit ul li').eq(_index).addClass('action');
             vm.auditNumber = $('.screen>div.audit ul li.action').eq(0).attr("data-number");
             vm.getPage();
-            vm.laypage();
+            // vm.laypage();
         },
         // 上架状态筛选
         screenfunShelve:function(event){
@@ -166,7 +209,7 @@ var vm = new Vue({
             // vm.laypage();
         },
         getMyStatusList:function(){
-            $.get('../../product/datadictionary/mystatuslist?del=1',function (r) {
+            $.get('../../product/datadictionary/mystatuslist',function (r) {
                 vm.audit.auditList = r.auditList;
                 vm.audit.auditCounts = r.auditCounts;
                 vm.putaway.putawayList = r.putawayList;
@@ -176,6 +219,30 @@ var vm = new Vue({
             });
         },
 
+
+        /*getAuditList: function () {
+            $.get('../../product/datadictionary/auditlist', function (r) {
+                vm.audit.auditList = r.auditList;
+                vm.audit.auditCounts = r.auditCounts;
+            });
+        },
+        getPutawayList: function () {
+            $.get('../../product/datadictionary/putawaylist', function (r) {
+                vm.putaway.putawayList = r.putawayList;
+                vm.putaway.putawayCounts = r.putawayCounts;
+            });
+        },
+        getProductTypeList: function () {
+            $.get('../../product/datadictionary/producttypelist', function (r) {
+                vm.productType.productTypeList = r.productTypeList;
+                vm.productType.productTypeCounts = r.productTypeCounts;
+            });
+        },*/
+        // getQueryCategoryOne: function () {
+        //     $.get('../../product/category/querycategoryone', function (r) {
+        //         vm.categoryOneList = r.categoryOneList;
+        //     });
+        // },
         // 分页器
         laypage: function () {
             // var tempTotalCount;
@@ -219,7 +286,7 @@ var vm = new Vue({
                 e = this.value9[1] + ' 23:59:59';
             }
             $.ajax({
-                url: '../../product/productrecycling/list',
+                url: '../../product/products/mylist',
                 type: 'post',
                 data: {
                     // '_search': false,
@@ -247,6 +314,7 @@ var vm = new Vue({
                         vm.statistics.allVariant = r.allVariant;
                         vm.proList = r.page.list;
                         vm.totalCount = r.page.totalCount;
+                        console.log(vm.proList);
                         // vm.proCurr = r.page.currPage;
                         // vm.limit = r.page.pageSize;
                         // vm.limit = lmt;
@@ -274,7 +342,7 @@ var vm = new Vue({
                 e = this.value9[1] + ' 23:59:59';
             }
             $.ajax({
-                url: '../../product/productrecycling/list',
+                url: '../../product/products/mylist',
                 type: 'post',
                 data: {
                     // '_search': false,
@@ -471,27 +539,31 @@ var vm = new Vue({
             if(vm.activeProlist.length == 0){
                 layer.alert('请选择要删除的产品');
             }else {
-                $.ajax({
-                    url: '../../product/products/falsedeletion',
-                    type: 'post',
-                    data:JSON.stringify(vm.activeProlist)
-                    // 'productIds': JSON.stringify(vm.activeProlist)
-                    ,
-                    contentType: "application/json",
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-                            layer.alert('操作成功');
-                            vm.getPage();
+                layer.confirm('确定修改吗？', function(index){
+                    $.ajax({
+                        url: '../../product/products/falsedeletion',
+                        type: 'post',
+                        data:JSON.stringify(vm.activeProlist)
+                        // 'productIds': JSON.stringify(vm.activeProlist)
+                        ,
+                        contentType: "application/json",
+                        success: function (r) {
+                            console.log(r);
+                            if (r.code === 0) {
+                                layer.msg('删除成功');
+                                vm.getPage();
 
-                        } else {
-                            layer.alert(r.msg);
+                            } else {
+                                layer.alert(r.msg);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
                         }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                })
+                    })
+
+                });
+
             }
 
         },
@@ -515,25 +587,28 @@ var vm = new Vue({
                     btn: ['修改','取消'],
                     btn1: function (index) {
                         console.log(vm.xiugaiData);
-                        $.ajax({
-                            url: '../../product/products/batchmodify',
-                            type: 'post',
-                            // data:vm.xiugaiData,
-                            data:JSON.stringify(vm.xiugaiData),
-                            contentType: "application/json",
-                            success: function (r) {
-                                console.log(r);
-                                if (r.code === 0) {
-                                    layer.alert('操作成功');
+                        layer.confirm('确定修改吗？',function () {
+                            $.ajax({
+                                url: '../../product/products/batchmodify',
+                                type: 'post',
+                                // data:vm.xiugaiData,
+                                data:JSON.stringify(vm.xiugaiData),
+                                contentType: "application/json",
+                                success: function (r) {
+                                    console.log(r);
+                                    if (r.code === 0) {
+                                        layer.msg('修改成功');
 
-                                } else {
-                                    layer.alert(r.msg);
+                                    } else {
+                                        layer.alert(r.msg);
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("网络故障");
                                 }
-                            },
-                            error: function () {
-                                layer.msg("网络故障");
-                            }
+                            })
                         })
+
 
                     },
                     btn2: function (index) {
@@ -623,32 +698,35 @@ var vm = new Vue({
         // 上架、下架、审核通过、待审核
         changeauditstatusFunc:function (n,t) {
             vm.getProIDs();
-            console.log(JSON.stringify(vm.activeProlist));
-            console.log(n);
-            console.log(t);
-            $.ajax({
-                url: '../../product/products/changeauditstatus',
-                type: 'post',
-                data:JSON.stringify({
-                    'productIds':vm.activeProlist,
-                    'number':'001',
-                    'type':'SHELVE_STATE'
-                }),
-                // dataType: 'json',
-                contentType: "application/json",
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        layer.alert('操作成功');
+            // console.log(JSON.stringify(vm.activeProlist));
+            // console.log(n);
+            // console.log(t);
+            layer.confirm('确定修改改状态吗？',function () {
+                $.ajax({
+                    url: '../../product/products/changeauditstatus',
+                    type: 'post',
+                    data:JSON.stringify({
+                        'productIds':vm.activeProlist,
+                        'number':'001',
+                        'type':'SHELVE_STATE'
+                    }),
+                    // dataType: 'json',
+                    contentType: "application/json",
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            layer.msg('操作成功');
 
-                    } else {
-                        layer.alert(r.msg);
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
                     }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
+                })
             })
+
 
 
         },
@@ -726,74 +804,103 @@ var vm = new Vue({
 
 
         },
-        // 一键恢复
-        recoveryFunc:function () {
-            vm.getProIDs();
-            if(vm.activeProlist.length == 0){
-                layer.alert('请选择要恢复的产品');
-            }else{
-                layer.confirm('确定恢复所选产品吗？', function(index){
-                    // console.log(vm.activeProlist);
+        // 采集产品弹框
+        caijiProFunc:function () {
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#caijiCreate'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['700px', '340px'],
+                shadeClose: true,
+                btn: ['采集','取消'],
+                btn1: function (index) {
+                    // console.log(vm.xiugaiData);
+                    console.log(vm.caijiUrl)
+                    console.log(vm.caijiThreeId);
+                    vm.caijiProgressIf = true;
+                    var timer = setInterval(function () {
+                        if(vm.caijiProgress<= 70){
+                            vm.caijiProgress += 10;
+                        }else {
+
+                            setTimeout(timer);
+                            // vm.caijiProgress = '';
+                        }
+
+                    },1000);
                     $.ajax({
-                        url: '../../product/productrecycling/restore',
+                        url: 'http://192.168.0.104:5000/getCollectionInfo',
                         type: 'post',
-                        data:JSON.stringify({productIds:vm.activeProlist})
-                        // 'productIds': JSON.stringify(vm.activeProlist)
-                        ,
-                        contentType: "application/json",
+                        // data:vm.xiugaiData,
+                        data:{
+                            url:vm.caijiUrl,
+                            category_three_id:vm.caijiThreeId
+                        },
+                        // contentType: "application/json",
                         success: function (r) {
-                            console.log(r);
+                            // console.log(r);
                             if (r.code === 0) {
-                                layer.msg('操作成功');
-                                vm.getPage();
+                                console.log(r);
+                                vm.caijiProgress = 100;
+                                vm.caijiProgressIf = false;
+                                vm.caijiProgress = 0;
+
+                                $.ajax({
+                                    url: '../../product/products/collectproduct',
+                                    type: 'get',
+                                    // data:vm.xiugaiData,
+                                    data:JSON.stringify({
+                                        productId:r.product_id
+                                    }),
+                                    contentType: "application/json",
+                                    success: function (r) {
+                                        // console.log(r);
+                                        if (r.code === 0) {
+                                            console.log(r);
+                                            layer.alert('操作成功');
+                                            vm.getPage();
+                                        } else {
+
+
+                                            layer.alert(r.msg);
+                                        }
+                                    },
+                                    error: function () {
+
+                                        layer.msg("网络故障");
+                                    }
+                                })
+
+                                layer.alert('操作成功');
 
                             } else {
+                                setTimeout(timer);
+                                vm.caijiProgressIf = false;
+                                vm.caijiProgress = 0;
                                 layer.alert(r.msg);
                             }
                         },
                         error: function () {
-                            layer.msg("网络故障");
+                            setTimeout(timer);
+                            vm.caijiProgressIf = false;
+                            vm.caijiProgress = 0;
+                            layer.msg("网络故障1111");
                         }
                     })
 
-                });
+                },
+                btn2: function (index) {
 
-            }
+
+                }
+            });
         },
-        // 彻底删除
-        delCheDiFunc:function () {
-            vm.getProIDs();
-            if(vm.activeProlist.length == 0){
-                layer.alert('请选择要删除的产品');
-            }else{
-                layer.confirm('确定删除所选产品吗？<br> <span style="color: indianred;font-size:13px;">删除后无法恢复</span>', function(index){
-                    // console.log(vm.activeProlist);
-                    $.ajax({
-                        url: '../../product/productrecycling/batchdelete',
-                        type: 'post',
-                        data:JSON.stringify({productIds:vm.activeProlist})
-                        // 'productIds': JSON.stringify(vm.activeProlist)
-                        ,
-                        contentType: "application/json",
-                        success: function (r) {
-                            console.log('彻底删除');
-                            console.log(r);
-                            if (r.code === 0) {
-                                layer.msg('操作成功');
-                                vm.getPage();
-
-                            } else {
-                                layer.alert(r.msg);
-                            }
-                        },
-                        error: function () {
-                            layer.msg("网络故障");
-                        }
-                    })
-
-                });
-            }
+        // 原创
+        createPro:function () {
+            window.location.href="createPro.html";
         }
+
 
     },
     created: function () {
@@ -829,7 +936,7 @@ var vm = new Vue({
         this.getPutawayList();
         this.getProductTypeList();*/
         // this.getQueryCategoryOne();
-        this.getPage(1, this.pageLimit);
+        this.getPage();
 
 
     }
