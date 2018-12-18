@@ -22,7 +22,6 @@ public class RechargeServiceImpl extends ServiceImpl<RechargeDao, RechargeEntity
                 new Query<RechargeEntity>(params).getPage(),
                 new EntityWrapper<RechargeEntity>()
         );
-
         return new PageUtils(page);
     }
 
