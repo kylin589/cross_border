@@ -149,7 +149,7 @@ var vm = new Vue({
             console.log(this.endDate);
             this.orderStatus = orderStatus;
             $.ajax({
-                url: '../../product/order/getMyList',
+                url: '../../product/order/getAllList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -187,7 +187,7 @@ var vm = new Vue({
         // 获取各状态订单数量
         getOrderStatenum:function () {
             $.ajax({
-                url: '../../product/datadictionary/myOrderStateList',
+                url: '../../product/datadictionary/allOrderStateList',
                 type: 'get',
                 data: {},
                 dataType: 'json',

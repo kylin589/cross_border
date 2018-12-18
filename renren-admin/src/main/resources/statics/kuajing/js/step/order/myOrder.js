@@ -182,7 +182,8 @@ var vm = new Vue({
             });
         },
         // 获取各状态订单数量
-        getOrderStatenum:function () {
+        getOrderStatenum:function (event) {
+            $(event.target).
             $.ajax({
                 url: '../../product/datadictionary/myOrderStateList',
                 type: 'get',
@@ -191,7 +192,12 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
+                        console.log('状态');
+                        console.log(r);
                         vm.allOrderCount = r.allOrderCount;
+                        // r.orderStateList.forEach(function (t) {
+                        //
+                        // })
                         for (var i=0;i<r.orderStateList.length;i++){
                             if(r.orderStateList[i].dataContent == "待付款"){
                                 r.orderStateList[i].color = 'org';
