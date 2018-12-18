@@ -30,11 +30,11 @@ public class RechargeEntity implements Serializable {
 	/**
 	 * 类型
 	 */
-	private String type;
+	private String type = "充值";
 	/**
 	 * 余额
 	 */
-	private BigDecimal balance;
+	private BigDecimal money;
 	/**
 	 * 充值时间
 	 */
@@ -91,14 +91,14 @@ public class RechargeEntity implements Serializable {
 	/**
 	 * 设置：余额
 	 */
-	public void setBalance(BigDecimal balance) {
-		this.balance = balance;
+	public void setMoney(BigDecimal money) {
+		this.money = money;
 	}
 	/**
 	 * 获取：余额
 	 */
-	public BigDecimal getBalance() {
-		return balance;
+	public BigDecimal getMoney() {
+		return money;
 	}
 	/**
 	 * 设置：充值时间

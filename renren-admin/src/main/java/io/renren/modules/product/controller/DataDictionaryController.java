@@ -244,7 +244,7 @@ public class DataDictionaryController extends AbstractController {
         return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
     }
     /**
-     * @methodname: myOrderStateList 所有订单状态获取
+     * @methodname: myOrderStateList 所有订单异常状态获取
      * @return: io.renren.common.utils.R
      * @auther: wdh
      * @date: 2018/12/3 10:02
@@ -254,6 +254,7 @@ public class DataDictionaryController extends AbstractController {
         DataDictionaryEntity normal = new DataDictionaryEntity();
         normal.setDataNumber("Normal");
         normal.setDataContent("正常");
+        normal.setDataSort(10);
         List<DataDictionaryEntity> abnormalStateList = new ArrayList<>();
         abnormalStateList.add(normal);
         List<DataDictionaryEntity> abnormalStateList1 = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "ORDER_ABNORMAL_STATE").orderBy(true, "data_sort", true));

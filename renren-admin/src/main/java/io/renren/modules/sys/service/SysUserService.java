@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public interface SysUserService extends IService<SysUserEntity> {
 
-	PageUtils queryPage(Map<String, Object> params);
+	PageUtils queryPage(Map<String, Object> params, Long deptId);
 	
 	/**
 	 * 查询用户的所有菜单ID
@@ -63,5 +63,5 @@ public interface SysUserService extends IService<SysUserEntity> {
 	 * 查询指定公司内员工id列表
 	 * @param deptId       公司ID
 	 */
-	LinkedHashSet<Long> selectUserCollection(Long deptId);
+	List<SysUserEntity> selectUserList(Long deptId);
 }

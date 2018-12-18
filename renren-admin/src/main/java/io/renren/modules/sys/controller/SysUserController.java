@@ -17,6 +17,7 @@
 package io.renren.modules.sys.controller;
 
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
@@ -24,7 +25,9 @@ import io.renren.common.validator.Assert;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.common.validator.group.AddGroup;
 import io.renren.common.validator.group.UpdateGroup;
+import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
+import io.renren.modules.sys.service.SysDeptService;
 import io.renren.modules.sys.service.SysUserRoleService;
 import io.renren.modules.sys.service.SysUserService;
 import io.renren.modules.sys.shiro.ShiroUtils;
@@ -33,6 +36,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -51,18 +55,35 @@ public class SysUserController extends AbstractController {
 	private SysUserService sysUserService;
 	@Autowired
 	private SysUserRoleService sysUserRoleService;
-	
+	@Autowired
+	private SysDeptService sysDeptService;
 	/**
 	 * 所有用户列表
 	 */
 	@RequestMapping("/list")
 	@RequiresPermissions("sys:user:list")
 	public R list(@RequestParam Map<String, Object> params){
-		PageUtils page = sysUserService.queryPage(params);
-
+		PageUtils page = sysUserService.queryPage(params, getDeptId());
 		return R.ok().put("page", page);
 	}
-	
+	/**
+	 * 下拉选择用户列表
+	 */
+	@RequestMapping("/getUserList")
+	public R list(@RequestParam Long deptId){
+		List<SysUserEntity> userList = new ArrayList<>();
+		if (getDeptId() == 1L){
+			if(deptId != null){
+				userList = sysUserService.selectUserList(deptId);
+				return R.ok().put("userList", userList);
+			}else{
+				return R.error("请先选择公司");
+			}
+		}else{
+			userList = sysUserService.selectUserList(getDeptId());
+			return R.ok().put("userList",userList);
+		}
+	}
 	/**
 	 * 获取登录的用户信息
 	 */
@@ -115,11 +136,17 @@ public class SysUserController extends AbstractController {
 	@RequestMapping("/save")
 	@RequiresPermissions("sys:user:save")
 	public R save(@RequestBody SysUserEntity user){
-		ValidatorUtils.validateEntity(user, AddGroup.class);
-		
-		sysUserService.save(user);
-		
-		return R.ok();
+		//获取当前用户数量
+		int count = sysUserService.selectCount(new EntityWrapper<SysUserEntity>().eq("dept_id",user.getDeptId()));
+		//获取公司账户限制数量
+		int accountCount = sysDeptService.selectOne(new EntityWrapper<SysDeptEntity>().eq("dept_id",user.getDeptId())).getAccountCount();
+		if(count < accountCount){
+			ValidatorUtils.validateEntity(user, AddGroup.class);
+			sysUserService.save(user);
+			return R.ok();
+		}else{
+			return R.error("账户数已达上限");
+		}
 	}
 	
 	/**

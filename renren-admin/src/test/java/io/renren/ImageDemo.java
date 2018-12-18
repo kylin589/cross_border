@@ -5,6 +5,8 @@ import io.renren.common.exception.RRException;
 import io.renren.modules.product.entity.ImageAddressEntity;
 import io.renren.modules.product.service.ImageAddressService;
 import io.renren.modules.sys.controller.AbstractController;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.entity.ContentType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,16 +15,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.Date;
 import java.util.List;
-
+import java.awt.Image;
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class Image extends AbstractController {
+public class ImageDemo extends AbstractController {
     @Autowired
     private ImageAddressService imageAddressService;
 
@@ -32,11 +35,11 @@ public class Image extends AbstractController {
      */
     @Test
     public void upload() {
-        File file = new File("C:\\Users\\asus\\Desktop\\4577f2ebc6d385d3fc5a19b6fab0bd9c_16097571.jpg");
+        File file = new File("C:\\Users\\asus\\Desktop\\9cc804b86b2aa5c5349983c8b803963a_U4P1T52D145F1033DT20131105102009.jpg");
         try {
             MultipartFile mulFile = new MockMultipartFile(
-                    "4577f2ebc6d385d3fc5a19b6fab0bd9c_16097571.jpg", //文件名
-                    "4577f2ebc6d385d3fc5a19b6fab0bd9c_16097571.jpg", //originalName 相当于上传文件在客户机上的文件名
+                    "9cc804b86b2aa5c5349983c8b803963a_U4P1T52D145F1033DT20131105102009.jpg", //文件名
+                    "9cc804b86b2aa5c5349983c8b803963a_U4P1T52D145F1033DT20131105102009.jpg", //originalName 相当于上传文件在客户机上的文件名
                     ContentType.APPLICATION_OCTET_STREAM.toString(), //文件类型
                     new FileInputStream(file)//文件流
             );
@@ -49,32 +52,39 @@ public class Image extends AbstractController {
             String fileName = mulFile.getOriginalFilename();
             // 获取上传文件的后缀名
             String suffixName = fileName.substring(fileName.lastIndexOf("."));
-           /* if (!suffixName.matches("^[(jpg)|(png)|(gif)|(jpeg)]+$")) {
-                throw new RRException("请上传PNG、JPG、GIF、JPEG格式的文件！");
-            }*/
             // 文件上传后是保存在本地的路径
             String filePath = "E:/test/";
-
-            String url = 1 + "/" + fileName;
+            String url = 2 + "/" + fileName;
             //文件上传的位置
-            File dest = new File(filePath + 1 + "/" + fileName);
+            File dest = new File(filePath + 2 + "/" + fileName);
             // 检测是否存在目录不存在创建一个文件
             if (!dest.getParentFile().exists()) {
                 dest.getParentFile().mkdirs();
             }
+            //把MultipartFile转成File
+            CommonsMultipartFile cf= (CommonsMultipartFile)mulFile;
+            DiskFileItem fi = (DiskFileItem)cf.getFileItem();
+            File fileone = fi.getStoreLocation();
+
+            Image srcImg=ImageIO.read(file);
+            BufferedImage buffImg = null;
+            buffImg = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+            buffImg.getGraphics().drawImage(
+                    srcImg.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH), 0,
+                    0, null);
+
+            ImageIO.write(buffImg, suffixName,dest);
+
             try {
-                mulFile.transferTo(dest);
                 ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
                 imageAddressEntity.setImageUrl(url);
-                imageAddressEntity.setProductId(1L);
+                imageAddressEntity.setProductId(2L);
                 imageAddressEntity.setIsDeleted("0");
                 imageAddressEntity.setCreateTime(new Date());
 
                 imageAddressService.insert(imageAddressEntity);
 
             } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
                 e.printStackTrace();
             }
         } catch (IOException e) {

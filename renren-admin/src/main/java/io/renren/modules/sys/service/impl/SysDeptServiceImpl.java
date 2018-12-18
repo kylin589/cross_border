@@ -35,9 +35,10 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 	
 	@Override
 	@DataFilter(subDept = true, user = false)
-	public List<SysDeptEntity> queryList(Map<String, Object> params){
+	public List<SysDeptEntity> queryList(Map<String, Object> params, Long deptId){
 		List<SysDeptEntity> deptList =
 			this.selectList(new EntityWrapper<SysDeptEntity>()
+			.eq(deptId != 1L,"dept_id",deptId)
 			.addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String)params.get(Constant.SQL_FILTER)));
 
 		for(SysDeptEntity sysDeptEntity : deptList){

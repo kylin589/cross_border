@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public interface SysDeptService extends IService<SysDeptEntity> {
 
-	List<SysDeptEntity> queryList(Map<String, Object> map);
+	List<SysDeptEntity> queryList(Map<String, Object> map, Long deptId);
 
 	/**
 	 * 查询子公司ID列表

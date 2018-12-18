@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>我的产品</title>
+    <title>产品认领</title>
     <#include "/header_kuajing.html">
         <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/myProduct.css" media="all">
         <style>
@@ -51,8 +51,8 @@
 
         <button class="sousuo" @click="selPage()">搜索</button>
 
-        <button class="create" @click="recoveryFunc">一键恢复</button>
-        <button class="create create1" @click="delCheDiFunc">彻底删除</button>
+        <button class="create" @click="createPro">原创产品</button>
+        <button class="create create1" @click="caijiProFunc">采集产品</button>
 
     </div>
     <!--筛选区域-->
@@ -86,14 +86,37 @@
         </div>
     </div>
 
+    <!--操作区域-->
+    <div class="operation">
+        <label style="color: #666;font-weight: bold">产品源：</label>
+        <el-select v-model="allYUanGValue" placeholder="请选择员工">
+            <el-option
+                    v-for="item in allYUanG"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+            </el-option>
+        </el-select>
 
-    <!--统计-->
-    <div class="statistics" style="width: 100%">
-        产品数量: <span>{{ statistics.proNum }}</span>
-        审核通过: <span>{{ statistics.via }}</span>
-        含变体产品数: <span>{{ statistics.variant }}</span>
-        变体总数: <span>{{ statistics.allVariant }}</span>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label style="color: #666;font-weight: bold">认领到：</label>
+        <el-select v-model="allYUanGValue1" placeholder="请选择员工">
+            <el-option
+                    v-for="item in allYUanG"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+            </el-option>
+        </el-select>
 
+        <!--统计-->
+        <div class="statistics">
+            产品数量: <span>{{ statistics.proNum }}</span>
+            审核通过: <span>{{ statistics.via }}</span>
+            含变体产品数: <span>{{ statistics.variant }}</span>
+            变体总数: <span>{{ statistics.allVariant }}</span>
+
+        </div>
     </div>
 
 
@@ -104,8 +127,8 @@
             <!--<img src="${request.contextPath}/statics/kuajing/img/img1.jpg">-->
             <img v-if="JSON.stringify(item.mainImageUrl) != 'null'" :src="item.mainImageUrl">
             <img v-if="JSON.stringify(item.mainImageUrl) == 'null'" src="${request.contextPath}/statics/kuajing/img/img1.jpg">
-            <h3 v-if="JSON.stringify(item.productTitle) != 'null' "><a :href="'detailsProduct1.html?id='+item.productId">{{ item.productTitle }}</a></h3>
-            <h3 v-if="JSON.stringify(item.productTitle) == 'null' "><a :href="'detailsProduct1.html?id='+item.productId">产品标题</a></h3>
+            <h3 v-if="JSON.stringify(item.productTitle) != 'null' "><a :href="'detailsProduct.html?id='+item.productId">{{ item.productTitle }}</a></h3>
+            <h3 v-if="JSON.stringify(item.productTitle) == 'null' "><a :href="'detailsProduct.html?id='+item.productId">产品标题</a></h3>
             <div class="footer">
                 <p>时间：{{ item.createTime }}</p>
                 <p>编号：{{ item.productId }}</p>
@@ -283,13 +306,17 @@
                 </div>
             </div>
         </div>
+        <div style="margin-left: 36px;width: calc(100% - 36px);">
+            <el-progress v-if="caijiProgressIf" :percentage="caijiProgress"></el-progress>
+        </div>
+
 
 
     </div>
 
 </div>
 
-<script src="${request.contextPath}/statics/kuajing/js/step/product/proRecycle.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/step/product/proClaim.js"></script>
 <!--<script src="${request.contextPath}/statics/js/modules/product/myProduct.js"></script>-->
 <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>-->
 <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/tuozhaiduoxuan.js"></script>-->

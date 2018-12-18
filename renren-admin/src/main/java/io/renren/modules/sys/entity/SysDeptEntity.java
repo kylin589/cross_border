@@ -95,8 +95,8 @@ public class SysDeptEntity implements Serializable {
 	//余额
 	private BigDecimal balance = new BigDecimal(0.00);
 
-	//可用余额
-	private BigDecimal availableBalance = new BigDecimal(0.00);
+	//预计费用
+	private BigDecimal estimatedCost = new BigDecimal(0.00);
 
 	//未结算订单数
 	private int unliquidatedNumber;
@@ -104,8 +104,8 @@ public class SysDeptEntity implements Serializable {
 	//未发货订单数
 	private int unshippedNumber;
 
-	//预计费用
-	private BigDecimal estimatedCost = new BigDecimal(0.00);
+	//可用余额
+	private BigDecimal availableBalance = new BigDecimal(0.00);
 
 	//预计还可生成单数
 	private int estimatedOrder;

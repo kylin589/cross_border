@@ -9,6 +9,9 @@ import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
 import io.renren.modules.product.vm.ChangeAuditStatusVM;
 import io.renren.modules.sys.controller.AbstractController;
+import io.renren.modules.sys.entity.SysDeptEntity;
+import io.renren.modules.sys.entity.SysUserEntity;
+import io.renren.modules.sys.service.SysDeptService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +49,8 @@ public class ProductsController extends AbstractController {
     private AmazonRateService amazonRateService;
     @Autowired
     private ImageAddressService imageAddressService;
+    @Autowired
+    private SysDeptService sysDeptService;
 
     private static final String US = "US";//美国
     private static final String CA = "CA";//加拿大
@@ -181,9 +186,13 @@ public class ProductsController extends AbstractController {
      * @date 2018-11-7 11:23
      */
     @RequestMapping("/modifySKU")
-    public R modifySKU() {
-        // TODO: 2018/11/7 根据产品的SKU 重新修正
-        String SKU = null;
+    public R modifySKU(Long productId) {
+        ProductsEntity productsEntity = productsService.selectById(productId);
+        String productSku = productsEntity.getProductSku();
+        Long deptId = getDeptId();
+        SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
+        String companySku = sysDeptEntity.getCompanySku();
+        String SKU = companySku+"-"+productSku;
         return R.ok().put("SKU", SKU);
     }
 
@@ -196,13 +205,19 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/getproductid")
     public R getProductId() {
         Long productId = productsService.getNewProductId(getUserId());
+
         ProductsEntity productsEntity = productsService.selectById(productId);
+        //生成SKU
+        SysUserEntity user = getUser();
+        String enName = user.getEnName();
+        String enBrand = user.getEnBrand();
+        String SKU =enName+"-"+enBrand+"-"+productId;
+        productsEntity.setProductSku(SKU);
         //美国运费
         FreightCostEntity americanFC = new FreightCostEntity();
         freightCostService.insert(americanFC);
         productsEntity.setAmericanFreight(americanFC.getFreightCostId());
         productsEntity.setAmericanFC(americanFC);
-
         // 加拿大运费
         FreightCostEntity canadaFC = new FreightCostEntity();
         freightCostService.insert(canadaFC);
@@ -253,6 +268,46 @@ public class ProductsController extends AbstractController {
         freightCostService.insert(australiaFC);
         productsEntity.setAustraliaFreight(australiaFC.getFreightCostId());
         productsEntity.setAustraliaFC(australiaFC);
+
+
+        //各个国家的介绍
+        //中文介绍
+        IntroductionEntity chinesePRE = new IntroductionEntity();
+
+        introductionService.insert(chinesePRE);
+
+        productsEntity.setChineseIntroduction(chinesePRE.getIntroductionId());
+        productsEntity.setChinesePRE(chinesePRE);
+        //英文介绍
+        IntroductionEntity britainPRE = new IntroductionEntity();
+        introductionService.insert(britainPRE);
+        productsEntity.setBritainIntroduction(britainPRE.getIntroductionId());
+        productsEntity.setBritainPRE(britainPRE);
+        //法语介绍
+        IntroductionEntity francePRE = new IntroductionEntity();
+        introductionService.insert(francePRE);
+        productsEntity.setFranceIntroduction(francePRE.getIntroductionId());
+        productsEntity.setFrancePRE(francePRE);
+        //德语介绍
+        IntroductionEntity germanyPRE = new IntroductionEntity();
+        introductionService.insert(germanyPRE);
+        productsEntity.setGermanyIntroduction(germanyPRE.getIntroductionId());
+        productsEntity.setGermanyPRE(germanyPRE);
+        //意大利语介绍
+        IntroductionEntity italyPRE = new IntroductionEntity();
+        introductionService.insert(italyPRE);
+        productsEntity.setItalyIntroduction(italyPRE.getIntroductionId());
+        productsEntity.setItalyPRE(italyPRE);
+        //西班牙语介绍
+        IntroductionEntity spainPRE = new IntroductionEntity();
+        introductionService.insert(spainPRE);
+        productsEntity.setSpainIntroduction(spainPRE.getIntroductionId());
+        productsEntity.setSpainPRE(spainPRE);
+        //日语介绍
+        IntroductionEntity japanPRE = new IntroductionEntity();
+        introductionService.insert(japanPRE);
+        productsEntity.setJapanIntroduction(japanPRE.getIntroductionId());
+        productsEntity.setJapanPRE(japanPRE);
         productsService.updateById(productsEntity);
         return R.ok().put("productsEntity", productsEntity);
     }
@@ -572,6 +627,13 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/collectproduct")
     public R collectProduct(@RequestParam("productId") Long productId) {
         ProductsEntity productsEntity = productsService.selectById(productId);
+        //生成SKU
+        SysUserEntity user = getUser();
+        String enName = user.getEnName();
+        String enBrand = user.getEnBrand();
+        String SKU =enName+"-"+enBrand+"-"+productId;
+        productsEntity.setProductSku(SKU);
+
         Long categoryThreeId = productsEntity.getCategoryThreeId();
         String s = categoryService.queryParentByChildIdAndCategory(categoryThreeId, productsEntity);
         System.out.println(s);
@@ -735,13 +797,12 @@ public class ProductsController extends AbstractController {
 
         //中文介绍
         IntroductionEntity chinesePRE = products.getChinesePRE();
-        introductionService.insert(chinesePRE);
+        introductionService.updateById(chinesePRE);
         //products.setProductTitle(chinesePRE.getProductTitle());
-        products.setChineseIntroduction(chinesePRE.getIntroductionId());
+
         //英文介绍
         IntroductionEntity britainPRE = products.getBritainPRE();
-        introductionService.insert(britainPRE);
-        products.setBritainIntroduction(britainPRE.getIntroductionId());
+        introductionService.updateById(britainPRE);
 
         //产品标题
         if (chinesePRE.getProductTitle() != null) {
@@ -752,24 +813,24 @@ public class ProductsController extends AbstractController {
 
         //法语介绍
         IntroductionEntity francePRE = products.getFrancePRE();
-        introductionService.insert(francePRE);
-        products.setFranceIntroduction(francePRE.getIntroductionId());
+        introductionService.updateById(francePRE);
+
         //德语介绍
         IntroductionEntity germanyPRE = products.getGermanyPRE();
-        introductionService.insert(germanyPRE);
-        products.setGermanyIntroduction(germanyPRE.getIntroductionId());
+        introductionService.updateById(germanyPRE);
+
         //意大利语介绍
         IntroductionEntity italyPRE = products.getItalyPRE();
-        introductionService.insert(italyPRE);
-        products.setItalyIntroduction(italyPRE.getIntroductionId());
+        introductionService.updateById(italyPRE);
+
         //西班牙语介绍
         IntroductionEntity spainPRE = products.getSpainPRE();
-        introductionService.insert(spainPRE);
-        products.setSpainIntroduction(spainPRE.getIntroductionId());
+        introductionService.updateById(spainPRE);
+
         //日语介绍
         IntroductionEntity japanPRE = products.getJapanPRE();
-        introductionService.insert(japanPRE);
-        products.setJapanIntroduction(japanPRE.getIntroductionId());
+        introductionService.updateById(japanPRE);
+
         //创建时间
         products.setCreateTime(new Date());
         //创建用户id
@@ -1004,8 +1065,9 @@ public class ProductsController extends AbstractController {
             for (VariantsInfoEntity variantsInfoEntity : variantsInfosList) {
                 variantsInfoEntity.setProductId(products.getProductId());
             }
+            variantsInfoService.insertBatch(variantsInfosList);
         }
-        variantsInfoService.insertBatch(variantsInfosList);
+
         //根据产品id进行更新
         productsService.updateById(products);
         return R.ok();

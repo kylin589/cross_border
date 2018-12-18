@@ -183,7 +183,7 @@
                     <span><label for="">厂商编号：</label><input type="text" placeholder="厂商编号" v-model="proDetails.manufacturerNumber"></span>
                     <span><label for="">产品来源：</label><input type="text" placeholder="产品来源" v-model="proDetails.productSource"></span><br>
                     <span><label for="">内部SKU：</label><input type="text" placeholder="内部SKU" v-model="proDetails.productSku"></span>
-                    <input type="button" value="一键修正">
+                    <input type="button" value="一键修正" @click="skuChFunc">
                     <br>
                     <span><label for="">来源地址：</label><textarea v-model="proDetails.sellerLink"></textarea></span><br>
                     <span><label for="">附加备注：</label><textarea v-model="proDetails.productRemark"></textarea></span><br>

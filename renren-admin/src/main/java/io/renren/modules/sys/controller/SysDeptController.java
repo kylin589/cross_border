@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,10 +49,9 @@ public class SysDeptController extends AbstractController {
 	 * 列表
 	 */
 	@RequestMapping("/list")
-//	@RequiresPermissions("sys:dept:list")
+	@RequiresPermissions("sys:dept:list")
 	public List<SysDeptEntity> list(){
-		List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>());
-
+		List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>(), getDeptId());
 		return deptList;
 	}
 
@@ -61,8 +61,8 @@ public class SysDeptController extends AbstractController {
 	@RequestMapping("/select")
 	@RequiresPermissions("sys:dept:select")
 	public R select(){
-		List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>());
-
+		List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>(), getDeptId());
+/*
 		//添加一级公司
 		if(getUserId() == Constant.SUPER_ADMIN){
 			SysDeptEntity root = new SysDeptEntity();
@@ -71,8 +71,7 @@ public class SysDeptController extends AbstractController {
 			root.setParentId(-1L);
 			root.setOpen(true);
 			deptList.add(root);
-		}
-
+		}*/
 		return R.ok().put("deptList", deptList);
 	}
 
@@ -84,7 +83,7 @@ public class SysDeptController extends AbstractController {
 	public R info(){
 		long deptId = 0;
 		if(getUserId() != Constant.SUPER_ADMIN){
-			List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>());
+			List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>(), getDeptId());
 			Long parentId = null;
 			for(SysDeptEntity sysDeptEntity : deptList){
 				if(parentId == null){
@@ -106,10 +105,14 @@ public class SysDeptController extends AbstractController {
 	 * 信息
 	 */
 	@RequestMapping("/info/{deptId}")
-//	@RequiresPermissions("sys:dept:info")
+	@RequiresPermissions("sys:dept:info")
 	public R info(@PathVariable("deptId") Long deptId){
 		SysDeptEntity dept = sysDeptService.selectById(deptId);
-		
+		String parentName = null;
+		if(dept.getParentId() != null && dept.getParentId() != 0L){
+			parentName = sysDeptService.selectById(dept.getParentId()).getName();
+		}
+		dept.setParentName(parentName);
 		return R.ok().put("dept", dept);
 	}
 	
@@ -117,10 +120,11 @@ public class SysDeptController extends AbstractController {
 	 * 保存
 	 */
 	@RequestMapping("/save")
-//	@RequiresPermissions("sys:dept:save")
+	@RequiresPermissions("sys:dept:save")
 	public R save(@RequestBody SysDeptEntity dept){
+		dept.setUpdateTime(new Date());
+		dept.setCreateTime(new Date());
 		sysDeptService.insert(dept);
-		
 		return R.ok();
 	}
 	
@@ -128,10 +132,10 @@ public class SysDeptController extends AbstractController {
 	 * 修改
 	 */
 	@RequestMapping("/update")
-//	@RequiresPermissions("sys:dept:update")
+	@RequiresPermissions("sys:dept:update")
 	public R update(@RequestBody SysDeptEntity dept){
+		dept.setUpdateTime(new Date());
 		sysDeptService.updateById(dept);
-
 		return R.ok();
 	}
 	

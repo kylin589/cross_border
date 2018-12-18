@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>详情</title>
+    <#include "/header_kuajing.html">
+        <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
+        <style>
+            .ul1 {
+                width: 100%;
+                position: relative;
+                /*margin: 10px auto;*/
+                /*overflow: hidden;*/
+                /*height: 100px;*/
+            }
+
+            .ul1 li {
+                width: 50px;
+                height: 50px;
+                float: left;
+                list-style: none;
+                margin: 10px;
+            }
+            .ul1 li img{
+                width: 100%;
+            }
+            .ul1 li i{
+                position: relative;
+                top: -65px;
+                left: 45px;
+                color: #00a3e8;
+                display: none;
+            }
+
+            .ul1 li:hover {
+                border-color: #9a9fa4;
+                box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.85);
+            }
+
+            .ul1 .active {
+                border: 1px dashed red;
+            }
+            form .pro_inf span{
+                color: #666;
+                min-width: 40%;
+            }
+            form .pro_inf label{
+                color: #333;
+                display: inline-block;
+                width: 120px;
+            }
+        </style>
+        </head>
+<body>
+<div class="box" id="step">
+
+
+    <form>
+        <p>
+            <span class="layui-breadcrumb" style="visibility: visible;">
+              <a href="javascript:window.location.href = document.referrer;">公司列表 / </a>
+              <a><cite>详情修改</cite></a>
+            </span>
+            <input type="button" class="return" @click="returnFunc" value="返回" />
+            <input type="button" class="save" @click="saveCou" value="保存并提交" />
+
+        </p>
+
+
+        <div class="form_item">
+
+            <div class="item">
+                <div>
+                    <h4>基本信息</h4>
+                </div>
+                <div class="pro_inf">
+                    <span><label for="">公司名称：</label><input type="text" placeholder="公司名称" v-model="couDetails.name"></span>
+
+                    <span><label for="">公司账户数：</label><input type="text" placeholder="公司账户数" v-model="couDetails.accountCount"></span><br>
+                    <span><label for="">公司SKU信息：</label><input type="text" placeholder="公司SKU信息" v-model="couDetails.companySku"></span>
+                    <span><label for="">公司地址：</label><input type="text" placeholder="公司地址" v-model="couDetails.companyAddress"></span><br>
+                    <span><label for="">公司负责人：</label><input type="text" placeholder="公司负责人" v-model="couDetails.companyPerson"></span>
+                    <span><label for="">电话：</label><input type="text" placeholder="内部电话SKU" v-model="couDetails.companyTel"></span><br>
+                    <span><label for="">QQ：</label><input type="text" placeholder="QQ" v-model="couDetails.companyQq"></span>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="form_item">
+
+            <div class="item">
+                <div>
+                    <h4>金额信息</h4>
+                </div>
+                <div class="pro_inf">
+                    <span><label for="">平台佣金点数：</label><input type="text" placeholder="平台佣金点数" v-model="couDetails.companyPoints"></span>
+                    <br>
+                    <span><label for="">余额：</label>{{couDetails.balance}}</span><br>
+                    <span><label for="">单数：</label>{{couDetails.unliquidatedNumber}}</span><br>
+                    <p style="color: #999">可用余额：{{couDetails.availableBalance}}&nbsp;&nbsp;&nbsp;&nbsp;未结算运单数：{{couDetails.unliquidatedNumber}}&nbsp;&nbsp;&nbsp;&nbsp;未发货订单数：{{couDetails.unshippedNumber}}&nbsp;&nbsp;&nbsp;&nbsp;预计费用：{{couDetails.estimatedCost}}   预计还可生成： {{couDetails.estimatedOrder}}单</p>
+
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </form>
+
+
+    <script src="${request.contextPath}/statics/js/modules/sys/deptCreate.js"></script>
+    <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>-->
+    <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
+    <script>
+
+    </script>
+</div>
+</body>
+</html>
