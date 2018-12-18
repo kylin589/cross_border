@@ -519,27 +519,31 @@ var vm = new Vue({
             if(vm.activeProlist.length == 0){
                 layer.alert('请选择要删除的产品');
             }else {
-                $.ajax({
-                    url: '../../product/products/falsedeletion',
-                    type: 'post',
-                    data:JSON.stringify(vm.activeProlist)
-                    // 'productIds': JSON.stringify(vm.activeProlist)
-                    ,
-                    contentType: "application/json",
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-                            layer.alert('操作成功');
-                            vm.getPage();
+                layer.confirm('确定修改吗？', function(index){
+                    $.ajax({
+                        url: '../../product/products/falsedeletion',
+                        type: 'post',
+                        data:JSON.stringify(vm.activeProlist)
+                        // 'productIds': JSON.stringify(vm.activeProlist)
+                        ,
+                        contentType: "application/json",
+                        success: function (r) {
+                            console.log(r);
+                            if (r.code === 0) {
+                                layer.msg('删除成功');
+                                vm.getPage();
 
-                        } else {
-                            layer.alert(r.msg);
+                            } else {
+                                layer.alert(r.msg);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
                         }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                })
+                    })
+
+                });
+
             }
 
         },
@@ -563,25 +567,28 @@ var vm = new Vue({
                     btn: ['修改','取消'],
                     btn1: function (index) {
                         console.log(vm.xiugaiData);
-                        $.ajax({
-                            url: '../../product/products/batchmodify',
-                            type: 'post',
-                            // data:vm.xiugaiData,
-                            data:JSON.stringify(vm.xiugaiData),
-                            contentType: "application/json",
-                            success: function (r) {
-                                console.log(r);
-                                if (r.code === 0) {
-                                    layer.alert('操作成功');
+                        layer.confirm('确定修改吗？',function () {
+                            $.ajax({
+                                url: '../../product/products/batchmodify',
+                                type: 'post',
+                                // data:vm.xiugaiData,
+                                data:JSON.stringify(vm.xiugaiData),
+                                contentType: "application/json",
+                                success: function (r) {
+                                    console.log(r);
+                                    if (r.code === 0) {
+                                        layer.msg('修改成功');
 
-                                } else {
-                                    layer.alert(r.msg);
+                                    } else {
+                                        layer.alert(r.msg);
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("网络故障");
                                 }
-                            },
-                            error: function () {
-                                layer.msg("网络故障");
-                            }
+                            })
                         })
+
 
                     },
                     btn2: function (index) {
@@ -671,32 +678,35 @@ var vm = new Vue({
         // 上架、下架、审核通过、待审核
         changeauditstatusFunc:function (n,t) {
             vm.getProIDs();
-            console.log(JSON.stringify(vm.activeProlist));
-            console.log(n);
-            console.log(t);
-            $.ajax({
-                url: '../../product/products/changeauditstatus',
-                type: 'post',
-                data:JSON.stringify({
-                    'productIds':vm.activeProlist,
-                    'number':'001',
-                    'type':'SHELVE_STATE'
-                }),
-                // dataType: 'json',
-                contentType: "application/json",
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        layer.alert('操作成功');
+            // console.log(JSON.stringify(vm.activeProlist));
+            // console.log(n);
+            // console.log(t);
+            layer.confirm('确定修改改状态吗？',function () {
+                $.ajax({
+                    url: '../../product/products/changeauditstatus',
+                    type: 'post',
+                    data:JSON.stringify({
+                        'productIds':vm.activeProlist,
+                        'number':'001',
+                        'type':'SHELVE_STATE'
+                    }),
+                    // dataType: 'json',
+                    contentType: "application/json",
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            layer.msg('操作成功');
 
-                    } else {
-                        layer.alert(r.msg);
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
                     }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
+                })
             })
+
 
 
         },

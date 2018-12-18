@@ -37,7 +37,7 @@
                     <span><label for="">SKU：</label><span>{{ orderDetails.sku }}</span></span>
                     <span><label for="">ASIN：</label><span>{{ orderDetails.asin }}</span></span>
                     <span><label for="">数量：</label><span>{{ orderDetails.num }}</span></span>
-                    <!--<span><label for="">采购价（￥）：</label><span>{{ orderDetails.price }}</span></span>-->
+                    <span><label for="">采购价（￥）：</label><span>{{ orderDetails.price }}</span></span>
                     <span><label for="">亚马逊单号：</label><span>{{ orderDetails.xiaoshouNum }}</span></span>
                     <input v-if="orderDetails.state == '虚发货'" class="yiCaigou" type="button" value="已采购">
                     <input v-if="orderDetails.state == '待发货'" class="yiFahuo" type="button" value="已发货">
@@ -74,6 +74,7 @@
                     <p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加"></p>
                     <span><label for="">采购价(￥)：</label><input type="text" placeholder="建议填写"></span>
                     <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" ><input class="" type="text" placeholder="建议填写" value="12213234"></a></span>
+                    <span><label for="">物流公司：</label><input class="" type="text" placeholder="建议填写" value="12213234"></span>
                     <span><label for="">发货日期(￥)：</label><input type="text" placeholder="建议填写"></span>
                     <div class="fr" style="">
                         <input class="edit" type="button" value="编辑">
