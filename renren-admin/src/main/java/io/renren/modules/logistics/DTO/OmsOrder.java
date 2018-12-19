@@ -26,15 +26,15 @@ public class OmsOrder {
     /**
      * 总利润额
      */
-    public BigDecimal profitamount;
+    public BigDecimal profitamount = null;
     /**
      * 总成本
      */
-    public BigDecimal costamount;
+    public BigDecimal costamount = null;
     /**
      * 运费成本
      */
-    public BigDecimal feedamount;
+    public BigDecimal feedamount = null;
     /**
      * 送货地址
      */
@@ -43,12 +43,13 @@ public class OmsOrder {
      * 国家英文简称
      */
     public String order_memo;
-    public String memo;
+
+    public String memo = null;
     /**
      * 销售额（人民币）
      * 最后是已经减去佣金
      */
-    public BigDecimal saleamount;
+    public BigDecimal saleamount = null;
 
     public String getOrder_sn() {
         return order_sn;

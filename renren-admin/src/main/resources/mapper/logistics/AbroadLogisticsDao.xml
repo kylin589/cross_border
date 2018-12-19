@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.logistics.dao.AbroadLogisticsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.logistics.entity.AbroadLogisticsEntity" id="abroadLogisticsMap">
+        <result property="abroadLogisticsId" column="abroad_logistics_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="abroadWaybill" column="abroad_waybill"/>
+        <result property="trackWaybill" column="track_waybill"/>
+        <result property="status" column="status"/>
+        <result property="state" column="state"/>
+        <result property="interFreight" column="inter_freight"/>
+        <result property="isSynchronization" column="is_synchronization"/>
+    </resultMap>
+
+
+</mapper>
