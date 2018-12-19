@@ -1,19 +1,18 @@
 package io.renren.modules.product.service.impl;
 
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
-
 import io.renren.modules.product.dao.AmazonCategoryDao;
 import io.renren.modules.product.entity.AmazonCategoryEntity;
 import io.renren.modules.product.service.AmazonCategoryService;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Service("amazonCategoryService")
@@ -37,9 +36,9 @@ public class AmazonCategoryServiceImpl extends ServiceImpl<AmazonCategoryDao, Am
      * @date: 2018/11/16 14:46
      */
     @Override
-    public List<AmazonCategoryEntity> queryByAreaOneClassify(Integer region) {
+    public List<AmazonCategoryEntity> queryByAreaOneClassify(String countryCode) {
        Map<String,Object> map =new HashMap<String,Object>();
-       map.put("region",region);
+       map.put("countryCode",countryCode);
        map.put("parent_id",0);
         List<AmazonCategoryEntity>amazonCategoryEntityList= this.selectByMap(map);
         return amazonCategoryEntityList;

@@ -1,23 +1,18 @@
 package io.renren.modules.product.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.R;
+import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.product.entity.AmazonCategoryEntity;
+import io.renren.modules.product.service.AmazonCategoryService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import io.renren.common.validator.ValidatorUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.product.entity.AmazonCategoryEntity;
-import io.renren.modules.product.service.AmazonCategoryService;
-import io.renren.common.utils.PageUtils;
-import io.renren.common.utils.R;
 
 
 /**
@@ -123,8 +118,8 @@ public class AmazonCategoryController {
      * @date: 2018/11/16 11:51
      */
     @RequestMapping("/amazonOneCategory")
-    public R queryByAreaOneClassify(Integer region){
-        List<AmazonCategoryEntity>amazonCategoryEntityList=amazonCategoryService.queryByAreaOneClassify(region);
+    public R queryByAreaOneClassify(String countryCode){
+        List<AmazonCategoryEntity>amazonCategoryEntityList=amazonCategoryService.queryByAreaOneClassify(countryCode);
         return R.ok().put("amazonCategoryEntityList",amazonCategoryEntityList);
     }
 
