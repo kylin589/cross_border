@@ -28,7 +28,7 @@ public class POIExcelUtil {
      * @auther: jhy
      * @date: 2018/12/1 14:41
      */
-    public static void insetCategory(String pathname, int region) throws Exception {
+    public static void insetCategory(String pathname, String countryCode) throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(new File(pathname)));
         //获取第一个标签页  根据标签页名称获取
         HSSFSheet sheet = workbook.getSheet("MAPPINGS");
@@ -53,7 +53,7 @@ public class POIExcelUtil {
                     if (i == 1) {
                         parentId = 0L;
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setRegion(region);
+                        amazonCategoryEntity.setCountryCode(countryCode);//英国
                         amazonCategoryEntity.setDisplayName(EntoZh(categoryNameArr[i]) + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                         //是否为最后一个分类
@@ -69,12 +69,12 @@ public class POIExcelUtil {
                         row.getCell(6).setCellType(CellType.STRING);
                         amazonCategoryEntity.setNodeIdEs(row.getCell(6).getStringCellValue());
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setRegion(region);
+                        amazonCategoryEntity.setCountryCode(countryCode);//英国
                         amazonCategoryEntity.setDisplayName(EntoZh(categoryNameArr[i]) + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                     } else {
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setRegion(region);
+                        amazonCategoryEntity.setCountryCode(countryCode);//英国
                         amazonCategoryEntity.setDisplayName(EntoZh(categoryNameArr[i]) + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                     }

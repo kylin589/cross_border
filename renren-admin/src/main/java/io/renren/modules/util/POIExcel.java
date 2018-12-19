@@ -60,7 +60,7 @@ public class POIExcel {
                     if (i == 1) {
                         parentId = 0L;
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setRegion(0);
+                        amazonCategoryEntity.setCountryCode("GB");//英国
                         amazonCategoryEntity.setDisplayName(this.EntoZh(categoryNameArr[i])+categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                         //是否为最后一级分类
@@ -76,12 +76,12 @@ public class POIExcel {
                         row.getCell(6).setCellType(CellType.STRING);
                         amazonCategoryEntity.setNodeIdEs(row.getCell(6).getStringCellValue());
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setRegion(0);
+                        amazonCategoryEntity.setCountryCode("GB");//英国
                         amazonCategoryEntity.setDisplayName(this.EntoZh(categoryNameArr[i])+categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                     } else {
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setRegion(0);
+                        amazonCategoryEntity.setCountryCode("GB");//英国
                         amazonCategoryEntity.setDisplayName(this.EntoZh(categoryNameArr[i])+categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                     }

@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.List;
 public class UKExcel {
     @Autowired
     private AmazonCategoryService amazonCategoryService;
+
     /**
      * @methodname 解析英国商品分类Excel
      * @auther: jhy
@@ -33,54 +35,39 @@ public class UKExcel {
      */
     @Test
     public void poiExcel() throws Exception {
-        String pathname = "C:\\Users\\asus\\Desktop\\英国商品分类\\分类树指南\\办公用品\\uk_office-products_browse_tree_guide._TTH_.xls";//文件的地址
+        String pathname = "C:\\Users\\asus\\Desktop\\uk\\uk_sports_browse_tree_guide._TTH_.xls";//文件的地址
         HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(new File(pathname)));//创建Excel文档对象HSSFWorkbook
-        HSSFSheet sheet = workbook.getSheet("OFFICE PRODUCTS_ (22.8.2018)");//获取第一个标签页  根据标签页名称获取
+        HSSFSheet sheet = workbook.getSheet("SPORTING GOODS_ (31.7.2018)");//获取第一个标签页  根据标签页名称获取
         for (Row row : sheet) {//遍历标签页
-            if (row.getRowNum() == 0) {//获取单元格，如果第一行直接跳过
+            if (row.getRowNum() == 0) {//获取单元格，如果第一行直接跳过 就是总的
                 continue;
             }
-            //获取Node Path的数据，以"/"进行拆分
-            String categoryNameString = row.getCell(1).getStringCellValue();
-            System.out.println("========================"+categoryNameString);
-
-
+            String categoryNameString = row.getCell(1).getStringCellValue();//获取Node Path的数据，以"/"进行拆分
             String[] categoryNameArr = categoryNameString.split("/");
-            Long parentId = 0L;
-            for (int i = 1; i < categoryNameArr.length; i++) {
-                //定义亚马逊分类实体
-                AmazonCategoryEntity amazonCategoryEntity = new AmazonCategoryEntity();
-                //根据分类名称查找判断数据库中是否有此条数据
-                Long id = this.queryByNameId(categoryNameArr[i]);
+            Long parentId = 0L;//定义父id为零
+            for (int i = 0; i < categoryNameArr.length; i++) {
+                AmazonCategoryEntity amazonCategoryEntity = new AmazonCategoryEntity();//定义亚马逊分类实体
+                Long id = this.queryByNameId(categoryNameArr[i]);//根据分类名称查找判断数据库中是否有此条数据
                 if (id == 0L) {
-                    //第一次循环
-                    if (i == 1) {
+                    if (i == 0) {//第一次循环
                         parentId = 0L;
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setRegion(0);
-                        amazonCategoryEntity.setDisplayName(this.EntoZh(categoryNameArr[i])+categoryNameArr[i]);
+                        amazonCategoryEntity.setCountryCode("GB");//英国
+                        String categoryNameChina = this.EntoZh(categoryNameArr[i]);
+                        String categoryNameChinaReplace = categoryNameChina.replace("\"", "").replace("\"", "");//去掉双引号
+                        amazonCategoryEntity.setDisplayName(categoryNameChinaReplace + "/" + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
-                        //是否为最后一级分类
-                    } else if (categoryNameArr.length - 1 == i) {
-                        row.getCell(1).setCellType(CellType.STRING);
-                        amazonCategoryEntity.setNodeIdUk(row.getCell(1).getStringCellValue());
-                        row.getCell(3).setCellType(CellType.STRING);
-                        amazonCategoryEntity.setNodeIdDe(row.getCell(3).getStringCellValue());
-                        row.getCell(4).setCellType(CellType.STRING);
-                        amazonCategoryEntity.setNodeIdFr(row.getCell(4).getStringCellValue());
-                        row.getCell(5).setCellType(CellType.STRING);
-                        amazonCategoryEntity.setNodeIdIt(row.getCell(5).getStringCellValue());
-                        row.getCell(6).setCellType(CellType.STRING);
-                        amazonCategoryEntity.setNodeIdEs(row.getCell(6).getStringCellValue());
-                        amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setRegion(0);
-                        amazonCategoryEntity.setDisplayName(this.EntoZh(categoryNameArr[i])+categoryNameArr[i]);
-                        amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
+                        row.getCell(0).setCellType(CellType.STRING);
+                        amazonCategoryEntity.setNodeIdUk(row.getCell(0).getStringCellValue());
                     } else {
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setRegion(0);
-                        amazonCategoryEntity.setDisplayName(this.EntoZh(categoryNameArr[i])+categoryNameArr[i]);
+                        amazonCategoryEntity.setCountryCode("GB");//英国
+                        String categoryNameChina = this.EntoZh(categoryNameArr[i]);
+                        String categoryNameChinaReplace = categoryNameChina.replace("\"", "").replace("\"", "");//去掉双引号
+                        amazonCategoryEntity.setDisplayName(categoryNameChinaReplace + "/" + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
+                        row.getCell(0).setCellType(CellType.STRING);
+                        amazonCategoryEntity.setNodeIdUk(row.getCell(0).getStringCellValue());
                     }
                     parentId = this.insert(amazonCategoryEntity);
                 } else {
@@ -95,7 +82,6 @@ public class UKExcel {
         AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("category_name", name));
         if (amazonCategoryEntity == null) {
             return 0L;
-
         } else {
             Long id = amazonCategoryEntity.getAmazonCategoryId();
             return id;
@@ -110,17 +96,12 @@ public class UKExcel {
 
     //英文翻译成中文
     private String EntoZh(String name) {
-        // 获取查询器
-        Querier<AbstractTranslator> querierTrans = new Querier<>();
-        // 设置参数：传过来的参数
-        querierTrans.setParams(LANG.EN, LANG.ZH, name);
-        // 向查询器中添加 Google 翻译器
-        //querierTrans.attach(new GoogleTranslator());
-        // 向查询器中添加 Baidu 翻译器
-        querierTrans.attach(new BaiduTranslator());
+        Querier<AbstractTranslator> querierTrans = new Querier<>(); // 获取查询器
+        querierTrans.setParams(LANG.EN, LANG.ZH, name);// 设置参数：传过来的参数
+        //querierTrans.attach(new GoogleTranslator());// 向查询器中添加 Google 翻译器
+        querierTrans.attach(new BaiduTranslator());// 向查询器中添加 Baidu 翻译器
         // 执行查询并接收查询结果
-        //翻译
-        List<String> nameList = querierTrans.execute();
+        List<String> nameList = querierTrans.execute();//翻译
         if (nameList.get(0) != "" && nameList.get(0) != null) {
             return nameList.get(0);
         } else {

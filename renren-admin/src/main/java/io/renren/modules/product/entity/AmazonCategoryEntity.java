@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * 亚马逊分类表
- * 
+ *
  * @author jhy
  * @email 617493711@qq.com
  * @date 2018-11-16 11:11:30
@@ -56,9 +56,9 @@ public class AmazonCategoryEntity implements Serializable {
 	 */
 	private String nodeIdEs;
 	/**
-	 * 所属区域(欧洲0、北美1、远东2）
+	 * 国家代号
 	 */
-	private Integer region;
+	private String countryCode;
 
 	/**
 	 * 是否有下一级
@@ -182,17 +182,13 @@ public class AmazonCategoryEntity implements Serializable {
 	public String getNodeIdEs() {
 		return nodeIdEs;
 	}
-	/**
-	 * 设置：所属区域(欧洲0、北美1、远东2）
-	 */
-	public void setRegion(Integer region) {
-		this.region = region;
+
+	public String getCountryCode() {
+		return countryCode;
 	}
-	/**
-	 * 获取：所属区域(欧洲0、北美1、远东2）
-	 */
-	public Integer getRegion() {
-		return region;
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 	@Override
@@ -202,12 +198,12 @@ public class AmazonCategoryEntity implements Serializable {
 				", parentId=" + parentId +
 				", categoryName='" + categoryName + '\'' +
 				", displayName='" + displayName + '\'' +
-				", nodeIdUk=" + nodeIdUk +
-				", nodeIdDe=" + nodeIdDe +
-				", nodeIdFr=" + nodeIdFr +
-				", nodeIdIt=" + nodeIdIt +
-				", nodeIdEs=" + nodeIdEs +
-				", region=" + region +
+				", nodeIdUk='" + nodeIdUk + '\'' +
+				", nodeIdDe='" + nodeIdDe + '\'' +
+				", nodeIdFr='" + nodeIdFr + '\'' +
+				", nodeIdIt='" + nodeIdIt + '\'' +
+				", nodeIdEs='" + nodeIdEs + '\'' +
+				", countryCode='" + countryCode + '\'' +
 				", ifNext='" + ifNext + '\'' +
 				'}';
 	}
