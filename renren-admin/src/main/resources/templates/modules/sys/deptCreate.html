@@ -58,7 +58,7 @@
     <form>
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
-              <a href="javascript:window.location.href = document.referrer;">公司列表 / </a>
+              <a href="javascript:window.location.href = document.referrer;">公司列表</a>
               <a><cite>详情修改</cite></a>
             </span>
             <input type="button" class="return" @click="returnFunc" value="返回" />
@@ -97,7 +97,7 @@
                     <span><label for="">平台佣金点数：</label><input type="text" placeholder="平台佣金点数" v-model="couDetails.companyPoints"></span>
                     <br>
                     <span><label for="">余额：</label>{{couDetails.balance}}</span><br>
-                    <span><label for="">单数：</label>{{couDetails.unliquidatedNumber}}</span><br>
+                    <!--<span><label for="">单数：</label>{{couDetails.unliquidatedNumber}}</span><br>-->
                     <p style="color: #999">可用余额：{{couDetails.availableBalance}}&nbsp;&nbsp;&nbsp;&nbsp;未结算运单数：{{couDetails.unliquidatedNumber}}&nbsp;&nbsp;&nbsp;&nbsp;未发货订单数：{{couDetails.unshippedNumber}}&nbsp;&nbsp;&nbsp;&nbsp;预计费用：{{couDetails.estimatedCost}}   预计还可生成： {{couDetails.estimatedOrder}}单</p>
 
                 </div>

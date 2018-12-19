@@ -226,7 +226,7 @@ var vm = new Vue({
                     url: '../../product/amazoncategory/amazonOneCategory',
                     type: 'post',
                     data: {
-                        region:this.shopinfo.region
+                        region:this.shopinfo.countryCode
                     },
                     dataType: 'json',
                     success: function (r) {

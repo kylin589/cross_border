@@ -76,14 +76,14 @@ window.onload = function (ev) {
 
     })
 
-    // 添加国际运单
-    $('.addguojiyundan').click(function () {
-        vm.addorder()
-    })
-    // 国际运单明细
-    $('.detailsOrderA').click(function () {
-        vm.detailsorder();
-    })
+    // // 添加国际运单
+    // $('.addguojiyundan').click(function () {
+    //     vm.addorder()
+    // })
+    // // 国际运单明细
+    // $('.detailsOrderA').click(function () {
+    //     vm.detailsorder();
+    // })
 
 
 }
@@ -207,7 +207,73 @@ var vm = new Vue({
                 }
             });
         },
-        //编辑修改
+        //编辑修改寄件信息
+        editJijian:function (domesticLogisticsId,index) {
+            console.log(index);
+            if($(event.target).val() == '编辑'){
+                $(event.target).val('保存');
+                $(event.target).parent().parent().find('input').removeAttr("disabled");
+                $(event.target).parent().parent().find('textarea').removeAttr("disabled");
+                $(event.target).parent().parent().find('input[type=text]').css('border','1px solid #d8dce5');
+                $(event.target).parent().parent().find('input.noedit').css('display','inline-block');
+                if($(event.target).parent().parent().find('.logistics').length!=0){
+                    $(event.target).parent().parent().find('.logistics').attr('data-ok','false');
+                }
+            }else {
+                $(event.target).val('编辑');
+                $(event.target).parent().parent().find('input[type=text]').attr('disabled','true');
+                $(event.target).parent().parent().find('textarea').attr('disabled','true');
+                $(event.target).parent().parent().find('input[type=text]').css('border','1px solid transparent');
+                $(event.target).parent().parent().find('input.noedit').css('display','none');
+                if($(event.target).parent().parent().find('.logistics').length!=0){
+                    $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
+                }
+                $.ajax({
+                    url: '../../domestic/updateLogistics',
+                    type: 'post',
+                    data: {
+                        orderId:this.orderId,
+                        waybill:this.waybill[index],
+                        domesticLogisticsId:domesticLogisticsId,
+                        price:this.price[index],
+                    },
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            $.ajax({
+                                url: '../../order/remark/updateLog',
+                                type: 'get',
+                                data: {
+                                    orderId:this.orderId,
+                                },
+                                dataType: 'json',
+                                success: function (r) {
+                                    console.log(r);
+                                    if (r.code === 0) {
+
+                                    } else {
+                                        layer.alert(r.msg);
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("网络故障");
+                                }
+                            });
+
+
+
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            }
+        },
+        //编辑修改国内物流
         edit:function (domesticLogisticsId,index) {
             console.log(index);
             if($(event.target).val() == '编辑'){
@@ -241,6 +307,28 @@ var vm = new Vue({
                     success: function (r) {
                         console.log(r);
                         if (r.code === 0) {
+                            $.ajax({
+                                url: '../../order/remark/updateLog',
+                                type: 'get',
+                                data: {
+                                    orderId:this.orderId,
+                                },
+                                dataType: 'json',
+                                success: function (r) {
+                                    console.log(r);
+                                    if (r.code === 0) {
+
+                                    } else {
+                                        layer.alert(r.msg);
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("网络故障");
+                                }
+                            });
+
+
+
                         } else {
                             layer.alert(r.msg);
                         }
@@ -297,6 +385,26 @@ var vm = new Vue({
                     'left':_left+'px'
                 })
             }
+        },
+        // 添加国内物流
+        addWuliuFunc:function () {
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#addWul'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['400px', '220px'],
+                shadeClose: true,
+                btn: ['添加','取消'],
+                btn1: function (index) {
+
+
+                },
+                btn2: function (index) {
+
+
+                }
+            });
         }
     },
     created:function () {

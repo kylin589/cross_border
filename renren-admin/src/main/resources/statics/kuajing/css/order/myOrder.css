@@ -214,6 +214,7 @@ table tr th{
 table tr td img{
     width: 50px;
     border-radius: 3px;
+    box-shadow: 0 0 10px #eee;
 }
 td:nth-child(7) span{
     display: inline-block;

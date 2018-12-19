@@ -90,7 +90,21 @@
             <th>下单时间</th>
         </tr>
         <tr v-for = 'item in prolist'>
-            <td>{{ item.orderId }}<br/><span class="brSpan"><img src="../../statics/kuajing/img/american.png" alt=""> {{ item.country }}</span></td>
+            <td>
+                {{ item.orderId }}<br/>
+                <span class="brSpan">
+                    <img src="../../statics/kuajing/img/american.png" alt="">
+                    <span v-if="item.countryCode == 'US'">美国</span>
+                    <span v-if="item.countryCode == 'JP'">日本</span>
+                    <span v-if="item.countryCode == 'ES'">西班牙</span>
+                    <span v-if="item.countryCode == 'GB'">英国</span>
+                    <span v-if="item.countryCode == 'IT'">意大利</span>
+                    <span v-if="item.countryCode == 'DE'">德国</span>
+                    <span v-if="item.countryCode == 'BR'">巴西</span>
+                    <span v-if="item.countryCode == 'CA'">加拿大</span>
+                    <span v-if="item.countryCode == 'MX'">墨西哥</span>
+                    <span v-if="item.countryCode == 'AU'">澳大利亚</span>
+                </span></td>
             <td class="imgtd"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
             <td><a :href="'orderDetails.html?orderid='+item.orderId">{{ item.amazonOrderId }}</a> <br/>
                 <span class="brSpan">
