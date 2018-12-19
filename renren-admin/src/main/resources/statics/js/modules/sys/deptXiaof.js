@@ -18,12 +18,22 @@ var vm = new Vue({
         },
         type:[{
             id:1,
-            name:'服务费'
+            name:'全部'
         },{
             id:2,
+            name:'服务费'
+        },{
+            id:3,
             name:'物流费'
         }],
-        typeValue:'',
+        typeValue:'全部',
+        // 所有员工
+        allYUanG:[{
+            userId:'1-1',
+            username:'所有员工'
+        }],
+        // 所选员工的value
+        allYUanGValue:'1-1',
     },
     methods:{
         // 获取公司详情
@@ -35,12 +45,13 @@ var vm = new Vue({
                 dataType: 'json',
                 success: function (r) {
                     console.log('公司详情');
-                    // console.log(r);
+                    console.log(r);
                     if (r.code === 0) {
 
                         vm.couDetails = r.dept;
                         vm.getauthorizeList();
                         vm.laypage();
+                        vm.getManList();
 
 
                     } else {
@@ -84,11 +95,52 @@ var vm = new Vue({
                 });
             });
         },
+        // 获取员工列表
+        getManList:function () {
+            console.log('11111');
+            $.ajax({
+                url: '../../sys/user/getUserList',
+                type: 'get',
+                data:{deptId:vm.id}
+                // 'productIds': JSON.stringify(vm.activeProlist)
+                ,
+                // contentType: "application/json",
+                dataType: 'json',
+                success: function (r) {
+                    console.log('获取员工');
+                    console.log(r);
+                    if (r.code === 0) {
+                        // layer.msg('操作成功');
+                        // vm.getPage();
+                        vm.allYUanG= r.userList;
+                        vm.allYUanG.unshift({
+                            userId:'1-1',
+                            username:'所有员工'
+                        })
+                        console.log('员工')
+                        console.log(vm.allYUanG)
+
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            })
+        },
         // 获取消费记录列表
         getauthorizeList:function () {
             console.log(this.couDetails);
-            if(vm.typeValue != ''){
+            if(vm.typeValue != '全部'){
                 vm.couDetails.type = vm.typeValue
+            }else {
+                vm.couDetails.type = '';
+            }
+            if(vm.allYUanGValue != '1-1'){
+                vm.couDetails.userId = vm.allYUanGValue
+            }else {
+                vm.couDetails.userId = '';
             }
             $.ajax({
                 url: '../../sys/consume/list',
@@ -123,6 +175,7 @@ var vm = new Vue({
 
         this.id = parseInt(id);
         this.getCouDetails();
+
         // this.getauthorizeList();
         // this.laypage();
 

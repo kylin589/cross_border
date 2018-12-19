@@ -34,6 +34,7 @@ form .form_item.one .item>div:nth-child(1){
 form .form_item.one .item>div:nth-child(1) img{
     width: 100%;
     border-radius: 3px;
+    box-shadow: 0 0 10px #eee;
 }
 form .form_item.one .item>div:nth-child(2){
     color: #777;
@@ -51,6 +52,9 @@ form .form_item.one .item>div:nth-child(2) p{
 form .form_item.one .item>div:nth-child(2)>span{
     margin-right: 18px;
     font-size: 13px;
+}
+form .form_item.one .item>div:nth-child(2)>span label{
+    font-weight: bold;
 }
 
 
@@ -145,7 +149,9 @@ form div.addorder .pro_inf>span{
 }
 
 form .pro_inf span span{
+    display: inline-block;
     margin-bottom: 0;
+    width: 130px;
 }
 form .pro_inf label{
     display: inline-block;
@@ -153,6 +159,9 @@ form .pro_inf label{
     line-height: 28px;
     color: #444;
     padding-left: 5px;
+}
+.jijian label{
+    /*width: 100px;*/
 }
 form .pro_inf label:before{
     content: '';
@@ -441,4 +450,34 @@ input.edit:hover ,input.noedit:hover,input.edit:active ,input.noedit:active{
 .yiFahuo{
     position: absolute;
     right:20px;
+}
+
+/*添加国内物流*/
+#addWul h3{
+    margin: 10px;
+    color: #00a3e8;
+    font-weight: bold;
+}
+#addWul span{
+    display: inline-block;
+    margin-bottom: 15px;
+    line-height: 28px;
+    margin: 15px 0 10px 40px;
+}
+#addWul span input, #addWul span select{
+    height: 28px;
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    padding-left: 6px;
+    margin-right: 10px;
+}
+#addWul span label:before{
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    background: -webkit-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: -moz-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: linear-gradient(to bottom, #1e9fff , #63e3f0);
+    margin-right: 5px;
 }

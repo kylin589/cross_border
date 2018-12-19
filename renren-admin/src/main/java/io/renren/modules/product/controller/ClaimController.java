@@ -51,16 +51,20 @@ public class ClaimController extends AbstractController{
      * 认领
      */
     @RequestMapping("/claim")
-    @RequiresPermissions("product:claim:claim")
+//    @RequiresPermissions("product:claim:claim")
     public R claim(@RequestBody ClaimVM claimVM){
         Long productId = claimVM.getProductId();
-        Long deptId = claimVM.getDeptId();
+
         Long userId = claimVM.getUserId();
+        SysUserEntity toUser = userService.selectById(userId);
+        Long deptId = toUser.getDeptId();
         ProductsEntity product = productsService.selectById(productId);
 
         SysDeptEntity dept = deptService.selectById(product.getDeptId());
         SysUserEntity user = userService.selectById(product.getCreateUserId());
         ClaimEntity claimEntity = new ClaimEntity();
+        //设置来源产品id
+        claimEntity.setProductId(productId);
         //设置来源
         claimEntity.setFromDeptId(dept.getDeptId());
         claimEntity.setFromDeptName(dept.getName());
@@ -68,9 +72,9 @@ public class ClaimController extends AbstractController{
         claimEntity.setFromUserName(user.getDisplayName());
         //设置认领到谁
         claimEntity.setToDeptId(deptId);
-        claimEntity.setToDeptName(deptService.selectById(productId).getName());
+        claimEntity.setToDeptName(deptService.selectById(deptId).getName());
         claimEntity.setToUserId(userId);
-        claimEntity.setToUserName(userService.selectById(userId).getDisplayName());
+        claimEntity.setToUserName(toUser.getDisplayName());
         //设置操作人
         claimEntity.setOperatorDeptId(getDeptId());
         claimEntity.setOperatorId(getUserId());
@@ -89,11 +93,13 @@ public class ClaimController extends AbstractController{
         productsService.insert(product);
         Long newProductId = product.getProductId();
         //生成新的变体信息
-        for(int i=0; i<variantsInfoList.size(); i++){
-            variantsInfoList.get(i).setVariantId(null);
-            variantsInfoList.get(i).setProductId(newProductId);
+        if(variantsInfoList != null && variantsInfoList.size()>0){
+            for(int i=0; i<variantsInfoList.size(); i++){
+                variantsInfoList.get(i).setVariantId(null);
+                variantsInfoList.get(i).setProductId(newProductId);
+            }
+            variantsInfoService.insertBatch(variantsInfoList);
         }
-        variantsInfoService.insertBatch(variantsInfoList);
         return R.ok();
     }
 
@@ -101,9 +107,9 @@ public class ClaimController extends AbstractController{
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("product:claim:list")
+//    @RequiresPermissions("product:claim:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = claimService.queryPage(params);
+        PageUtils page = claimService.queryPage(params,getDeptId());
 
         return R.ok().put("page", page);
     }

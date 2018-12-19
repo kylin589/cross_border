@@ -22,6 +22,11 @@ var vm = new Vue({
             parentName:null,
             parentId:0,
             orderNum:0
+        },
+        chongzhiData:{
+            money:'',
+            remark:'',
+            deptId:null
         }
     },
     methods: {
@@ -122,7 +127,42 @@ var vm = new Vue({
             vm.showList = true;
             Dept.table.refresh();
         },
+        // 充值弹框
+        chongzhiTank:function (id) {
+            vm.chongzhiData.deptId = id;
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#chongzhi'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['400px', '220px'],
+                shadeClose: true,
+                btn: ['充值','取消'],
+                btn1: function (index) {
+                    console.log(vm.chongzhiData);
+                    $.ajax({
+                        type: "POST",
+                        url: baseURL + "sys/recharge/recharge",
+                        data: JSON.stringify(vm.chongzhiData),
+                        contentType: "application/json",
+                        success: function(r){
+                            if(r.code === 0){
+                                layer.msg('充值成功');
 
+                            }else{
+                                alert(r.msg);
+                            }
+                        }
+                    });
+                    layer.close(index);
+
+                },
+                btn2: function (index) {
+
+
+                }
+            });
+        }
     }
 });
 
@@ -150,7 +190,7 @@ Dept.initColumn = function () {
         {title: '创建时间', field: 'createTime', align: 'center', valign: 'middle', sortable: true, width: '100px'},
         {title: '操作', field: 'deptId', align: 'center', valign: 'middle', sortable: true, width: '100px',formatter: function(value, options, row){
             console.log(value)
-            return '<span class="label label-success" onclick="aa('+value.deptId+')" style="cursor:pointer;">查看</span>'
+            return '<span class="label label-success" onclick="aa('+value.deptId+')" style="cursor:pointer;">查看</span> <span class="label label-success1" onclick="bb('+value.deptId+')" style="cursor:pointer;">充值</span>'
 
         }}
         ]
@@ -161,7 +201,10 @@ Dept.initColumn = function () {
 function aa(a) {
     window.location.href = 'deptDetailsL.html?id=' + a;
 }
-
+// 充值
+function bb(id) {
+    vm.chongzhiTank(id)
+}
 function getDeptId () {
     var selected = $('#deptTable').bootstrapTreeTable('getSelections');
     if (selected.length == 0) {

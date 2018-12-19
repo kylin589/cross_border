@@ -1,22 +1,17 @@
 package io.renren.modules.product.service.impl;
 
-import io.renren.modules.product.entity.ProductsEntity;
-import org.springframework.data.annotation.Id;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
-
 import io.renren.modules.product.dao.CategoryDao;
 import io.renren.modules.product.entity.CategoryEntity;
+import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.service.CategoryService;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 
 @Service("categoryService")

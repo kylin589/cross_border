@@ -136,43 +136,80 @@ var vm = new Vue({
         caijiUrl:'',
         // 所有员工
         allYUanG:[{
-            id:1,
-            name:'选择公司'
+            userId:'1-1',
+            username:'所有员工'
         }],
         // 所选员工的value
-        allYUanGValue:'',
+        allYUanGValue:'1-1',
         // 所有公司
         allGongsi:[],
         // 所选公司的value
-        allGongsiValue:''
+        allGongsiValue:'1-1'
     },
     methods: {
         // 获取员工列表
         getManList:function () {
             console.log('11111');
-            $.ajax({
-                url: '../../sys/user/getUserList',
-                type: 'get',
-                data:{deptId:vm.allGongsiValue}
-                // 'productIds': JSON.stringify(vm.activeProlist)
-                ,
-                // contentType: "application/json",
-                dataType: 'json',
-                success: function (r) {
-                    console.log('获取员工');
-                    console.log(r);
-                    if (r.code === 0) {
-                        layer.msg('操作成功');
-                        // vm.getPage();
+            if(vm.allGongsiValue != '1-1'){
+                console.log('@@@@@@');
+                console.log(vm.allYUanGValue);
+                $.ajax({
+                    url: '../../sys/user/getUserList',
+                    type: 'get',
+                    data:{deptId:vm.allGongsiValue}
+                    // 'productIds': JSON.stringify(vm.activeProlist)
+                    ,
+                    // contentType: "application/json",
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('获取员工');
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.allYUanG= r.userList;
+                            vm.allYUanG.unshift({
+                                userId:'1-1',
+                                username:'所有员工'
+                            })
+                            // vm.getPage();
 
-                    } else {
-                        layer.alert(r.msg);
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
                     }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
-            })
+                })
+            }else {
+                $.ajax({
+                    url: '../../sys/user/getUserList',
+                    type: 'get',
+                    data:{deptId:'0'}
+                    // 'productIds': JSON.stringify(vm.activeProlist)
+                    ,
+                    // contentType: "application/json",
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('获取员工');
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.allYUanG= r.userList;
+                            vm.allYUanG.unshift({
+                                userId:'1-1',
+                                username:'所有员工'
+                            })
+                            // vm.getPage();
+
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                })
+            }
+
         },
         // 获取公司列表
         getCouList:function(){
@@ -188,8 +225,12 @@ var vm = new Vue({
                     console.log('获取公司');
                     console.log(r);
                     if (r.code === 0) {
-                        layer.msg('操作成功');
+                        // layer.msg('操作成功');
                         vm.allGongsi = r.deptList;
+                        vm.allGongsi.unshift({
+                            deptId:'1-1',
+                            name:'全部'
+                        })
                         console.log(vm.allGongsi)
                         // vm.getPage();
 
@@ -204,7 +245,11 @@ var vm = new Vue({
         },
         // 选择公司后获取员工
         chanGongsiFunc:function () {
-            console.log('22222');
+            vm.allYUanG = [{
+                userId:'1-1',
+                username:'所有员工'
+            }];
+            vm.allYUanGValue = '1-1';
         },
         // 筛选
         // 审核状态筛选
@@ -287,6 +332,19 @@ var vm = new Vue({
                 s = this.value9[0] + ' 00:00:00';
                 e = this.value9[1] + ' 23:59:59';
             }
+
+            if(this.allYUanGValue != '1-1'){
+
+            }else {
+
+            }
+
+            if(this.allGongsiValue != '1-1'){
+
+            }else {
+
+            }
+
             $.ajax({
                 url: '../../product/products/alllist',
                 type: 'post',
