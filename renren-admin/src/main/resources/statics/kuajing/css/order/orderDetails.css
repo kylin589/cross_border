@@ -67,8 +67,19 @@ form .item>div:nth-child(2){
     flex: 1;
     overflow: hidden;
 }
+form .item>div:nth-child(2)>div{
+    position: relative;
+    padding-right: 40px;
+    margin-bottom: 16px;
+}
+form .item>div:nth-child(2)>div>span{
+    display: inline-block;
+    margin-bottom: 6px;
+}
 form .item>div:nth-child(2) div.fr{
-    float: right;
+    position: absolute;
+    right: 6px;
+    top: 4px;
 }
 form .item>div:nth-child(2) div.fr span{
     margin-bottom: 0;
@@ -246,7 +257,7 @@ form div.details table tr.two th , form div.details table tr.two td{
 }
 .operationLog li span:nth-child(1){
     display: inline-block;
-    width: 120px;
+    width: 170px;
     color: #00a3e8;
     font-size: 14px;
 
