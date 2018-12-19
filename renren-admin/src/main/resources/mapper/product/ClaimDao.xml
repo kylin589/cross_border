@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.ClaimDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.ClaimEntity" id="claimMap">
+        <result property="productClaimId" column="product_claim_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="fromDeptId" column="from_dept_id"/>
+        <result property="fromDeptName" column="from_dept_name"/>
+        <result property="fromUserId" column="from_user_id"/>
+        <result property="fromUserName" column="from_user_name"/>
+        <result property="toDeptId" column="to_dept_id"/>
+        <result property="toDeptName" column="to_dept_name"/>
+        <result property="toUserId" column="to_user_id"/>
+        <result property="toUserName" column="to_user_name"/>
+        <result property="operatorDeptId" column="operator_dept_id"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="operatorName" column="operator_name"/>
+        <result property="operatorTime" column="operator_time"/>
+    </resultMap>
+
+
+</mapper>

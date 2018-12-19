@@ -25,6 +25,10 @@ public class AbroadLogisticsUtil {
 
     public final static String pushUrl = "http://test.oofay.trylose.cn:60254/api/ExpressAccess/GetOrderDataFromOtherPlatform";
 
+    public final static String detailUrl = "http://test.oofay.trylose.cn:60254/api/ExpressAccess/GetOrderDetailByOrderSn";
+
+    public final static String updateUrl = "http://test.oofay.trylose.cn:60254/api/ExpressAccess/UpdateOrderDetailStatusByOrderSn";
+
     public final static String testUrl = "http://127.0.0.1:8081/renren-api/api/test";
 
     public final static String key = "5c0d54e1d5184c36921d7f08fa10dcae";
@@ -34,11 +38,18 @@ public class AbroadLogisticsUtil {
     private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm") ;
 
     public static void main(String[] args) {
-        pottingData();
+        //推送订单
+//        pushOrder();
+        //获取订单国际物流状态
+        getOrderDetail(20181214L);
+        //修改订单国际物流状态
+//        updateOrder(20181214L,4);
     }
 
-    public static void pottingData(){
+    public static void pushOrder(){
+        //传输参数
         Map<String, String> paramList = new HashMap<>();
+        //获取秘钥
         Map<String, String> paramsMap = new HashMap<>();
         paramList.put("userdean", String.valueOf(userdean));
         paramsMap.put("userdean", String.valueOf(userdean));
@@ -74,6 +85,66 @@ public class AbroadLogisticsUtil {
         }
     }
 
+    public static void getOrderDetail(Long orderId){
+        //传输参数
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("userdean", String.valueOf(userdean));
+        paramList.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
+        paramList.put("orderSn",String.valueOf(orderId));
+        String asin = null;
+        String result = null;
+        //参数根据ASCII码排序并加密得到签名
+        try {
+            asin = getSign(paramList);
+            if(asin != null && asin != ""){
+                paramList.put("asin",asin);
+                String params = proData(paramList);
+                //开始推送数据
+                result = sendPost(detailUrl,params);
+                System.out.println("result:" + result);
+                JSONObject obj = JSONObject.parseObject(result);
+                String data = obj.getString("data");
+                String data1 = new String(decoder.decode(data), "UTF-8");
+                System.out.println("data1:" + data1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     * @param orderId
+     * @param status
+     * 1备货；2，缺货；4.问题；3发货；5退款；6妥投；10物流问题
+     */
+    public static void updateOrder(Long orderId, int status){
+        //传输参数
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("userdean", String.valueOf(userdean));
+        paramList.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
+        paramList.put("orderSn",String.valueOf(orderId));
+        paramList.put("status",String.valueOf(status));
+        String asin = null;
+        String result = null;
+        //参数根据ASCII码排序并加密得到签名
+        try {
+            asin = getSign(paramList);
+            if(asin != null && asin != ""){
+                paramList.put("asin",asin);
+                String params = proData(paramList);
+                //开始推送数据
+                result = sendPost(updateUrl,params);
+                System.out.println("result:" + result);
+                JSONObject obj = JSONObject.parseObject(result);
+                String data = obj.getString("data");
+                String data1 = new String(decoder.decode(data), "UTF-8");
+                System.out.println("data1:" + data1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * 获取UTC时间戳
      * @return

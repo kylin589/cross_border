@@ -1,21 +1,18 @@
 package io.renren.modules.order.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import io.renren.common.validator.ValidatorUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.order.entity.RemarkEntity;
-import io.renren.modules.order.service.RemarkService;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
+import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.order.entity.RemarkEntity;
+import io.renren.modules.order.service.RemarkService;
+import io.renren.modules.sys.controller.AbstractController;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Map;
 
 
 
@@ -28,10 +25,40 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("order/remark")
-public class RemarkController {
+public class RemarkController extends AbstractController{
     @Autowired
     private RemarkService remarkService;
 
+    /**
+     * 添加 添加国内物流操作记录
+     */
+    @RequestMapping("/addLog")
+    public R addLog(@RequestParam Long orderId){
+        RemarkEntity remark = new RemarkEntity();
+        remark.setOrderId(orderId);
+        remark.setType("log");
+        remark.setRemark("添加采购信息");
+        remark.setUserId(getUserId());
+        remark.setUserName(getUser().getDisplayName());
+        remark.setUpdateTime(new Date());
+        remarkService.insert(remark);
+        return R.ok();
+    }
+    /**
+     * 添加 修改国内物流操作记录
+     */
+    @RequestMapping("/updateLog")
+    public R updateLog(@RequestParam Long orderId){
+        RemarkEntity remark = new RemarkEntity();
+        remark.setOrderId(orderId);
+        remark.setType("log");
+        remark.setRemark("修改采购信息");
+        remark.setUserId(getUserId());
+        remark.setUserName(getUser().getDisplayName());
+        remark.setUpdateTime(new Date());
+        remarkService.insert(remark);
+        return R.ok();
+    }
     /**
      * 列表
      */
@@ -59,10 +86,13 @@ public class RemarkController {
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("order:remark:save")
+//    @RequiresPermissions("order:remark:save")
     public R save(@RequestBody RemarkEntity remark){
+        remark.setType("remark");
+        remark.setUserId(getUserId());
+        remark.setUserName(getUser().getDisplayName());
+        remark.setUpdateTime(new Date());
         remarkService.insert(remark);
-
         return R.ok();
     }
 
@@ -88,5 +118,4 @@ public class RemarkController {
 
         return R.ok();
     }
-
 }
