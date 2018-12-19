@@ -38,7 +38,7 @@ public class AmazonCategoryServiceImpl extends ServiceImpl<AmazonCategoryDao, Am
     @Override
     public List<AmazonCategoryEntity> queryByAreaOneClassify(String countryCode) {
        Map<String,Object> map =new HashMap<String,Object>();
-       map.put("countryCode",countryCode);
+       map.put("country_code",countryCode);
        map.put("parent_id",0);
         List<AmazonCategoryEntity>amazonCategoryEntityList= this.selectByMap(map);
         return amazonCategoryEntityList;
