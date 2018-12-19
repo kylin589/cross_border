@@ -25,7 +25,7 @@ public interface AmazonCategoryService extends IService<AmazonCategoryEntity> {
      * @auther: jhy
      * @date: 2018/11/16 14:39
      */
-    List<AmazonCategoryEntity> queryByAreaOneClassify(Integer region);
+    List<AmazonCategoryEntity> queryByAreaOneClassify(String countryCode);
     /**
      * @methodname: queryByChindIdParentId 根据子级id查出所有的父级id以逗号进行拼接成字符串
      * @param: [amazonCategoryId] 子级id
