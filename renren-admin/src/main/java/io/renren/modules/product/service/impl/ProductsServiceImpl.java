@@ -700,4 +700,31 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         dto.setProductsList(productsList);
         return dto;
     }
+    @Override
+    public UploadProductDTO isNotCanUpload(List<Long> idList, Long userId) {
+        UploadProductDTO dto = new UploadProductDTO();
+        List<ProductsEntity> list = this.selectBatchIds(idList);
+        List<ProductsEntity> productsList = new ArrayList<>();
+        for(int i=0; i < list.size(); i++){
+            ProductsEntity product = list.get(i);
+            if(product.getCreateUserId().longValue() == userId.longValue()){
+                if("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())){
+                    productsList.add(product);
+                }else{
+                    dto.setCode("error");
+                    if((!"001".equals(product.getAuditStatus()))){
+                        System.out.println("id==" + product.getProductId());
+                        dto.setMsg("有产品没有通过审核");
+                    } else if((!"001".equals(product.getShelveStatus()))){
+                        dto.setMsg("有产品没有上架");
+                    }else{
+                        dto.setMsg("有产品没有通过审核/上架");
+                    }
+                    return dto;
+                }
+            }
+        }
+        dto.setProductsList(productsList);
+        return dto;
+    }
 }

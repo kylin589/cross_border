@@ -169,4 +169,8 @@ public interface ProductsService extends IService<ProductsEntity> {
 
     //筛选属于通过和上架而且属于自己的产品
     UploadProductDTO selectCanUploadProducts(List<Long> idList, Long userId);
+
+    //判断是否满足上传条件
+    UploadProductDTO isNotCanUpload(List<Long> idList, Long userId);
+
 }
