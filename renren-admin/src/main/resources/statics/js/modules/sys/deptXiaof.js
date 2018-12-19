@@ -30,7 +30,7 @@ var vm = new Vue({
         // 所有员工
         allYUanG:[{
             userId:'1-1',
-            username:'所有员工'
+            displayName:'所有员工'
         }],
         // 所选员工的value
         allYUanGValue:'1-1',
@@ -115,7 +115,7 @@ var vm = new Vue({
                         vm.allYUanG= r.userList;
                         vm.allYUanG.unshift({
                             userId:'1-1',
-                            username:'所有员工'
+                            displayName:'所有员工'
                         })
                         console.log('员工')
                         console.log(vm.allYUanG)

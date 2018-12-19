@@ -482,9 +482,71 @@ var vm = new Vue({
         categoryThreeName:'',
         // nowategoryThreeName:'',
         nowProTypeId:'',
+        // 产品上传
+        dialogImageUrl: '',
+        // dialogVisible: false
 
     },
     methods:{
+        // 产品上传方法
+        handleRemove:function(file, fileList) {
+            layer.confirm('确定删除吗？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                // return true
+                // layer.msg('的确很重要', {icon: 1});
+
+            }, function(){
+                console.log(file);
+                console.log(fileList);
+                fileList.splice(file.index , 0, file)
+                // fileList.push(file);
+                // return false
+                // layer.msg('也可以这样', {
+                //     time: 20000, //20s后自动关闭
+                //     btn: ['明白了', '知道了']
+                // });
+            });
+            // console.log(file, fileList);
+        },
+        // 上传图片移上去的方法
+        handlePictureCardPreview:function(file) {
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
+        },
+        // 图片上传成功
+        upSuccessFunc:function (file,fileList) {
+            layer.confirm('确定上传改图片吗',{
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                // 确定方法
+
+            }, function(){
+                // 取消方法
+
+
+            })
+        },
+        // 图片上传失败
+        upErrorFunc:function (file) {
+            layer.msg('上传失败')
+        },
+        // 删除上传图片
+        delImgFunc:function (file) {
+            layer.confirm('您是如何看待前端开发？', {
+                btn: ['重要','奇葩'] //按钮
+            }, function(){
+                return true
+                // layer.msg('的确很重要', {icon: 1});
+
+            }, function(){
+                return false
+                // layer.msg('也可以这样', {
+                //     time: 20000, //20s后自动关闭
+                //     btn: ['明白了', '知道了']
+                // });
+            });
+        },
         // 获取产品详情
         getProDetails:function () {
             $.ajax({
@@ -593,7 +655,23 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('产品相册');
                         console.log(r);
-                        vm.proAlbum = r.imageInfo;
+                        r.imageInfo.forEach(function (item,index) {
+                            vm.proAlbum.push({
+                                index:index,
+                                imgId:item.imageId,
+                                url:item.imageUrl,
+                                isDeleted:item.isDeleted,
+                                createUserId:item.createUserId,
+                                createTime:item.createTime,
+                                lastOperationTime:item.lastOperationTime,
+                                lastOperationUserId:item.lastOperationUserId,
+                                productId:item.productId,
+                                status:item.status,
+                                uid:item.uid
+
+                            })
+                        })
+                        // vm.proAlbum = r.imageInfo;
 
                     } else {
                         layer.alert(r.msg);

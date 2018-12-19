@@ -160,7 +160,7 @@ var vm = new Vue({
         // 所有员工
         allYUanG:[{
             userId:'1-1',
-            username:'所有员工'
+            displayName:'所有员工'
         }],
         // 所选员工的value
         allYUanGValue:'1-1',
@@ -193,7 +193,7 @@ var vm = new Vue({
                             vm.allYUanG= r.userList;
                             vm.allYUanG.unshift({
                                 userId:'1-1',
-                                username:'所有员工'
+                                displayName:'所有员工'
                             })
                             // vm.getPage();
 
@@ -272,7 +272,7 @@ var vm = new Vue({
         chanGongsiFunc:function () {
             vm.allYUanG = [{
                 userId:'1-1',
-                username:'所有员工'
+                displayName:'所有员工'
             }];
             vm.allYUanGValue = '1-1';
         },
@@ -382,8 +382,8 @@ var vm = new Vue({
                 e = this.value9[1] + ' 23:59:59';
             }
             $.ajax({
-                url: '../../product/products/mylist',
-                type: 'post',
+                url: '../../product/products/getClaimList',
+                type: 'get',
                 data: {
                     // '_search': false,
                     'page': this.proCurr,
@@ -402,6 +402,8 @@ var vm = new Vue({
                 },
                 dataType: 'json',
                 success: function (r) {
+                    console.log('认领列表');
+                    console.log(r);
                     if (r.code === 0) {
                         // console.log(r)
                         vm.statistics.proNum = r.proNum;

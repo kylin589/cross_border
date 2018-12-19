@@ -245,14 +245,16 @@
     position: absolute;
     top: 38px;
     left: 1px;
-    width: 510px;
+    padding: 10px;
+    /*width: 510px;*/
     /*display: flex;*/
     display: none;
-    background: #fff;
+    /*background: #fff;*/
+    border: 1px solid #eee;
     /*border: 1px solid #ddd;*/
     border-radius: 3px;
     z-index: 1;
-    box-shadow: 0 0 10px #ccc;
+    /*box-shadow: 0 0 10px #ccc;*/
 }
 .sousuoArea1{
     top: 205px;
@@ -264,12 +266,18 @@
     left: 146px;
 }
 .sousuoArea>div{
-    flex: 1;
+    width: 170px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    box-shadow: 0 0 10px #eee;
+    margin-right: 5px;
+    /*flex: 1;*/
     /*display: none;*/
 }
 
 .sousuoArea>div:nth-child(even){
-    background: #f0f0f0;
+    /*background: #f0f0f0;*/
 }
 .sousuoArea>div ul{
     margin: 0;

@@ -237,7 +237,7 @@ var vm = new Vue({
                             console.log(vm.leven);
                             vm.fenleiTankuang();
                         } else {
-                            layer.alert(r.message);
+                            layer.alert(r.msg);
                         }
                     },
                     error: function () {
