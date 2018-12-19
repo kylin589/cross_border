@@ -29,8 +29,16 @@
                     :value="item.name">
             </el-option>
         </el-select>
+        <el-select v-model="allYUanGValue" placeholder="请选择员工">
+            <el-option
+                    v-for="item in allYUanG"
+                    :key="item.userId"
+                    :label="item.username"
+                    :value="item.userId">
+            </el-option>
+        </el-select>
         <input type="text" placeholder="订单ID" v-model="couDetails.orderId">
-        <input type="text" placeholder="用户ID" v-model="couDetails.userId">
+        <!--<input type="text" placeholder="用户ID" v-model="couDetails.userId">-->
 
 
         <button class="sousuo" @click="getauthorizeList()">搜索</button>

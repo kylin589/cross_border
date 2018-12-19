@@ -15,6 +15,47 @@
     text-align: center;
 }
 .label-success{
-    background: #16b4ef;
+    background: none;
     padding: 4px 12px;
+    color: #16b4ef;
+}
+.label-success1{
+    background: none;
+    padding: 4px 12px;
+    color: #fe8060;
+}
+
+.openClass{
+    padding: 0px!important;
+}
+
+/*添加国内物流*/
+#chongzhi h3{
+    margin: 10px;
+    color: #00a3e8;
+    font-size: 18px;
+    font-weight: bold;
+}
+#chongzhi span{
+    display: inline-block;
+    margin-bottom: 15px;
+    line-height: 28px;
+    margin: 15px 0 10px 40px;
+}
+#chongzhi span input, #addWul span select{
+    height: 28px;
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    padding-left: 6px;
+    margin-right: 10px;
+}
+#chongzhi span label:before{
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    background: -webkit-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: -moz-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: linear-gradient(to bottom, #1e9fff , #63e3f0);
+    margin-right: 5px;
 }

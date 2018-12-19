@@ -17,7 +17,7 @@
     <div class="search1" style="padding: 0">
 
         <#if shiro.hasPermission("sys:dept:list")>
-            <el-select v-model="allGongsiValue" filterable @change="getManList" placeholder="请选择公司">
+            <el-select v-model="allGongsiValue" filterable @change="chanGongsiFunc" placeholder="请选择公司">
                 <el-option
                         v-for="item in allGongsi"
                         :key="item.deptId"
@@ -29,12 +29,12 @@
         </#if>
 
 
-        <el-select v-model="allYUanGValue" placeholder="请选择员工">
+        <el-select v-model="allYUanGValue" placeholder="请选择员工" @focus="getManList">
             <el-option
                     v-for="item in allYUanG"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
+                    :key="item.userId"
+                    :label="item.username"
+                    :value="item.userId">
             </el-option>
         </el-select>
 
