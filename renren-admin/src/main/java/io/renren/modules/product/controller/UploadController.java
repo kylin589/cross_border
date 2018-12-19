@@ -1,39 +1,34 @@
 package io.renren.modules.product.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.renren.common.annotation.SysLog;
+import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.entity.AmazonCategoryHistoryEntity;
-import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonCategoryHistoryService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.util.COUNTY;
 import io.renren.modules.job.entity.ScheduleJobEntity;
 import io.renren.modules.job.service.ScheduleJobService;
+import io.renren.modules.product.dto.UploadProductDTO;
 import io.renren.modules.product.entity.AmazonCategoryEntity;
 import io.renren.modules.product.entity.ProductsEntity;
+import io.renren.modules.product.entity.UploadEntity;
 import io.renren.modules.product.service.AmazonCategoryService;
 import io.renren.modules.product.service.ProductsService;
+import io.renren.modules.product.service.UploadService;
 import io.renren.modules.product.vm.AddUploadVM;
 import io.renren.modules.sys.controller.AbstractController;
-import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import io.renren.modules.product.entity.UploadEntity;
-import io.renren.modules.product.service.UploadService;
-import io.renren.common.utils.PageUtils;
-import io.renren.common.utils.R;
-
-import javax.xml.crypto.Data;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -183,16 +178,30 @@ public class UploadController extends AbstractController {
 //    @RequiresPermissions("product:upload:addupload")
     public R addUpload(@RequestBody AddUploadVM addUploadVM){
         List<UploadEntity> uploadList = new ArrayList<UploadEntity>();
-        Set<Long> ret = new LinkedHashSet<>(0);
+        List<ProductsEntity> ret = new ArrayList<>();
+        if(addUploadVM.getUploadIds() != null){
+            UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()),getUserId());
+            if("ok".equals(dto1.getCode())){
+                List productsList1 = dto1.getProductsList();
+                ret.addAll(productsList1);
+            }else{
+                return R.error(dto1.getMsg());
+            }
+        };
+        List<Long> seList = new ArrayList<>();
         if(addUploadVM.getStartId() != null && addUploadVM.getEndId() != null){
             Long index = addUploadVM.getStartId();
             while (index <= addUploadVM.getEndId()){
-                ret.add(index);
+                seList.add(index);
                 index++;
             }
-        }
-        if(addUploadVM.getUploadIds() != null){
-            ret.addAll(Arrays.asList(addUploadVM.getUploadIds()));
+            UploadProductDTO dto2 = productsService.selectCanUploadProducts(seList,getUserId());
+            if("ok".equals(dto2.getCode())){
+                List productsList2 = dto2.getProductsList();
+                ret.addAll(productsList2);
+            }else{
+                return R.error(dto2.getMsg());
+            }
         }
         System.out.println("ret:" + ret);
         //迭代
@@ -201,7 +210,7 @@ public class UploadController extends AbstractController {
         while(i.hasNext()){
             UploadEntity upload = new UploadEntity();
             //获取产品
-            ProductsEntity product = productsService.selectById(Long.valueOf(i.next().toString()));
+            ProductsEntity product = (ProductsEntity) i.next();
             //设置产品id
             upload.setProductId(product.getProductId());
             //设置主图片

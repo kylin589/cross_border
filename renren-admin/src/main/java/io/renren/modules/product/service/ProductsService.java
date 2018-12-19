@@ -3,8 +3,10 @@ package io.renren.modules.product.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
+import io.renren.modules.product.dto.UploadProductDTO;
 import io.renren.modules.product.entity.ProductsEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -165,5 +167,6 @@ public interface ProductsService extends IService<ProductsEntity> {
    //变体参数尺寸与产品绑定
     boolean relationVariantSize(Long productId, Long variantParameterId);
 
-
+    //筛选属于通过和上架而且属于自己的产品
+    UploadProductDTO selectCanUploadProducts(List<Long> idList, Long userId);
 }

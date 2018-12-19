@@ -7,6 +7,7 @@ import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.product.dao.ProductsDao;
+import io.renren.modules.product.dto.UploadProductDTO;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.VariantsInfoEntity;
 import io.renren.modules.product.service.ImageAddressService;
@@ -16,10 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zjr
@@ -673,5 +671,33 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         } else {
             return false;
         }
+    }
+
+    @Override
+    public UploadProductDTO selectCanUploadProducts(List<Long> idList, Long userId) {
+        UploadProductDTO dto = new UploadProductDTO();
+        List<ProductsEntity> list = this.selectBatchIds(idList);
+        List<ProductsEntity> productsList = new ArrayList<>();
+        for(int i=0; i < list.size(); i++){
+            ProductsEntity product = list.get(i);
+            if(product.getCreateUserId().longValue() == userId.longValue()){
+                if("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())){
+                        productsList.add(product);
+                }else{
+                    dto.setCode("error");
+                    if((!"001".equals(product.getAuditStatus()))){
+                        System.out.println("id==" + product.getProductId());
+                        dto.setMsg("有产品没有通过审核");
+                    } else if((!"001".equals(product.getShelveStatus()))){
+                        dto.setMsg("有产品没有上架");
+                    }else{
+                        dto.setMsg("有产品没有通过审核/上架");
+                    }
+                    return dto;
+                }
+            }
+        }
+        dto.setProductsList(productsList);
+        return dto;
     }
 }
