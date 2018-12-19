@@ -519,7 +519,7 @@ var vm = new Vue({
             if(vm.activeProlist.length == 0){
                 layer.alert('请选择要删除的产品');
             }else {
-                layer.confirm('确定修改吗？', function(index){
+                layer.confirm('确定删除吗？', function(index){
                     $.ajax({
                         url: '../../product/products/falsedeletion',
                         type: 'post',

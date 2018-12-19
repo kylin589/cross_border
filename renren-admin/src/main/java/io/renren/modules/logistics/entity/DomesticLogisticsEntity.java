@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -26,6 +27,10 @@ public class DomesticLogisticsEntity implements Serializable {
 	 * 订单id
 	 */
 	private Long orderId;
+	/**
+	 * 采购价
+	 */
+	private BigDecimal price;
 	/**
 	 * 运单号
 	 */
@@ -67,6 +72,15 @@ public class DomesticLogisticsEntity implements Serializable {
 	public Long getOrderId() {
 		return orderId;
 	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
 	/**
 	 * 设置：运单号
 	 */

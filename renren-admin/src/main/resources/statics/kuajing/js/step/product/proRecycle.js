@@ -736,8 +736,8 @@ var vm = new Vue({
                     // console.log(vm.activeProlist);
                     $.ajax({
                         url: '../../product/productrecycling/restore',
-                        type: 'get',
-                        data:JSON.stringify(vm.activeProlist)
+                        type: 'post',
+                        data:JSON.stringify({productIds:vm.activeProlist})
                         // 'productIds': JSON.stringify(vm.activeProlist)
                         ,
                         contentType: "application/json",
@@ -745,7 +745,7 @@ var vm = new Vue({
                             console.log(r);
                             if (r.code === 0) {
                                 layer.msg('操作成功');
-                                // vm.getPage();
+                                vm.getPage();
 
                             } else {
                                 layer.alert(r.msg);
@@ -759,8 +759,41 @@ var vm = new Vue({
                 });
 
             }
-        }
+        },
+        // 彻底删除
+        delCheDiFunc:function () {
+            vm.getProIDs();
+            if(vm.activeProlist.length == 0){
+                layer.alert('请选择要删除的产品');
+            }else{
+                layer.confirm('确定删除所选产品吗？<br> <span style="color: indianred;font-size:13px;">删除后无法恢复</span>', function(index){
+                    // console.log(vm.activeProlist);
+                    $.ajax({
+                        url: '../../product/productrecycling/batchdelete',
+                        type: 'post',
+                        data:JSON.stringify({productIds:vm.activeProlist})
+                        // 'productIds': JSON.stringify(vm.activeProlist)
+                        ,
+                        contentType: "application/json",
+                        success: function (r) {
+                            console.log('彻底删除');
+                            console.log(r);
+                            if (r.code === 0) {
+                                layer.msg('操作成功');
+                                vm.getPage();
 
+                            } else {
+                                layer.alert(r.msg);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
+                        }
+                    })
+
+                });
+            }
+        }
 
     },
     created: function () {

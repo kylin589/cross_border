@@ -52,6 +52,8 @@ var vm = new Vue({
         allOrderCount:0,
         //各状态订单个数
         orderStateList:[],
+        //异常订单
+        orderStateListyc:[],
         //订单列表
         prolist:[],
         // 当前页码
@@ -183,7 +185,7 @@ var vm = new Vue({
         },
         // 获取各状态订单数量
         getOrderStatenum:function (event) {
-            $(event.target).
+            // $(event.target).
             $.ajax({
                 url: '../../product/datadictionary/myOrderStateList',
                 type: 'get',
@@ -239,7 +241,13 @@ var vm = new Vue({
                                 r.orderStateList[i].color = 'red';
                             }
                         }
-                        vm.orderStateList=r.orderStateList;
+                        for (var i=0;i<r.orderStateList.length;i++){
+                            if(r.orderStateList[i].dataType == "ORDER_ABNORMAL_STATE"){
+                                vm.orderStateListyc.push(r.orderStateList[i]);
+                            }else {
+                                vm.orderStateList.push(r.orderStateList[i]);
+                            }
+                        }
                         console.log(vm.orderStateList);
                     } else {
                         layer.alert(r.message);

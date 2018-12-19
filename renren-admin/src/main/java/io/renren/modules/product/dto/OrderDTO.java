@@ -55,6 +55,10 @@ public class OrderDTO {
      */
     private String productSku;
     /**
+     * 产品标题
+     */
+    private String productTitle;
+    /**
      * 产品asin码
      */
     private String productAsin;
@@ -212,6 +216,14 @@ public class OrderDTO {
 
     public void setProductSku(String productSku) {
         this.productSku = productSku;
+    }
+
+    public String getProductTitle() {
+        return productTitle;
+    }
+
+    public void setProductTitle(String productTitle) {
+        this.productTitle = productTitle;
     }
 
     public String getProductAsin() {

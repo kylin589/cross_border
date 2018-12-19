@@ -88,16 +88,28 @@ public class RemarkEntity implements Serializable {
 		return remark;
 	}
 	/**
-	 * 设置：操作人
+	 * 设置：用户id
 	 */
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 	/**
-	 * 获取：操作人
+	 * 获取：用户id
 	 */
 	public Long getUserId() {
 		return userId;
+	}
+	/**
+	 * 获取：操作人
+	 */
+	public String getUserName() {
+		return userName;
+	}
+	/**
+	 * 设置：操作人
+	 */
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	/**
 	 * 设置：操作时间

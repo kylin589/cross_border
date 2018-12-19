@@ -51,8 +51,7 @@
         <div class="audit">
             <span>异常状态</span>
             <ul>
-                <li class="red active" @click="getOrderlist('')">全部 <span>({{ allOrderCount }})</span></li>
-                <li  v-for="item in orderStateList" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
+                <li  v-for="item in orderStateListyc" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
             </ul>
         </div>
 
@@ -93,7 +92,7 @@
         <tr v-for = 'item in prolist'>
             <td>{{ item.orderId }}<br/><span class="brSpan"><img src="../../statics/kuajing/img/american.png" alt=""> {{ item.country }}</span></td>
             <td class="imgtd"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
-            <td><a href="orderDetails.html">{{ item.amazonOrderId }}</a> <br/>
+            <td><a :href="'orderDetails.html?orderid='+item.orderId">{{ item.amazonOrderId }}</a> <br/>
                 <span class="brSpan">
                     <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
                     {{ item.shopName }}

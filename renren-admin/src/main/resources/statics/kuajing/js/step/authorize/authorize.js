@@ -205,14 +205,16 @@ var vm = new Vue({
                 btn1: function (index) {
                     $.ajax({
                         url: '../../amazon/amazongrant/update',
-                        type: 'get',
-                        data: {
+                        type: 'post',
+                        data: JSON.stringify({
                             amazonGrant:vm.amazonGrant
-                        },
-                        dataType: 'json',
+                        }),
+                        // dataType: 'json',
+                        contentType: "application/json",
                         success: function (r) {
                             console.log(r);
                             if (r.code === 0) {
+                                layer.msg("操作成功");
                                 layer.close(index)
                             } else {
                                 layer.alert(r.msg);

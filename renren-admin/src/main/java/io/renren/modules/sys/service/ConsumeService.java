@@ -16,5 +16,6 @@ import java.util.Map;
 public interface ConsumeService extends IService<ConsumeEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
 }
 

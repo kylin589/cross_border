@@ -1532,6 +1532,29 @@ var vm = new Vue({
             console.log(vm.proDetails.variantsInfos);
 
         },
+        // 一键修正SKU
+        skuChFunc:function () {
+            $.ajax({
+                type: 'get',
+                url: '../../product/products/modifySKU',
+                contentType: "application/json",
+                data: {productId:vm.id},
+                success: function (r) {
+                    console.log('修改sku');
+                    console.log(r);
+                    // console.log(vm.proDetails);
+                    if (r.code == 0) {
+                        vm.proDetails.productSku = r.SKU;
+                        layer.msg('修改成功');
+
+                        // window.location.href = document.referrer;
+
+                    } else {
+                        alert(r.msg);
+                    }
+                }
+            });
+        },
         // 返回
         returnFunc:function () {
             layer.confirm('确定返回吗？',function () {

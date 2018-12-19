@@ -88,8 +88,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         Map<String, Object> condition = new HashMap<>(1);
         condition.put("userId",userId);
         OrderStatisticsEntity orderCounts = baseMapper.statisticsOrderCounts(condition);
+        //核算订单数
+        int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
+        orderCounts.setOrderCounts(completeCounts);
         //退货数
-        int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+        int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
         orderCounts.setReturnCounts(returnCounts);
         Map<String, Object> map = new HashMap<>(2);
         map.put("page",pageUtils);
@@ -150,18 +153,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         PageUtils pageUtils = new PageUtils(page);
         OrderStatisticsEntity orderCounts = new OrderStatisticsEntity();
         Map<String, Object> condition = new HashMap<>(1);
-        if(deptId == 1){
+        if(deptId == 1L){
             //总公司
             orderCounts = baseMapper.statisticsOrderCounts(condition);
+            //核算订单数
+            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
+            orderCounts.setOrderCounts(completeCounts);
             //退货数
-            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
             orderCounts.setReturnCounts(returnCounts);
         }else{
             //加盟商
             condition.put("deptId",deptId);
             orderCounts = baseMapper.statisticsOrderCounts(condition);
+            //核算订单数
+            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
+            orderCounts.setOrderCounts(completeCounts);
             //退货数
-            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
             orderCounts.setReturnCounts(returnCounts);
         }
 
@@ -172,12 +181,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
-    public boolean updateState(@RequestParam Long orderId, @RequestParam String orderState) {
+    public boolean updateState(Long orderId, String orderState) {
         String orderStatus = dataDictionaryService.selectOne(
                 new EntityWrapper<DataDictionaryEntity>()
                         .eq("data_type","AMAZON_ORDER_STATE")
                         .eq("data_content",orderState)
         ).getDataNumber();
+        
         int flag = baseMapper.updateState(orderId,orderState,orderStatus);
         if(flag != 0){
             return true;
