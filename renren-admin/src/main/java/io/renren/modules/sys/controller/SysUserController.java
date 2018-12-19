@@ -73,7 +73,7 @@ public class SysUserController extends AbstractController {
 	public R list(@RequestParam Long deptId){
 		List<SysUserEntity> userList = new ArrayList<>();
 		if (getDeptId() == 1L){
-			if(deptId != null){
+			if(deptId != null && deptId != 0L){
 				userList = sysUserService.selectUserList(deptId);
 				return R.ok().put("userList", userList);
 			}else{

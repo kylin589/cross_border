@@ -2,9 +2,9 @@ package io.renren.modules.product.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.IService;
+import io.renren.common.utils.PageUtils;
 import io.renren.modules.product.entity.ProductsEntity;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +32,7 @@ public interface ProductsService extends IService<ProductsEntity> {
     /**
      * 所有产品列表
      * @param params url参数
-     * @param deptId 用户id
+     * @param deptId 公司id
      * @return Map<String,Object>
      * page 产品page
      * proCount 产品数量
@@ -43,6 +43,17 @@ public interface ProductsService extends IService<ProductsEntity> {
      * @date 2018-11-07 14:54:47
      */
     Map<String,Object> queryAllPage(Map<String,Object> params, Long deptId);
+
+    /**
+     * 认领产品列表
+     * @param params url参数
+     * @param deptId 公司id
+     * @return Map<String,Object>
+     * page 产品page
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
+    PageUtils queryClaimPage(Map<String,Object> params, Long deptId);
 
     /**
      * 产品回收站

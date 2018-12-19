@@ -15,6 +15,6 @@ import java.util.Map;
  */
 public interface ClaimService extends IService<ClaimEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(Map<String, Object> params,Long deptId);
 }
 

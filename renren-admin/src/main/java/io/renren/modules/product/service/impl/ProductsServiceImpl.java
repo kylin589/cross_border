@@ -7,7 +7,6 @@ import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.product.dao.ProductsDao;
-import io.renren.modules.product.entity.ImageAddressEntity;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.VariantsInfoEntity;
 import io.renren.modules.product.service.ImageAddressService;
@@ -17,7 +16,10 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author zjr
@@ -52,7 +54,6 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
-        // TODO: 2018/11/13 时间处理
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
@@ -110,7 +111,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param deptId 公司id
-     * @return Map<String                                                               ,                                                                                                                               O                                                               b                                                               ject>
+     * @return Map<String,Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -125,12 +126,12 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
-        // TODO: 2018/11/13 时间处理
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
+        String userId = (String)params.get("userId");
         //条件构造器拼接条件
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
         //管理员
@@ -143,6 +144,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
                     .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                     .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq(StringUtils.isNotBlank(userId),"create_user_id",userId)
                     .eq("is_deleted", 0)
                     .orderBy(true, "create_time", false)//时间排序
                     .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
@@ -156,6 +158,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
                     .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                     .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq(StringUtils.isNotBlank(userId),"create_user_id",userId)
                     .eq("dept_id", deptId)
                     .eq("is_deleted", 0)
                     .orderBy(true, "create_time", false)//时间排序
@@ -193,7 +196,65 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         map.put("variantsCount", variantsCount);
         return map;
     }
-
+    /**
+     * 认领产品列表
+     *
+     * @param params url参数
+     * @param deptId 公司id
+     * @return Map<String,Object>
+     * page 产品page
+     * @author zjr
+     * @date 2018-11-07 14:54:47
+     */
+    @Override
+    public PageUtils queryClaimPage(Map<String, Object> params, Long deptId) {
+        // 分类传过来的是三级分类的id
+        String category = (String) params.get("category");
+        String title = (String) params.get("title");
+        String sku = (String) params.get("sku");
+        String startDate = (String) params.get("startDate");
+        String endDate = (String) params.get("endDate");
+        String auditNumber = (String) params.get("auditNumber");
+        String shelveNumber = (String) params.get("shelveNumber");
+        String productNumber = (String) params.get("productNumber");
+        String userId = (String)params.get("userId");
+        //条件构造器拼接条件
+        EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
+        //管理员
+        if (deptId == 1) {
+            wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
+                    .like(StringUtils.isNotBlank(title), "product_title", title)
+                    .like(StringUtils.isNotBlank(sku), "product_sku", sku)
+                    .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                    .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
+                    .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                    .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq(StringUtils.isNotBlank(userId),"create_user_id",userId)
+                    .ne("product_type","007")
+                    .eq("is_deleted", 0)
+                    .orderBy(true, "create_time", false)//时间排序
+                    .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+        } else {
+            //加盟商
+            wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
+                    .like(StringUtils.isNotBlank(title), "product_title", title)
+                    .like(StringUtils.isNotBlank(sku), "product_sku", sku)
+                    .ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                    .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
+                    .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
+                    .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
+                    .eq(StringUtils.isNotBlank(userId),"create_user_id",userId)
+                    .ne("product_type","007")
+                    .eq("dept_id", deptId)
+                    .eq("is_deleted", 0)
+                    .orderBy(true, "create_time", false)//时间排序
+                    .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+        }
+        Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
+        return new PageUtils(page);
+    }
     /**
      * 产品回收站
      *

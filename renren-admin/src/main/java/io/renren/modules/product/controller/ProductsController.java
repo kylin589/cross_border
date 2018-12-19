@@ -1,6 +1,7 @@
 package io.renren.modules.product.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 
@@ -111,7 +112,21 @@ public class ProductsController extends AbstractController {
         Map<String, Object> map = productsService.queryAllPage(params, getDeptId());
         return R.ok().put("page", map.get("page")).put("proNum", map.get("proCount")).put("via", map.get("approvedCount")).put("variant", map.get("numberOfVariants")).put("allVariant", map.get("variantsCount"));
     }
-
+    /**
+     * @methodname: getClaimList 所有认领产品列表
+     * @param: [params]
+     * @return: io.renren.common.utils.R
+     * page 产品page
+     * 根据用户id查询没有被删除的产品，按时间降序排列
+     * @auther: jhy
+     * @date: 2018/11/29 19:32
+     */
+    @RequestMapping("/getClaimList")
+    public R getClaimList(@RequestParam Map<String, Object> params) {
+        //公司所有产品列表(认领产品不在其中)
+        PageUtils page = productsService.queryClaimPage(params,getDeptId());
+        return R.ok().put("page", page);
+    }
     /**
      * @return R
      * @methodname: 更改产品的审核、上架、产品状态

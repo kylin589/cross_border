@@ -7,7 +7,6 @@ package io.renren.modules.product.vm;
  */
 public class ClaimVM {
     private Long productId;
-    private Long deptId;
     private Long userId;
 
     public Long getProductId() {
@@ -16,14 +15,6 @@ public class ClaimVM {
 
     public void setProductId(Long productId) {
         this.productId = productId;
-    }
-
-    public Long getDeptId() {
-        return deptId;
-    }
-
-    public void setDeptId(Long deptId) {
-        this.deptId = deptId;
     }
 
     public Long getUserId() {
