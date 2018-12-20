@@ -51,6 +51,7 @@ form .item div:nth-child(2) .imgDiv>div{
     background: #000;
     border-radius: 3px;
     overflow: hidden;
+    box-shadow: 0 0 10px #ddd;
 }
 form .item div:nth-child(2) .imgDiv img{
     width: 130px;
@@ -489,4 +490,22 @@ table.tableY tr th,table.tableY tr td{
 }
 .tableV tr td input{
     width: 90px!important;
+}
+
+.selImg{
+    border: 0!important;
+    color: #00a3e8!important;
+    cursor: pointer;
+
+}
+.selImg:hover{
+    background: none!important;
+    color: #00a3e8!important;
+}
+
+.el-icon-zoom-in{
+    display: none;
+}
+.el-upload-list--picture-card .el-upload-list__item-status-label{
+    display: none!important;
 }

@@ -33,7 +33,7 @@
             <el-option
                     v-for="item in allYUanG"
                     :key="item.userId"
-                    :label="item.username"
+                    :label="item.displayName"
                     :value="item.userId">
             </el-option>
         </el-select>
@@ -133,13 +133,13 @@
         </el-select>
 
         <!--统计-->
-        <div class="statistics">
-            产品数量: <span>{{ statistics.proNum }}</span>
-            审核通过: <span>{{ statistics.via }}</span>
-            含变体产品数: <span>{{ statistics.variant }}</span>
-            变体总数: <span>{{ statistics.allVariant }}</span>
+        <!--<div class="statistics">-->
+            <!--产品数量: <span>{{ statistics.proNum }}</span>-->
+            <!--审核通过: <span>{{ statistics.via }}</span>-->
+            <!--含变体产品数: <span>{{ statistics.variant }}</span>-->
+            <!--变体总数: <span>{{ statistics.allVariant }}</span>-->
 
-        </div>
+        <!--</div>-->
     </div>
 
 
