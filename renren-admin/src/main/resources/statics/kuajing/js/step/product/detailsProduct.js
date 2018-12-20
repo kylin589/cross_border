@@ -275,7 +275,12 @@ window.onload = function() {
                 }
             }
         },30);
-    }
+    };
+
+
+    $('.selImg').change(function(){
+        console.log($('.selImg')[0].files)
+    })
 
 }
 
@@ -529,6 +534,7 @@ var vm = new Vue({
         },
         // 图片上传失败
         upErrorFunc:function (file) {
+            console.log(file);
             layer.msg('上传失败')
         },
         // 删除上传图片

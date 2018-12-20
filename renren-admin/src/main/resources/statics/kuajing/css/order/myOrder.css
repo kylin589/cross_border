@@ -216,7 +216,7 @@ table tr td img{
     border-radius: 3px;
     box-shadow: 0 0 10px #eee;
 }
-td:nth-child(7) span{
+td:nth-child(8) span{
     display: inline-block;
     text-align: center;
     padding: 2px;
@@ -248,10 +248,10 @@ td span.brSpan{
     color: #888;
     font-size: 13px;
 }
-tr td:nth-child(1) span.brSpan img{
+tr td:nth-child(2) span.brSpan img{
     width: 25px;
 }
-tr td:nth-child(3) span.brSpan img{
+tr td:nth-child(4) span.brSpan img{
     width: 15px;
 }
 span.red{
