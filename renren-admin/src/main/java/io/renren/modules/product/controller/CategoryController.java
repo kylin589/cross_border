@@ -1,26 +1,21 @@
 package io.renren.modules.product.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.R;
+import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.product.entity.CategoryEntity;
+import io.renren.modules.product.entity.ProductsEntity;
+import io.renren.modules.product.service.CategoryService;
+import io.renren.modules.product.service.ProductsService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import io.renren.common.validator.ValidatorUtils;
-import io.renren.modules.product.entity.ProductsEntity;
-import io.renren.modules.product.service.ProductsService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.product.entity.CategoryEntity;
-import io.renren.modules.product.service.CategoryService;
-import io.renren.common.utils.PageUtils;
-import io.renren.common.utils.R;
 
 
 /**
@@ -131,12 +126,12 @@ public class CategoryController {
         Map<String, Object> map = new HashMap<>();
         map.put("parent_id", 0);
         List<CategoryEntity> parentList = categoryService.selectByMap(map);
-        for (CategoryEntity categoryEntity : parentList) {
+        /*for (CategoryEntity categoryEntity : parentList) {
             //根据分类id查出一级分类产品总数
             int oneCategoryProductCount = productsService.selectCount(new EntityWrapper<ProductsEntity>().eq("category_one_id", categoryEntity.getCategoryId()).eq("is_deleted", del));
             categoryEntity.setCount(oneCategoryProductCount);
             categoryEntity.setIfNext("true");
-        }
+        }*/
         return R.ok().put("categoryOneList", parentList);
     }
 
@@ -152,12 +147,12 @@ public class CategoryController {
         //根据分类的父级id查出子类分类
         List<CategoryEntity> parentLists = categoryService.selectList(new EntityWrapper<CategoryEntity>().eq("parent_id", categoryId));
         for (CategoryEntity categoryEntity : parentLists) {
-            int temp = categoryService.selectCount(new EntityWrapper<CategoryEntity>().eq("parent_id", categoryEntity.getCategoryId()));
+            /*int temp = categoryService.selectCount(new EntityWrapper<CategoryEntity>().eq("parent_id", categoryEntity.getCategoryId()));
             if (temp==0){
                 categoryEntity.setIfNext("false");
             }else{
                 categoryEntity.setIfNext("true");
-            }
+            }*/
             //父类分类id查子类没有删除的产品总和
             int childCategoryProductCount = productsService.selectCount(new EntityWrapper<ProductsEntity>().eq("category_two_id", categoryEntity.getCategoryId()).or().eq("category_three_id", categoryEntity.getCategoryId()).eq("is_deleted", del));
             categoryEntity.setCount(childCategoryProductCount);

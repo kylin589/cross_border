@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 
@@ -26,6 +25,10 @@ public class AmazonCategoryHistoryEntity implements Serializable {
 	 * 
 	 */
 	private Long amazonCategoryId;
+	/**
+	 * 亚马逊分类
+	 */
+	private String amazonAllCategory;
 	/**
 	 * 亚马逊分类
 	 */
@@ -61,6 +64,15 @@ public class AmazonCategoryHistoryEntity implements Serializable {
 	public Long getAmazonCategoryId() {
 		return amazonCategoryId;
 	}
+
+	public String getAmazonAllCategory() {
+		return amazonAllCategory;
+	}
+
+	public void setAmazonAllCategory(String amazonAllCategory) {
+		this.amazonAllCategory = amazonAllCategory;
+	}
+
 	/**
 	 * 设置：亚马逊分类
 	 */
