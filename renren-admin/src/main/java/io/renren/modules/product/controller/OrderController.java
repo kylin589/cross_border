@@ -109,7 +109,14 @@ public class OrderController extends AbstractController{
                 new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderId)
         );
         orderDTO.setDomesticLogisticsList(domesticLogisticsList);
-        // TODO: 2018/12/11 国际物流
+        //国际物流
+        AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
+        if(abroadLogistics == null){
+            orderDTO.setAbroadLogistics(new AbroadLogisticsEntity());
+        }else{
+            orderDTO.setAbroadLogistics(abroadLogistics);
+        }
+
         BigDecimal momentRate = orderEntity.getMomentRate();
         orderDTO.setMomentRate(momentRate);
         //判断订单异常状态——不属于退货
@@ -137,6 +144,13 @@ public class OrderController extends AbstractController{
                 BigDecimal purchasePrice = orderEntity.getPurchasePrice();
                 orderDTO.setPurchasePrice(purchasePrice);
                 // TODO: 2018/12/15  国际运费()\平台佣金(platformCommissions)\利润(orderProfit)
+                //国际运费
+                BigDecimal interFreight = orderEntity.getInterFreight();
+                //平台佣金
+                BigDecimal platformCommissions = orderEntity.getPlatformCommissions();
+                //利润
+                BigDecimal orderProfit = orderEntity.getOrderProfit();
+
             }else {
                 //属于取消订单不处理
                 if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(orderStatus)){
@@ -177,12 +191,15 @@ public class OrderController extends AbstractController{
             orderDTO.setAccountMoney(accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
             //平台佣金设置为0.00
             orderDTO.setPlatformCommissions(new BigDecimal(0.00));
-            //TODO: 国际运费
+            //国际运费
+            BigDecimal interFreight = orderEntity.getInterFreight();
+            orderDTO.setInterFreight(interFreight);
             //退货费用
             BigDecimal returnCost = orderEntity.getReturnCost();
             orderDTO.setReturnCost(returnCost);
             //利润
-            accountMoneyForeign.multiply(momentRate).subtract(returnCost).setScale(2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal orderProfit = accountMoneyForeign.multiply(momentRate).subtract(returnCost).setScale(2,BigDecimal.ROUND_HALF_UP);
+            orderDTO.setOrderProfit(orderProfit);
         }
         List<RemarkEntity> remarkList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","reamrk").eq("order_id",orderId));
         List<RemarkEntity> logList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","log").eq("order_id",orderId));
