@@ -1,5 +1,6 @@
 package io.renren.modules.product.dto;
 
+import io.renren.modules.logistics.entity.AbroadLogisticsEntity;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.entity.RemarkEntity;
@@ -81,7 +82,7 @@ public class OrderDTO {
     /**
      * 国际物流
      */
-    // TODO: 2018/12/10 国际物流
+    private AbroadLogisticsEntity abroadLogistics;
     /**
      * 当天汇率
      */
@@ -368,5 +369,13 @@ public class OrderDTO {
 
     public void setLogList(List<RemarkEntity> logList) {
         this.logList = logList;
+    }
+
+    public AbroadLogisticsEntity getAbroadLogistics() {
+        return abroadLogistics;
+    }
+
+    public void setAbroadLogistics(AbroadLogisticsEntity abroadLogistics) {
+        this.abroadLogistics = abroadLogistics;
     }
 }
