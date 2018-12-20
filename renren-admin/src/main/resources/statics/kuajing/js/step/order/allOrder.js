@@ -52,6 +52,8 @@ var vm = new Vue({
         allOrderCount:0,
         //各状态订单个数
         orderStateList:[],
+        //异常订单
+        orderStateListyc:[],
         //订单列表
         prolist:[],
         // 当前页码
@@ -83,7 +85,9 @@ var vm = new Vue({
             purchase:238175,
             refund:123,
             refundCost:-2378.23
-        }
+        },
+        yichangList:[],
+        yichangListValue:'',
     },
     methods:{
         // addOrder:function () {
@@ -235,8 +239,15 @@ var vm = new Vue({
                             if(r.orderStateList[i].dataContent == "问题"){
                                 r.orderStateList[i].color = 'red';
                             }
+
                         }
-                        vm.orderStateList=r.orderStateList;
+                        for (var i=0;i<r.orderStateList.length;i++){
+                            if(r.orderStateList[i].dataType == "ORDER_ABNORMAL_STATE"){
+                                vm.orderStateListyc.push(r.orderStateList[i]);
+                            }else {
+                                vm.orderStateList.push(r.orderStateList[i]);
+                            }
+                        }
                         console.log(vm.orderStateList);
                     } else {
                         layer.alert(r.message);
@@ -268,12 +279,40 @@ var vm = new Vue({
         imgMouout:function () {
             $('img.bigImg').remove();
             $('.bigImgDiv').css('display','none');
+        },
+        // 获取异常状态列表
+        getYichangList:function () {
+            $.ajax({
+                url: '../../product/datadictionary/getAbnormalStateList',
+                type: 'post',
+                data: '',
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.yichangList = r.abnormalStateList;
+                        vm.yichangList.unshift({
+                            userId:'',
+                            displayName:'-选择-'
+                        })
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        allSel:function () {
+
         }
     },
     created:function () {
         this.getOrderlist('');
         // this.laypage();
         this.getOrderStatenum();
+        this.getYichangList();
 
     }
 })

@@ -69,7 +69,7 @@
                     :value="item.dataNumber">
             </el-option>
         </el-select>
-
+        <span @click="updateAbnormalState">确定</span>
         <!--统计-->
         <div class="statistics">
             核算订单数: <span>{{ statistics.orderNum }}</span>
@@ -86,8 +86,7 @@
     <table>
         <tr>
             <th>
-                <input type="checkbox">
-
+                <input type="checkbox"  v-model='isok' @click='demo'>
             </th>
             <th>订单号</th>
             <th>图片</th>
@@ -100,9 +99,9 @@
             <th>国内运单</th>
             <th>下单时间</th>
         </tr>
-        <tr v-for = 'item in prolist'>
-            <td>
-                <input type="checkbox" @click="allSel">
+        <tr v-for = '(item,index) in prolist'>
+            <td class="orderchenc">
+                <input type="checkbox" :value='item.orderid' v-model='allcheck[index]' @change='demo2(item.orderId)'>
             </td>
             <td>
                 {{ item.orderId }}<br/>
