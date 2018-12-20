@@ -78,8 +78,8 @@ form>p>input.save{
     color: #fff;
     /*margin-right: 10px;*/
     font-size: 13px;
-
     margin-right: 10px;
+    cursor: pointer;
 }
 
 form>p>input.return{
@@ -124,6 +124,7 @@ form .item>div:nth-child(2) input[type=button]{
     background: none;
     margin-right: 10px;
     font-size: 13px;
+    cursor: pointer;
 }
 form .item>div:nth-child(2) input[type=button]:hover , form .item>div:nth-child(2) input[type=button]:active {
     border: 1.5px solid #fff;
@@ -295,10 +296,12 @@ form .chengben label{
     padding: 4px;
     border: 1px solid transparent;
     margin: 3px;
+    cursor: pointer;
 }
 .tankuang ul li img{
     width: 100%;
     border-radius: 3px;
+    box-shadow: 0 0 10px #ddd;
 }
 .tankuang ul li.action{
     border-color: #00a3e8;
@@ -508,4 +511,17 @@ table.tableY tr th,table.tableY tr td{
 }
 .el-upload-list--picture-card .el-upload-list__item-status-label{
     display: none!important;
+}
+#imgBigDiv{
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    padding: 10px;
+    background: #fff;
+    box-shadow: 0 0 10px #ccc;
+    border-radius: 5px;
+    z-index: 100000000000;
+}
+#imgBigDiv img{
+    width: 100%;
 }

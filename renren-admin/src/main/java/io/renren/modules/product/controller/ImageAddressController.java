@@ -108,7 +108,8 @@ public class ImageAddressController extends AbstractController {
         // 获取上传文件的后缀名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));
         // 文件上传后是保存在本地的路径
-        String filePath = "E:/test/";
+        String filePath = "/bilinlin/Desktop/cross_border/test/";
+//        String filePath = "E:/test/";
 
         String url = productId + "/" + fileName;
         //文件上传的位置
