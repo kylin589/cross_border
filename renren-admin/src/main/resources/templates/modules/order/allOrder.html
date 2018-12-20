@@ -70,6 +70,7 @@
                     :value="item.dataNumber">
             </el-option>
         </el-select>
+        <span @click="updateAbnormalState">确定</span>
         <!--统计-->
         <div class="statistics" style="width: 100%">
             核算订单数: <span>{{ statistics.orderNum }}</span>
@@ -87,8 +88,7 @@
     <table>
         <tr>
             <th>
-                <input type="checkbox">
-
+                <input type="checkbox"  v-model='isok' @click='demo'>
             </th>
             <th>订单号</th>
             <th>图片</th>
@@ -101,13 +101,13 @@
             <th>国内运单</th>
             <th>下单时间</th>
         </tr>
-        <tr v-for = 'item in prolist'>
+        <tr v-for = '(item,index) in prolist'>
             <td>
-                <input type="checkbox" @click="allSel" :value="item.orderId">
+                <input type="checkbox" :value='item.orderid' v-model='allcheck[index]' @change='demo2(item.orderId)'>
             </td>
             <td>{{ item.orderId }}<br/><span class="brSpan"><img src="../../statics/kuajing/img/american.png" alt=""> {{ item.country }}</span></td>
             <td class="imgtd"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
-            <td><a href="orderDetails.html">{{ item.amazonOrderId }}</a> <br/>
+            <td><a :href="'orderDetails.html?orderid='+item.orderId">{{ item.amazonOrderId }}</a> <br/>
                 <span class="brSpan">
                     <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
                     {{ item.shopName }}
