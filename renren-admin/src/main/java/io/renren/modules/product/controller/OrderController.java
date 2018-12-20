@@ -18,6 +18,8 @@ import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.vm.OrderVM;
 import io.renren.modules.sys.controller.AbstractController;
+import io.renren.modules.sys.entity.SysDeptEntity;
+import io.renren.modules.sys.service.SysDeptService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +54,8 @@ public class OrderController extends AbstractController{
     private RemarkService remarkService;
     @Autowired
     private ProductsService productsService;
+    @Autowired
+    private SysDeptService deptService;
     /**
      * 我的订单
      */
@@ -139,18 +143,31 @@ public class OrderController extends AbstractController{
                 //到账金额
                 BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
                 orderDTO.setAccountMoneyForeign(accountMoneyForeign);
-                orderDTO.setAccountMoney(accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                BigDecimal accountMoney = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
+                orderDTO.setAccountMoney(accountMoney);
                 //采购价
                 BigDecimal purchasePrice = orderEntity.getPurchasePrice();
                 orderDTO.setPurchasePrice(purchasePrice);
                 // TODO: 2018/12/15  国际运费()\平台佣金(platformCommissions)\利润(orderProfit)
                 //国际运费
                 BigDecimal interFreight = orderEntity.getInterFreight();
+                orderDTO.setInterFreight(interFreight);
                 //平台佣金
                 BigDecimal platformCommissions = orderEntity.getPlatformCommissions();
+                if(platformCommissions.compareTo(new BigDecimal(0.00)) == 0){
+                    BigDecimal companyPoint = deptService.selectById(orderEntity.getDeptId()).getCompanyPoints();
+                    platformCommissions = accountMoney.multiply(companyPoint).setScale(2,BigDecimal.ROUND_HALF_UP);
+                    orderEntity.setPlatformCommissions(platformCommissions);
+                }
+                orderDTO.setPlatformCommissions(platformCommissions);
                 //利润
                 BigDecimal orderProfit = orderEntity.getOrderProfit();
-
+                if(orderProfit.compareTo(new BigDecimal(0.00)) == 0){
+                    //到账-国际运费-采购价-平台佣金
+                    orderProfit = accountMoneyForeign.multiply(momentRate).subtract(purchasePrice).subtract(interFreight).setScale(2,BigDecimal.ROUND_HALF_UP);
+                    orderEntity.setOrderProfit(orderProfit);
+                }
+                orderDTO.setOrderProfit(orderProfit);
             }else {
                 //属于取消订单不处理
                 if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(orderStatus)){
@@ -189,8 +206,9 @@ public class OrderController extends AbstractController{
             BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
             orderDTO.setAccountMoneyForeign(accountMoneyForeign);
             orderDTO.setAccountMoney(accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
-            //平台佣金设置为0.00
-            orderDTO.setPlatformCommissions(new BigDecimal(0.00));
+            //平台佣金
+            BigDecimal platformCommissions = orderEntity.getPlatformCommissions();
+            orderDTO.setPlatformCommissions(platformCommissions);
             //国际运费
             BigDecimal interFreight = orderEntity.getInterFreight();
             orderDTO.setInterFreight(interFreight);
@@ -198,7 +216,7 @@ public class OrderController extends AbstractController{
             BigDecimal returnCost = orderEntity.getReturnCost();
             orderDTO.setReturnCost(returnCost);
             //利润
-            BigDecimal orderProfit = accountMoneyForeign.multiply(momentRate).subtract(returnCost).setScale(2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal orderProfit = orderEntity.getOrderProfit();
             orderDTO.setOrderProfit(orderProfit);
         }
         List<RemarkEntity> remarkList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","reamrk").eq("order_id",orderId));
@@ -250,6 +268,21 @@ public class OrderController extends AbstractController{
     public R updateState(@RequestBody OrderVM orderVM){
         boolean flag = orderService.updateState(orderVM.getOrderId(),orderVM.getOrderState());
         if(flag){
+            //添加操作日志
+            RemarkEntity remark = new RemarkEntity();
+            remark.setOrderId(orderVM.getOrderId());
+            remark.setType("log");
+            if("已采购".equals(orderVM.getOrderState())){
+                remark.setRemark("订单已采购");
+            }else if("待签收".equals(orderVM.getOrderState())){
+                remark.setRemark("订单已发货");
+            }else if("完成".equals(orderVM.getOrderState())){
+                remark.setRemark("订单已完成");
+            }
+            remark.setUserId(getUserId());
+            remark.setUserName(getUser().getDisplayName());
+            remark.setUpdateTime(new Date());
+            remarkService.insert(remark);
             return R.ok();
         }
         return R.error();
@@ -271,11 +304,16 @@ public class OrderController extends AbstractController{
      */
     @RequestMapping("/createAbroadWaybill")
     public R createAbroadWaybill(@RequestBody OrderVM orderVM){
+        //获取可用余额
+        SysDeptEntity dept = deptService.selectById(getDeptId());
+        if(dept.getAvailableBalance().compareTo(new BigDecimal(50.00)) != 1){
+            return R.error("余额不足，请联系公司管理员及时充值后再次尝试");
+        }
         Long orderId = orderVM.getOrderId();
         Random random = new Random();
         StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("YT");
-        for (int i = 0; i < 16; i++) {
+        stringBuffer.append("YT2");
+        for (int i = 0; i < 15; i++) {
             stringBuffer.append(random.nextInt(10));
         }
         //生成国际物流单号

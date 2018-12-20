@@ -2,7 +2,9 @@ package io.renren.modules.product.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.sys.entity.SysUserEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,5 +40,13 @@ public interface OrderService extends IService<OrderEntity> {
      * 修改异常状态
      */
     boolean updateAbnormalState(Long[] orderIds, String abnormalStatus, String abnormalState);
+    /**
+     * 取消订单
+     */
+    void cancleOrder(String amazonOrderId);
+    /**
+     * 更新订单列表
+     */
+    void updateOrder(SysUserEntity user, List<OrderEntity> objList);
 }
 
