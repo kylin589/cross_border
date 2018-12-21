@@ -453,6 +453,7 @@ var vm = new Vue({
                         console.log(r);
                         if (r.code === 0) {
                             layer.alert('添加成功');
+                            console.log(r);
                             vm.getOrderInfo();
                         } else {
                             layer.alert(r.msg);

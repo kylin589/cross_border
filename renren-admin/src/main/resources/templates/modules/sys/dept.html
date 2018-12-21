@@ -3,6 +3,7 @@
 <head>
 <title>公司管理</title>
 <#include "/header.html">
+<#include "/header_kuajing.html">
 <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap-table.min.css">
 <link rel="stylesheet" href="${request.contextPath}/statics/plugins/treegrid/jquery.treegrid.css">
 	<link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/sys/gongsi.css" media="all">
@@ -11,6 +12,11 @@
 <script src="${request.contextPath}/statics/plugins/treegrid/jquery.treegrid.bootstrap3.js"></script>
 <script src="${request.contextPath}/statics/plugins/treegrid/jquery.treegrid.extension.js"></script>
 <script src="${request.contextPath}/statics/plugins/treegrid/tree.table.js"></script>
+	<style>
+		.el-select-dropdown{
+			z-index:2000000000!important;
+		}
+	</style>
 </head>
 <body>
 <div id="rrapp" v-cloak>
@@ -24,6 +30,12 @@
 			</#if>
 			<#if shiro.hasPermission("sys:dept:delete")>
 			<a class="btn del" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+			<#if shiro.hasPermission("sys:dept:update")>
+				<a class="btn up" @click="hebingfunc"><i class="fa fa-compress"></i></i>&nbsp;合并</a>
+			</#if>
+			<#if shiro.hasPermission("sys:dept:delete")>
+				<a class="btn del" @click=""><i class="fa fa-expand"></i>&nbsp;分离</a>
 			</#if>
 		</div>
 		<table id="deptTable" data-mobile-responsive="true" data-click-to-select="true">
@@ -47,6 +59,30 @@
             <label for="">备注：</label>
             <input type="text" placeholder="备注" v-model="chongzhiData.remark">
         </span>
+	</div>
+	<!--合并弹框-->
+	<div id="hebing" style="display: none">
+		<h3>合并</h3>
+		<label for="">选择合并公司：</label>
+		<el-select v-model="allGongsiValue" filterable placeholder="请选择公司">
+			<el-option
+					v-for="item in allGongsi"
+					:key="item.deptId"
+					:label="item.name"
+					:value="item.deptId"
+			>
+			</el-option>
+		</el-select>
+
+		<!--<span>-->
+			<!--<label for="">充值金额：</label>-->
+			<!--<input type="text" placeholder="充值金额" v-model="chongzhiData.money">-->
+		<!--</span>-->
+		<!--<br>-->
+		<!--<span>-->
+            <!--<label for="">备注：</label>-->
+            <!--<input type="text" placeholder="备注" v-model="chongzhiData.remark">-->
+        <!--</span>-->
 	</div>
 
 </div>

@@ -112,12 +112,22 @@
                     <h4>授权店铺</h4>
                 </div>
                 <div class="pro_inf">
-                    <select name="marketplace" id="marketplace" class="form-control" style="width: 200px" v-model="shopinfo">
-                        <option value="">选择</option>
-                        <option v-for="item in marketplace" :value="item">
-                            {{ item.shopName }}
-                        </option>
-                    </select>
+                    <!--<select name="marketplace" id="marketplace" class="form-control" style="width: 200px" v-model="shopinfo">-->
+                        <!--<option value="">选择</option>-->
+                        <!--<option v-for="item in marketplace" :value="item">-->
+                            <!--{{ item.shopName }}-->
+                        <!--</option>-->
+                    <!--</select>-->
+
+                    <el-select v-model="shopinfo" placeholder="请选择员工">
+                        <el-option
+                                v-for="item in marketplace"
+                                :key="item"
+                                :label="item.shopName"
+                                :value="item">
+                        </el-option>
+                    </el-select>
+
                     <span></span>
 
                 </div>

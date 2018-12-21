@@ -1169,5 +1169,10 @@ var vm = new Vue({
         this.getCouList();
 
 
+    },
+    updated:function () {
+        $('.pro_list').css('display','block');
+        var _width = $('.pro_list .item img').width();
+        $('.pro_list .item img').css('height',_width+'px');
     }
 })

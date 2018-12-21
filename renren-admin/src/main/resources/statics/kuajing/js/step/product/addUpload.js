@@ -174,7 +174,7 @@ var vm = new Vue({
             console.log(vm.operateItem);
             vm.grantShopId = vm.shopinfo.grantShopId;
             vm.grantShop = vm.shopinfo.shopName;
-            console.log(vm);
+            console.log(vm.grantShopId);
             $.ajax({
                 url: '../../product/upload/addUpload',
                 type: 'post',

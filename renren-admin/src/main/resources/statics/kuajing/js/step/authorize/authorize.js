@@ -21,7 +21,8 @@ var vm = new Vue({
         area:'',
         merchantId:'',
         grantToken:'',
-        amazonGrant:{}
+        amazonGrant:{},
+        totalCount:'',
     },
     methods:{
         addShouq:function () {
@@ -154,6 +155,7 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         vm.authorizeList=r.page.list;
+                        vm.totalCount = r.page.totalCount;
                     } else {
                         layer.alert(r.message);
                     }

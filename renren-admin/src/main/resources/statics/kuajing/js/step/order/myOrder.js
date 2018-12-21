@@ -344,7 +344,7 @@ var vm = new Vue({
         updateAbnormalState:function () {
             console.log(vm.yichangListValue);
             for (var i =0;i<vm.yichangList.length;i++){
-                if (vm.yichangListValue = vm.yichangList[i].dataNumber) {
+                if (vm.yichangListValue == vm.yichangList[i].dataNumber) {
                     vm.abnormalStatus = vm.yichangList[i].dataNumber;
                     vm.abnormalState = vm.yichangList[i].dataContent;
                 }
@@ -390,6 +390,10 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         vm.shopList = r.shopList;
+                        vm.shopList.unshift({
+                            // userId:'1-1',
+                            shopName:''
+                        })
                     } else {
                         layer.alert(r.msg);
                     }

@@ -9,6 +9,16 @@
         .layui-col-md3{
             width: 20%;
         }
+        .stateBtn{
+            display: inline-block;
+            height: 32px;
+            line-height: 35px;
+            padding: 0 10px;
+            margin-left: 10px;
+            background: #00aee3;
+            color: #fff;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
@@ -16,10 +26,20 @@
 
     <!--搜索区域-->
     <div class="search1">
-        <select name="remark_type" class="sousuoAreaInput" v-model="shopName">
-            <option value="" selected="selected">店铺名称</option>
-            <option :value="item.shopName" v-for="item in shopList">{{item.shopName}}</option>
-        </select>
+        <!--<select name="remark_type" class="sousuoAreaInput" v-model="shopName">-->
+            <!--<option value="" selected="selected">店铺名称</option>-->
+            <!--<option :value="item.shopName" v-for="item in shopList">{{item.shopName}}</option>-->
+        <!--</select>-->
+
+        <el-select v-model="shopName" placeholder="请选择店铺">
+            <el-option
+                    v-for="item in shopList"
+                    :key="item.shopName"
+                    :label="item.shopName"
+                    :value="item.shopName">
+            </el-option>
+        </el-select>
+
         <input type="text" placeholder="订单id" v-model="orderId">
         <input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">
         <input type="text" class="sousuoAreaInput" placeholder="关联产品id" v-model="productId">
@@ -64,7 +84,8 @@
 
     <!--操作区域-->
     <div class="operation">
-        <el-select v-model="yichangListValue" placeholder="请选择员工" >
+        <label for="" style="color: #666;font-weight: bold;">选中项：</label>
+        <el-select v-model="yichangListValue" placeholder="请选择状态" >
             <el-option
                     v-for="item in yichangList"
                     :key="item.dataNumber"
@@ -72,7 +93,7 @@
                     :value="item.dataNumber">
             </el-option>
         </el-select>
-        <span @click="updateAbnormalState">确定</span>
+        <span class="stateBtn" v-if="yichangListValue!=''" @click="updateAbnormalState" style="">确定</span>
         <!--统计-->
         <div class="statistics">
             核算订单数: <span>{{ statistics.orderNum }}</span>
@@ -98,6 +119,7 @@
             <th>成本（￥）</th>
             <th>利润（￥）</th>
             <th>状态</th>
+            <th>异常状态</th>
             <th>国际运单</th>
             <th>国内运单</th>
             <th>下单时间</th>
@@ -155,6 +177,9 @@
                 <span v-if="item.orderState == '待签收'||item.orderState == '补发'" class="bule1">
                     {{ item.orderState }}
                 </span>
+            </td>
+            <td>
+                <span style="padding: 2px 6px;border-radius: 3px;background: #ff6154;color: #fff;">{{item.abnormalStatus}}</span>
             </td>
             <td>{{ item.abroadWaybill }}</td>
             <td>{{ item.domesticWaybill }}</td>

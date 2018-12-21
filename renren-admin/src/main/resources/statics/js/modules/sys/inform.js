@@ -1,33 +1,37 @@
-window.onload = function (ev) {
-    var rows = document.getElementsByTagName('tr');//取得行
-    for(var i=0 ;i<rows.length; i++)
-    {
-        if(i != 0){
-            rows[i].onmouseover = function(){//鼠标移上去,添加一个类'hilite'
-                this.className += 'hilite';
-            }
-            rows[i].onmouseout = function(){//鼠标移开,改变该类的名称
-                this.className = this.className.replace('hilite','');
-            }
-        }
-
-    }
-}
-
-
-
 var vm = new Vue({
-    el:'#step',
+    el:'#LAY_app',
     data:{
         // 当前页码
         proCurr:1,
         // 每页数量限制
         pageLimit:12,
-        prolist:[],
-        // 总页数
         totalCount:'',
+        informList:[{
+            id:1,
+            type:'订单消息',
+            con:'订单消息订单消息订单消息订单消息',
+            date:'2018-10-11 10:00:00'
+        },{
+            id:2,
+            type:'产品消息',
+            con:'订单消息订单消息订单消息订单消息',
+            date:'2018-11-10 12:10:10'
+        },{
+            id:3,
+            type:'订单消息',
+            con:'订单消息订单消息订单消息订单消息',
+            date:'2018-10-11 11:00:20'
+        },{
+            id:4,
+            type:'产品消息',
+            con:'订单消息订单消息订单消息订单消息',
+            date:'2018-11-10 10:30:30'
+        }],
+
+
     },
-    methods:{
+    methods: {
+
         // 分页器
         laypage: function () {
             // var tempTotalCount;
@@ -54,42 +58,31 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getMyUploadList();
+                            vm.getauthorizeList();
                         }
                     }
                 });
             });
         },
-        //上传列表
-        getMyUploadList:function () {
-            $.ajax({
-                url: '../../product/upload/getMyUploadList',
-                type: 'post',
-                data: JSON.stringify({
-                    page:this.proCurr,
-                    limit:this.pageLimit
-                }),
-                dataType: 'json',
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        vm.prolist = r.page.list;
-                        vm.totalCount = r.page.totalCount;
-                    } else {
-                        layer.alert(r.msg);
-                    }
 
+        // 获取消息列表
+        getInformList: function (event) {
 
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
-            });
-        }
+        },
+
     },
-    created:function () {
-
-        this.getMyUploadList();
+    created: function(){
+        this.getInformList();
         this.laypage();
+    },
+    updated: function(){
+        //路由
+        // var router = new Router();
+        // routerList(router, vm.menuList);
+        // router.start();
+        // console.log(vm.main);
+        // if(vm.main == 'modules/sys/inform.html'){
+        // 	$('.layui-badge-dot1').css('display','none');
+        // }
     }
-})
+});
