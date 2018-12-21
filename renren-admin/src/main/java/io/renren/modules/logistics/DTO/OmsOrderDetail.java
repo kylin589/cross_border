@@ -1,4 +1,4 @@
-package io.renren.modules.logistics.DTO;
+package io.renren.modules.logistics.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;

@@ -1,7 +1,6 @@
-package io.renren.modules.logistics.DTO;
+package io.renren.modules.logistics.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @Auther: wdh
@@ -22,7 +21,7 @@ public class OmsOrder {
     /**
      * 订单时间
      */
-    public Date order_date;
+    public String order_date;
     /**
      * 总利润额
      */
@@ -38,7 +37,7 @@ public class OmsOrder {
     /**
      * 送货地址
      */
-    public String delivery_address;
+    public String delivery_address = null;
     /**
      * 国家英文简称
      */
@@ -67,11 +66,11 @@ public class OmsOrder {
         this.order_currency = order_currency;
     }
 
-    public Date getOrder_date() {
+    public String getOrder_date() {
         return order_date;
     }
 
-    public void setOrder_date(Date order_date) {
+    public void setOrder_date(String order_date) {
         this.order_date = order_date;
     }
 
