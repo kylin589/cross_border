@@ -189,16 +189,16 @@
                             <ul class="operationLog">
                                 <li v-for="item in orderDetails.remarkList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark }}</span></li>
                             </ul>
-                            <textarea placeholder="留言备注" style="margin-bottom: 10px"></textarea>
+                            <textarea placeholder="留言备注" style="margin-bottom: 10px" v-model="remark"></textarea>
                             <br>
-                            <select id="remark_type" name="remark_type" class="form-control">
-                                <option value="1" selected="selected">内部备注</option>
-                                <option value="addr">收件人地址异常</option>
-                                <option value="purchase">采购异常</option>
-                                <option value="express">国内快递异常</option>
-                                <option value="waybill">国际物流异常</option>
+                            <select id="remark_type" name="remark_type" class="form-control" v-model="remarkType">
+                                <option value="" selected="selected">内部备注</option>
+                                <option value="收件人地址异常">收件人地址异常</option>
+                                <option value="采购异常">采购异常</option>
+                                <option value="国内快递异常">国内快递异常</option>
+                                <option value="国际物流异常">国际物流异常</option>
                             </select>
-                            <input type="button" value="添加备注说明">
+                            <input type="button" value="添加备注说明" @click="Addnotes">
                         </div>
                         <div class="layui-tab-content">
                             <ul class="operationLog">
