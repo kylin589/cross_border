@@ -56,14 +56,39 @@ public class AmazonCategoryEntity implements Serializable {
 	 */
 	private String nodeIdEs;
 	/**
+	 * 澳大利亚节点id
+	 */
+	private String nodeIdAu;
+	/**
+	 *加拿大节点id
+	 */
+	private String nodeIdCa;
+	/**
+	 *美国节点id
+	 */
+	private String nodeIdUs;
+	/**
+	 *墨西哥节点id
+	 */
+	private String nodeIdMx;
+	/**
+	 *日本节点id
+	 */
+	private String nodeIdJp;
+	/**
 	 * 国家代号
 	 */
 	private String countryCode;
+	/**
+	 *分类名称前缀
+	 */
+	private String categoryQ;
+
 
 	/**
 	 * 是否有下一级
 	 */
-	@TableField(exist=false)
+	/*@TableField(exist=false)
 	private String ifNext;
 
 	public String getIfNext() {
@@ -72,7 +97,7 @@ public class AmazonCategoryEntity implements Serializable {
 
 	public void setIfNext(String ifNext) {
 		this.ifNext = ifNext;
-	}
+	}*/
 
 	/**
 	 * 设置：亚马逊分类id
@@ -183,12 +208,60 @@ public class AmazonCategoryEntity implements Serializable {
 		return nodeIdEs;
 	}
 
+	public String getNodeIdAu() {
+		return nodeIdAu;
+	}
+
+	public void setNodeIdAu(String nodeIdAu) {
+		this.nodeIdAu = nodeIdAu;
+	}
+
+	public String getNodeIdCa() {
+		return nodeIdCa;
+	}
+
+	public void setNodeIdCa(String nodeIdCa) {
+		this.nodeIdCa = nodeIdCa;
+	}
+
+	public String getNodeIdUs() {
+		return nodeIdUs;
+	}
+
+	public void setNodeIdUs(String nodeIdUs) {
+		this.nodeIdUs = nodeIdUs;
+	}
+
+	public String getNodeIdMx() {
+		return nodeIdMx;
+	}
+
+	public void setNodeIdMx(String nodeIdMx) {
+		this.nodeIdMx = nodeIdMx;
+	}
+
+	public String getNodeIdJp() {
+		return nodeIdJp;
+	}
+
+	public void setNodeIdJp(String nodeIdJp) {
+		this.nodeIdJp = nodeIdJp;
+	}
+
 	public String getCountryCode() {
 		return countryCode;
 	}
 
 	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
+	}
+
+	public String getCategoryQ() {
+		return categoryQ;
+	}
+
+	public void setCategoryQ(String categoryQ) {
+		this.categoryQ = categoryQ;
 	}
 
 	@Override
@@ -203,8 +276,13 @@ public class AmazonCategoryEntity implements Serializable {
 				", nodeIdFr='" + nodeIdFr + '\'' +
 				", nodeIdIt='" + nodeIdIt + '\'' +
 				", nodeIdEs='" + nodeIdEs + '\'' +
+				", nodeIdAu='" + nodeIdAu + '\'' +
+				", nodeIdCa='" + nodeIdCa + '\'' +
+				", nodeIdUs='" + nodeIdUs + '\'' +
+				", nodeIdMx='" + nodeIdMx + '\'' +
+				", nodeIdJp='" + nodeIdJp + '\'' +
 				", countryCode='" + countryCode + '\'' +
-				", ifNext='" + ifNext + '\'' +
+				", categoryQ='" + categoryQ + '\'' +
 				'}';
 	}
 }
