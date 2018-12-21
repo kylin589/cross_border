@@ -461,27 +461,29 @@ var vm = new Vue({
         // 产品相册
         proAlbum:[],
         // 产品回收站
-        proStation:[{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },],
+        proStation:[
+            {
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },{
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },{
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },{
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },{
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },
+        ],
         // 产品介绍列表
         proDecList:{
             'productTitle':'',
@@ -667,6 +669,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('产品回收站');
                         console.log(r);
+                        vm.proStation = r.isdeleteList;
 
                     } else {
                         layer.alert(r.msg);
@@ -875,39 +878,170 @@ var vm = new Vue({
         },
         // 图片回收站
         prostation:function () {
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#proStation'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['800px', '500px'],
-                shadeClose: true,
-                scrollbar:false,
-                btn: ['<i class="layui-icon layui-icon-refresh"></i> 恢复','取消',],
-                btn1: function (index) {
-                    vm.proAlbum = [];
-                    var _length = $('.proStationUl li.action').length;
-                    console.log(_length);
-                    for(var i =0;i<_length;i++){
-                        var _index = $('.proStationUl li.action').eq(i).attr('data-index');
-                        vm.proAlbum.push({
-                            url:vm.proStation[_index].url
-                        })
-                    }
-                    console.log(vm.proAlbum)
-                    layer.close(index)
-                },
-                btn2: function (index) {
-                    // vm.proAlbum = vm.proStation
-                    layer.close(index);
-                    return false
+            vm.getProStation();
+            if(vm.proStation.length == 0){
+                layer.msg("暂无回收站图片");
+            }else {
+                layer.open({
+                    type: 1,
+                    title: false,
+                    content: $('#proStation'), //这里content是一个普通的String
+                    skin: 'openClass openClass1',
+                    area: ['800px', '500px'],
+                    shadeClose: true,
+                    scrollbar:false,
+                    btn: ['彻底删除','<i class="layui-icon layui-icon-refresh"></i> 恢复','取消',],
+                    btn1: function (index) {
+                        var activeImg = $('#proStation .proStationUl li.action');
+                        var arr = [];
+                        for(var i = 0;i<activeImg.length;i++){
+                            arr.push(activeImg.eq(i).attr('data-index'));
+                        }
+                        if(arr.length == 0){
+                            layer.msg("请选择要删除的图片");
+                        }else {
+                            layer.confirm('确定删除吗',function () {
+                                $.ajax({
+                                    url: '../../product/imageaddress/deleteimage',
+                                    type: 'get',
+                                    data: {
+                                        'imageIds': arr
+                                    },
+                                    dataType: 'json',
+                                    success: function (r) {
+                                        // console.log(r);
+                                        if (r.code === 0) {
+                                            // 重新获取图片回收站
+                                            vm.getProStation();
+                                            // vm.proAlbum = r.imageInfo;
 
-                }
-            });
+                                        } else {
+                                            layer.alert(r.msg);
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("网络故障");
+                                    }
+                                })
+                            })
+                        }
+
+
+                    },
+                    btn2: function (index) {
+                        var activeImg = $('#proStation .proStationUl li.action');
+                        var arr = [];
+                        for(var i = 0;i<activeImg.length;i++){
+                            arr.push(activeImg.eq(i).attr('data-index'));
+                        }
+                        if(arr.length == 0){
+                            layer.msg("请选择要恢复的图片");
+                        }else {
+                            layer.confirm('确定要恢复吗',function () {
+                                $.ajax({
+                                    url: '../../product/imageaddress/recoverdelete',
+                                    type: 'post',
+                                    data: JSON.stringify({
+                                        'imageIds': arr
+                                    }),
+                                    // dataType: 'json',
+                                    contentType: "application/json",
+                                    success: function (r) {
+                                        // console.log(r);
+                                        if (r.code === 0) {
+                                            // 重新获取图片回收站
+                                            vm.getProStation();
+                                            vm.getProAlbum();
+                                            layer.close(index);
+                                            // vm.proAlbum = r.imageInfo;
+
+                                        } else {
+                                            layer.alert(r.msg);
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("网络故障");
+                                    }
+                                })
+                            })
+                        }
+
+                        // vm.proAlbum = [];
+                        // var _length = $('.proStationUl li.action').length;
+                        // console.log(_length);
+                        // for(var i =0;i<_length;i++){
+                        //     var _index = $('.proStationUl li.action').eq(i).attr('data-index');
+                        //     vm.proAlbum.push({
+                        //         url:vm.proStation[_index].url
+                        //     })
+                        // }
+                        // console.log(vm.proAlbum)
+                        // layer.close(index)
+                    },
+                    btn3: function (index) {
+                        // vm.proAlbum = vm.proStation
+                        layer.close(index);
+                        return false
+
+                    }
+                });
+            }
+
         },
         // 点击每个图片选中（变体参数选中图片弹框）
         activeImg:function (i) {
             $('#selImg .proStationUl li').eq(i).toggleClass('action');
+
+        },
+        // 点击图片相册选中
+        clickActiveImg:function () {
+            console.log(111);
+            $(event.target).parent().toggleClass('active');
+        },
+        // 相册图片删除
+        proDel:function () {
+            var elList = $('.imgAlbum.active');
+            var arr = [];
+            for(var i = 0;i<elList.length;i++){
+                arr.push(elList.eq(i).attr('data-index'));
+            }
+            console.log(arr);
+            if(arr.length == 0){
+                layer.msg('请选择要删除的图片');
+            }else {
+                layer.confirm('确定删除吗？',function () {
+                    $.ajax({
+                        type: 'post',
+                        url: '../../product/imageaddress/updateimage',
+                        contentType: "application/json",
+                        // data: {
+                        //     'imageIds':arr
+                        // },
+                        data: JSON.stringify({
+                            'imageIds':arr
+                        }),
+                        success: function (r) {
+                            console.log('删除图片');
+                            console.log(r);
+                            // console.log(vm.proDetails);
+                            if (r.code == 0) {
+                                // 重新获取图片相册
+                                vm.getProAlbum();
+                                // vm.proDetails.productSku = r.SKU;
+                                layer.msg('删除成功');
+                                layer.close(index);
+
+                                // window.location.href = document.referrer;
+
+                            } else {
+                                alert(r.msg);
+                            }
+                        }
+                    });
+                })
+            }
+
+
 
         },
         // 获取选中的变体参数图片
@@ -1611,8 +1745,7 @@ var vm = new Vue({
                         vm.recommendAll.push({
                             id:i+j,
                             name:recommend[i]+'*'+recommend1[j],
-                            img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-                                '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                            img:[],
                             sku:'',
                             addPrice:'',
                             stock:'',
@@ -1639,7 +1772,7 @@ var vm = new Vue({
                     vm.recommendAll.push({
                         id:i,
                         name:recommend[i],
-                        img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                        img:[],
                         sku:'',
                         addPrice:'',
                         stock:'',

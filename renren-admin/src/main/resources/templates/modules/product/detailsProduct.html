@@ -43,6 +43,14 @@
             .ul1 .active {
                 border: 1px dashed red;
             }
+            form .item div:nth-child(2) .imgDiv>div:hover{
+                /*border: 2px solid #00a3e8;*/
+                box-shadow: 0 0 20px #888;
+            }
+            form .item div:nth-child(2) .imgDiv>div.active{
+                border: 2px solid #00a3e8;
+                box-shadow: 0 0 20px #888;
+            }
         </style>
         </head>
 <body>
@@ -75,30 +83,33 @@
                 </div>
                 <div>
                     <!--图片区域-->
-                    <!--<div class="imgDiv">-->
-                        <!--<div v-for="(item,index) in proAlbum" :data-index="index" @mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)">-->
-                            <!--&lt;!&ndash;<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">&ndash;&gt;-->
-                            <!--<img :src="item.imageUrl" alt="" class="imgItem" :data-con="item">-->
-                            <!--<i class="layui-icon layui-icon-close-fill imgDel"></i>-->
-                        <!--</div>-->
+                    <div class="imgDiv">
+                        <div class="imgAlbum" v-for="(item,index) in proAlbum" :data-index="item.imgId">
+                            <!--@mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)"-->
+                            <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
+                            <img :src="item.url" alt="" class="imgItem" :data-con="item" @click="clickActiveImg">
+                            <i class="layui-icon layui-icon-close-fill imgDel"></i>
+                        </div>
 
 
 
-                    <!--</div>-->
-                    <el-upload
-                            action="${request.contextPath}/product/imageaddress/upload"
-                            list-type="picture-card"
-                            :file-list="proAlbum"
-                            :on-preview="handlePictureCardPreview"
-                            :on-error="upErrorFunc"
-                            :on-remove="handleRemove">
-                            <i class="el-icon-plus"></i>
-                    </el-upload>
+                    </div>
+                    <!--<el-upload-->
+                            <!--action="${request.contextPath}/product/imageaddress/upload"-->
+                            <!--list-type="picture-card"-->
+                            <!--:file-list="proAlbum"-->
+                            <!--:on-preview="handlePictureCardPreview"-->
+                            <!--:on-error="upErrorFunc"-->
+                            <!--:on-remove="handleRemove">-->
+                            <!--<i class="el-icon-plus"></i>-->
+                    <!--</el-upload>-->
                     <!--<el-dialog :visible.sync="dialogVisible">-->
                         <!--<img width="100%" :src="dialogImageUrl" alt="">-->
                     <!--</el-dialog>-->
                     <input type="file" value="选择文件" class="selImg">
+
                     <input type="button" value="开始上传" id="upload" @click="shangchuan">
+                    <input type="button" value="批量删除" id="" @click="proDel">
                     <input type="button" class="proStation" value="图片回收站" @click="prostation">
                 </div>
             </div>
