@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>认领记录</title>
+    <#include "/header_kuajing.html">
+        <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/authorize/authorize.css" media="all">
+        <style>
+            table tr td img{
+                width: 40px;
+                border-radius: 3px;
+                box-shadow: 0 0 10px #ddd;
+            }
+        </style>
+        </head>
+<body>
+
+<div class="box" id="step">
+
+    <p>
+        <span class="layui-breadcrumb" style="visibility: visible;">
+          <a href="javascript:;">认领记录</a>
+        </span>
+
+    </p>
+
+    <table>
+        <tr>
+            <th style="width: 50px">产品ID</th>
+            <th>产品</th>
+            <th>产品来源公司</th>
+            <th>产品创建人</th>
+            <th>认领公司</th>
+            <th>认领人员</th>
+            <th>操作人</th>
+            <th>操作时间</th>
+        </tr>
+        <tr v-for="item in recordList">
+            <td style="width: 50px">{{ item.productId }}</td>
+            <td><img src="${request.contextPath}/statics/kuajing/img/img1.jpg" alt=""></td>
+            <td>{{ item.fromDeptName }}</td>
+            <td>{{ item.fromUserName }}</td>
+            <td>{{ item.toDeptName }}</td>
+            <td>{{ item.toUserName }}</td>
+            <td>{{ item.operatorName }}</td>
+            <td>{{ item.operatorTime }}</td>
+
+        </tr>
+    </table>
+
+    <!--分页-->
+    <div id="page" style="text-align: center"></div>
+
+</div>
+
+<script src="${request.contextPath}/statics/kuajing/js/step/product/proClaimRecord.js"></script>
+</body>
+</html>

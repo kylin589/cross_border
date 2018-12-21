@@ -240,7 +240,7 @@ var vm = new Vue({
                 dataType: 'json',
                 success: function (r) {
                     if (r.code === 0) {
-                        // console.log(r)
+                        console.log(r);
                         vm.statistics.proNum = r.proNum;
                         vm.statistics.via = r.via;
                         vm.statistics.variant = r.variant;
@@ -832,5 +832,10 @@ var vm = new Vue({
         this.getPage(1, this.pageLimit);
 
 
+    },
+    updated:function () {
+        $('.pro_list').css('display','block');
+        var _width = $('.pro_list .item img').width();
+        $('.pro_list .item img').css('height',_width+'px');
     }
 })

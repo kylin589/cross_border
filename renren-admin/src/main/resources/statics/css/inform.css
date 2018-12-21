@@ -1,0 +1,48 @@
+
+/*body>div{*/
+/*margin: 10px;*/
+/*padding: 10px;*/
+/**/
+/*}*/
+p{
+    margin: 16px 10px 14px 20px;
+    color: #ffb4b4;
+    font-size: 13px;
+    font-weight: bold;
+}
+table{
+    margin: 10px 20px;
+    width: calc(100% - 40px);
+}
+table tr:nth-child(1){
+    /*background: #ddf8ff;*/
+    border-radius: 3px;
+}
+table tr th{
+    padding: 10px;
+    color: #666;
+    font-weight: bold;
+    font-size: 15px;
+    text-align: left;
+}
+table tr td{
+    position: relative;
+    color: #666;
+    font-size: 13px;
+    padding: 10px;
+    background: rgba(255,255,255,.9);
+    border-bottom: 2px solid #f2f2f2;
+}
+table tr td span{
+    /*position: absolute;*/
+    /*top:2px;*/
+    /*left:10px;*/
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #FF5722;
+    border-radius: 50%;
+}
+table tr td:last-child{
+    color: #999;
+}

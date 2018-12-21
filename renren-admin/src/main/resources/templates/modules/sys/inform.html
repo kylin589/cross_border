@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息通知</title>
+    <#include "/header_kuajing.html">
+        <link rel="stylesheet" href="${request.contextPath}/statics/css/inform.css" media="all">
+</head>
+<body>
+
+<div id="LAY_app">
+    <p>注：有红点代表未读</p>
+    <table>
+        <tr>
+            <th style="width: 10px"></th>
+            <th>消息类型</th>
+            <th>通知内容</th>
+            <th>时间</th>
+        </tr>
+        <tr v-for="item in informList" :data-id="item.id">
+            <td style="width: 10px">
+                <span></span>
+            </td>
+            <td>
+                {{item.type}}
+
+            </td>
+            <td>{{item.con}}</td>
+            <td>{{item.date}}</td>
+        </tr>
+    </table>
+
+    <!--分页-->
+    <div id="page" style="text-align: center"></div>
+</div>
+
+<script type="text/javascript" src="${request.contextPath}/statics/js/modules/sys/inform.js"></script>
+</body>
+</html>

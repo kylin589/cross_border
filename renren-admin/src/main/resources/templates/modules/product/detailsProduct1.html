@@ -40,6 +40,9 @@
             .ul1 .active {
                 border: 1px dashed red;
             }
+            /*input{*/
+                /*border:0;*/
+            /*}*/
         </style>
         </head>
 <body>
@@ -182,6 +185,7 @@
                     <span><label for="">品牌名称：</label><input type="text" placeholder="品牌名称" v-model="proDetails.brandName" readonly></span>
                     <span><label for="">厂商编号：</label><input type="text" placeholder="厂商编号" v-model="proDetails.manufacturerNumber" readonly></span>
                     <span><label for="">产品来源：</label><input type="text" placeholder="产品来源" v-model="proDetails.productSource" readonly></span><br>
+                    <span><label for="">内部SKU码：</label><input type="text" placeholder="内部SKU码" v-model="proDetails.productSku" readonly></span><br>
                     <span><label for="">来源地址：</label><textarea v-model="proDetails.sellerLink" readonly></textarea></span><br>
                     <span><label for="">附加备注：</label><textarea v-model="proDetails.productRemark" readonly></textarea></span><br>
                 </div>

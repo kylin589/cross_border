@@ -40,6 +40,7 @@ form .item>div:nth-child(2){
 }
 form .item div:nth-child(2) .imgDiv{
     overflow: hidden;
+    padding: 10px;
 }
 form .item div:nth-child(2) .imgDiv>div{
     position: relative;

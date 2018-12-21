@@ -66,7 +66,9 @@ var vm = new Vue({
 		main:"main.html",
 		password:'',
 		newPassword:'',
-        navTitle:"控制台"
+        navTitle:"控制台",
+		informNum:15,
+
 	},
 	methods: {
 		getMenuList: function (event) {
@@ -162,6 +164,10 @@ var vm = new Vue({
 		// var router = new Router();
 		// routerList(router, vm.menuList);
 		// router.start();
+		// console.log(vm.main);
+		// if(vm.main == 'modules/sys/inform.html'){
+		// 	$('.layui-badge-dot1').css('display','none');
+		// }
 	}
 });
 

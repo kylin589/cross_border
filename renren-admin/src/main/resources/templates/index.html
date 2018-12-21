@@ -15,6 +15,22 @@
         cite{
             /*display:none;*/
         }
+        .layui-badge-dot1{
+            display: inline-block;
+            position: absolute;
+            top:50%;
+            width: 18px;
+            height: 18px;
+            background: #FF5722;
+            margin-top: -15px!important;
+            margin-left: 11px;
+            text-align: center;
+            line-height: 18px;
+            font-size: 10px;
+            color: #fff;
+            border-radius: 50%;
+        }
+
     </style>
     <script>
         /^http(s*):\/\//.test(location.href) || alert('请先部署到 localhost 下再访问');
@@ -49,14 +65,14 @@
             </ul>
             <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
 
-                <!--<li class="layui-nav-item" lay-unselect>-->
-                    <!--<a lay-href="app/message/index.html" layadmin-event="message" lay-text="消息中心">-->
-                        <!--<i class="layui-icon layui-icon-notice"></i>-->
+                <li class="layui-nav-item" lay-unselect>
+                    <a lay-href="modules/sys/inform.html" layadmin-event="message" lay-text="通知中心">
+                        <i class="layui-icon layui-icon-notice"></i>
 
-                        <!--&lt;!&ndash; 如果有新消息，则显示小圆点 &ndash;&gt;-->
-                        <!--<span class="layui-badge-dot"></span>-->
-                    <!--</a>-->
-                <!--</li>-->
+                        <!-- 如果有新消息，则显示小圆点 -->
+                        <span v-if="informNum != ''" class="layui-badge-dot1">{{informNum}}</span>
+                    </a>
+                </li>
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
                     <a href="javascript:;" layadmin-event="theme">
                         <i class="layui-icon layui-icon-theme"></i>

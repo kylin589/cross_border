@@ -29,7 +29,7 @@
     padding: 0px!important;
 }
 
-/*添加国内物流*/
+/*充值*/
 #chongzhi h3{
     margin: 10px;
     color: #00a3e8;
@@ -58,4 +58,23 @@
     background: -moz-linear-gradient(bottom, #1e9fff , #63e3f0);
     background: linear-gradient(to bottom, #1e9fff , #63e3f0);
     margin-right: 5px;
+}
+
+/*充值*/
+#hebing h3{
+    margin: 10px;
+    color: #00a3e8;
+    font-size: 18px;
+    font-weight: bold;
+}
+#hebing label:before{
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    background: -webkit-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: -moz-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: linear-gradient(to bottom, #1e9fff , #63e3f0);
+    margin-right: 5px;
+    margin-left: 10px;
 }
