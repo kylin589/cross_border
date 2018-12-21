@@ -2,7 +2,6 @@ package io.renren.modules.product.vm;
 
 import io.renren.modules.sys.entity.SysUserEntity;
 
-import javax.xml.crypto.Data;
 import java.util.Arrays;
 
 /**
@@ -22,7 +21,7 @@ public class AddUploadVM {
     //授权店铺
     private String grantShop;
     //操作项（0:产品基本信息1:关系 2:图片3:库存4:价格）
-    private Object[] operateItem;
+    private String[] operateItem;
     //亚马逊分类id
     private Long amazonCategoryId;
     //亚马逊分类
@@ -36,8 +35,6 @@ public class AddUploadVM {
     // TODO: 2018/11/27 分类属性
     //接受前台传过来的时间；
     private String time;
-    //前台传过来的国家
-    private String countryCode;
 
     //用户
     private SysUserEntity user;
@@ -45,13 +42,6 @@ public class AddUploadVM {
     private Long userId;
     //公司id
     private Long deptId;
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
-    }
 
     public SysUserEntity getUser() {
         return user;
@@ -125,11 +115,11 @@ public class AddUploadVM {
         this.grantShop = grantShop;
     }
 
-    public Object[] getOperateItem() {
+    public String[] getOperateItem() {
         return operateItem;
     }
 
-    public void setOperateItem(Object[] operateItem) {
+    public void setOperateItem(String[] operateItem) {
         this.operateItem = operateItem;
     }
 

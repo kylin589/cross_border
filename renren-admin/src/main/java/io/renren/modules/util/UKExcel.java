@@ -5,7 +5,6 @@ import com.swjtu.lang.LANG;
 import com.swjtu.querier.Querier;
 import com.swjtu.trans.AbstractTranslator;
 import com.swjtu.trans.impl.BaiduTranslator;
-import com.swjtu.trans.impl.GoogleTranslator;
 import io.renren.modules.product.entity.AmazonCategoryEntity;
 import io.renren.modules.product.service.AmazonCategoryService;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -20,9 +19,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Random;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -37,10 +35,12 @@ public class UKExcel {
      */
     @Test
     public void poiExcel() throws Exception {
-        File file = new File("C:\\Users\\asus\\Desktop\\法国商品分类FR");
+        Random random = new Random();
+        File file = new File("D:\\uk");
         File[] files = file.listFiles();
         //System.out.println(files.length);
-        for (int i = 0; i <files.length ; i++) {
+        for (int i = 6; i <files.length ; i++) {
+            Thread.sleep(random.nextInt(500));
             //System.out.println(files[i]);
             this.insertCategory(files[i]);
         }
@@ -81,6 +81,7 @@ public class UKExcel {
 
     //excel的分类方法插入到数据库
     public  void  insertCategory(File fileName) throws Exception {
+        Random random = new Random();
         HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(fileName));//创建Excel文档对象HSSFWorkbook
         HSSFSheet sheet = workbook.getSheet("sheet");//获取第一个标签页  根据标签页名称获取
         for (Row row : sheet) {//遍历标签页
@@ -92,9 +93,11 @@ public class UKExcel {
             String nodeIdUk = row.getCell(0).getStringCellValue();*/
             String[] categoryNameArr = categoryNameString.split("/");
             AmazonCategoryEntity amazonCategoryEntity = new AmazonCategoryEntity();//定义亚马逊分类实体
+
+            Thread.sleep(random.nextInt(500));
             if(categoryNameArr.length == 1){
                 //一级类目
-                amazonCategoryEntity.setCountryCode("FR");
+                amazonCategoryEntity.setCountryCode("GB");
                 amazonCategoryEntity.setCategoryQ("");
                 String categoryNameChina = this.EntoZh(categoryNameArr[0]);
                 String categoryNameChinaReplace = categoryNameChina.replace("\"", "").replace("\"", "");//去掉双引号
@@ -102,7 +105,7 @@ public class UKExcel {
                 amazonCategoryEntity.setParentId(0L);
                 amazonCategoryEntity.setCategoryName(categoryNameArr[0]);
                 row.getCell(0).setCellType(CellType.STRING);
-                amazonCategoryEntity.setNodeIdFr(row.getCell(0).getStringCellValue());
+                amazonCategoryEntity.setNodeIdUk(row.getCell(0).getStringCellValue());
                 this.insert(amazonCategoryEntity);
             }else{
                 //非一级类目
@@ -113,11 +116,11 @@ public class UKExcel {
                 //以倒数第二个为条件拆分字符串
                 String before1 = categoryNameString.split(a1)[0];
                 //根据分类名称查找判断数据库中是否有此条数据
-                Long id1 = this.queryByNameId(a1,"FR",before1);
+                Long id1 = this.queryByNameId(a1,"GB",before1);
                 //以倒数第一个为条件拆分字符串
                 String before2 = categoryNameString.split(a2)[0];
                 //插入最后一个
-                amazonCategoryEntity.setCountryCode("FR");
+                amazonCategoryEntity.setCountryCode("GB");
                 amazonCategoryEntity.setCategoryQ(before2);
                 String categoryNameChina = this.EntoZh(a2);
                 String categoryNameChinaReplace = categoryNameChina.replace("\"", "").replace("\"", "");//去掉双引号
@@ -125,7 +128,7 @@ public class UKExcel {
                 amazonCategoryEntity.setParentId(id1);
                 amazonCategoryEntity.setCategoryName(a2);
                 row.getCell(0).setCellType(CellType.STRING);
-                amazonCategoryEntity.setNodeIdFr(row.getCell(0).getStringCellValue());
+                amazonCategoryEntity.setNodeIdUk(row.getCell(0).getStringCellValue());
                 this.insert(amazonCategoryEntity);
             }
         }

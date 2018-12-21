@@ -178,13 +178,19 @@ public class UploadController extends AbstractController {
 //    @RequiresPermissions("product:upload:addupload")
     public R addUpload(@RequestBody AddUploadVM addUploadVM){
         UploadEntity uploadEntity = new UploadEntity();
+        uploadEntity.setStartId(addUploadVM.getStartId());
+        uploadEntity.setEndId(addUploadVM.getEndId());
+        uploadEntity.setUploadIds(StringUtils.join(addUploadVM.getUploadIds(),","));
         //ret:要上传的产品列表
-        List<ProductsEntity> ret = new ArrayList<>();
+        List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
+        //idList:要上传的id列表
+        List<Long> idList = new ArrayList<Long>();
         if(addUploadVM.getUploadIds() != null){
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()),getUserId());
             if("ok".equals(dto1.getCode())){
                 List productsList1 = dto1.getProductsList();
                 ret.addAll(productsList1);
+                idList.addAll(dto1.getRet());
             }else{
                 return R.error(dto1.getMsg());
             }
@@ -200,12 +206,13 @@ public class UploadController extends AbstractController {
             if("ok".equals(dto2.getCode())){
                 List productsList2 = dto2.getProductsList();
                 ret.addAll(productsList2);
+                idList.addAll(dto2.getRet());
             }else{
                 return R.error(dto2.getMsg());
             }
         }
-        System.out.println("ret:" + ret);
         uploadEntity.setUploadProductsList(ret);
+        uploadEntity.setUploadProductsIds(StringUtils.join(idList.toArray(),","));
         //获取分类对象
         AmazonCategoryEntity amazonCategory = amazonCategoryService.selectById(addUploadVM.getAmazonCategoryId());
         //设置授权账户
@@ -381,13 +388,19 @@ public class UploadController extends AbstractController {
     //@RequiresPermissions("product:upload:addupload")
     public R timingUpload(@RequestBody AddUploadVM addUploadVM) {
         UploadEntity uploadEntity = new UploadEntity();
+        uploadEntity.setStartId(addUploadVM.getStartId());
+        uploadEntity.setEndId(addUploadVM.getEndId());
+        uploadEntity.setUploadIds(StringUtils.join(addUploadVM.getUploadIds(),","));
         //ret:要上传的产品列表
-        List<ProductsEntity> ret = new ArrayList<>();
+        List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
+        //idList:要上传的id列表
+        List<Long> idList = new ArrayList<Long>();
         if(addUploadVM.getUploadIds() != null){
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()),getUserId());
             if("ok".equals(dto1.getCode())){
                 List productsList1 = dto1.getProductsList();
                 ret.addAll(productsList1);
+                idList.addAll(dto1.getRet());
             }else{
                 return R.error(dto1.getMsg());
             }
@@ -403,12 +416,13 @@ public class UploadController extends AbstractController {
             if("ok".equals(dto2.getCode())){
                 List productsList2 = dto2.getProductsList();
                 ret.addAll(productsList2);
+                idList.addAll(dto2.getRet());
             }else{
                 return R.error(dto2.getMsg());
             }
         }
-        System.out.println("ret:" + ret);
         uploadEntity.setUploadProductsList(ret);
+        uploadEntity.setUploadProductsIds(StringUtils.join(idList.toArray(),","));
         //获取分类对象
         AmazonCategoryEntity amazonCategory = amazonCategoryService.selectById(addUploadVM.getAmazonCategoryId());
         //设置授权账户

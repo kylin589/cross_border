@@ -33,8 +33,9 @@ public class UploadEntity implements Serializable {
 	//筛选后要上传的id列表
 	@TableField(exist = false)
 	private List<ProductsEntity>  uploadProductsList;
+	//真正要上传的id，逗号隔开
+	private String uploadProductsIds;
 	//国家代码
-	@TableField(exist = false)
 	private String countryCode;
 	/**
 	 * 店铺id
@@ -355,5 +356,13 @@ public class UploadEntity implements Serializable {
 
 	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
+	}
+
+	public String getUploadProductsIds() {
+		return uploadProductsIds;
+	}
+
+	public void setUploadProductsIds(String uploadProductsIds) {
+		this.uploadProductsIds = uploadProductsIds;
 	}
 }
