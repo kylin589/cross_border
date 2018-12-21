@@ -258,6 +258,15 @@ span.red{
     color: orangered;
 }
 
+.screen li{
+    color: #9373e8;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+.screen li:hover{
+    color: #fff;
+    background: #9373e8;
+}
 li.org{
     color: #ffa552;
     padding: 2px 4px;
@@ -294,7 +303,8 @@ li.red:hover , li.red.action{
     background: #e7535a;
     color: #fff!important;
 }
-li:hover span , li.action span{
+
+.screen li:hover span , .screen li.action span{
     color: #fff!important;
 }
 
@@ -344,4 +354,8 @@ li:hover span , li.action span{
     border: 4px solid transparent;
     border-right: 4px solid #00a3e8;
     margin-top: 150px;
+}
+
+.el-select-dropdown__item:hover{
+    color: #666!important;
 }

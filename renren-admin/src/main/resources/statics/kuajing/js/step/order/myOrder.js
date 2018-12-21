@@ -299,8 +299,8 @@ var vm = new Vue({
                     if (r.code === 0) {
                         vm.yichangList = r.abnormalStateList;
                         vm.yichangList.unshift({
-                            userId:'',
-                            displayName:'-选择-'
+                            dataNumber:'',
+                            dataContent:'-选择-'
                         })
                     } else {
                         layer.alert(r.msg);
