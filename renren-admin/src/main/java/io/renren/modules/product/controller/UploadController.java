@@ -235,14 +235,28 @@ public class UploadController extends AbstractController {
             case ES:
                 uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdEs());
                 break;
-
+            case US:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdUs());
+                break;
+            case MX:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdMx());
+                break;
+            case CA:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdCa());
+                break;
+            case AU:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdAu());
+                break;
+            case JP:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdJp());
+                break;
             default:
                 break;
         }
         //设置模板
         uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
         uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
-        //设置操作类型（0：上传   1：修改）
+        //设置操作类型（0：上传;1：修改）
         uploadEntity.setOperateType(0);
         //数组转','号隔开的字符串
         String operateItem = StringUtils.join(addUploadVM.getOperateItem(),",");
@@ -406,6 +420,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setAmazonCategory(amazonCategory.getDisplayName());
         //设置分类节点id
         String county = amazonGrantShop.getCountryCode();
+        uploadEntity.setCountryCode(county);
         COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
         switch (countyEnum){
             case GB:
@@ -423,14 +438,28 @@ public class UploadController extends AbstractController {
             case ES:
                 uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdEs());
                 break;
-
+            case US:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdUs());
+                break;
+            case MX:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdMx());
+                break;
+            case CA:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdCa());
+                break;
+            case AU:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdAu());
+                break;
+            case JP:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdJp());
+                break;
             default:
                 break;
         }
         //设置模板
         uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
         uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
-        //设置操作类型（0：上传   1：修改）
+        //设置操作类型（0：上传;1：修改）
         uploadEntity.setOperateType(0);
         //数组转','号隔开的字符串
         String operateItem = StringUtils.join(addUploadVM.getOperateItem(),",");
@@ -462,7 +491,7 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setAmazonAllCategory(addUploadVM.getAmazonCategory());
             categoryHistoryNew.setCount(1);
             categoryHistoryNew.setUserId(addUploadVM.getUserId());
-            categoryHistoryNew.setDeptId(addUploadVM.getUserId());
+            categoryHistoryNew.setDeptId(addUploadVM.getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
         return R.ok();
