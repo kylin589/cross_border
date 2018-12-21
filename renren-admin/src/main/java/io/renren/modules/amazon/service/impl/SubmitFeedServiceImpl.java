@@ -29,10 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Future;
 
 @Service
@@ -61,6 +58,23 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
     @Value(("${file.path}"))
     private String fileStoragePath;
+
+    private static Map<String, String> uploadTypeMap;
+
+    static {
+        Map map = new HashMap<String, String>();
+        // 0 基本信息
+        map.put("0", "_POST_PRODUCT_DATA_");
+        // 1 关系
+        map.put("1", "_POST_PRODUCT_RELATIONSHIP_DATA_");
+        // 2 图片
+        map.put("2", "_POST_PRODUCT_IMAGE_DATA_");
+        // 3 库存
+        map.put("3", "_POST_INVENTORY_AVAILABILITY_DATA_");
+        // 4 价格
+        map.put("4", "_POST_PRODUCT_PRICING_DATA_");
+        uploadTypeMap = Collections.unmodifiableMap(map);
+    }
 
     @Override
     public String generateProductXML(String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode, String categoryNodeId) {
@@ -197,37 +211,47 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             Element productType = computers.addElement("ProductType");
             Element keyboards = productType.addElement("Keyboards");
 
-            if (productsEntity.getSizeId() != null || productsEntity.getSizeId() != null) {
+            String sizeStr = "";
+            String colorStr = "";
+            boolean isSize = false;
+            boolean isColor = false;
+            String typeStr = "";
+            if (productsEntity.getSizeId() != null && productsEntity.getSizeId() != 0) {
+                VariantParameterEntity sizeVariantParameter = variantParameterService.selectById(productsEntity.getSizeId());
+                sizeStr = sizeVariantParameter.getParamsType();
+                isSize = true;
+            }
+            if (productsEntity.getColorId() != null && productsEntity.getColorId() != 0) {
+                VariantParameterEntity colorVariantParameter = variantParameterService.selectById(productsEntity.getColorId());
+                colorStr = colorVariantParameter.getParamsType();
+                isColor = true;
+            }
+            if ((!"".equals(sizeStr)) || (!"".equals(colorStr))) {
                 Element variationData = keyboards.addElement("VariationData");
                 Element parentage = variationData.addElement("Parentage");
                 parentage.addText("parent");
                 Element variationTheme = variationData.addElement("VariationTheme");
-                if (productsEntity.getSizeId() != null && productsEntity.getSizeId() != null) {
-                    VariantParameterEntity sizeVariantParameter = variantParameterService.selectById(productsEntity.getSizeId());
-                    String sizeStr = sizeVariantParameter.getParamsType();
-                    VariantParameterEntity colorVariantParameter = variantParameterService.selectById(productsEntity.getColorId());
-                    String colorStr = colorVariantParameter.getParamsType();
-                    if (("size".equals(sizeStr)||"Size".equals(sizeStr))&&("color".equals(colorStr)||"Color".equals(colorStr))){
+                if (isSize && (!isColor)) {
+                    variationTheme.addText("Size");
+                    typeStr = "Size";
+                }
+                if (isColor && (!isSize)) {
+                    variationTheme.addText("Color");
+                    typeStr = "Color";
+                }
+                if (isSize && isColor) {
+                    if (("size".equals(sizeStr) || "Size".equals(sizeStr)) && ("color".equals(colorStr) || "Color".equals(colorStr))) {
                         variationTheme.addText("Size-Color");
+                        typeStr = "Size-Color";
                     }
                 }
             }
-
-            VariantParameterEntity sizeVariantParameter = variantParameterService.selectById(productsEntity.getSizeId());
-            String sizeStr = sizeVariantParameter.getParamsType();
-            VariantParameterEntity colorVariantParameter = variantParameterService.selectById(productsEntity.getColorId());
-            String colorStr = colorVariantParameter.getParamsType();
-
 
             // 只有变体有MSRP
             /*
             Element msrp = descriptionData.addElement("MSRP");
             msrp.addText(productsEntity.get)
             */
-
-            // 变体参数
-            /*VariantsInfoEntity colorVariantsInfo = variantsInfoService.selectById(productsEntity.getColorId());
-            VariantsInfoEntity sizeVariantsInfo = variantsInfoService.selectById(productsEntity.getSizeId());*/
 
             List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productsEntity.getProductId()).orderBy(true, "variant_sort", true));
             if (variantsInfoEntityList != null) {
@@ -265,7 +289,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     Element manufacturer1 = descriptionData1.addElement("Manufacturer");
                     manufacturer1.addText(productsEntity.getProducerName());
 
-
                     // RecommendedBrowseNode 分类
                     Element recommendedBrowseNode1 = descriptionData1.addElement("RecommendedBrowseNode");
                     recommendedBrowseNode1.addText(categoryNodeId);
@@ -274,7 +297,32 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     Element computers1 = productData1.addElement("Computers");
                     Element productType1 = computers1.addElement("ProductType");
                     Element keyboards1 = productType1.addElement("Keyboards");
-                    keyboards1.addText("");
+                    Element variationData1 = keyboards1.addElement("VariationData");
+                    Element parentage1 = variationData1.addElement("Parentage");
+                    parentage1.addText("child");
+                    Element variationTheme1 = variationData1.addElement("VariationTheme");
+                    switch (typeStr) {
+                        case "Size":
+                            // TODO: 2018/12/20 zjr size 写死
+                            variationTheme1.addText(typeStr);
+                            Element size = variationData1.addElement("Size");
+                            size.addText("45");
+                            break;
+                        case "Color":
+                            // TODO: 2018/12/20 zjr color 写死
+                            variationTheme1.addText(typeStr);
+                            Element color = variationData1.addElement("Color");
+                            color.addText("Darkroom");
+                            break;
+                        case "Size-Color":
+                            // TODO: 2018/12/20 zjr Size_color 写死
+                            variationTheme1.addText(typeStr);
+                            Element size1 = variationData1.addElement("Size");
+                            size1.addText("45");
+                            Element color1 = variationData1.addElement("Color");
+                            color1.addText("Darkroom");
+                            break;
+                    }
                 }
             }
         }
@@ -745,43 +793,186 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
     @Override
     public List<String> singleSubmitFeed(UploadEntity uploadEntity) {
-        ProductsEntity productsEntity = productsService.selectById(uploadEntity.getProductId());
+        List<ProductsEntity> productsEntityList = uploadEntity.getUploadProductsList();
 
-        List<ProductsEntity> productsEntityList = new ArrayList<>();
-        productsEntityList.add(productsEntity);
-
+        // 授权店铺信息
         AmazonGrantShopEntity amazonGrantShopEntity = amazonGrantShopService.selectById(uploadEntity.getGrantShopId());
+        // 请求接口网站
         String serviceURL = amazonGrantShopEntity.getMwsPoint();
+        // 国家端点
         String marketplaceId = amazonGrantShopEntity.getMarketplaceId();
         List<String> marketplaceIdList = new ArrayList<>();
         marketplaceIdList.add(marketplaceId);
 
         AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(amazonGrantShopEntity.getGrantId());
+        // 授权令牌
         String devToken = amazonGrantEntity.getGrantToken();
+        // 店铺id
         String merchantId = amazonGrantEntity.getMerchantId();
+        // 国家代码
+        String countryCode = amazonGrantShopEntity.getCountryCode();
+        // 操作项
+        String[] operateItemStr = uploadEntity.getOperateItem().split(",");
 
-        String productPath = generateProductXML(merchantId, productsEntityList, "GB",null);
-        String relationshipsPath = generateRelationshipsXML(productsEntityList, merchantId);
-        String imagesPath = generateImagesXML(productsEntityList, merchantId);
-        String inventoryPath = generateInventoryXML(productsEntityList, merchantId);
-        String pricesPath = generatePricesXML("GB", productsEntityList, merchantId);
-
-        String productFeedSubmissionId = submitFeed(serviceURL, merchantId, devToken, "_POST_PRODUCT_DATA_", productPath, marketplaceIdList);
-
-        Map<String, String> typeMap = new HashMap<>();
-        typeMap.put("1", "_POST_PRODUCT_RELATIONSHIP_DATA_");
-        typeMap.put("2", "_POST_PRODUCT_IMAGE_DATA_");
-        typeMap.put("3", "_POST_INVENTORY_AVAILABILITY_DATA_");
-        typeMap.put("4", "_POST_PRODUCT_PRICING_DATA_");
-
+        // 生成xml文件路径
         Map<String, String> filePathMap = new HashMap<>();
-        filePathMap.put("1", relationshipsPath);
-        filePathMap.put("2", imagesPath);
-        filePathMap.put("3", inventoryPath);
-        filePathMap.put("4", pricesPath);
-        List<String> feedSubmissionId = submitAsyncFeed(serviceURL, merchantId, devToken, typeMap, filePathMap, marketplaceIdList);
-        feedSubmissionId.add(productFeedSubmissionId);
-        return feedSubmissionId;
+        for (int i = 0; i < operateItemStr.length; i++) {
+            switch (operateItemStr[i]) {
+                // 0 基本信息
+                case "0":
+                    String productPath = generateProductXML(merchantId, productsEntityList, countryCode, uploadEntity.getAmazonCategoryNodeId());
+                    filePathMap.put("0", productPath);
+                    break;
+                // 1 关系
+                case "1":
+                    String relationshipsPath = generateRelationshipsXML(productsEntityList, merchantId);
+                    filePathMap.put("1", relationshipsPath);
+                    break;
+                // 2 图片
+                case "2":
+                    String imagesPath = generateImagesXML(productsEntityList, merchantId);
+                    filePathMap.put("2", imagesPath);
+                    break;
+                // 3 库存
+                case "3":
+                    String inventoryPath = generateInventoryXML(productsEntityList, merchantId);
+                    filePathMap.put("3", inventoryPath);
+                    break;
+                // 4 价格
+                case "4":
+                    String pricesPath = generatePricesXML(countryCode, productsEntityList, merchantId);
+                    filePathMap.put("4", pricesPath);
+                    break;
+            }
+        }
+
+        String productKey = "0";
+        if (filePathMap.containsKey(productKey)) {
+            String productFeedSubmissionId = submitFeed(serviceURL, merchantId, devToken, uploadTypeMap.get(productKey), filePathMap.get(productKey), marketplaceIdList);
+            System.out.println("产品基本信息FeedSubmissionId为了 = " + productFeedSubmissionId);
+            List<String> list = new ArrayList<String>();
+            list.add(productFeedSubmissionId);
+            IdList idList = new IdList();
+            idList.setId(list);
+            GetFeedSubmissionListRequest feedSubmissionListRequest = new GetFeedSubmissionListRequest();
+            feedSubmissionListRequest.setMerchant(merchantId);
+            feedSubmissionListRequest.setMWSAuthToken(devToken);
+            feedSubmissionListRequest.setFeedSubmissionIdList(idList);
+            String feedProcessingStatus = null;
+            while (true) {
+                try {
+                    // TODO: 2018/12/21 zjr service 封装
+                    MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
+                    config.setServiceURL(serviceURL);
+                    MarketplaceWebService service = new MarketplaceWebServiceClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+                            "mws", "1.1", config);
+
+                    feedProcessingStatus = getFeedSubmissionList(service, feedSubmissionListRequest);
+                    System.out.println("feedProcessingStatus = " + feedProcessingStatus);
+                    if ("_DONE_".equals(feedProcessingStatus)) {
+                        break;
+                    }
+                    // 设置暂停的时间 6 秒
+                    Thread.sleep(10 * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+          /*  List<String> feedSubmissionId = submitAsyncFeed(serviceURL, merchantId, devToken, typeMap, filePathMap, marketplaceIdList);
+            feedSubmissionId.add(productFeedSubmissionId);*/
+        }
+
+        // TODO: 2018/12/21 todo
+        return null;
+}
+
+    public List<String> invokeSubmitAsyncFeed(MarketplaceWebService service, List<SubmitFeedRequest> requests) {
+        List<String> feedSubmissionIdList = new ArrayList<>();
+        List<Future<SubmitFeedResponse>> responses = new ArrayList<Future<SubmitFeedResponse>>();
+        for (SubmitFeedRequest request : requests) {
+            responses.add(service.submitFeedAsync(request));
+        }
+        for (Future<SubmitFeedResponse> future : responses) {
+            while (!future.isDone()) {
+                Thread.yield();
+            }
+            try {
+                SubmitFeedResponse response = future.get();
+                if (response.isSetSubmitFeedResult()) {
+                    FeedSubmissionInfo feedSubmissionInfo = response.getSubmitFeedResult().getFeedSubmissionInfo();
+                    feedSubmissionIdList.add(feedSubmissionInfo.getFeedSubmissionId());
+                }
+            } catch (Exception e) {
+                if (e.getCause() instanceof MarketplaceWebServiceException) {
+                    MarketplaceWebServiceException exception = MarketplaceWebServiceException.class.cast(e.getCause());
+                    System.out.println("Caught Exception: " + exception.getMessage());
+                    System.out.println("Response Status Code: " + exception.getStatusCode());
+                    System.out.println("Error Code: " + exception.getErrorCode());
+                    System.out.println("Error Type: " + exception.getErrorType());
+                    System.out.println("Request ID: " + exception.getRequestId());
+                    System.out.print("XML: " + exception.getXML());
+                    System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return feedSubmissionIdList;
+    }
+
+    public static void invokeGetFeedSubmissionResult(MarketplaceWebService service, List<GetFeedSubmissionResultRequest> requests) {
+        List<Future<GetFeedSubmissionResultResponse>> responses = new ArrayList<Future<GetFeedSubmissionResultResponse>>();
+        for (GetFeedSubmissionResultRequest request : requests) {
+            responses.add(service.getFeedSubmissionResultAsync(request));
+        }
+        for (Future<GetFeedSubmissionResultResponse> future : responses) {
+            while (!future.isDone()) {
+                Thread.yield();
+            }
+            try {
+                GetFeedSubmissionResultResponse response = future.get();
+                // Original request corresponding to this response, if needed:
+                GetFeedSubmissionResultRequest originalRequest = requests.get(responses.indexOf(future));
+                System.out.println("Result md5checksum : " + response.getGetFeedSubmissionResultResult().getMD5Checksum());
+                System.out.println("Response request id: " + response.getResponseMetadata().getRequestId());
+                System.out.println("FeedSubmissionResult: ");
+                System.out.println(requests.get(responses.indexOf(future)).getFeedSubmissionResultOutputStream().toString());
+                System.out.println(response.getResponseHeaderMetadata());
+                System.out.println();
+            } catch (Exception e) {
+                if (e.getCause() instanceof MarketplaceWebServiceException) {
+                    MarketplaceWebServiceException exception = MarketplaceWebServiceException.class.cast(e.getCause());
+                    System.out.println("Caught Exception: " + exception.getMessage());
+                    System.out.println("Response Status Code: " + exception.getStatusCode());
+                    System.out.println("Error Code: " + exception.getErrorCode());
+                    System.out.println("Error Type: " + exception.getErrorType());
+                    System.out.println("Request ID: " + exception.getRequestId());
+                    System.out.print("XML: " + exception.getXML());
+                    System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static String getFeedSubmissionList(MarketplaceWebService service, GetFeedSubmissionListRequest request) {
+        try {
+            GetFeedSubmissionListResponse response = service.getFeedSubmissionList(request);
+            if (response.isSetGetFeedSubmissionListResult()) {
+                GetFeedSubmissionListResult getFeedSubmissionListResult = response.getGetFeedSubmissionListResult();
+                java.util.List<FeedSubmissionInfo> feedSubmissionInfoList = getFeedSubmissionListResult
+                        .getFeedSubmissionInfoList();
+                for (FeedSubmissionInfo feedSubmissionInfo : feedSubmissionInfoList) {
+                    if (feedSubmissionInfo.isSetFeedProcessingStatus()) {
+                        return feedSubmissionInfo.getFeedProcessingStatus();
+                    }
+                }
+            }
+        } catch (MarketplaceWebServiceException ex) {
+        }
+        return null;
     }
 
     public void submitAsyncFeed(String serviceURL, List<SubmitFeedRequest> requests) {
@@ -845,40 +1036,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         return feedSubmissionIds;
     }
 
-    public List<String> invokeSubmitAsyncFeed(MarketplaceWebService service, List<SubmitFeedRequest> requests) {
-        List<String> feedSubmissionIdList = new ArrayList<>();
-        List<Future<SubmitFeedResponse>> responses = new ArrayList<Future<SubmitFeedResponse>>();
-        for (SubmitFeedRequest request : requests) {
-            responses.add(service.submitFeedAsync(request));
-        }
-        for (Future<SubmitFeedResponse> future : responses) {
-            while (!future.isDone()) {
-                Thread.yield();
-            }
-            try {
-                SubmitFeedResponse response = future.get();
-                if (response.isSetSubmitFeedResult()) {
-                    FeedSubmissionInfo feedSubmissionInfo = response.getSubmitFeedResult().getFeedSubmissionInfo();
-                    feedSubmissionIdList.add(feedSubmissionInfo.getFeedSubmissionId());
-                }
-            } catch (Exception e) {
-                if (e.getCause() instanceof MarketplaceWebServiceException) {
-                    MarketplaceWebServiceException exception = MarketplaceWebServiceException.class.cast(e.getCause());
-                    System.out.println("Caught Exception: " + exception.getMessage());
-                    System.out.println("Response Status Code: " + exception.getStatusCode());
-                    System.out.println("Error Code: " + exception.getErrorCode());
-                    System.out.println("Error Type: " + exception.getErrorType());
-                    System.out.println("Request ID: " + exception.getRequestId());
-                    System.out.print("XML: " + exception.getXML());
-                    System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return feedSubmissionIdList;
-    }
-
     public void getFeedSubmissionResultAsync(String serviceURL) {
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
         config.setServiceURL(serviceURL);
@@ -891,42 +1048,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         GetFeedSubmissionResultRequest requestOne = new GetFeedSubmissionResultRequest();
         requests.add(requestOne);
         invokeGetFeedSubmissionResult(service, requests);
-    }
-
-    public static void invokeGetFeedSubmissionResult(MarketplaceWebService service, List<GetFeedSubmissionResultRequest> requests) {
-        List<Future<GetFeedSubmissionResultResponse>> responses = new ArrayList<Future<GetFeedSubmissionResultResponse>>();
-        for (GetFeedSubmissionResultRequest request : requests) {
-            responses.add(service.getFeedSubmissionResultAsync(request));
-        }
-        for (Future<GetFeedSubmissionResultResponse> future : responses) {
-            while (!future.isDone()) {
-                Thread.yield();
-            }
-            try {
-                GetFeedSubmissionResultResponse response = future.get();
-                // Original request corresponding to this response, if needed:
-                GetFeedSubmissionResultRequest originalRequest = requests.get(responses.indexOf(future));
-                System.out.println("Result md5checksum : " + response.getGetFeedSubmissionResultResult().getMD5Checksum());
-                System.out.println("Response request id: " + response.getResponseMetadata().getRequestId());
-                System.out.println("FeedSubmissionResult: ");
-                System.out.println(requests.get(responses.indexOf(future)).getFeedSubmissionResultOutputStream().toString());
-                System.out.println(response.getResponseHeaderMetadata());
-                System.out.println();
-            } catch (Exception e) {
-                if (e.getCause() instanceof MarketplaceWebServiceException) {
-                    MarketplaceWebServiceException exception = MarketplaceWebServiceException.class.cast(e.getCause());
-                    System.out.println("Caught Exception: " + exception.getMessage());
-                    System.out.println("Response Status Code: " + exception.getStatusCode());
-                    System.out.println("Error Code: " + exception.getErrorCode());
-                    System.out.println("Error Type: " + exception.getErrorType());
-                    System.out.println("Request ID: " + exception.getRequestId());
-                    System.out.print("XML: " + exception.getXML());
-                    System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
 }

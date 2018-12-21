@@ -31,7 +31,7 @@ public class SubmitFeedConfig {
     private static MarketplaceWebService service;
 
 
-    public static synchronized MarketplaceWebService getAsyncService(String serviceURL) {
+    public static MarketplaceWebService getAsyncService(String serviceURL) {
         if (service == null) {
             MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
             config.setServiceURL(serviceURL);
@@ -42,13 +42,10 @@ public class SubmitFeedConfig {
         return service;
     }
 
-    public static synchronized MarketplaceWebService getService(String serviceURL) {
-        if (service == null) {
-            MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
-            config.setServiceURL(serviceURL);
-            service = new MarketplaceWebServiceClient(accessKey, secretKey,
-                    appName, appVersion, config);
-        }
+    public static MarketplaceWebService getService(String serviceURL) {
+        MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
+        config.setServiceURL(serviceURL);
+        service = new MarketplaceWebServiceClient(accessKey, secretKey, appName, appVersion, config);
         return service;
     }
 
