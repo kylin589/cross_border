@@ -25,6 +25,8 @@ var vm = new Vue({
         grantShop:null,
         amazonCategoryId: 0,
         amazonCategory: null,
+        amazonAllCategory:'',
+        amazonAllArr:[],
         amazonTemplateId: 10,
         amazonTemplate: 'test模板',
         inputche:[],
@@ -281,6 +283,7 @@ var vm = new Vue({
             var _index = $(event.target).attr('data-index');
             var index = parseInt(_index) + 1;
             vm.leven.splice(index);
+            vm.amazonAllArr.splice(_index);
             console.log(list);
             // if (list.ifNext=='true') {
                 $.ajax({
@@ -296,11 +299,22 @@ var vm = new Vue({
                         if (r.code === 0) {
                             if(r.amazonCategoryEntityChildList.length != 0){
                                 vm.leven.push(r.amazonCategoryEntityChildList);
+                                console.log(vm.leven);
                                 vm.amazonCategoryId = list.amazonCategoryId;
                                 vm.amazonCategory = list.displayName;
+                                vm.amazonAllArr.push(list.displayName);
+                                console.log(vm.amazonAllArr);
                             }else {
                                 vm.amazonCategoryId = list.amazonCategoryId;
                                 vm.amazonCategory = list.displayName;
+                                // vm.amazonAllArr.push(list.displayName);
+                                console.log(vm.amazonAllArr);
+                                vm.amazonAllArr.forEach(function (t) {
+                                    vm.amazonAllCategory+=t+'/'
+                                })
+                                vm.amazonAllCategory+=list.displayName;
+                                console.log(vm.amazonAllCategory);
+                                // amazonAllCategory =
                             }
 
                         } else {
@@ -394,7 +408,8 @@ var vm = new Vue({
             });
         },
         lishiSelFunc:function () {
-
+            vm.amazonCategory = $(event.target).attr('data-val');
+            vm.amazonCategoryId = $(event.target).attr('id');
         }
     },
     created:function () {

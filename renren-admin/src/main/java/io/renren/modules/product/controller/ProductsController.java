@@ -1072,6 +1072,7 @@ public class ProductsController extends AbstractController {
         //获取最后操作用户id
         products.setLastOperationUserId(this.getUserId());
         Long productId = products.getProductId();
+
         //批量删除变体信息
         variantsInfoService.delete(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId));
         //插入变体信息

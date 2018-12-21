@@ -16,7 +16,10 @@
 
     <!--搜索区域-->
     <div class="search1">
-        <input type="text" class="sousuoAreaInput" placeholder="店铺名称" v-model="shopName">
+        <select name="remark_type" class="sousuoAreaInput" v-model="shopName">
+            <option value="" selected="selected">店铺名称</option>
+            <option :value="item.shopName" v-for="item in shopList">{{item.shopName}}</option>
+        </select>
         <input type="text" placeholder="订单id" v-model="orderId">
         <input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">
         <input type="text" class="sousuoAreaInput" placeholder="关联产品id" v-model="productId">

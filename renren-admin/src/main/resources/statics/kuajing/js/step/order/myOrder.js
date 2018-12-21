@@ -92,7 +92,8 @@ var vm = new Vue({
         orderIds:[],
         allcheck:[],
         abnormalStatus:'',
-        abnormalState:''
+        abnormalState:'',
+        shopList:[]
     },
     methods:{
         addOrder:function () {
@@ -152,7 +153,7 @@ var vm = new Vue({
             console.log(orderStatus);
             this.startDate = this.value9[0];
             this.endDate = this.value9[1];
-            console.log(this.startDate);
+            console.log(this.shopName);
             console.log(this.endDate);
             this.orderStatus = orderStatus;
             $.ajax({
@@ -299,8 +300,8 @@ var vm = new Vue({
                     if (r.code === 0) {
                         vm.yichangList = r.abnormalStateList;
                         vm.yichangList.unshift({
-                            userId:'',
-                            displayName:'-选择-'
+                            dataNumber:'',
+                            dataContent:'-选择-'
                         })
                     } else {
                         layer.alert(r.msg);
@@ -376,6 +377,27 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             });
+        },
+        //选择店铺
+        myShopList:function () {
+            $.ajax({
+                url: '../../amazon/amazongrantshop/myShopList',
+                type: 'get',
+                data: {
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.shopList = r.shopList;
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
         }
     },
     created:function () {
@@ -383,6 +405,7 @@ var vm = new Vue({
         // this.laypage();
         this.getOrderStatenum();
         this.getYichangList();
+        this.myShopList();
 
     }
 })

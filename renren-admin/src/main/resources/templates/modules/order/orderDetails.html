@@ -45,16 +45,16 @@
                     <span><label for="">亚马逊单号：</label><span>{{ orderDetails.amazonOrderId }}</span></span>
                     <span><label for="">购买日期：</label><span>{{ orderDetails.buyDate }}</span></span>
                     <!--<input v-if="orderDetails.orderState == '待付款'" class="yiCaigou" type="button" value="待付款">-->
-                    <input v-if="orderDetails.orderState == '虚发货'" class="yiFahuo" type="button" value="已采购">
+                    <input v-if="orderDetails.orderState == '虚发货'" class="yiFahuo" type="button" value="已采购" @click="updateState('已采购')">
                     <!--<input v-if="orderDetails.orderState == '缺货'" class="yiCaigou" type="button" value="缺货">-->
                     <!--<input v-if="orderDetails.orderState == '取消'" class="yiFahuo" type="button" value="取消">-->
                     <!--<input v-if="orderDetails.orderState == '退货'" class="yiCaigou" type="button" value="退货">-->
                     <!--<input v-if="orderDetails.orderState == '问题'" class="yiFahuo" type="button" value="问题">-->
                     <!--<input v-if="orderDetails.orderState == '已付款'" class="yiCaigou" type="button" value="已付款">-->
                     <!--<input v-if="orderDetails.orderState == '已采购'" class="yiFahuo" type="button" value="已采购">-->
-                    <input v-if="orderDetails.orderState == '待发货'" class="yiCaigou" type="button" value="已发货">
+                    <input v-if="orderDetails.orderState == '待发货'" class="yiCaigou" type="button" value="已发货" @click="updateState('待签收')">
                     <!--<input v-if="orderDetails.orderState == '入库'" class="yiFahuo" type="button" value="入库">-->
-                    <input v-if="orderDetails.orderState == '国际已发货'" class="yiCaigou" type="button" value="已完成">
+                    <input v-if="orderDetails.orderState == '国际已发货'" class="yiCaigou" type="button" value="已完成" @click="updateState('完成')">
                     <!--<input v-if="orderDetails.orderState == '待签收'" class="yiFahuo" type="button" value="待签收">-->
                     <!--<input v-if="orderDetails.orderState == '补发'" class="yiCaigou" type="button" value="补发">-->
                 </div>
@@ -189,16 +189,16 @@
                             <ul class="operationLog">
                                 <li v-for="item in orderDetails.remarkList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark }}</span></li>
                             </ul>
-                            <textarea placeholder="留言备注" style="margin-bottom: 10px"></textarea>
+                            <textarea placeholder="留言备注" style="margin-bottom: 10px" v-model="remark"></textarea>
                             <br>
-                            <select id="remark_type" name="remark_type" class="form-control">
-                                <option value="1" selected="selected">内部备注</option>
-                                <option value="addr">收件人地址异常</option>
-                                <option value="purchase">采购异常</option>
-                                <option value="express">国内快递异常</option>
-                                <option value="waybill">国际物流异常</option>
+                            <select id="remark_type" name="remark_type" class="form-control" v-model="remarkType">
+                                <option value="" selected="selected">内部备注</option>
+                                <option value="收件人地址异常">收件人地址异常</option>
+                                <option value="采购异常">采购异常</option>
+                                <option value="国内快递异常">国内快递异常</option>
+                                <option value="国际物流异常">国际物流异常</option>
                             </select>
-                            <input type="button" value="添加备注说明">
+                            <input type="button" value="添加备注说明" @click="Addnotes">
                         </div>
                         <div class="layui-tab-content">
                             <ul class="operationLog">

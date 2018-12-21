@@ -70,6 +70,7 @@
 #lishi ul li{
     padding: 5px;
     border-radius: 3px;
+    cursor: pointer;
 }
 #lishi ul li:hover , #lishi ul li.active{
     background: #dbedf7;
