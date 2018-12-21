@@ -124,6 +124,10 @@ public class UploadFeedThread extends Thread {
 
             // TODO: 2018/12/22 zjr 获取报告解析。放入xml表 ，如果都成功，总状态也变成成功，如果失败，总状态失败，失败xml的状态也失败。线程关闭
 
+            // TODO: 2018/12/22 zjr 更新：当人们更新了根据上传失败的类型，上传文件 
+
+
+
             // 当所有状态都为_DONE_时，执行下一步
             boolean b = false;
             int count;
