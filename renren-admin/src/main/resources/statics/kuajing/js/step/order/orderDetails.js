@@ -135,8 +135,9 @@ var vm = new Vue({
         addyundanhao:'123424',
         addzhuizonghao:'34564',
         logistics:{
-
-        }
+        },
+        remark:'',
+        remarkType:''
     },
     methods:{
         addorder:function () {
@@ -405,6 +406,63 @@ var vm = new Vue({
 
                 }
             });
+        },
+        //修改订单状态
+        updateState:function (orderState) {
+            $.ajax({
+                url: '../../product/order/updateState',
+                type: 'post',
+                data: JSON.stringify({
+                    orderId:this.orderid,
+                    orderState:orderState
+                }),
+                contentType: "application/json",
+                success: function (r) {
+                    console.log('订单详情');
+                    console.log(r);
+                    if (r.code === 0) {
+                        layer.alert('修改成功');
+                        vm.getOrderInfo();
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        //添加备注
+        Addnotes:function () {
+            console.log(vm.remark)
+            if (vm.remark==''){
+                layer.alert('请输入备注内容');
+            }if (vm.remarkType==''){
+                layer.alert('请输入备注类型');
+            }else {
+                $.ajax({
+                    url: '../../order/remark/save',
+                    type: 'post',
+                    data: JSON.stringify({
+                        orderId:this.orderid,
+                        remark:vm.remark,
+                        remarkType:vm.remarkType
+                    }),
+                    contentType: "application/json",
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            layer.alert('添加成功');
+                            vm.getOrderInfo();
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            }
         }
     },
     created:function () {

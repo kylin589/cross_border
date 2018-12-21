@@ -38,6 +38,18 @@
     background-size: 100% 100%;
     color: #fff;
 }
+.openClass1 .layui-layer-btn a.layui-layer-btn1{
+    border: 0;
+    height: 31px;
+    line-height: 31px;
+    /*width: 29px;*/
+    text-align: center;
+    background: url("../img/create_bg.png");
+    background-size: 100% 100%;
+    color: #fff;
+}
+
+
 .tankuang h3{
     margin: 10px;
     color: #00a3e8;

@@ -160,7 +160,7 @@ var vm = new Vue({
         // 所有员工
         allYUanG:[{
             userId:'1-1',
-            username:'所有员工'
+            displayName:'所有员工'
         }],
         // 所选员工的value
         allYUanGValue:'1-1',
@@ -168,7 +168,8 @@ var vm = new Vue({
         // 所有公司
         allGongsi:[],
         // 所选公司的value
-        allGongsiValue:'1-1'
+        allGongsiValue:'1-1',
+        allGongsiValue1:''
 
     },
     methods: {
@@ -193,7 +194,71 @@ var vm = new Vue({
                             vm.allYUanG= r.userList;
                             vm.allYUanG.unshift({
                                 userId:'1-1',
+                                displayName:'所有员工'
+                            })
+                            // vm.getPage();
+
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                })
+            }else {
+                $.ajax({
+                    url: '../../sys/user/getUserList',
+                    type: 'get',
+                    data:{deptId:'0'}
+                    // 'productIds': JSON.stringify(vm.activeProlist)
+                    ,
+                    // contentType: "application/json",
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('获取员工');
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.allYUanG= r.userList;
+                            vm.allYUanG.unshift({
+                                userId:'1-1',
                                 username:'所有员工'
+                            })
+                            // vm.getPage();
+
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                })
+            }
+
+        },
+        // 获取员工列表1
+        getManList1:function () {
+            console.log('11111');
+            if(vm.allGongsiValue1 != ''){
+                console.log('@@@@@@');
+                console.log(vm.allYUanGValue);
+                $.ajax({
+                    url: '../../sys/user/getUserList',
+                    type: 'get',
+                    data:{deptId:vm.allGongsiValue1}
+                    // 'productIds': JSON.stringify(vm.activeProlist)
+                    ,
+                    // contentType: "application/json",
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('获取员工');
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.allYUanG= r.userList;
+                            vm.allYUanG.unshift({
+                                userId:'1-1',
+                                displayName:'所有员工'
                             })
                             // vm.getPage();
 
@@ -272,7 +337,7 @@ var vm = new Vue({
         chanGongsiFunc:function () {
             vm.allYUanG = [{
                 userId:'1-1',
-                username:'所有员工'
+                displayName:'所有员工'
             }];
             vm.allYUanGValue = '1-1';
         },
@@ -381,9 +446,27 @@ var vm = new Vue({
                 s = this.value9[0] + ' 00:00:00';
                 e = this.value9[1] + ' 23:59:59';
             }
+
+            var Gongs='';
+            var Yuang='';
+
+            if(this.allYUanGValue == '1-1'){
+                Yuang='';
+            }else {
+                Yuang=this.allYUanGValue;
+            }
+
+            if(this.allGongsiValue == '1-1'){
+                Gongs=''
+            }else {
+                Gongs=this.allGongsiValue
+            }
+            console.log(Gongs);
+            console.log(Yuang);
+
             $.ajax({
-                url: '../../product/products/mylist',
-                type: 'post',
+                url: '../../product/products/getClaimList',
+                type: 'get',
                 data: {
                     // '_search': false,
                     'page': this.proCurr,
@@ -398,10 +481,14 @@ var vm = new Vue({
                     'auditNumber': this.auditNumber,
                     'shelveNumber': this.shelveNumber,
                     'productNumber': this.productNumber,
+                    'deptId':Gongs,
+                    'userId':Yuang
                     // '_': $.now()
                 },
                 dataType: 'json',
                 success: function (r) {
+                    console.log('认领列表');
+                    console.log(r);
                     if (r.code === 0) {
                         // console.log(r)
                         vm.statistics.proNum = r.proNum;
@@ -995,6 +1082,52 @@ var vm = new Vue({
         // 原创
         createPro:function () {
             window.location.href="createPro.html";
+        },
+        // 认领
+        renlFunc:function (id) {
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#renlTk'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['340px', '260px'],
+                shadeClose: true,
+                btn: ['认领','取消'],
+                btn1: function (index) {
+                    console.log(vm.xiugaiData);
+                    layer.confirm('确定认领吗？',function () {
+                        $.ajax({
+                            url: '../../product/claim/claim',
+                            type: 'post',
+                            // data:vm.xiugaiData,
+                            data:JSON.stringify({
+                                'productId':id,
+                                'userId':vm.allYUanGValue1
+                            }),
+                            contentType: "application/json",
+                            success: function (r) {
+                                console.log(r);
+                                if (r.code === 0) {
+                                    layer.close(index);
+                                    layer.msg('认领成功');
+
+                                } else {
+                                    layer.alert(r.msg);
+                                }
+                            },
+                            error: function () {
+                                layer.msg("网络故障");
+                            }
+                        })
+                    })
+
+
+                },
+                btn2: function (index) {
+
+
+                }
+            });
         }
 
 

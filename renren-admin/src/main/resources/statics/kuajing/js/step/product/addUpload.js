@@ -1,7 +1,7 @@
 $(function () {
-    $('.inner-content-div2').slimScroll({
-        height: '270px' //设置显示的高度
-    });
+    // $('.inner-content-div2').slimScroll({
+    //     height: '270px' //设置显示的高度
+    // });
 })
 
 window.onload = function () {
@@ -25,6 +25,8 @@ var vm = new Vue({
         grantShop:null,
         amazonCategoryId: 0,
         amazonCategory: null,
+        amazonAllCategory:'',
+        amazonAllArr:[],
         amazonTemplateId: 10,
         amazonTemplate: 'test模板',
         inputche:[],
@@ -36,7 +38,8 @@ var vm = new Vue({
         arr:[],
         arr2:[],
         // 转换时间
-        changeTime:''
+        changeTime:'',
+        lishiList:[],
     },
     methods:{
         fenleiTankuang:function () {
@@ -50,6 +53,8 @@ var vm = new Vue({
             // })
             // vm.amazonOneCategory();
 
+
+
             // 分类弹框
             layer.open({
                 type: 1,
@@ -60,13 +65,20 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['确定','取消'],
                 btn1: function (index) {
+                    $('#fenleiTankuang div.con li').removeClass('active');
                     layer.close(index);
 
                 },
                 btn2: function (index) {
 
-                    $('#fenleiTankuang div.con>div.qita').remove();
+                    // $('#fenleiTankuang div.con>div.qita').remove();
+                    $('#fenleiTankuang div.con li').removeClass('active');
                 }
+            });
+            console.log('打印');
+            console.log($('.inner-content-div2'))
+            $('.inner-content-div2').slimScroll({
+                height: '270px' //设置显示的高度
             });
         },
 
@@ -221,12 +233,13 @@ var vm = new Vue({
         amazonOneCategory:function () {
             // console.log(this.shopinfo.region);
             if (this.shopinfo.region!=undefined) {
+                console.log(this.shopinfo.countryCode);
 
                 $.ajax({
                     url: '../../product/amazoncategory/amazonOneCategory',
-                    type: 'post',
+                    type: 'get',
                     data: {
-                        region:this.shopinfo.countryCode
+                        countryCode:this.shopinfo.countryCode
                     },
                     dataType: 'json',
                     success: function (r) {
@@ -235,9 +248,16 @@ var vm = new Vue({
                             vm.leven = [];
                             vm.leven.push(r.amazonCategoryEntityList);
                             console.log(vm.leven);
+
                             vm.fenleiTankuang();
+                            setTimeout(function () {
+                                $('.inner-content-div2').slimScroll({
+                                    height: '270px' //设置显示的高度
+                                });
+                            },1000)
+
                         } else {
-                            layer.alert(r.message);
+                            layer.alert(r.msg);
                         }
                     },
                     error: function () {
@@ -251,22 +271,52 @@ var vm = new Vue({
         },
         // 子级分类
         amazonItemCategory:function (list) {
+            $('.inner-content-div2').slimScroll({
+                height: '270px' //设置显示的高度
+            });
+            // console.log($(event))
+            $(event.target).siblings().removeClass('active');
+            $(event.target).addClass('active');
+            //
+            // var id = $(event.target).attr('id');
+
             var _index = $(event.target).attr('data-index');
             var index = parseInt(_index) + 1;
             vm.leven.splice(index);
+            vm.amazonAllArr.splice(_index);
             console.log(list);
-            if (list.ifNext=='true') {
+            // if (list.ifNext=='true') {
                 $.ajax({
                     url: '../../product/amazoncategory/childCategoryList',
-                    type: 'post',
+                    type: 'get',
                     data: {
                         amazonCategoryId:list.amazonCategoryId
                     },
                     dataType: 'json',
                     success: function (r) {
+                        console.log('子集分类')
                         console.log(r);
                         if (r.code === 0) {
-                            vm.leven.push(r.amazonCategoryEntityChildList);
+                            if(r.amazonCategoryEntityChildList.length != 0){
+                                vm.leven.push(r.amazonCategoryEntityChildList);
+                                console.log(vm.leven);
+                                vm.amazonCategoryId = list.amazonCategoryId;
+                                vm.amazonCategory = list.displayName;
+                                vm.amazonAllArr.push(list.displayName);
+                                console.log(vm.amazonAllArr);
+                            }else {
+                                vm.amazonCategoryId = list.amazonCategoryId;
+                                vm.amazonCategory = list.displayName;
+                                // vm.amazonAllArr.push(list.displayName);
+                                console.log(vm.amazonAllArr);
+                                vm.amazonAllArr.forEach(function (t) {
+                                    vm.amazonAllCategory+=t+'/'
+                                })
+                                vm.amazonAllCategory+=list.displayName;
+                                console.log(vm.amazonAllCategory);
+                                // amazonAllCategory =
+                            }
+
                         } else {
                             layer.alert(r.message);
                         }
@@ -275,10 +325,9 @@ var vm = new Vue({
                         layer.msg("网络故障");
                     }
                 });
-            }else {
-                vm.amazonCategoryId = list.amazonCategoryId;
-                vm.amazonCategory = list.displayName;
-            }
+            // }else {
+
+            // }
 
         },
         //时区转换
@@ -306,6 +355,61 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             });
+        },
+        // 历史选择
+        lishiFunc:function () {
+
+            $.ajax({
+                url: '../../amazon/amazoncategoryhistory/getMyList',
+                type: 'get',
+                data: '',
+                dataType: 'json',
+                success: function (r) {
+                    console.log('历史选择')
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.lishiList = r.list;
+                        layer.open({
+                            type: 1,
+                            title: false,
+                            content: $('#lishi'), //这里content是一个普通的String
+                            skin: 'openClass',
+                            area: ['800px', '400px'],
+                            shadeClose: true,
+                            btn: ['确定','取消'],
+                            btn1: function (index) {
+                                // $('#fenleiTankuang div.con li').removeClass('active');
+                                layer.close(index);
+
+                            },
+                            btn2: function (index) {
+
+                                // $('#fenleiTankuang div.con>div.qita').remove();
+                                // $('#fenleiTankuang div.con li').removeClass('active');
+                            }
+                        });
+                        $('.inner-content-div2').slimScroll({
+                            height: '300px' //设置显示的高度
+                        });
+                        setTimeout(function () {
+                            $('.inner-content-div2').slimScroll({
+                                height: '300px' //设置显示的高度
+                            });
+                        },1000)
+
+
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        lishiSelFunc:function () {
+            vm.amazonCategory = $(event.target).attr('data-val');
+            vm.amazonCategoryId = $(event.target).attr('id');
         }
     },
     created:function () {

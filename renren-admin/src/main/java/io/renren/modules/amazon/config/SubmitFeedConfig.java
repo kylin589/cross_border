@@ -28,7 +28,7 @@ public class SubmitFeedConfig {
     /**
      * The client, lazy initialized. Async client is also a sync client.
      */
-    private static MarketplaceWebService service = null;
+    private static MarketplaceWebService service;
 
 
     public static synchronized MarketplaceWebService getAsyncService(String serviceURL) {
@@ -36,6 +36,16 @@ public class SubmitFeedConfig {
             MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
             config.setServiceURL(serviceURL);
             config.setMaxAsyncThreads(35);
+            service = new MarketplaceWebServiceClient(accessKey, secretKey,
+                    appName, appVersion, config);
+        }
+        return service;
+    }
+
+    public static synchronized MarketplaceWebService getService(String serviceURL) {
+        if (service == null) {
+            MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
+            config.setServiceURL(serviceURL);
             service = new MarketplaceWebServiceClient(accessKey, secretKey,
                     appName, appVersion, config);
         }

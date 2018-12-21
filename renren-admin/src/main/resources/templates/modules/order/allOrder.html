@@ -16,7 +16,10 @@
 
     <!--搜索区域-->
     <div class="search1">
-        <input type="text" class="sousuoAreaInput" placeholder="店铺名称" v-model="shopName">
+        <select name="remark_type" class="sousuoAreaInput" v-model="shopName">
+            <option value="" selected="selected">店铺名称</option>
+            <option :value="item.shopName" v-for="item in shopList">{{item.shopName}}</option>
+        </select>
         <input type="text" placeholder="订单id" v-model="orderId">
         <input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">
         <input type="text" class="sousuoAreaInput" placeholder="关联产品id" v-model="productId">
@@ -42,9 +45,16 @@
     <!--筛选区域-->
     <div class="screen">
         <div class="audit">
-            <li class="red" @click="getOrderlist('')">全部 <span>({{ allOrderCount }})</span></li>
+            <span>订单状态</span>
             <ul>
+                <li class="red active" @click="getOrderlist('')">全部 <span>({{ allOrderCount }})</span></li>
                 <li  v-for="item in orderStateList" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
+            </ul>
+        </div>
+        <div class="audit">
+            <span>异常状态</span>
+            <ul>
+                <li  v-for="item in orderStateListyc" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
             </ul>
         </div>
 
@@ -55,9 +65,17 @@
     <!--操作区域-->
     <div class="operation">
         <!--<button class="addBtn"><i class="layui-icon layui-icon-add-1"></i> 添加订单</button>-->
-
+        <el-select v-model="yichangListValue" placeholder="请选择员工" >
+            <el-option
+                    v-for="item in yichangList"
+                    :key="item.dataNumber"
+                    :label="item.dataContent"
+                    :value="item.dataNumber">
+            </el-option>
+        </el-select>
+        <span @click="updateAbnormalState" >确定</span>
         <!--统计-->
-        <div class="statistics" style="width: 100%">
+        <div class="statistics" style="">
             核算订单数: <span>{{ statistics.orderNum }}</span>
             总金额: <span>{{ statistics.allPrice }}</span>
             利润: <span>{{ statistics.profit }}</span>
@@ -72,6 +90,9 @@
 
     <table>
         <tr>
+            <th>
+                <input type="checkbox"  v-model='isok' @click='demo'>
+            </th>
             <th>订单号</th>
             <th>图片</th>
             <th>亚马逊单号</th>
@@ -83,10 +104,13 @@
             <th>国内运单</th>
             <th>下单时间</th>
         </tr>
-        <tr v-for = 'item in prolist'>
+        <tr v-for = '(item,index) in prolist'>
+            <td>
+                <input type="checkbox" :value='item.orderid' v-model='allcheck[index]' @change='demo2(item.orderId)'>
+            </td>
             <td>{{ item.orderId }}<br/><span class="brSpan"><img src="../../statics/kuajing/img/american.png" alt=""> {{ item.country }}</span></td>
             <td class="imgtd"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
-            <td><a href="orderDetails.html">{{ item.amazonOrderId }}</a> <br/>
+            <td><a :href="'orderDetails.html?orderid='+item.orderId">{{ item.amazonOrderId }}</a> <br/>
                 <span class="brSpan">
                     <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
                     {{ item.shopName }}

@@ -417,6 +417,8 @@ var vm = new Vue({
                 contentType: "application/json",
                 data: '',
                 success: function (r) {
+                    console.log('产品一级分类');
+                    console.log(r);
                     if (r.code == 0) {
                         vm.categoryOneList = r.categoryOneList;
 

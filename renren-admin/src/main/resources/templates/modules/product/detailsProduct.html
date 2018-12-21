@@ -5,6 +5,7 @@
     <title>详情</title>
     <#include "/header_kuajing.html">
         <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
+        <script src="${request.contextPath}/statics/libs/ajaxupload.js"></script>
         <style>
             .ul1 {
                 width: 100%;
@@ -23,12 +24,14 @@
             }
             .ul1 li img{
                 width: 100%;
+                box-shadow: 0 0 10px #ddd;
             }
             .ul1 li i{
                 position: relative;
                 top: -65px;
                 left: 45px;
                 color: #00a3e8;
+                cursor: pointer;
                 display: none;
             }
 
@@ -39,6 +42,14 @@
 
             .ul1 .active {
                 border: 1px dashed red;
+            }
+            form .item div:nth-child(2) .imgDiv>div:hover{
+                /*border: 2px solid #00a3e8;*/
+                box-shadow: 0 0 20px #888;
+            }
+            form .item div:nth-child(2) .imgDiv>div.active{
+                border: 2px solid #00a3e8;
+                box-shadow: 0 0 20px #888;
             }
         </style>
         </head>
@@ -73,16 +84,33 @@
                 <div>
                     <!--图片区域-->
                     <div class="imgDiv">
-                        <div v-for="(item,index) in proAlbum" :data-index="index" @mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)">
+                        <div class="imgAlbum" v-for="(item,index) in proAlbum" :data-index="item.imgId">
+                            <!--@mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)"-->
                             <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
-                            <img :src="item.imageUrl" alt="" class="imgItem" :data-con="item">
+                            <img :src="item.url" alt="" class="imgItem" :data-con="item" @click="clickActiveImg">
                             <i class="layui-icon layui-icon-close-fill imgDel"></i>
                         </div>
 
+
+
                     </div>
-                    <input type="button" value="选中文件">
-                    <input type="button" value="开始上传">
-                    <input type="button" class="proStation" value="图片回收站">
+                    <!--<el-upload-->
+                            <!--action="${request.contextPath}/product/imageaddress/upload"-->
+                            <!--list-type="picture-card"-->
+                            <!--:file-list="proAlbum"-->
+                            <!--:on-preview="handlePictureCardPreview"-->
+                            <!--:on-error="upErrorFunc"-->
+                            <!--:on-remove="handleRemove">-->
+                            <!--<i class="el-icon-plus"></i>-->
+                    <!--</el-upload>-->
+                    <!--<el-dialog :visible.sync="dialogVisible">-->
+                        <!--<img width="100%" :src="dialogImageUrl" alt="">-->
+                    <!--</el-dialog>-->
+                    <input type="file" value="选择文件" class="selImg">
+
+                    <input type="button" value="开始上传" id="upload" @click="shangchuan">
+                    <input type="button" value="批量删除" id="" @click="proDel">
+                    <input type="button" class="proStation" value="图片回收站" @click="prostation">
                 </div>
             </div>
             <div class="item">
@@ -437,11 +465,11 @@
                             <td><input type="text" v-model="item.stock"></td>
                             <td><input type="text" v-model="item.code"></td>
                             <td><input type="button" class="del" :data-index="item.id" value="删除" @click="delVariantList"></td>
-                            <td><input type="button" class="chan" value="选择图片"> <input type="button" class="all" value="一键添加"></td>
+                            <td><input type="button" class="chan" value="选择图片" @click="selImgCFcun(item)"> <input type="button" class="all" value="一键添加" @click="yijianAddFunc(item)"></td>
                             <td>
                                 <ul class="ul1">
-                                    <li v-for="img in item.img">
-                                        <img :src="img" alt="">
+                                    <li v-for="(img,index) in item.img" @mouseover="imgBig" :data-url="img" :data-index="index" @mouseout="imgBigS">
+                                        <img :src="img" alt="" :data-url="img">
                                         <i class="layui-icon layui-icon-close-fill"></i>
                                     </li>
                                 </ul>
@@ -463,6 +491,21 @@
                     <!--要加滚动条的具体内容-->
                     <ul class="proStationUl">
                         <li v-for="(item,index) in proStation" @click="choicePro(index)" :data-index="index">
+                            <img :src="item.url" alt="">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!--变体列表选择图片-->
+        <div id="selImg" class="tankuang" style="display: none">
+            <h3>产品回收站</h3>
+            <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
+                <div class="inner-content-div2">
+                    <!--要加滚动条的具体内容-->
+                    <ul class="proStationUl">
+                        <li v-for="(item,index) in proAlbum" @click="activeImg(index)" :data-index="item.imageId" :data-url="item.url">
                             <img :src="item.url" alt="">
 
                         </li>
@@ -492,10 +535,15 @@
                 <span v-for="item in recommend1">{{ item }}</span>
             </div>
         </div>
+
+        <div id="imgBigDiv" style="display: none">
+            <img src="" alt="">
+        </div>
+
     </form>
 
 
-    <script src="${request.contextPath}/statics/kuajing/js/step/product/detailsProduct.js"></script>
+    <script src="${request.contextPath}/statics/kuajing/js/step/product/detailsProduct.js?_${.now?long}"></script>
     <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>-->
     <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
     <script>

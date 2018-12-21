@@ -16,7 +16,10 @@
 
     <!--搜索区域-->
     <div class="search1">
-        <input type="text" class="sousuoAreaInput" placeholder="店铺名称" v-model="shopName">
+        <select name="remark_type" class="sousuoAreaInput" v-model="shopName">
+            <option value="" selected="selected">店铺名称</option>
+            <option :value="item.shopName" v-for="item in shopList">{{item.shopName}}</option>
+        </select>
         <input type="text" placeholder="订单id" v-model="orderId">
         <input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">
         <input type="text" class="sousuoAreaInput" placeholder="关联产品id" v-model="productId">
@@ -61,8 +64,15 @@
 
     <!--操作区域-->
     <div class="operation">
-        <button class="addBtn"><i class="layui-icon layui-icon-add-1"></i> 添加订单</button>
-
+        <el-select v-model="yichangListValue" placeholder="请选择员工" >
+            <el-option
+                    v-for="item in yichangList"
+                    :key="item.dataNumber"
+                    :label="item.dataContent"
+                    :value="item.dataNumber">
+            </el-option>
+        </el-select>
+        <span @click="updateAbnormalState">确定</span>
         <!--统计-->
         <div class="statistics">
             核算订单数: <span>{{ statistics.orderNum }}</span>
@@ -78,6 +88,9 @@
 
     <table>
         <tr>
+            <th>
+                <input type="checkbox"  v-model='isok' @click='demo'>
+            </th>
             <th>订单号</th>
             <th>图片</th>
             <th>亚马逊单号</th>
@@ -89,7 +102,10 @@
             <th>国内运单</th>
             <th>下单时间</th>
         </tr>
-        <tr v-for = 'item in prolist'>
+        <tr v-for = '(item,index) in prolist'>
+            <td class="orderchenc">
+                <input type="checkbox" :value='item.orderid' v-model='allcheck[index]' @change='demo2(item.orderId)'>
+            </td>
             <td>
                 {{ item.orderId }}<br/>
                 <span class="brSpan">

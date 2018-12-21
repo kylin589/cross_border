@@ -9,6 +9,35 @@
             .layui-col-md3{
                 width: 20%;
             }
+            .sousuoArea{
+                left:386px;
+            }
+            .renl{
+                position: absolute;
+                top:6px;
+                right: 6px;
+                padding: 6px 16px;
+                border-radius: 5px;
+                background: #2f8eea;
+                box-shadow: 0 0 10px #3d4a56;
+                color: #fff;
+                font-size: 13px;
+                /*letter-spacing: 3px;*/
+                display: none;
+                border:0;
+                cursor: pointer;
+            }
+            .pro_list .item:hover .renl{
+                display: inline-block;
+            }
+            #renlTk h3{
+                margin: 10px;
+                color: #00a3e8;
+                font-weight: bold;
+            }
+            .el-select-dropdown{
+                z-index: 200000000!important;
+            }
         </style>
         </head>
 <body>
@@ -33,7 +62,7 @@
             <el-option
                     v-for="item in allYUanG"
                     :key="item.userId"
-                    :label="item.username"
+                    :label="item.displayName"
                     :value="item.userId">
             </el-option>
         </el-select>
@@ -109,44 +138,13 @@
         </div>
     </div>
 
-    <!--操作区域-->
-    <div class="operation">
-        <label style="color: #666;font-weight: bold">产品源：</label>
-        <el-select v-model="allYUanGValue" placeholder="请选择员工">
-            <el-option
-                    v-for="item in allYUanG"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-            </el-option>
-        </el-select>
-
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <label style="color: #666;font-weight: bold">认领到：</label>
-        <el-select v-model="allYUanGValue1" placeholder="请选择员工">
-            <el-option
-                    v-for="item in allYUanG"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-            </el-option>
-        </el-select>
-
-        <!--统计-->
-        <div class="statistics">
-            产品数量: <span>{{ statistics.proNum }}</span>
-            审核通过: <span>{{ statistics.via }}</span>
-            含变体产品数: <span>{{ statistics.variant }}</span>
-            变体总数: <span>{{ statistics.allVariant }}</span>
-
-        </div>
-    </div>
 
 
 
     <!--商品列表-->
     <div class="pro_list" data-click="true">
         <div v-for="(item,index) in proList" class="item" :data-id="item.productId" @click="activePro(index)">
+            <button class="renl" @click="renlFunc(item.productId)">认领</button>
             <!--<img src="${request.contextPath}/statics/kuajing/img/img1.jpg">-->
             <img v-if="JSON.stringify(item.mainImageUrl) != 'null'" :src="item.mainImageUrl">
             <img v-if="JSON.stringify(item.mainImageUrl) == 'null'" src="${request.contextPath}/statics/kuajing/img/img1.jpg">
@@ -167,175 +165,37 @@
     </div>
     <!--分页-->
     <div id="page" style="text-align: center"></div>
-    <!--批量删除弹框-->
-    <div id="pilUp" style="display: none">
-        <h3>批量修改</h3>
-        <div class="form_item">
-            <div class="item">
-                <div>
-                    <h4>审核状态</h4>
-                </div>
-                <div>
-                    <input type="radio" class="rdo" name="sex" value="001" v-model="xiugaiData.auditStatus" style="">
-                    <label class="rdo-text">通过</label>
-                    <input type="radio" class="rdo" name="sex" value="002" v-model="xiugaiData.auditStatus">
-                    <label class="rdo-text">待审核</label>
-                    <input type="radio" class="rdo" name="sex" value="003" v-model="xiugaiData.auditStatus">
-                    <label class="rdo-text">失效</label>
 
-                </div>
-            </div>
-            <div class="item">
-                <div>
-                    <h4>上下架</h4>
-                </div>
-                <div>
-                    <input type="radio" class="rdo" name="sex1" value="001" v-model="xiugaiData.shelveStatus" style="">
-                    <label class="rdo-text">上架</label>
-                    <input type="radio" class="rdo" name="sex1" value="002" v-model="xiugaiData.shelveStatus">
-                    <label class="rdo-text">下架</label>
-                    <input type="radio" class="rdo" name="sex1" value="003" v-model="xiugaiData.shelveStatus">
-                    <label class="rdo-text">过滤</label>
-                    <input type="radio" class="rdo" name="sex1" value="004" v-model="xiugaiData.shelveStatus" style="">
-                    <label class="rdo-text">侵权</label>
-                    <input type="radio" class="rdo" name="sex1" value="005" v-model="xiugaiData.shelveStatus">
-                    <label class="rdo-text">屏蔽</label>
-                </div>
-            </div>
-            <div class="item">
-                <div>
-                    <h4>产品类型</h4>
-                </div>
-                <div>
-                    <input type="radio" class="rdo" name="sex2" value="001" v-model="xiugaiData.productType" style="">
-                    <label class="rdo-text">重点</label>
-                    <input type="radio" class="rdo" name="sex2" value="002" v-model="xiugaiData.productType">
-                    <label class="rdo-text">原创</label>
-                    <input type="radio" class="rdo" name="sex2" value="003" v-model="xiugaiData.productType">
-                    <label class="rdo-text">海外</label>
-                    <input type="radio" class="rdo" name="sex2" value="004" v-model="xiugaiData.productType" style="">
-                    <label class="rdo-text">抓取</label>
-                    <input type="radio" class="rdo" name="sex2" value="005" v-model="xiugaiData.productType">
-                    <label class="rdo-text">其他</label>
-                </div>
-            </div>
-        </div>
+    <!--认领弹框-->
+    <div id="renlTk" style="padding: 16px;display: none">
+        <h3>认领到</h3>
+        <br>
+        <#if shiro.hasPermission("sys:dept:list")>
+            <label for="">选择公司：</label>
+            <el-select v-model="allGongsiValue1" filterable @change="chanGongsiFunc" placeholder="请选择公司">
+                <el-option
+                        v-for="item in allGongsi"
+                        :key="item.deptId"
+                        :label="item.name"
+                        :value="item.deptId"
+                >
+                </el-option>
+            </el-select>
+        </#if>
 
-        <div class="form_item">
-            <div class="item">
-                <div>
-                    <h4>产品分类</h4>
-                </div>
-                <div>
-                    <input type="text" class="sousuoAreaInput" placeholder="产品类目" v-model="xiugaiData.productCategory" @click="typeClickINput1">
-                    <div class="sousuoArea sousuoArea1">
-                        <div class="areaOne">
-                            <ul>
-                                <li v-for="categoryOneItem in categoryOneList" :data-id="categoryOneItem.categoryId" :data-pId="categoryOneItem.parentId" :data-if="categoryOneItem.ifNext" :data-val = 'categoryOneItem.categoryName' @click="clickTypeItem1"> {{ categoryOneItem.categoryName }}（{{categoryOneItem.count}}）</li>
-                            </ul>
-                        </div>
-                        <div class="areaTwo" v-if="categoryTwoList.length != 0">
-                            <ul>
-                                <li v-for="categoryTwoItem in categoryTwoList" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-if="categoryTwoItem.ifNext" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem1"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
-                            </ul>
-                        </div>
-                        <div class="areaThree" v-if="categoryThreeList.length != 0">
-                            <ul>
-                                <li v-for="categoryThreeItem in categoryThreeList" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-if="categoryThreeItem.ifNext" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem1"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="form_item">
-            <div class="item">
-                <div>
-                    <h4>产品信息</h4>
-                </div>
-                <div>
-                    <div class="pro_inf">
-                        <span><label for="">厂家：</label><input type="text" placeholder="厂家名称" v-model="xiugaiData.producerName"></span>
-                        <span><label for="">厂家编号：</label><input type="text" placeholder="厂家编号" v-model="xiugaiData.manufacturerNumber"></span>
-                        <span><label for="">品牌：</label><input type="text" placeholder="品牌名称" v-model="xiugaiData.brandName"></span>
-                        <span><label for="">商品简介：</label><input type="text" placeholder="商品简介" v-model="xiugaiData.producerName"></span><br>
-                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="xiugaiData.productWeight"></span>
-                        <span><label for="">尺寸（cm）：</label><input class="size_input" type="text" placeholder="长" v-model="xiugaiData.productLength"> * <input class="size_input" type="text" placeholder="宽" v-model="xiugaiData.productWide"> * <input type="text" class="size_input" placeholder="高" v-model="xiugaiData.productHeight"></span><br>
-                        <span><label for="">标题前加：</label><input type="text" placeholder="建议填写" v-model="xiugaiData.productTitleQ"></span>
-                        <span><label for="">标题后加：</label><input type="text" placeholder="建议填写" v-model="xiugaiData.productTitleH"></span><br>
-                        <span><label for="">买点：</label><textarea v-model="xiugaiData.producerName">建议填写</textarea></span><br>
-                        <span><label for="">关键词：</label><textarea v-model="xiugaiData.keyWord">建议填写</textarea></span><br>
-                        <span><label for="">描述前加：</label><textarea v-model="xiugaiData.productDescriptionQ">建议填写</textarea></span><br>
-                        <span><label for="">描述后加：</label><textarea v-model="xiugaiData.productDescriptionH">建议填写</textarea></span><br>
-                        <p>
-                            <input type="checkbox" >中文
-
-                            <i class="layui-icon layui-icon-spread-left"></i>
-
-                            <input type="checkbox" >英语
-                            <input type="checkbox" >法语
-                            <input type="checkbox" >德语
-                            <input type="checkbox" >意大利语
-                            <input type="checkbox" >西班牙语
-
-
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <br>
+        <br>
+        <label for="">选择人员：</label>
+        <el-select v-model="allYUanGValue1" placeholder="请选择员工" @focus="getManList1">
+            <el-option
+                    v-for="item in allYUanG"
+                    :key="item.userId"
+                    :label="item.displayName"
+                    :value="item.userId">
+            </el-option>
+        </el-select>
     </div>
 
-    <!--采集产品分类-->
-    <div id="caijiCreate" style="display: none">
-        <h3>采集产品</h3>
-
-        <div class="form_item">
-            <div class="item">
-                <div>
-                    <h4>采集网址</h4>
-                </div>
-                <div>
-                    <input type="text" class="" placeholder="采集网址" v-model="caijiUrl" style="width: 200px">
-                </div>
-            </div>
-        </div>
-
-        <div class="form_item">
-            <div class="item">
-                <div>
-                    <h4>产品分类</h4>
-                </div>
-                <div>
-                    <input type="text" class="sousuoAreaInput" placeholder="产品类目" v-model="caijiNowType" @click="typeClickINput2">
-                    <div class="sousuoArea sousuoArea2">
-                        <div class="areaOne">
-                            <ul>
-                                <li v-for="categoryOneItem in categoryOneList" :data-id="categoryOneItem.categoryId" :data-pId="categoryOneItem.parentId" :data-if="categoryOneItem.ifNext" :data-val = 'categoryOneItem.categoryName' @click="clickTypeItem2"> {{ categoryOneItem.categoryName }}（{{categoryOneItem.count}}）</li>
-                            </ul>
-                        </div>
-                        <div class="areaTwo" v-if="categoryTwoList.length != 0">
-                            <ul>
-                                <li v-for="categoryTwoItem in categoryTwoList" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-if="categoryTwoItem.ifNext" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem2"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
-                            </ul>
-                        </div>
-                        <div class="areaThree" v-if="categoryThreeList.length != 0">
-                            <ul>
-                                <li v-for="categoryThreeItem in categoryThreeList" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-if="categoryThreeItem.ifNext" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem2"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div style="margin-left: 36px;width: calc(100% - 36px);">
-            <el-progress v-if="caijiProgressIf" :percentage="caijiProgress"></el-progress>
-        </div>
-
-
-
-    </div>
 
 </div>
 

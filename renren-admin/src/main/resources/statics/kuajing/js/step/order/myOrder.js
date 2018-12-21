@@ -85,7 +85,15 @@ var vm = new Vue({
             purchase:238175,
             refund:123,
             refundCost:-2378.23
-        }
+        },
+        yichangList:[],
+        yichangListValue:'',
+        isok:false,  //判断CheckBox是否选中
+        orderIds:[],
+        allcheck:[],
+        abnormalStatus:'',
+        abnormalState:'',
+        shopList:[]
     },
     methods:{
         addOrder:function () {
@@ -145,7 +153,7 @@ var vm = new Vue({
             console.log(orderStatus);
             this.startDate = this.value9[0];
             this.endDate = this.value9[1];
-            console.log(this.startDate);
+            console.log(this.shopName);
             console.log(this.endDate);
             this.orderStatus = orderStatus;
             $.ajax({
@@ -279,12 +287,125 @@ var vm = new Vue({
         imgMouout:function () {
             $('img.bigImg').remove();
             $('.bigImgDiv').css('display','none');
+        },
+        // 获取异常状态列表
+        getYichangList:function () {
+            $.ajax({
+                url: '../../product/datadictionary/getAbnormalStateList',
+                type: 'post',
+                data: '',
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.yichangList = r.abnormalStateList;
+                        vm.yichangList.unshift({
+                            dataNumber:'',
+                            dataContent:'-选择-'
+                        })
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        allSel:function () {
+            
+        },
+        demo:function(){   //全选/反选
+            console.log(this.isok);
+            this.orderIds=[];
+            this.allcheck=[];
+            if(this.isok){ //全选中 所有CheckBox
+                this.prolist.forEach(function (fruit) {
+                    this.orderIds.push(fruit.orderId);
+                    this.allcheck.push(true)
+                }, this);
+            }else{   //反选清楚所有CheckBox选中
+                this.orderIds=[];
+                this.allcheck=[];
+            }
+            console.log(this.orderIds);
+            console.log(this.allcheck)
+        },
+        demo2:function(orderId){
+            this.orderIds.push(orderId);
+            if(this.prolist.length==this.orderIds.length){ //判断每一个CheckBox是否选中   全选中让全选反选按钮选中
+                this.isok=true;
+            }else{  // 不选中 让全选反选按钮不选中
+                this.isok=false;
+            }
+            console.log(this.orderIds)
+        },
+        //标记为异常状态
+        updateAbnormalState:function () {
+            console.log(vm.yichangListValue);
+            for (var i =0;i<vm.yichangList.length;i++){
+                if (vm.yichangListValue = vm.yichangList[i].dataNumber) {
+                    vm.abnormalStatus = vm.yichangList[i].dataNumber;
+                    vm.abnormalState = vm.yichangList[i].dataContent;
+                }
+            }
+            console.log(vm.orderIds)
+            console.log(vm.abnormalStatus)
+            console.log(vm.abnormalState)
+            $.ajax({
+                url: '../../product/order/updateAbnormalState',
+                type: 'post',
+                data:  JSON.stringify({
+                    orderIds:vm.orderIds,
+                    abnormalStatus:vm.abnormalStatus,
+                    abnormalState:vm.abnormalState
+                }),
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.isok=false;
+                            vm.orderIds=[];
+                            vm.allcheck=[];
+                        vm.getOrderlist();
+                        layer.alert('修改成功');
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        //选择店铺
+        myShopList:function () {
+            $.ajax({
+                url: '../../amazon/amazongrantshop/myShopList',
+                type: 'get',
+                data: {
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.shopList = r.shopList;
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
         }
     },
     created:function () {
         this.getOrderlist('');
         // this.laypage();
         this.getOrderStatenum();
+        this.getYichangList();
+        this.myShopList();
 
     }
 })

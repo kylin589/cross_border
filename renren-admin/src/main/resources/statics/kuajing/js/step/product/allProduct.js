@@ -137,7 +137,7 @@ var vm = new Vue({
         // 所有员工
         allYUanG:[{
             userId:'1-1',
-            username:'所有员工'
+            displayName:'所有员工'
         }],
         // 所选员工的value
         allYUanGValue:'1-1',
@@ -168,7 +168,7 @@ var vm = new Vue({
                             vm.allYUanG= r.userList;
                             vm.allYUanG.unshift({
                                 userId:'1-1',
-                                username:'所有员工'
+                                displayName:'所有员工'
                             })
                             // vm.getPage();
 
@@ -247,7 +247,7 @@ var vm = new Vue({
         chanGongsiFunc:function () {
             vm.allYUanG = [{
                 userId:'1-1',
-                username:'所有员工'
+                displayName:'所有员工'
             }];
             vm.allYUanGValue = '1-1';
         },
@@ -332,18 +332,22 @@ var vm = new Vue({
                 s = this.value9[0] + ' 00:00:00';
                 e = this.value9[1] + ' 23:59:59';
             }
+            var Gongs='';
+            var Yuang='';
 
-            if(this.allYUanGValue != '1-1'){
-
+            if(this.allYUanGValue == '1-1'){
+                Yuang='';
             }else {
-
+                Yuang=this.allYUanGValue;
             }
 
-            if(this.allGongsiValue != '1-1'){
-
+            if(this.allGongsiValue == '1-1'){
+                Gongs=''
             }else {
-
+                Gongs=this.allGongsiValue
             }
+            console.log(Gongs);
+            console.log(Yuang);
 
             $.ajax({
                 url: '../../product/products/alllist',
@@ -362,6 +366,8 @@ var vm = new Vue({
                     'auditNumber': this.auditNumber,
                     'shelveNumber': this.shelveNumber,
                     'productNumber': this.productNumber,
+                    'deptId':Gongs,
+                    'userId':Yuang
                     // '_': $.now()
                 },
                 dataType: 'json',

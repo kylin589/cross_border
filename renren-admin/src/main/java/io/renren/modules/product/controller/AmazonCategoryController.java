@@ -133,15 +133,15 @@ public class AmazonCategoryController {
     @RequestMapping("/childCategoryList")
     public R queryByParentIdChildList(Long amazonCategoryId){
         List<AmazonCategoryEntity>amazonCategoryEntityChildList=amazonCategoryService.selectList(new EntityWrapper<AmazonCategoryEntity>().eq("parent_id",amazonCategoryId));
-        for (AmazonCategoryEntity amazonCategoryEntity : amazonCategoryEntityChildList) {
+        /*for (AmazonCategoryEntity amazonCategoryEntity : amazonCategoryEntityChildList) {
             int temp=amazonCategoryService.selectCount(new EntityWrapper<AmazonCategoryEntity>().eq("parent_id",amazonCategoryEntity.getAmazonCategoryId()));
             //判断出是否有下一级分类
-           /* if (temp==0){
+            if (temp==0){
                 amazonCategoryEntity.setIfNext("false");
             }else{
                 amazonCategoryEntity.setIfNext("true");
-            }*/
-        }
+            }
+        }*/
         return R.ok().put("amazonCategoryEntityChildList",amazonCategoryEntityChildList);
     }
 

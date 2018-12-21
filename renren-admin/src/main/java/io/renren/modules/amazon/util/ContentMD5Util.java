@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class ContentMD5Util {
 
-    private static String computeContentMD5HeaderValue(FileInputStream fis)
+    public static String computeContentMD5HeaderValue(FileInputStream fis)
             throws IOException, NoSuchAlgorithmException {
 
         DigestInputStream dis = new DigestInputStream(fis, MessageDigest.getInstance("MD5"));

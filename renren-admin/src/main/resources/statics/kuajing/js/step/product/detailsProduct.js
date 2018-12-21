@@ -36,9 +36,9 @@ $(function () {
     // })
 
     // 产品回收站
-    $('.proStation').click(function () {
-        vm.prostation();
-    })
+    // $('.proStation').click(function () {
+    //     vm.prostation();
+    // })
 
     // 点击分类框元素外部隐藏元素
     $(document).click(function(){
@@ -52,6 +52,38 @@ $(function () {
     $('.sousuoAreaInput').click(function(event){
         event.stopPropagation();
     })
+
+    new AjaxUpload('#upload', {
+        action: "../../product/imageaddress/upload",
+        data:{
+            productId:147
+        },
+        name: 'file',
+        autoSubmit:true,
+        responseType:"json",
+        onSubmit:function(file, extension){
+            // if(vm.config.type == null){
+            //     alert("云存储配置未配置");
+            //     return false;
+            // }
+            if (!(extension && /^(jpg|jpeg|png|gif)$/.test(extension.toLowerCase()))){
+                alert('只支持jpg、png、gif格式的图片！');
+                return false;
+            }
+        },
+        onComplete : function(file, r){
+            console.log(r);
+            console.log(file);
+            if(r.code == 0){
+                alert(r.url);
+                vm.reload();
+            }else{
+                alert(r.msg);
+            }
+        }
+    });
+
+
 })
 
 window.onload = function() {
@@ -59,223 +91,228 @@ window.onload = function() {
     // var oUl = document.getElementById("ul1");
 
     // var aLi = oUl.getElementsByTagName("li");
-    for(var nn = 0;nn<$('.ul1').length;nn++){
-        //      console.log(nn);
-        var _index = nn;
-        var aLi = $(".ul1").eq(_index).find('li');
-        var aLiLast = $(".ul1").eq(_index).find('li:last-child');
-        // console.log(aLiLast);
-        var disX = 0;
-        var disY = 0;
-        var minZindex = 1;
-        var aPos = [];
-        for(var i = 0; i < aLi.length; i++) {
-            var t = aLi[i].offsetTop;
-            var l = aLi[i].offsetLeft;
-            aLi[i].style.top = t + "px";
-            aLi[i].style.left = l + "px";
-            aPos[i] = {
-                left: l,
-                top: t
-            };
-            aLi[i].index = i;
-        }
-        for(var i = 0; i < aLi.length; i++) {
-            aLi[i].style.position = "absolute";
-            aLi[i].style.margin = 0;
-            setDrag(aLi[i],aLi);
-        }
-        var _height = aLiLast[0].offsetTop+60;
-        // console.log(_height);
-        aLiLast.parent().css('height',_height+'px');
-        aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+//     for(var nn = 0;nn<$('.ul1').length;nn++){
+//         //      console.log(nn);
+//         var _index = nn;
+//         var aLi = $(".ul1").eq(_index).find('li');
+//         var aLiLast = $(".ul1").eq(_index).find('li:last-child');
+//         // console.log(aLiLast);
+//         var disX = 0;
+//         var disY = 0;
+//         var minZindex = 1;
+//         var aPos = [];
+//         for(var i = 0; i < aLi.length; i++) {
+//             var t = aLi[i].offsetTop;
+//             var l = aLi[i].offsetLeft;
+//             aLi[i].style.top = t + "px";
+//             aLi[i].style.left = l + "px";
+//             aPos[i] = {
+//                 left: l,
+//                 top: t
+//             };
+//             aLi[i].index = i;
+//         }
+//         for(var i = 0; i < aLi.length; i++) {
+//             aLi[i].style.position = "absolute";
+//             aLi[i].style.margin = 0;
+//             setDrag(aLi[i],aLi);
+//         }
+//         var _height = aLiLast[0].offsetTop+60;
+//         // console.log(_height);
+//         aLiLast.parent().css('height',_height+'px');
+//         aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+//
+//         aLi.mouseover(function () {
+//             $(this).find('i').css('display','inline-block');
+//             $(this).find('i').mouseover(function () {
+//                 $(this).css('display','inline-block');
+//             })
+//             $(this).find('i').mouseout(function () {
+//                 $(this).css('display','none');
+//             })
+//         })
+//         aLi.mouseout(function () {
+//             $(this).find('i').css('display','none');
+//             $(this).find('i').mouseover(function () {
+//                 $(this).css('display','inline-block');
+//             })
+//             $(this).find('i').mouseout(function () {
+//                 $(this).css('display','none');
+//             })
+//         })
+//     }
+//     //拖拽
+//     function setDrag(obj,all) {
+//         obj.onmouseover = function() {
+//             obj.style.cursor = "move";
+//         }
+//         obj.onmousedown = function(event) {
+// //						获取滚动条位置
+//             var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+//             var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+// //						设置当前拖拽元素位于最上方
+//             obj.style.zIndex = minZindex++;
+//             //当鼠标按下时计算鼠标与拖拽对象的距离
+//             disX = event.clientX + scrollLeft - obj.offsetLeft;
+//             disY = event.clientY + scrollTop - obj.offsetTop;
+//             document.onmousemove = function(event) {
+//                 all.removeClass('active');
+//                 //当鼠标拖动时计算div的位置
+//                 var l = event.clientX - disX + scrollLeft;
+//                 var t = event.clientY - disY + scrollTop;
+//                 obj.style.left = l + "px";
+//                 obj.style.top = t + "px";
+//                 /*for(var i=0;i<aLi.length;i++){
+//                     aLi[i].className = "";
+//                     if(obj==aLi[i])continue;//如果是自己则跳过自己不加红色虚线
+//                     if(colTest(obj,aLi[i])){
+//                         aLi[i].className = "active";
+//                     }
+//                 }*/
+//                 for(var i = 0; i < aLi.length; i++) {
+//                     aLi[i].className = "";
+//                 }
+// //							找到距离最近的元素
+//                 var oNear = findMin(obj,all);
+// //							给距离最近的元素添加选中类名active
+//                 if(oNear) {
+//                     oNear.className = "active";
+//                 }
+//             }
+//             document.onmouseup = function() {
+//                 document.onmousemove = null; //当鼠标弹起时移出移动事件
+//                 document.onmouseup = null; //移出up事件，清空内存
+//                 //检测是否普碰上，在交换位置
+//                 var oNear = findMin(obj,all);
+//                 if(oNear) {
+//                     oNear.className = "";
+//                     oNear.style.zIndex = minZindex++;
+//                     obj.style.zIndex = minZindex++;
+// //								互换位置
+//                     startMove(oNear, aPos[obj.index]);
+//                     startMove(obj, aPos[oNear.index]);
+//                     //交换index
+//                     oNear.index += obj.index;
+//                     obj.index = oNear.index - obj.index;
+//                     oNear.index = oNear.index - obj.index;
+// //								var _indexN = $(oNear).attr('data-index');
+//                     var _indexN = oNear.getAttribute('data-index');
+// //								var _index = $(obj).attr('data-index');
+//                     var _index = obj.getAttribute('data-index');
+//                     oNear.setAttribute('data-index',_index);
+// //								$(oNear).attr('data-index',_index);
+//                     obj.setAttribute('data-index',_indexN);
+// //								$(obj).attr('data-index',_indexN);
+//                 } else {
+// //								没有选中的最近元素,则拖拽元素返回自己原本的位置
+//                     startMove(obj, aPos[obj.index]);
+//                 }
+//             }
+//             clearInterval(obj.timer);
+//             return false; //低版本出现禁止符号
+//         }
+//     }
+//     //碰撞检测
+//     function colTest(obj1, obj2) {
+//         var t1 = obj1.offsetTop;
+//         var r1 = obj1.offsetWidth + obj1.offsetLeft;
+//         var b1 = obj1.offsetHeight + obj1.offsetTop;
+//         var l1 = obj1.offsetLeft;
+//
+//         var t2 = obj2.offsetTop;
+//         var r2 = obj2.offsetWidth + obj2.offsetLeft;
+//         var b2 = obj2.offsetHeight + obj2.offsetTop;
+//         var l2 = obj2.offsetLeft;
+//
+//         if(t1 > b2 || r1 < l2 || b1 < t2 || l1 > r2) {
+//             return false;
+//         } else {
+//             return true;
+//         }
+//     }
+//     //勾股定理求距离
+//     function getDis(obj1, obj2) {
+//         var a = obj1.offsetLeft - obj2.offsetLeft;
+//         var b = obj1.offsetTop - obj2.offsetTop;
+//         return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+//     }
+//     //找到距离最近的
+//     function findMin(obj,all) {
+//         var minDis = 999999999;
+//         var minIndex = -1;
+//         for(var i = 0; i < all.length; i++) {
+//             if(obj == all[i]) continue;
+//             if(colTest(obj, all[i])) {
+//                 var dis = getDis(obj, all[i]);
+//                 if(dis < minDis) {
+//                     minDis = dis;
+//                     minIndex = i;
+//                 }
+//             }
+//         }
+//         if(minIndex == -1) {
+//             return null;
+//         } else {
+//             return all[minIndex];
+//         }
+//     }
+//
+//     //通过class获取元素
+//     function getClass(cls){
+//         var ret = [];
+//         var els = document.getElementsByTagName("*");
+//         for (var i = 0; i < els.length; i++){
+//             //判断els[i]中是否存在cls这个className;.indexOf("cls")判断cls存在的下标，如果下标>=0则存在;
+//             if(els[i].className === cls || els[i].className.indexOf("cls")>=0 || els[i].className.indexOf(" cls")>=0 || els[i].className.indexOf(" cls ")>0){
+//                 ret.push(els[i]);
+//             }
+//         }
+//         return ret;
+//     }
+//     function getStyle(obj,attr){//解决JS兼容问题获取正确的属性值
+//         return obj.currentStyle?obj.currentStyle[attr]:getComputedStyle(obj,false)[attr];
+//     }
+//     function startMove(obj,json,fun){
+//         clearInterval(obj.timer);
+//         obj.timer = setInterval(function(){
+//             var isStop = true;
+//             for(var attr in json){
+//                 var iCur = 0;
+//                 //判断运动的是不是透明度值
+//                 if(attr=="opacity"){
+//                     iCur = parseInt(parseFloat(getStyle(obj,attr))*100);
+//                 }else{
+//                     iCur = parseInt(getStyle(obj,attr));
+//                 }
+//                 var ispeed = (json[attr]-iCur)/3;
+//                 //运动速度如果大于0则向下取整，如果小于0想上取整；
+//                 ispeed = ispeed>0?Math.ceil(ispeed):Math.floor(ispeed);
+//                 //判断所有运动是否全部完成
+//                 if(iCur!=json[attr]){
+//                     isStop = false;
+//                 }
+//                 //运动开始
+//                 if(attr=="opacity"){
+//                     obj.style.filter = "alpha:(opacity:"+(json[attr]+ispeed)+")";
+//                     obj.style.opacity = (json[attr]+ispeed)/100;
+//                 }else{
+//                     obj.style[attr] = iCur+ispeed+"px";
+//                 }
+//             }
+//             //判断是否全部完成
+//             if(isStop){
+//                 clearInterval(obj.timer);
+//                 if(fun){
+//                     fun();
+//                 }
+//             }
+//         },30);
+//     };
+    vm.drapImg();
 
-        aLi.mouseover(function () {
-            $(this).find('i').css('display','inline-block');
-            $(this).find('i').mouseover(function () {
-                $(this).css('display','inline-block');
-            })
-            $(this).find('i').mouseout(function () {
-                $(this).css('display','none');
-            })
-        })
-        aLi.mouseout(function () {
-            $(this).find('i').css('display','none');
-            $(this).find('i').mouseover(function () {
-                $(this).css('display','inline-block');
-            })
-            $(this).find('i').mouseout(function () {
-                $(this).css('display','none');
-            })
-        })
-    }
-    //拖拽
-    function setDrag(obj,all) {
-        obj.onmouseover = function() {
-            obj.style.cursor = "move";
-        }
-        obj.onmousedown = function(event) {
-//						获取滚动条位置
-            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
-//						设置当前拖拽元素位于最上方
-            obj.style.zIndex = minZindex++;
-            //当鼠标按下时计算鼠标与拖拽对象的距离
-            disX = event.clientX + scrollLeft - obj.offsetLeft;
-            disY = event.clientY + scrollTop - obj.offsetTop;
-            document.onmousemove = function(event) {
-                all.removeClass('active');
-                //当鼠标拖动时计算div的位置
-                var l = event.clientX - disX + scrollLeft;
-                var t = event.clientY - disY + scrollTop;
-                obj.style.left = l + "px";
-                obj.style.top = t + "px";
-                /*for(var i=0;i<aLi.length;i++){
-                    aLi[i].className = "";
-                    if(obj==aLi[i])continue;//如果是自己则跳过自己不加红色虚线
-                    if(colTest(obj,aLi[i])){
-                        aLi[i].className = "active";
-                    }
-                }*/
-                for(var i = 0; i < aLi.length; i++) {
-                    aLi[i].className = "";
-                }
-//							找到距离最近的元素
-                var oNear = findMin(obj,all);
-//							给距离最近的元素添加选中类名active
-                if(oNear) {
-                    oNear.className = "active";
-                }
-            }
-            document.onmouseup = function() {
-                document.onmousemove = null; //当鼠标弹起时移出移动事件
-                document.onmouseup = null; //移出up事件，清空内存
-                //检测是否普碰上，在交换位置
-                var oNear = findMin(obj,all);
-                if(oNear) {
-                    oNear.className = "";
-                    oNear.style.zIndex = minZindex++;
-                    obj.style.zIndex = minZindex++;
-//								互换位置
-                    startMove(oNear, aPos[obj.index]);
-                    startMove(obj, aPos[oNear.index]);
-                    //交换index
-                    oNear.index += obj.index;
-                    obj.index = oNear.index - obj.index;
-                    oNear.index = oNear.index - obj.index;
-//								var _indexN = $(oNear).attr('data-index');
-                    var _indexN = oNear.getAttribute('data-index');
-//								var _index = $(obj).attr('data-index');
-                    var _index = obj.getAttribute('data-index');
-                    oNear.setAttribute('data-index',_index);
-//								$(oNear).attr('data-index',_index);
-                    obj.setAttribute('data-index',_indexN);
-//								$(obj).attr('data-index',_indexN);
-                } else {
-//								没有选中的最近元素,则拖拽元素返回自己原本的位置
-                    startMove(obj, aPos[obj.index]);
-                }
-            }
-            clearInterval(obj.timer);
-            return false; //低版本出现禁止符号
-        }
-    }
-    //碰撞检测
-    function colTest(obj1, obj2) {
-        var t1 = obj1.offsetTop;
-        var r1 = obj1.offsetWidth + obj1.offsetLeft;
-        var b1 = obj1.offsetHeight + obj1.offsetTop;
-        var l1 = obj1.offsetLeft;
-
-        var t2 = obj2.offsetTop;
-        var r2 = obj2.offsetWidth + obj2.offsetLeft;
-        var b2 = obj2.offsetHeight + obj2.offsetTop;
-        var l2 = obj2.offsetLeft;
-
-        if(t1 > b2 || r1 < l2 || b1 < t2 || l1 > r2) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    //勾股定理求距离
-    function getDis(obj1, obj2) {
-        var a = obj1.offsetLeft - obj2.offsetLeft;
-        var b = obj1.offsetTop - obj2.offsetTop;
-        return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-    }
-    //找到距离最近的
-    function findMin(obj,all) {
-        var minDis = 999999999;
-        var minIndex = -1;
-        for(var i = 0; i < all.length; i++) {
-            if(obj == all[i]) continue;
-            if(colTest(obj, all[i])) {
-                var dis = getDis(obj, all[i]);
-                if(dis < minDis) {
-                    minDis = dis;
-                    minIndex = i;
-                }
-            }
-        }
-        if(minIndex == -1) {
-            return null;
-        } else {
-            return all[minIndex];
-        }
-    }
-
-    //通过class获取元素
-    function getClass(cls){
-        var ret = [];
-        var els = document.getElementsByTagName("*");
-        for (var i = 0; i < els.length; i++){
-            //判断els[i]中是否存在cls这个className;.indexOf("cls")判断cls存在的下标，如果下标>=0则存在;
-            if(els[i].className === cls || els[i].className.indexOf("cls")>=0 || els[i].className.indexOf(" cls")>=0 || els[i].className.indexOf(" cls ")>0){
-                ret.push(els[i]);
-            }
-        }
-        return ret;
-    }
-    function getStyle(obj,attr){//解决JS兼容问题获取正确的属性值
-        return obj.currentStyle?obj.currentStyle[attr]:getComputedStyle(obj,false)[attr];
-    }
-    function startMove(obj,json,fun){
-        clearInterval(obj.timer);
-        obj.timer = setInterval(function(){
-            var isStop = true;
-            for(var attr in json){
-                var iCur = 0;
-                //判断运动的是不是透明度值
-                if(attr=="opacity"){
-                    iCur = parseInt(parseFloat(getStyle(obj,attr))*100);
-                }else{
-                    iCur = parseInt(getStyle(obj,attr));
-                }
-                var ispeed = (json[attr]-iCur)/3;
-                //运动速度如果大于0则向下取整，如果小于0想上取整；
-                ispeed = ispeed>0?Math.ceil(ispeed):Math.floor(ispeed);
-                //判断所有运动是否全部完成
-                if(iCur!=json[attr]){
-                    isStop = false;
-                }
-                //运动开始
-                if(attr=="opacity"){
-                    obj.style.filter = "alpha:(opacity:"+(json[attr]+ispeed)+")";
-                    obj.style.opacity = (json[attr]+ispeed)/100;
-                }else{
-                    obj.style[attr] = iCur+ispeed+"px";
-                }
-            }
-            //判断是否全部完成
-            if(isStop){
-                clearInterval(obj.timer);
-                if(fun){
-                    fun();
-                }
-            }
-        },30);
-    }
+    $('.selImg').change(function(){
+        console.log($('.selImg')[0].files)
+    })
 
 }
 
@@ -424,27 +461,29 @@ var vm = new Vue({
         // 产品相册
         proAlbum:[],
         // 产品回收站
-        proStation:[{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },],
+        proStation:[
+            {
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },{
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },{
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },{
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },{
+                url:'../../statics/kuajing/img/img1.jpg'
+            },{
+                url:'../../statics/kuajing/img/img2.jpg'
+            },
+        ],
         // 产品介绍列表
         proDecList:{
             'productTitle':'',
@@ -482,9 +521,72 @@ var vm = new Vue({
         categoryThreeName:'',
         // nowategoryThreeName:'',
         nowProTypeId:'',
+        // 产品上传
+        dialogImageUrl: '',
+        // dialogVisible: false
 
     },
     methods:{
+        // 产品上传方法
+        handleRemove:function(file, fileList) {
+            layer.confirm('确定删除吗？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                // return true
+                // layer.msg('的确很重要', {icon: 1});
+
+            }, function(){
+                console.log(file);
+                console.log(fileList);
+                fileList.splice(file.index , 0, file)
+                // fileList.push(file);
+                // return false
+                // layer.msg('也可以这样', {
+                //     time: 20000, //20s后自动关闭
+                //     btn: ['明白了', '知道了']
+                // });
+            });
+            // console.log(file, fileList);
+        },
+        // 上传图片移上去的方法
+        handlePictureCardPreview:function(file) {
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
+        },
+        // 图片上传成功
+        upSuccessFunc:function (file,fileList) {
+            layer.confirm('确定上传改图片吗',{
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                // 确定方法
+
+            }, function(){
+                // 取消方法
+
+
+            })
+        },
+        // 图片上传失败
+        upErrorFunc:function (file) {
+            console.log(file);
+            layer.msg('上传失败')
+        },
+        // 删除上传图片
+        delImgFunc:function (file) {
+            layer.confirm('您是如何看待前端开发？', {
+                btn: ['重要','奇葩'] //按钮
+            }, function(){
+                return true
+                // layer.msg('的确很重要', {icon: 1});
+
+            }, function(){
+                return false
+                // layer.msg('也可以这样', {
+                //     time: 20000, //20s后自动关闭
+                //     btn: ['明白了', '知道了']
+                // });
+            });
+        },
         // 获取产品详情
         getProDetails:function () {
             $.ajax({
@@ -520,15 +622,11 @@ var vm = new Vue({
                                 type:vm.proDetails.sizeVP.paramsValue.split(',')
                             })
                         }
-
-
-
                         vm.proDetails.variantsInfos.forEach(function (t,i) {
                             vm.recommendAll.push({
                                 id:i,
                                 name:t.variantCombination,
-                                img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-                                    '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                                img:t.imageUrl.split(','),
                                 sku:t.variantSku,
                                 addPrice:t.variantAddPrice,
                                 stock:t.variantStock,
@@ -536,8 +634,10 @@ var vm = new Vue({
 
 
                             })
+                            vm.drapImg();
                         })
-                        setTimeout(function(){ vm.drapImg(); }, 3000);
+                        vm.drapImg();
+                        // setTimeout(function(){ vm.drapImg(); }, 1000);
 
                         console.log('运费')
                         console.log(vm.proDetails.americanFC.freight)
@@ -569,6 +669,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('产品回收站');
                         console.log(r);
+                        vm.proStation = r.isdeleteList;
 
                     } else {
                         layer.alert(r.msg);
@@ -593,7 +694,23 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('产品相册');
                         console.log(r);
-                        vm.proAlbum = r.imageInfo;
+                        r.imageInfo.forEach(function (item,index) {
+                            vm.proAlbum.push({
+                                index:index,
+                                imgId:item.imageId,
+                                url:item.imageUrl,
+                                isDeleted:item.isDeleted,
+                                createUserId:item.createUserId,
+                                createTime:item.createTime,
+                                lastOperationTime:item.lastOperationTime,
+                                lastOperationUserId:item.lastOperationUserId,
+                                productId:item.productId,
+                                status:item.status,
+                                uid:item.uid
+
+                            })
+                        })
+                        // vm.proAlbum = r.imageInfo;
 
                     } else {
                         layer.alert(r.msg);
@@ -759,36 +876,245 @@ var vm = new Vue({
                 }
             });
         },
+        // 图片回收站
         prostation:function () {
+            vm.getProStation();
+            if(vm.proStation.length == 0){
+                layer.msg("暂无回收站图片");
+            }else {
+                layer.open({
+                    type: 1,
+                    title: false,
+                    content: $('#proStation'), //这里content是一个普通的String
+                    skin: 'openClass openClass1',
+                    area: ['800px', '500px'],
+                    shadeClose: true,
+                    scrollbar:false,
+                    btn: ['彻底删除','<i class="layui-icon layui-icon-refresh"></i> 恢复','取消',],
+                    btn1: function (index) {
+                        var activeImg = $('#proStation .proStationUl li.action');
+                        var arr = [];
+                        for(var i = 0;i<activeImg.length;i++){
+                            arr.push(activeImg.eq(i).attr('data-index'));
+                        }
+                        if(arr.length == 0){
+                            layer.msg("请选择要删除的图片");
+                        }else {
+                            layer.confirm('确定删除吗',function () {
+                                $.ajax({
+                                    url: '../../product/imageaddress/deleteimage',
+                                    type: 'get',
+                                    data: {
+                                        'imageIds': arr
+                                    },
+                                    dataType: 'json',
+                                    success: function (r) {
+                                        // console.log(r);
+                                        if (r.code === 0) {
+                                            // 重新获取图片回收站
+                                            vm.getProStation();
+                                            // vm.proAlbum = r.imageInfo;
+
+                                        } else {
+                                            layer.alert(r.msg);
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("网络故障");
+                                    }
+                                })
+                            })
+                        }
+
+
+                    },
+                    btn2: function (index) {
+                        var activeImg = $('#proStation .proStationUl li.action');
+                        var arr = [];
+                        for(var i = 0;i<activeImg.length;i++){
+                            arr.push(activeImg.eq(i).attr('data-index'));
+                        }
+                        if(arr.length == 0){
+                            layer.msg("请选择要恢复的图片");
+                        }else {
+                            layer.confirm('确定要恢复吗',function () {
+                                $.ajax({
+                                    url: '../../product/imageaddress/recoverdelete',
+                                    type: 'post',
+                                    data: JSON.stringify({
+                                        'imageIds': arr
+                                    }),
+                                    // dataType: 'json',
+                                    contentType: "application/json",
+                                    success: function (r) {
+                                        // console.log(r);
+                                        if (r.code === 0) {
+                                            // 重新获取图片回收站
+                                            vm.getProStation();
+                                            vm.getProAlbum();
+                                            layer.close(index);
+                                            // vm.proAlbum = r.imageInfo;
+
+                                        } else {
+                                            layer.alert(r.msg);
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("网络故障");
+                                    }
+                                })
+                            })
+                        }
+
+                        // vm.proAlbum = [];
+                        // var _length = $('.proStationUl li.action').length;
+                        // console.log(_length);
+                        // for(var i =0;i<_length;i++){
+                        //     var _index = $('.proStationUl li.action').eq(i).attr('data-index');
+                        //     vm.proAlbum.push({
+                        //         url:vm.proStation[_index].url
+                        //     })
+                        // }
+                        // console.log(vm.proAlbum)
+                        // layer.close(index)
+                    },
+                    btn3: function (index) {
+                        // vm.proAlbum = vm.proStation
+                        layer.close(index);
+                        return false
+
+                    }
+                });
+            }
+
+        },
+        // 点击每个图片选中（变体参数选中图片弹框）
+        activeImg:function (i) {
+            $('#selImg .proStationUl li').eq(i).toggleClass('action');
+
+        },
+        // 点击图片相册选中
+        clickActiveImg:function () {
+            console.log(111);
+            $(event.target).parent().toggleClass('active');
+        },
+        // 相册图片删除
+        proDel:function () {
+            var elList = $('.imgAlbum.active');
+            var arr = [];
+            for(var i = 0;i<elList.length;i++){
+                arr.push(elList.eq(i).attr('data-index'));
+            }
+            console.log(arr);
+            if(arr.length == 0){
+                layer.msg('请选择要删除的图片');
+            }else {
+                layer.confirm('确定删除吗？',function () {
+                    $.ajax({
+                        type: 'post',
+                        url: '../../product/imageaddress/updateimage',
+                        contentType: "application/json",
+                        // data: {
+                        //     'imageIds':arr
+                        // },
+                        data: JSON.stringify({
+                            'imageIds':arr
+                        }),
+                        success: function (r) {
+                            console.log('删除图片');
+                            console.log(r);
+                            // console.log(vm.proDetails);
+                            if (r.code == 0) {
+                                // 重新获取图片相册
+                                vm.getProAlbum();
+                                // vm.proDetails.productSku = r.SKU;
+                                layer.msg('删除成功');
+                                layer.close(index);
+
+                                // window.location.href = document.referrer;
+
+                            } else {
+                                alert(r.msg);
+                            }
+                        }
+                    });
+                })
+            }
+
+
+
+        },
+        // 获取选中的变体参数图片
+        getSelImgVerFunc:function () {
+            var els = $('#selImg .proStationUl li.action');
+            var arr = [];
+            for(var i = 0;i<els.length;i++){
+                arr.push({
+                    id:els.eq(i).attr('data-index'),
+                    url:els.eq(i).attr('data-url')
+                })
+            }
+            // console.log($('#selImg .proStationUl li.active'));
+            // console.log(arr);
+            return arr
+        },
+        // 变体参数选择图片
+        selImgCFcun:function (data) {
             layer.open({
                 type: 1,
                 title: false,
-                content: $('#proStation'), //这里content是一个普通的String
+                content: $('#selImg'), //这里content是一个普通的String
                 skin: 'openClass',
                 area: ['800px', '500px'],
                 shadeClose: true,
                 scrollbar:false,
-                btn: ['<i class="layui-icon layui-icon-refresh"></i> 恢复','取消',],
+                btn: ['确定','取消',],
                 btn1: function (index) {
-                    vm.proAlbum = [];
-                    var _length = $('.proStationUl li.action').length;
-                    console.log(_length);
-                    for(var i =0;i<_length;i++){
-                        var _index = $('.proStationUl li.action').eq(i).attr('data-index');
-                        vm.proAlbum.push({
-                            url:vm.proStation[_index].url
-                        })
-                    }
-                    console.log(vm.proAlbum)
+                    console.log(data);
+                    data.img=[];
+                    var arr = vm.getSelImgVerFunc();
+                    arr.forEach(function (v) {
+                        data.img.push(v.url)
+                    })
+                    // vm.recommendAll.forEach(function (t) {
+                    //     if(t.id = data.id){
+                    //         t.img = data.img;
+                    //     }
+                    // })
+                    console.log(vm.recommendAll);
+
                     layer.close(index)
                 },
                 btn2: function (index) {
-                    vm.proAlbum = vm.proStation
+                    // vm.proAlbum = vm.proStation
                     layer.close(index);
                     return false
 
                 }
             });
+        },
+        // 一键添加（变体图片）
+        yijianAddFunc:function (data) {
+
+
+            layer.confirm('确定添加所有图片吗？',function (index) {
+
+                $('.ul1 li').css({
+                    'position':'relative',
+                    'top':'0px',
+                    'left':'0px',
+                    'margin':'10px'
+                });
+
+                data.img = [];
+                vm.proAlbum.forEach(function (t) {
+                    data.img.push(t.url)
+                })
+                setTimeout(function(){ vm.drapImg(); }, 1000);
+                layer.close(index);
+            })
+
+
         },
         // 变体添加
         addVariant:function () {
@@ -909,7 +1235,7 @@ var vm = new Vue({
             // }else {
             //     $('.proStationUl li').eq(i).removeClass('action');
             // }
-            $('.proStationUl li').eq(i).toggleClass('action');
+            $('#proStation .proStationUl li').eq(i).toggleClass('action');
         },
         imgItem:function (index) {
             $('.imgDiv>div').eq(index).find('img').css('opacity','.5');
@@ -1175,6 +1501,7 @@ var vm = new Vue({
                 }
             });
         },
+        // 图片拖拽
         drapImg:function () {
             for(var nn = 0;nn<$('.ul1').length;nn++){
                 //      console.log(nn);
@@ -1401,16 +1728,24 @@ var vm = new Vue({
             vm.proDetails.variantsInfos = [];
 
             if(this.variantList.length == 2){
-                var recommend = this.variantList[0].type;
-                var recommend1 = this.variantList[1].type;
+                var recommend;
+                var recommend1;
+                this.variantList.forEach(function (t) {
+                    if(t.id == 0){
+                        recommend = t.type;
+                    }
+                    if(t.id == 1){
+                        recommend1 = t.type;
+                    }
+                })
+
 
                 for(var i = 0;i<recommend.length;i++){
                     for(var j = 0;j<recommend1.length;j++){
                         vm.recommendAll.push({
                             id:i+j,
                             name:recommend[i]+'*'+recommend1[j],
-                            img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-                                '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                            img:[],
                             sku:'',
                             addPrice:'',
                             stock:'',
@@ -1437,7 +1772,7 @@ var vm = new Vue({
                     vm.recommendAll.push({
                         id:i,
                         name:recommend[i],
-                        img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                        img:[],
                         sku:'',
                         addPrice:'',
                         stock:'',
@@ -1459,25 +1794,58 @@ var vm = new Vue({
             }
 
             console.log('1111111');
-            setTimeout(function(){ vm.drapImg(); }, 3000);
+            setTimeout(function(){ vm.drapImg(); }, 2000);
 
         },
         // 修改保存
         savePro:function () {
 
-            vm.recommendAll.forEach(function (t,i) {
+            var u = $('.ul1');
+            var shunx = [];
+            for(var j = 0;j<u.length;j++){
+                var arr = u.eq(j).find('li');
+                shunx[j] = []
+                for(var i = 0;i<arr.length;i++){
+                    shunx[j].push(arr.eq(i).attr('data-index'))
+                }
+            }
+
+            // var arr = $('.ul1 li');
+            // var shunx = [];
+            // for(var i = 0;i<arr.length;i++){
+            //     shunx.push(arr.eq(i).attr('data-index'))
+            // }
+            console.log(shunx);
+
+            shunx.forEach(function (v,i) {
+                var t = vm.recommendAll[i];
+                console.log(t);
+                var string = '';
+                v.forEach(function (n) {
+                    string+=t.img[n]+','
+                })
                 vm.proDetails.variantsInfos[i].variantId = i;
                 vm.proDetails.variantsInfos[i].eanCode = t.code;
                 vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
                 vm.proDetails.variantsInfos[i].variantSku = t.sku;
                 vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+                vm.proDetails.variantsInfos[i].imageUrl = string;
             })
+
+            // vm.recommendAll.forEach(function (t,i) {
+            //     vm.proDetails.variantsInfos[i].variantId = i;
+            //     vm.proDetails.variantsInfos[i].eanCode = t.code;
+            //     vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
+            //     vm.proDetails.variantsInfos[i].variantSku = t.sku;
+            //     vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+            //     vm.proDetails.variantsInfos[i].imageUrl = (t.img).join(',');
+            // })
 
             // vm.proDetails.variantsInfos.eanCode = vm.recommendAll.code;
             // vm.proDetails.variantsInfos.variantAddPrice = vm.recommendAll.addPrice;
             // vm.proDetails.variantsInfos.variantSku = vm.recommendAll.sku;
             // vm.proDetails.variantsInfos.variantStock = vm.recommendAll.stock;
-            console.log(vm.proDetails.variantsInfos);
+            console.log(vm.proDetails);
 
 
 
@@ -1518,7 +1886,7 @@ var vm = new Vue({
         // 删除变体列表某条数据
         delVariantList:function (event) {
             var _index = $(event.target).attr('data-index');
-            $(event.target).parent().parent().remove();
+            // $(event.target).parent().parent().remove();
             var delId;
             console.log(vm.recommendAll);
             for(var i = 0;i<vm.recommendAll.length;i++){
@@ -1530,6 +1898,7 @@ var vm = new Vue({
             vm.recommendAll.splice(delId,1);
             vm.proDetails.variantsInfos.splice(delId,1);
             console.log(vm.proDetails.variantsInfos);
+            console.log(vm.recommendAll);
 
         },
         // 一键修正SKU
@@ -1555,12 +1924,34 @@ var vm = new Vue({
                 }
             });
         },
+        // 上传
+        shangchuan:function () {
+            console.log('上传文件');
+            $('.selImg')[0].files;
+        },
+        // 图片放大
+        imgBig:function (event){
+            var top = $(event.target).offset().top - 428;
+            var left = $(event.target).offset().left - 350;
+            // console.log(right);
+            $('#imgBigDiv').css({
+                'display':'inline-block',
+                'top':top+'px',
+                'left':left+'px'
+            })
+            $('#imgBigDiv img').attr('src',$(event.target).attr('data-url'));
+
+        },
+        imgBigS:function () {
+            $('#imgBigDiv').css('display','none')
+        },
+
         // 返回
         returnFunc:function () {
             layer.confirm('确定返回吗？',function () {
                 window.location.href = document.referrer;
             })
-        }
+        },
     },
 
     created:function () {
@@ -1583,41 +1974,9 @@ var vm = new Vue({
         this.getProStation();
 
 
-
-
-        // if(this.variantList.length == 2){
-        //     var recommend = this.variantList[0].type;
-        //     var recommend1 = this.variantList[1].type;
-        //
-        //     for(var i = 0;i<recommend.length;i++){
-        //         for(var j = 0;j<recommend1.length;j++){
-        //             this.recommendAll.push({
-        //                 name:recommend[i]+'*'+recommend1[j],
-        //                 img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-        //                     '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
-        //             });
-        //         }
-        //     }
-        // }else if(this.variantList.length == 1){
-        //     var recommend = this.variantList[0].type;
-        //     for(var i = 0;i<recommend.length;i++){
-        //         this.recommendAll.push({
-        //             name:recommend[i],
-        //             img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg']
-        //         });
-        //     }
-        // }
-
-
-        // this.recommend.forEach(function (value) {
-        //     this.recommend1.forEach(function (value2) {
-        //         this.recommendAll.push({
-        //             name:value+'*'+value2,
-        //             img:[]
-        //         });
-        //     })
-        // })
-        // console.log(this.recommendAll);
+    },
+    updated:function () {
+        vm.drapImg();
     }
 
 })

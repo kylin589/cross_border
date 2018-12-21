@@ -9,6 +9,10 @@
             .layui-col-md3{
                 width: 20%;
             }
+            .sousuoArea{
+                left:386px;
+            }
+
         </style>
         </head>
 <body>
@@ -33,7 +37,7 @@
             <el-option
                     v-for="item in allYUanG"
                     :key="item.userId"
-                    :label="item.username"
+                    :label="item.displayName"
                     :value="item.userId">
             </el-option>
         </el-select>
