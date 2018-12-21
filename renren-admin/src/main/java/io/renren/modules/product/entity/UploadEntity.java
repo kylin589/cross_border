@@ -1,10 +1,12 @@
 package io.renren.modules.product.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 产品上传
@@ -22,14 +24,18 @@ public class UploadEntity implements Serializable {
 	 */
 	@TableId
 	private Long uploadId;
-	/**
-	 * 产品id
-	 */
-	private Long productId;
-	/**
-	 * 主图片url
-	 */
-	private String mainUrl;
+	//开始id
+	private Long startId;
+	//结束id
+	private Long endId;
+	//上传id,逗号隔开
+	private String uploadIds;
+	//筛选后要上传的id列表
+	@TableField(exist = false)
+	private List<ProductsEntity>  uploadProductsList;
+	//国家代码
+	@TableField(exist = false)
+	private String countryCode;
 	/**
 	 * 店铺id
 	 */
@@ -75,9 +81,9 @@ public class UploadEntity implements Serializable {
 	 */
 	private Long attributeId;
 	/**
-	 * (默认0：正在上传1：上传成功2：上传失败)
+	 * (默认0：等待上传；1：正在上传；2：上传成功；3：上传失败)
 	 */
-	private Integer uploadState;
+	private Integer uploadState = 0;
 	/**
 	 * 返回错误代码（上传失败）
 	 */
@@ -131,31 +137,38 @@ public class UploadEntity implements Serializable {
 	public Long getUploadId() {
 		return uploadId;
 	}
-	/**
-	 * 设置：主图片url
-	 */
-	public void setMainUrl(String mainUrl) {
-		this.mainUrl = mainUrl;
-	}
-	/**
-	 * 获取：主图片url
-	 */
-	public String getMainUrl() {
-		return mainUrl;
-	}
-	/**
-	 * 设置：产品id
-	 */
-	public void setProductId(Long productId) {
-		this.productId = productId;
-	}
-	/**
-	 * 获取：产品id
-	 */
-	public Long getProductId() {
-		return productId;
+
+	public Long getStartId() {
+		return startId;
 	}
 
+	public void setStartId(Long startId) {
+		this.startId = startId;
+	}
+
+	public Long getEndId() {
+		return endId;
+	}
+
+	public void setEndId(Long endId) {
+		this.endId = endId;
+	}
+
+	public String getUploadIds() {
+		return uploadIds;
+	}
+
+	public void setUploadIds(String uploadIds) {
+		this.uploadIds = uploadIds;
+	}
+
+	public List<ProductsEntity> getUploadProductsList() {
+		return uploadProductsList;
+	}
+
+	public void setUploadProductsList(List<ProductsEntity> uploadProductsList) {
+		this.uploadProductsList = uploadProductsList;
+	}
 
 	/**
 	 * 设置：操作类型（默认0：上传   1：修改）
@@ -334,5 +347,13 @@ public class UploadEntity implements Serializable {
 
 	public void setDeptId(Long deptId) {
 		this.deptId = deptId;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 }

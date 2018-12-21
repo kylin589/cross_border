@@ -10,8 +10,8 @@ import java.util.Map;
 /**
  * 
  *
- * @author zjr
- * @email zhang-jiarui@baizesoft.com
+ * @author wdh
+ * @email wang-dehai@baizesoft.com
  * @date 2018-11-19 14:59:13
  */
 public interface OrderService extends IService<OrderEntity> {
