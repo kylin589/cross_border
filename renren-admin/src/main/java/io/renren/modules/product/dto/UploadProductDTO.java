@@ -13,6 +13,7 @@ public class UploadProductDTO {
     private String code = "ok";
     private String msg;
     private List<ProductsEntity> productsList;
+    private List<Long> ret;
 
     public String getCode() {
         return code;
@@ -36,5 +37,13 @@ public class UploadProductDTO {
 
     public void setProductsList(List<ProductsEntity> productsList) {
         this.productsList = productsList;
+    }
+
+    public List<Long> getRet() {
+        return ret;
+    }
+
+    public void setRet(List<Long> ret) {
+        this.ret = ret;
     }
 }

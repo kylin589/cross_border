@@ -67,4 +67,14 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleDao, SysUserR
 	public int deleteBatch(Long[] roleIds){
 		return baseMapper.deleteBatch(roleIds);
 	}
+
+	@Override
+	public boolean isNotManager(Long userId) {
+		List<Long> roleList = baseMapper.queryRoleIdList(userId);
+		if(roleList.contains(1L) || roleList.contains(2L)){
+			//如果有管理员或者财务,则返回true
+			return true;
+		}
+		return false;
+	}
 }

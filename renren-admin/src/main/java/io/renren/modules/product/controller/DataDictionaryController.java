@@ -1,29 +1,26 @@
 package io.renren.modules.product.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.R;
+import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.amazon.util.ConstantDictionary;
+import io.renren.modules.product.entity.DataDictionaryEntity;
+import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.product.entity.ProductsEntity;
+import io.renren.modules.product.service.DataDictionaryService;
+import io.renren.modules.product.service.OrderService;
+import io.renren.modules.product.service.ProductsService;
+import io.renren.modules.sys.controller.AbstractController;
+import io.renren.modules.sys.service.SysUserRoleService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import io.renren.common.validator.ValidatorUtils;
-import io.renren.modules.product.entity.OrderEntity;
-import io.renren.modules.product.entity.ProductsEntity;
-import io.renren.modules.product.service.OrderService;
-import io.renren.modules.product.service.ProductsService;
-import io.renren.modules.sys.controller.AbstractController;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.product.entity.DataDictionaryEntity;
-import io.renren.modules.product.service.DataDictionaryService;
-import io.renren.common.utils.PageUtils;
-import io.renren.common.utils.R;
 
 /**
  * 数据字典
@@ -41,6 +38,8 @@ public class DataDictionaryController extends AbstractController {
     private ProductsService productsService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private SysUserRoleService userRoleService;
     /**
      * 列表
      * @param params url列表
@@ -258,6 +257,13 @@ public class DataDictionaryController extends AbstractController {
         List<DataDictionaryEntity> abnormalStateList = new ArrayList<>();
         abnormalStateList.add(normal);
         List<DataDictionaryEntity> abnormalStateList1 = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "ORDER_ABNORMAL_STATE").orderBy(true, "data_sort", true));
+        if(getDeptId() != 1L || !userRoleService.isNotManager(getUserId()) ){
+            for (int i = 0; i < abnormalStateList1.size(); i++){
+                if(ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStateList1.get(i).getDataNumber())){
+                    abnormalStateList1.remove(i);
+                }
+            }
+        }
         abnormalStateList.addAll(abnormalStateList1);
         return R.ok().put("abnormalStateList", abnormalStateList);
     }

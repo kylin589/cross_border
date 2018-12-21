@@ -678,11 +678,13 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         UploadProductDTO dto = new UploadProductDTO();
         List<ProductsEntity> list = this.selectBatchIds(idList);
         List<ProductsEntity> productsList = new ArrayList<>();
+        List<Long> ret = new ArrayList<Long>();
         for(int i=0; i < list.size(); i++){
             ProductsEntity product = list.get(i);
             if(product.getCreateUserId().longValue() == userId.longValue()){
                 if("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())){
-                        productsList.add(product);
+                    productsList.add(product);
+                    ret.add(product.getProductId());
                 }else{
                     dto.setCode("error");
                     if((!"001".equals(product.getAuditStatus()))){
@@ -698,6 +700,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
             }
         }
         dto.setProductsList(productsList);
+        dto.setRet(ret);
         return dto;
     }
     @Override

@@ -42,4 +42,9 @@ public interface SysUserRoleService extends IService<SysUserRoleEntity> {
 	 * 根据角色ID数组，批量删除
 	 */
 	int deleteBatch(Long[] roleIds);
+
+	/**
+	 * 根据用户id判断是否是管理员或财务
+	 */
+	boolean isNotManager(Long userId);
 }

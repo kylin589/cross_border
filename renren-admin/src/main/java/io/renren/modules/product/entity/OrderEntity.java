@@ -3,10 +3,9 @@ package io.renren.modules.product.entity;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
-import java.math.BigDecimal;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 
@@ -52,6 +51,10 @@ public class OrderEntity implements Serializable {
 	 * 国家代码
 	 */
 	private String countryCode;
+	/**
+	 * 币种代码
+	 */
+	private String rateCode;
 	/**
 	 * 店铺名称(店铺+国家）
 	 */
@@ -409,5 +412,13 @@ public class OrderEntity implements Serializable {
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getRateCode() {
+		return rateCode;
+	}
+
+	public void setRateCode(String rateCode) {
+		this.rateCode = rateCode;
 	}
 }
