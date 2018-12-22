@@ -31,7 +31,12 @@ var vm = new Vue({
         // 所有公司
         allGongsi:[],
         // 所选公司的value
-        allGongsiValue:''
+        allGongsiValue:'',
+        allGongsiValue1:'',
+        // 所有员工
+        allYUanG:[],
+        // 所选员工的value
+        allYUanGValue:[],
     },
     methods: {
         // 获取公司列表
@@ -50,10 +55,10 @@ var vm = new Vue({
                     if (r.code === 0) {
                         // layer.msg('操作成功');
                         vm.allGongsi = r.deptList;
-                        vm.allGongsi.unshift({
-                            deptId:'',
-                            name:'全部'
-                        })
+                        // vm.allGongsi.unshift({
+                        //     deptId:'',
+                        //     name:'全部'
+                        // })
                         console.log(vm.allGongsi)
                         // vm.getPage();
 
@@ -65,6 +70,75 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             })
+        },
+        // 获取员工列表
+        getManList:function () {
+            console.log('11111');
+            if(vm.allGongsiValue != '1-1'){
+                console.log('@@@@@@');
+                console.log(vm.allYUanGValue);
+                $.ajax({
+                    url: '../../sys/user/getUserList',
+                    type: 'get',
+                    data:{deptId:vm.allGongsiValue}
+                    // 'productIds': JSON.stringify(vm.activeProlist)
+                    ,
+                    // contentType: "application/json",
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('获取员工');
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.allYUanG= r.userList;
+                            // vm.allYUanG.unshift({
+                            //     userId:'1-1',
+                            //     displayName:'所有员工'
+                            // })
+                            // vm.getPage();
+
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                })
+            }else {
+                $.ajax({
+                    url: '../../sys/user/getUserList',
+                    type: 'get',
+                    data:{deptId:'0'}
+                    // 'productIds': JSON.stringify(vm.activeProlist)
+                    ,
+                    // contentType: "application/json",
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('获取员工');
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.allYUanG= r.userList;
+                            // vm.allYUanG.unshift({
+                            //     userId:'1-1',
+                            //     username:'所有员工'
+                            // })
+                            // vm.getPage();
+
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                })
+            }
+
+        },
+        // 选择公司后获取员工
+        chanGongsiFunc:function () {
+            vm.allYUanG = [];
+            vm.allYUanGValue = [];
         },
         getDept: function(){
             //加载公司树
@@ -107,6 +181,55 @@ var vm = new Vue({
                 type: 1,
                 title: false,
                 content: $('#hebing'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['400px', '220px'],
+                shadeClose: true,
+                btn: ['合并','取消'],
+                btn1: function (index) {
+                    console.log(vm.chongzhiData);
+                    layer.confirm('确定合并吗？',function () {
+                        console.log(deptId);
+                        console.log(this.allGongsiValue1);
+                        $.ajax({
+                            type: "POST",
+                            url: baseURL + "sys/dept/merge",
+                            data: JSON.stringify({
+                                'fromDeptId':deptId,
+                                'toDeptId':this.allGongsiValue1
+                            }),
+                            contentType: "application/json",
+                            success: function(r){
+                                if(r.code === 0){
+                                    layer.msg('合并成功');
+                                    layer.close(index);
+
+                                }else{
+                                    alert(r.msg);
+                                }
+                            }
+                        });
+
+                    })
+
+
+                },
+                btn2: function (index) {
+
+
+                }
+            });
+
+        },
+        // 合并
+        fenlifunc:function () {
+            var deptId = getDeptId();
+            if(deptId == null){
+                return ;
+            }
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#fenli'), //这里content是一个普通的String
                 skin: 'openClass',
                 area: ['400px', '220px'],
                 shadeClose: true,
