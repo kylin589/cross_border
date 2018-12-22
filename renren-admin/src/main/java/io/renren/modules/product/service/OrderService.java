@@ -2,7 +2,11 @@ package io.renren.modules.product.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.sys.dto.StatisticsDto;
+import io.renren.modules.sys.dto.UserStatisticsDto;
 import io.renren.modules.sys.entity.SysUserEntity;
+import io.renren.modules.sys.vm.StatisticsVM;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -58,5 +62,14 @@ public interface OrderService extends IService<OrderEntity> {
      * 生成运费记录、服务费记录
      */
     void internationalShipments(OrderEntity order);
+    /**
+     * 扣款，并生成运费记录和服务费记录
+     * @param order
+     */
+    void deduction(OrderEntity order);
+    /**
+     * 查询总部员工统计
+     */
+    UserStatisticsDto oneLevelUserStatistics(StatisticsVM vm);
 }
 

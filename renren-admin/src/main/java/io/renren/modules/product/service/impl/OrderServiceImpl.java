@@ -3,6 +3,10 @@ package io.renren.modules.product.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import io.renren.modules.product.entity.*;
+import io.renren.modules.product.service.ProductsService;
+import io.renren.modules.sys.dto.UserStatisticsDto;
+import io.renren.modules.util.DateUtils;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.amazon.util.ConstantDictionary;
@@ -14,19 +18,17 @@ import io.renren.modules.logistics.util.AbroadLogisticsUtil;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.service.ProductShipAddressService;
 import io.renren.modules.product.dao.OrderDao;
-import io.renren.modules.product.entity.AmazonRateEntity;
-import io.renren.modules.product.entity.DataDictionaryEntity;
-import io.renren.modules.product.entity.OrderEntity;
-import io.renren.modules.product.entity.OrderStatisticsEntity;
 import io.renren.modules.product.service.AmazonRateService;
 import io.renren.modules.product.service.DataDictionaryService;
 import io.renren.modules.product.service.OrderService;
+import io.renren.modules.sys.dto.StatisticsDto;
 import io.renren.modules.sys.entity.ConsumeEntity;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.ConsumeService;
 import io.renren.modules.sys.service.SysDeptService;
 import io.renren.modules.sys.service.SysUserService;
+import io.renren.modules.sys.vm.StatisticsVM;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -55,6 +57,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private SysUserService userService;
     @Autowired
     private ConsumeService consumeService;
+    @Autowired
+    private ProductsService productsService;
     @Override
     public Map<String, Object> queryMyPage(Map<String, Object> params, Long userId) {
         //店铺名称
@@ -325,6 +329,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         BigDecimal c = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
                         BigDecimal orderProfit = c.subtract(interFreight).subtract(platformCommissions).setScale(2,BigDecimal.ROUND_HALF_UP);
                         orderEntity.setOrderProfit(orderProfit);
+                        //扣款
+                        deduction(orderEntity);
                     }
                     orderList.add(orderEntity);
                 }
@@ -364,17 +370,23 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 orderEntity.setUserId(user.getUserId());
                 orderEntity.setDeptId(user.getDeptId());
                 orderEntity.setUpdateTime(new Date());
-
+                //设置汇率*
+                BigDecimal rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("","countryCode")).getRate();
+                orderEntity.setMomentRate(rate);
                 //获取订单金额（外币）*
                 BigDecimal orderMoney = orderEntity.getOrderMoney();
                 //获取Amazon佣金（外币）
                 BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15));
                 //到账金额
                 BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
-                //TODO: 2018/12/21设置金额*
-                //设置汇率*
-                BigDecimal rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("","countryCode")).getRate();
-                orderEntity.setMomentRate(rate);
+                //TODO: 2018/12/21设置金额*(同时设置人民币)
+                //设置订单金额（人民币：外币*当时汇率）
+//                orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                //设置Amazon佣金（人民币：外币*当时汇率）
+//                orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                //设置到账金额（人民币）
+//                BigDecimal accountMoney = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
+//                orderDTO.setAccountMoney(accountMoney);
                 // TODO: 2018/12/21 新增收货人信息*
             }else{
                 //更新订单
@@ -415,6 +427,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public void internationalShipments(OrderEntity order) {
         order.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED);
         order.setOrderState("国际已发货");
+        deduction(order);
+    }
+
+
+    @Override
+    public void deduction(OrderEntity order){
         //扣款
         SysDeptEntity dept = deptService.selectById(order.getDeptId());
         //原来余额
@@ -449,6 +467,65 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         consumeEntity2.setAfterBalance(nowBalance);
         consumeEntity2.setCreateTime(new Date());
         consumeService.insert(consumeEntity2);
+    }
+
+    @Override
+    public UserStatisticsDto oneLevelUserStatistics(StatisticsVM vm) {
+        Map<String, Object> params = new HashMap<String,Object>();
+        String type = vm.getType();
+        String startDate = null;
+        String endDate = null;
+        if("year".equals(type)){
+            //查询年
+            startDate = DateUtils.getYearFirst();
+            endDate = DateUtils.getYearEnd();
+            params.put("startDate", startDate);
+            params.put("endDate", endDate);
+            params.put("deptId",vm.getDeptId());
+            params.put("userIdId",vm.getUserId());
+        }else if("month".equals(type)){
+            //查询月
+            startDate = DateUtils.getMonthFirst();
+            endDate = DateUtils.getMonthEnd();
+            params.put("startDate", startDate);
+            params.put("endDate", endDate);
+            params.put("deptId",vm.getDeptId());
+            params.put("userIdId",vm.getUserId());
+        }else if("day".equals(type)){
+            //查询日
+            startDate = DateUtils.getDayFirst();
+            endDate = DateUtils.getDayEnd();
+            params.put("startDate", startDate);
+            params.put("endDate", endDate);
+            params.put("deptId",vm.getDeptId());
+            params.put("userIdId",vm.getUserId());
+        }else{
+            //按时间查询
+            startDate = DateUtils.startFormat.format(vm.getStartDate());
+            endDate = DateUtils.endFormat.format(vm.getEndDate());
+            params.put("startDate", startDate);
+            params.put("endDate", endDate);
+            params.put("deptId",vm.getDeptId());
+            params.put("userIdId",vm.getUserId());
+        }
+        EntityWrapper orderWrapper = new EntityWrapper<OrderEntity>();
+        orderWrapper.ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                    .eq(StringUtils.isNotBlank(vm.getDeptId()),"dept_id",vm.getDeptId())
+                    .eq(StringUtils.isNotBlank(vm.getUserId()),"user_id",vm.getUserId());
+        EntityWrapper productWrapper = new EntityWrapper<ProductsEntity>();
+        productWrapper.ge(StringUtils.isNotBlank(startDate), "create_time", startDate)
+                .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
+                .eq(StringUtils.isNotBlank(vm.getDeptId()),"dept_id",vm.getDeptId())
+                .eq(StringUtils.isNotBlank(vm.getUserId()),"create_user_id",vm.getUserId());
+        UserStatisticsDto dto = baseMapper.oneLevelUserStatistics1(params);
+        dto.setAddProductsCounts(productsService.selectCount(productWrapper));
+        dto.setSalesVolume(new BigDecimal(baseMapper.oneLevelUserStatistics2(params)));
+        dto.setAddOrderCounts(this.selectCount(orderWrapper));
+        dto.setReturnCounts(this.selectCount(orderWrapper));
+        dto.setAbnormalCounts(this.selectCount(orderWrapper.isNotNull("abnormal_status")));
+        dto.setProfitRate(dto.getProfit().divide(dto.getSalesVolume(),2,BigDecimal.ROUND_HALF_UP));
+        return dto;
     }
 }
 

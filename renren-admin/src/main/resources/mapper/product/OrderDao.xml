@@ -9,7 +9,13 @@
                 and user_id =#{params.userId}
             </if>
             <if test="params.deptId != null">
-                and dept_id =#{params.value}
+                and dept_id =#{params.deptId}
+            </if>
+            <if test="params.startDate != null">
+                and buy_date <![CDATA[>= ]]> #{params.startDate}
+            </if>
+            <if test="params.endDate != null">
+                and buy_date <![CDATA[<= ]]> #{params.endDate}
             </if>
         </where>
     </sql>
@@ -42,6 +48,13 @@
         <result property="orderFreight" column="order_freight"/>
     </resultMap>
 
+    <resultMap type="io.renren.modules.sys.dto.UserStatisticsDto" id="statisticsDtoMap">
+        <result property="cost" column="cost"/>
+        <result property="orderFreight" column="order_freight"/>
+        <result property="servicePrice" column="service_price"/>
+        <result property="profit" column="profit"/>
+    </resultMap>
+
     <!-- 修改订单状态-->
     <update id="updateState" >
         update product_order
@@ -55,8 +68,8 @@
     <update id="updateAbnormalState" >
         update product_order
         <set>
-            abnormal_status=#{abnormalState},
-            abnormal_state=#{abnormalStatus}
+            abnormal_status=#{abnormalStatus},
+            abnormal_state=#{abnormalState}
         </set>
         where order_id in
         <foreach collection="orderIds" item="id" index="index" open="(" close=")" separator=",">
@@ -65,9 +78,22 @@
     </update>
     <!-- 查询我的订单金额总数 -->
     <select id="statisticsOrderCounts"  resultMap="orderCountMap">
-        select sum(order_money) AS order_money, sum(order_profit) AS order_profit,
-        sum(return_cost) AS return_cost, sum(purchase_price) AS purchase_price, sum(inter_freight) AS order_freight
+        select sum(order_profit) AS order_profit,sum(return_cost) AS return_cost, sum(purchase_price) AS purchase_price, sum(inter_freight) AS order_freight
          from product_order
         <include refid="sql_Where_Clause" />
+    </select>
+
+    <!-- 统计员工 -->
+    <select id="oneLevelUserStatistics1"  resultMap="statisticsDtoMap">
+        select sum(order_profit) AS profit, sum(purchase_price) AS cost, sum(inter_freight) AS order_freight, sum(platform_commissions) AS service_price
+        from product_order
+        <include refid="sql_Where_Clause" />
+    </select>
+    <!-- 统计员工 -->
+        <select id="oneLevelUserStatistics2"  resultType="String">
+        select sum(order_money_cny)
+        from product_order
+        <include refid="sql_Where_Clause" />
+        and abnormal_state is null
     </select>
 </mapper>

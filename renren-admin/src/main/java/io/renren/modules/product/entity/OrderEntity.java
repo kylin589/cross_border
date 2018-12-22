@@ -88,13 +88,25 @@ public class OrderEntity implements Serializable {
 	 */
 	private BigDecimal orderMoney = new BigDecimal(0.00);
 	/**
+	 * 订单金额（人民币）
+	 */
+	private BigDecimal orderMoneyCny = new BigDecimal(0.00);
+	/**
 	 * Amazon佣金
 	 */
 	private BigDecimal amazonCommission = new BigDecimal(0.00);
 	/**
+	 * Amazon佣金（人民币）
+	 */
+	private BigDecimal amazonCommissionCny = new BigDecimal(0.00);
+	/**
 	 * 到账金额
 	 */
 	private BigDecimal accountMoney = new BigDecimal(0.00);
+	/**
+	 * 到账金额（人民币）
+	 */
+	private BigDecimal accountMoneyCny = new BigDecimal(0.00);
 	/**
 	 * 国际运费
 	 */
@@ -420,5 +432,29 @@ public class OrderEntity implements Serializable {
 
 	public void setRateCode(String rateCode) {
 		this.rateCode = rateCode;
+	}
+
+	public BigDecimal getOrderMoneyCny() {
+		return orderMoneyCny;
+	}
+
+	public void setOrderMoneyCny(BigDecimal orderMoneyCny) {
+		this.orderMoneyCny = orderMoneyCny;
+	}
+
+	public BigDecimal getAmazonCommissionCny() {
+		return amazonCommissionCny;
+	}
+
+	public void setAmazonCommissionCny(BigDecimal amazonCommissionCny) {
+		this.amazonCommissionCny = amazonCommissionCny;
+	}
+
+	public BigDecimal getAccountMoneyCny() {
+		return accountMoneyCny;
+	}
+
+	public void setAccountMoneyCny(BigDecimal accountMoneyCny) {
+		this.accountMoneyCny = accountMoneyCny;
 	}
 }
