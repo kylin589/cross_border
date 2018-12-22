@@ -99,29 +99,36 @@ public class SysLoginController extends AbstractController{
 			return R.error("账户验证失败");
 		}
 
-		SysDeptEntity dept = deptService.selectById(getDeptId());
-		//未发货订单
-		int unshippedNumber = orderService.selectCount(
-				new EntityWrapper<OrderEntity>().in("order_status", ConstantDictionary.OrderStateCode.UNLIQUIDATED_ORDER_STATE)
-												.ne("abnormal_status",ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN)
-		);
-		dept.setUnshippedNumber(unshippedNumber);
-		//未结算订单数(国际已发货)
-		int unliquidatedNumber = orderService.selectCount(
-				new EntityWrapper<OrderEntity>().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED)
-		);
-		dept.setUnliquidatedNumber(unliquidatedNumber);
-		//预计费用
-		BigDecimal estimatedCost = new BigDecimal(unshippedNumber * 50);
-		dept.setEstimatedCost(estimatedCost);
-		//可用余额
-		BigDecimal availableBalance = dept.getBalance().subtract(estimatedCost).setScale(2,BigDecimal.ROUND_HALF_UP);
-		dept.setAvailableBalance(availableBalance);
-		//预计还可生成单数
-		int estimatedOrder = availableBalance.divide(new BigDecimal(50),0,BigDecimal.ROUND_HALF_DOWN).intValue();
-		dept.setEstimatedOrder(estimatedOrder);
-		deptService.updateById(dept);
+		new CalculationThread().start();
 		return R.ok();
+	}
+
+	class CalculationThread extends Thread   {
+		@Override
+		public void run() {
+			SysDeptEntity dept = deptService.selectById(getDeptId());
+			//未发货订单
+			int unshippedNumber = orderService.selectCount(
+					new EntityWrapper<OrderEntity>().in("order_status", ConstantDictionary.OrderStateCode.UNLIQUIDATED_ORDER_STATE)
+							.ne("abnormal_status",ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN)
+			);
+			dept.setUnshippedNumber(unshippedNumber);
+			//未结算订单数(国际已发货)
+			int unliquidatedNumber = orderService.selectCount(
+					new EntityWrapper<OrderEntity>().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED)
+			);
+			dept.setUnliquidatedNumber(unliquidatedNumber);
+			//预计费用
+			BigDecimal estimatedCost = new BigDecimal(unshippedNumber * 50);
+			dept.setEstimatedCost(estimatedCost);
+			//可用余额
+			BigDecimal availableBalance = dept.getBalance().subtract(estimatedCost).setScale(2,BigDecimal.ROUND_HALF_UP);
+			dept.setAvailableBalance(availableBalance);
+			//预计还可生成单数
+			int estimatedOrder = availableBalance.divide(new BigDecimal(50),0,BigDecimal.ROUND_HALF_DOWN).intValue();
+			dept.setEstimatedOrder(estimatedOrder);
+			deptService.updateById(dept);
+		}
 	}
 	
 	/**

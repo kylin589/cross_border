@@ -18,8 +18,12 @@ package io.renren.modules.sys.controller;
 
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.R;
+import io.renren.modules.product.service.AmazonCategoryService;
 import io.renren.modules.sys.entity.SysDeptEntity;
+import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysDeptService;
+import io.renren.modules.sys.service.SysUserService;
+import io.renren.modules.sys.vm.DeptMergeSeparateVM;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +49,10 @@ import java.util.List;
 public class SysDeptController extends AbstractController {
 	@Autowired
 	private SysDeptService sysDeptService;
-	
+	@Autowired
+	private SysUserService userService;
+	@Autowired
+	private AmazonCategoryService amazonCategoryService;
 	/**
 	 * 列表
 	 */
@@ -53,6 +61,61 @@ public class SysDeptController extends AbstractController {
 	public List<SysDeptEntity> list(){
 		List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>(), getDeptId());
 		return deptList;
+	}
+
+	/**
+	 * 公司合并
+	 */
+	@RequestMapping("/merge")
+//	@RequiresPermissions("sys:dept:merge")
+	public R merge(@RequestBody DeptMergeSeparateVM vm){
+		Long fromDeptId = vm.getFromDeptId();
+		Long toDeptId = vm.getToDeptId();
+		if(fromDeptId == 1L){
+			return R.error("总部不能合并");
+		}
+		//将员工全部归到目标公司
+		List<SysUserEntity> fromUserList = userService.selectUserList(fromDeptId);
+		for(SysUserEntity user : fromUserList){
+			user.setDeptId(toDeptId);
+		}
+		userService.updateBatchById(fromUserList);
+		//将对应表中对应公司id替换
+		//历史记录表、授权店铺表、公司消费表、充值记录表、Amazon授权表、订单表、产品表、上传表
+		sysDeptService.merge(fromDeptId, toDeptId);
+		//删除原来的公司
+		List<Long> deptList = sysDeptService.queryDetpIdList(fromDeptId);
+		if(deptList.size() > 1){
+			for(Long deptId : deptList){
+				sysDeptService.deleteById(fromDeptId);
+			}
+		}else{
+			sysDeptService.deleteById(fromDeptId);
+		}
+
+		return R.ok();
+	}
+	/**
+	 * 公司分离
+	 */
+	@RequestMapping("/separate")
+//	@RequiresPermissions("sys:dept:separate")
+	public R separate(@RequestBody DeptMergeSeparateVM vm){
+		Long fromDeptId = vm.getFromDeptId();
+		Long toDeptId = vm.getToDeptId();
+		Long[] userIds = vm.getUserIds();
+		if(fromDeptId == 1L){
+			return R.error("总部不能分离");
+		}
+		//将员工全部归到目标公司
+		List<SysUserEntity> userList = userService.selectBatchIds(Arrays.asList(userIds));
+		for(SysUserEntity user : userList){
+			user.setDeptId(toDeptId);
+		}
+		//将对应表中对应员工的公司id替换
+		//历史记录表、授权店铺表、公司消费表、充值记录表、Amazon授权表、订单表、产品表、上传表
+		sysDeptService.separate(userIds, toDeptId);
+		return R.ok();
 	}
 
 	/**

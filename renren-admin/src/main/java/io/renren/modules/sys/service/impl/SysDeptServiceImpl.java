@@ -67,6 +67,30 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 		return deptIdList;
 	}
 
+	@Override
+	public void merge(Long fromDeptId, Long toDeptId) {
+		baseMapper.updateCategoryHistory(fromDeptId, toDeptId);
+		baseMapper.updateGrantShop(fromDeptId, toDeptId);
+		baseMapper.updateCompanyConsume(fromDeptId, toDeptId);
+		baseMapper.updateCompanyRecharge(fromDeptId, toDeptId);
+		baseMapper.updateGrant(fromDeptId, toDeptId);
+		baseMapper.updateOrder(fromDeptId, toDeptId);
+		baseMapper.updateProduct(fromDeptId, toDeptId);
+		baseMapper.updateProductUpload(fromDeptId, toDeptId);
+	}
+
+	@Override
+	public void separate(Long[] userIds, Long toDeptId) {
+		baseMapper.separateCategoryHistory(userIds, toDeptId);
+		baseMapper.separateGrantShop(userIds, toDeptId);
+		baseMapper.separateCompanyConsume(userIds, toDeptId);
+		baseMapper.separateCompanyRecharge(userIds, toDeptId);
+		baseMapper.separateGrant(userIds, toDeptId);
+		baseMapper.separateOrder(userIds, toDeptId);
+		baseMapper.separateProduct(userIds, toDeptId);
+		baseMapper.separateProductUpload(userIds, toDeptId);
+	}
+
 	/**
 	 * 递归
 	 */

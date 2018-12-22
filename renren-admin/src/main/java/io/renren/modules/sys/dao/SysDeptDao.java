@@ -18,6 +18,7 @@ package io.renren.modules.sys.dao;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import io.renren.modules.sys.entity.SysDeptEntity;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -36,4 +37,72 @@ public interface SysDeptDao extends BaseMapper<SysDeptEntity> {
      */
     List<Long> queryDetpIdList(Long parentId);
 
+
+    /**
+     * 合并历史记录表的公司
+     */
+    int updateCategoryHistory(@Param("fromDeptId")Long fromDeptId, @Param("toDeptId")Long toDeptId);
+    /**
+     * 合并授权店铺表的公司
+     */
+    int updateGrantShop(@Param("fromDeptId")Long fromDeptId, @Param("toDeptId")Long toDeptId);
+    /**
+     * 合并公司消费表的公司
+     */
+    int updateCompanyConsume(@Param("fromDeptId")Long fromDeptId, @Param("toDeptId")Long toDeptId);
+    /**
+     * 合并充值记录表的公司
+     */
+    int updateCompanyRecharge(@Param("fromDeptId")Long fromDeptId, @Param("toDeptId")Long toDeptId);
+    /**
+     * 合并Amazon授权表的公司
+     */
+    int updateGrant(@Param("fromDeptId")Long fromDeptId, @Param("toDeptId")Long toDeptId);
+    /**
+     * 合并订单表的公司
+     */
+    int updateOrder(@Param("fromDeptId")Long fromDeptId, @Param("toDeptId")Long toDeptId);
+    /**
+     * 合并产品表的公司
+     */
+    int updateProduct(@Param("fromDeptId")Long fromDeptId, @Param("toDeptId")Long toDeptId);
+    /**
+     * 合并上传表的公司
+     */
+    int updateProductUpload(@Param("fromDeptId")Long fromDeptId, @Param("toDeptId")Long toDeptId);
+
+
+
+    /**
+     * 分离历史记录表的公司
+     */
+    int separateCategoryHistory(@Param("userIds")Long[] userIds, @Param("toDeptId")Long toDeptId);
+    /**
+     * 分离授权店铺表的公司
+     */
+    int separateGrantShop(@Param("userIds")Long[] userIds, @Param("toDeptId")Long toDeptId);
+    /**
+     * 分离公司消费表的公司
+     */
+    int separateCompanyConsume(@Param("userIds")Long[] userIds, @Param("toDeptId")Long toDeptId);
+    /**
+     * 分离充值记录表的公司
+     */
+    int separateCompanyRecharge(@Param("userIds")Long[] userIds, @Param("toDeptId")Long toDeptId);
+    /**
+     * 分离Amazon授权表的公司
+     */
+    int separateGrant(@Param("userIds")Long[] userIds, @Param("toDeptId")Long toDeptId);
+    /**
+     * 分离订单表的公司
+     */
+    int separateOrder(@Param("userIds")Long[] userIds, @Param("toDeptId")Long toDeptId);
+    /**
+     * 分离产品表的公司
+     */
+    int separateProduct(@Param("userIds")Long[] userIds, @Param("toDeptId")Long toDeptId);
+    /**
+     * 分离上传表的公司
+     */
+    int separateProductUpload(@Param("userIds")Long[] userIds, @Param("toDeptId")Long toDeptId);
 }

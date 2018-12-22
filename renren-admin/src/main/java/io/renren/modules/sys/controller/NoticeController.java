@@ -62,7 +62,9 @@ public class NoticeController extends AbstractController{
         for(NoticeEntity notice : noticeList){
             notice.setNoticeState(1);
         }
-        noticeService.updateBatchById(noticeList);
+        if(noticeList.size() > 0){
+            noticeService.updateBatchById(noticeList);
+        }
         return R.ok();
     }
     /**
