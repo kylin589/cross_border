@@ -60,7 +60,7 @@
     margin-right: 5px;
 }
 
-/*充值*/
+/*合并*/
 #hebing h3{
     margin: 10px;
     color: #00a3e8;
@@ -68,6 +68,24 @@
     font-weight: bold;
 }
 #hebing label:before{
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    background: -webkit-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: -moz-linear-gradient(bottom, #1e9fff , #63e3f0);
+    background: linear-gradient(to bottom, #1e9fff , #63e3f0);
+    margin-right: 5px;
+    margin-left: 10px;
+}
+/*分离*/
+#fenli h3{
+    margin: 10px;
+    color: #00a3e8;
+    font-size: 18px;
+    font-weight: bold;
+}
+#fenli label:before{
     content: '';
     display: inline-block;
     width: 3px;

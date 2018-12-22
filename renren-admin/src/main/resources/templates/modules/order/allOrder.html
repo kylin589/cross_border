@@ -31,6 +31,28 @@
             <!--<option :value="item.shopName" v-for="item in shopList">{{item.shopName}}</option>-->
         <!--</select>-->
 
+        <#if shiro.hasPermission("sys:dept:list")>
+            <el-select v-model="allGongsiValue" filterable @change="chanGongsiFunc" placeholder="请选择公司">
+                <el-option
+                        v-for="item in allGongsi"
+                        :key="item.deptId"
+                        :label="item.name"
+                        :value="item.deptId"
+                >
+                </el-option>
+            </el-select>
+        </#if>
+
+
+        <el-select v-model="allYUanGValue" placeholder="请选择员工" @focus="getManList">
+            <el-option
+                    v-for="item in allYUanG"
+                    :key="item.userId"
+                    :label="item.displayName"
+                    :value="item.userId">
+            </el-option>
+        </el-select>
+
         <el-select v-model="shopName" placeholder="请选择店铺">
             <el-option
                     v-for="item in shopList"
@@ -167,7 +189,8 @@
                 </span>
             </td>
             <td>
-                <span style="padding: 2px 6px;border-radius: 3px;background: #ff6154;color: #fff;">{{item.abnormalStatus}}</span>
+                <span v-if="item.abnormalStatus != '正常' " style="padding: 2px 6px;border-radius: 3px;background: #ff6154;color: #fff;">{{item.abnormalStatus}}</span>
+                <span v-if="item.abnormalStatus == '正常' " style="padding: 2px 6px;border-radius: 3px;background: #4da7ff;color: #fff;">{{item.abnormalStatus}}</span>
             </td>
             <td>{{ item.abroadWaybill }}</td>
             <td>{{ item.domesticWaybill }}</td>
