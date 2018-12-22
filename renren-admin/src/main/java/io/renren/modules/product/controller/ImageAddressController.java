@@ -7,6 +7,7 @@ import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.product.entity.ImageAddressEntity;
 import io.renren.modules.product.service.ImageAddressService;
 import io.renren.modules.sys.controller.AbstractController;
+import io.renren.modules.util.FtpUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
 
 
 /**
@@ -97,47 +96,52 @@ public class ImageAddressController extends AbstractController {
      * @auther: jhy
      * @date: 2018/11/6 15:54
      */
+    //保存到数据库的Url前缀
+    private static final String fileUrl = "http://hgjfsdg.top/image/";
     @RequestMapping("/upload")
     public R upload(@RequestParam("file") MultipartFile file, Long productId) throws Exception {
         //判断文件是否为空
-        if (file.isEmpty()) {
-            return R.error("上传文件不能为空");
-        }
-        // 上传文件夹获取文件名
-        String fileName = file.getOriginalFilename();
-        // 获取上传文件的后缀名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));
-        // 文件上传后是保存在本地的路径
-        String filePath = "/bilinlin/Desktop/cross_border/test/";
-//        String filePath = "E:/test/";
-
-        String url = productId + "/" + fileName;
-        //文件上传的位置
-        //File dest = new File(filePath +productId+"/"+ fileName);
-        File dest = new File(filePath + url);
-        // 检测是否存在目录不存在创建一个文件
-        if (!dest.getParentFile().exists()) {
-            dest.getParentFile().mkdirs();
-        }
         try {
-            //图片写到指定的文件夹
-            file.transferTo(dest);
-            ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
-            imageAddressEntity.setImageUrl(url);
-            imageAddressEntity.setProductId(productId);
-            imageAddressEntity.setIsDeleted("0");
-            imageAddressEntity.setCreateTime(new Date());
-            imageAddressEntity.setCreateUserId(getUserId());
-            imageAddressEntity.setLastOperationUserId(getUserId());
-            imageAddressEntity.setLastOperationTime(new Date());
-            imageAddressService.insert(imageAddressEntity);
-            Long id=imageAddressEntity.getImageId();
-            return R.ok().put("url", url).put("id",id);
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            if (file.isEmpty()) {
+                return R.error("上传文件不能为空");
+            }
+            // 上传文件夹获取文件名
+            String fileName = file.getOriginalFilename();
+            // 获取上传文件的后缀名
+            String suffixName = fileName.substring(fileName.lastIndexOf("."));
+            if (!suffixName.equalsIgnoreCase(".jpg")){
+                return R.error(1,"图片格式不正确，请上传jpg格式的图片");
+            }
+            //获取图片的输入流
+            InputStream inputStream = file.getInputStream();
+            //获取年月日以年月日来分目录
+            Calendar calendar = Calendar.getInstance();
+            String year = String.valueOf(calendar.get(Calendar.YEAR));
+            String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+            String date = String.valueOf(calendar.get(Calendar.DATE));
+           // 文件上传到ftp的地址上
+            String filePath = "/image/" + year + "/" + month + "/" + date + "/" + productId + "/";
+            //调用FtpUtil的方法，连接ftp服务器，并把图片上传到服务器上
+            Boolean flag = FtpUtil.uploadFile(fileName, inputStream, filePath);
+            if (flag == true) {
+                ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
+                String url = year + "/" + month + "/" + date + "/" + productId + "/" + fileName;
+                String urlOne = fileUrl + url;
+                imageAddressEntity.setImageUrl(urlOne);
+                imageAddressEntity.setProductId(productId);
+                imageAddressEntity.setIsDeleted("0");
+                imageAddressEntity.setCreateTime(new Date());
+                imageAddressEntity.setCreateUserId(getUserId());
+                imageAddressEntity.setLastOperationUserId(getUserId());
+                imageAddressEntity.setLastOperationTime(new Date());
+                imageAddressService.insert(imageAddressEntity);
+                Long id = imageAddressEntity.getImageId();
+                return R.ok().put("url", urlOne).put("id", id);}
+            } catch(IllegalStateException e){
+                e.printStackTrace();
+            } catch(IOException e){
+                e.printStackTrace();
+            }
         return R.error(1, "上传失败");
     }
 
