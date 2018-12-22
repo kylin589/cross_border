@@ -1,11 +1,10 @@
 package io.renren.modules.logistics.util;
 
 import com.alibaba.fastjson.JSONObject;
-import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.logistics.DTO.ReceiveOofayData;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.*;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -39,14 +38,17 @@ public class AbroadLogisticsUtil {
 
     public static void main(String[] args) {
         //推送订单
-//        pushOrder();
+//        pushOrder("1");
         //获取订单国际物流状态
         getOrderDetail(20181214L);
         //修改订单国际物流状态
 //        updateOrder(20181214L,4);
+//        String orderData = "{\"order\":{\"order_sn\":\"20181214\",\"order_currency\":\"null\",\"order_date\":\"null\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
+//        System.out.println(orderData);
     }
 
-    public static void pushOrder(){
+    public static Map<String,String> pushOrder(String orderData){
+        Map<String,String> map = new HashMap<>();
         //传输参数
         Map<String, String> paramList = new HashMap<>();
         //获取秘钥
@@ -55,7 +57,9 @@ public class AbroadLogisticsUtil {
         paramsMap.put("userdean", String.valueOf(userdean));
         paramList.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
         paramsMap.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
-        String orderData = "{\"order\":{\"order_sn\":\"20181214\",\"order_currency\":\"USD\",\"order_date\":\"2018-11-12T17:01:47.0948075+08:00\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
+//        String orderData = "{\"order\":{\"order_sn\":\"20181214\",\"order_currency\":\"USD\",\"order_date\":\"2018-11-12T17:01:47.0948075+08:00\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
+//        orderData = "{\"order\":{\"order_currency\":\"USD\",\"order_sn\":\"2018122203\",\"order_date\":\"2018-12-12T15:44:29.0000000+08:00\",\"profitamount\":0,\"costamount\":\"\",\"feedamount\":0,\"delivery_address\":\"\",\"order_memo\":\"US\",\"memo\":\"\",\"saleamount\":0},\"orderDetailList\":[{\"product_id\":\"LKJHGFDSA3\",\"price\":0,\"quantity\":1,\"cost\":0,\"profit\":0,\"supplyorderno\":\"\",\"supplyexpressno\":\"803216550758084158\",\"saleamount\":0,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"wangdh\",\"custcompany\":\"sdf\",\"custcountry\":\"US\",\"custstate\":\"aaa\",\"custcity\":\"nuyork\",\"custzipcode\":\"030000\",\"custphone\":\"18334784662\",\"custaddress\":\"gfhd1gfhd2gfhd3\",\"address_line1\":\"gfhd1\",\"address_line2\":\"gfhd2\",\"address_line3\":\"gfhd3\"}}";
+
         paramsMap.put("oofayOrderData",orderData);
         String oofayOrderData = null;
         try {
@@ -77,15 +81,26 @@ public class AbroadLogisticsUtil {
                 System.out.println("result:" + result);
                 JSONObject obj = JSONObject.parseObject(result);
                 String data = obj.getString("data");
-                String data1 = new String(decoder.decode(data), "UTF-8");
-                System.out.println("data1:" + data1);
+                if(data != null && data != ""){
+                    String data1 = new String(decoder.decode(data), "UTF-8");
+                    //System.out.println("data1:" + data1);
+                    JSONObject j = JSONObject.parseObject(data1);
+                    map.put("code",j.getString("isSuccess"));
+                    map.put("msg",j.getString("errorMsg"));
+                }else{
+                    map.put("code","false");
+                    map.put("msg",obj.getString("Message"));
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            map.put("code","false");
+            map.put("msg","网络故障，请重试。");
         }
+        return map;
     }
 
-    public static void getOrderDetail(Long orderId){
+    public static Map<String,Object> getOrderDetail(Long orderId){
+        Map<String,Object> map = new HashMap<>();
         //传输参数
         Map<String, String> paramList = new HashMap<>();
         paramList.put("userdean", String.valueOf(userdean));
@@ -106,10 +121,18 @@ public class AbroadLogisticsUtil {
                 String data = obj.getString("data");
                 String data1 = new String(decoder.decode(data), "UTF-8");
                 System.out.println("data1:" + data1);
+                JSONObject a = JSONObject.parseObject(data1);
+                ReceiveOofayData receiveOofayData = new ReceiveOofayData();
+                JSONObject detail = a.getJSONArray("OmsOrderDetailext").getJSONObject(0);
+//                String status =
+                map.put("code","true");
+                map.put("receiveOofayData",receiveOofayData);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            map.put("code","false");
+            map.put("msg","网络故障，请重试。");
         }
+        return map;
     }
 
     /**

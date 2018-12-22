@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 订单配送地址表
@@ -59,9 +58,17 @@ public class ProductShipAddressEntity implements Serializable {
 	 */
 	private String shipDistrict;
 	/**
-	 * 街道
+	 * 街道1
 	 */
-	private String shipAddressLine;
+	private String shipAddressLine1;
+	/**
+	 * 街道2
+	 */
+	private String shipAddressLine2;
+	/**
+	 * 街道3
+	 */
+	private String shipAddressLine3;
 
 	/**
 	 * 设置：配送地址id
@@ -183,16 +190,28 @@ public class ProductShipAddressEntity implements Serializable {
 	public String getShipDistrict() {
 		return shipDistrict;
 	}
-	/**
-	 * 设置：街道
-	 */
-	public void setShipAddressLine(String shipAddressLine) {
-		this.shipAddressLine = shipAddressLine;
+
+	public String getShipAddressLine1() {
+		return shipAddressLine1;
 	}
-	/**
-	 * 获取：街道
-	 */
-	public String getShipAddressLine() {
-		return shipAddressLine;
+
+	public void setShipAddressLine1(String shipAddressLine1) {
+		this.shipAddressLine1 = shipAddressLine1;
+	}
+
+	public String getShipAddressLine2() {
+		return shipAddressLine2;
+	}
+
+	public void setShipAddressLine2(String shipAddressLine2) {
+		this.shipAddressLine2 = shipAddressLine2;
+	}
+
+	public String getShipAddressLine3() {
+		return shipAddressLine3;
+	}
+
+	public void setShipAddressLine3(String shipAddressLine3) {
+		this.shipAddressLine3 = shipAddressLine3;
 	}
 }

@@ -45,4 +45,13 @@ public interface SysDeptService extends IService<SysDeptEntity> {
 	 */
 	List<Long> getSubDeptIdList(Long deptId);
 
+	/**
+	 * 合并公司
+	 */
+	void merge(Long fromDeptId, Long toDeptId);
+
+	/**
+	 * 分离公司
+	 */
+	void separate(Long[] userIds, Long toDeptId);
 }

@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.util.ConstantDictionary;
+import io.renren.modules.logistics.DTO.ReceiveOofayData;
 import io.renren.modules.logistics.entity.AbroadLogisticsEntity;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.logistics.service.AbroadLogisticsService;
 import io.renren.modules.logistics.service.DomesticLogisticsService;
+import io.renren.modules.logistics.util.AbroadLogisticsUtil;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.entity.RemarkEntity;
 import io.renren.modules.order.service.ProductShipAddressService;
@@ -81,15 +83,59 @@ public class OrderController extends AbstractController{
     @RequestMapping("/getOrderInfo")
     public R getOrderInfo(@RequestParam(value = "orderId") Long orderId){
         OrderEntity orderEntity = orderService.selectById(orderId);
+        BigDecimal momentRate = orderEntity.getMomentRate();
+        String orderStatus = orderEntity.getOrderStatus();
+        String abnormalStatus = orderEntity.getAbnormalStatus();
+        //不属于退货
+        if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
+            //如果订单状态在待签收和入库时，更新订单的国际物流信息
+            if(ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus) || ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING.equals(orderStatus)){
+                Map<String,Object> map = AbroadLogisticsUtil.getOrderDetail(orderId);
+                int status = 0;
+                if("true".equals(map.get("code"))){
+                    orderEntity.setUpdateTime(new Date());
+                    ReceiveOofayData receiveOofayData = (ReceiveOofayData)map.get("receiveOofayData");
+                    //有运费
+                    if(receiveOofayData.getInterFreight() != null && receiveOofayData.getInterFreight() != "" && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
+                        //计算国际运费、平台佣金、利润
+                        //国际运费
+                        BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
+                        orderEntity.setInterFreight(interFreight);
+                        //平台佣金
+                        BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
+                        BigDecimal accountMoney = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
+                        BigDecimal companyPoint = deptService.selectById(orderEntity.getDeptId()).getCompanyPoints();
+                        BigDecimal platformCommissions = accountMoney.multiply(companyPoint).setScale(2,BigDecimal.ROUND_HALF_UP);
+                        orderEntity.setPlatformCommissions(platformCommissions);
+                        //利润 到账-国际运费-采购价-平台佣金
+                        BigDecimal orderProfit = accountMoneyForeign.multiply(momentRate).subtract(orderEntity.getPurchasePrice()).subtract(interFreight).setScale(2,BigDecimal.ROUND_HALF_UP);
+                        orderEntity.setOrderProfit(orderProfit);
+                        orderService.updateById(orderEntity);
+                    }
+                    //状态转变为入库
+                    if(receiveOofayData.isWarehousing && ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus)){
+                        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING);
+                        orderEntity.setOrderState("入库");
+                    }else{
+                        if(receiveOofayData.getStatusStr() != null && receiveOofayData.getStatusStr() != ""){
+                            status = Integer.parseInt(receiveOofayData.getStatusStr());
+                            if(status == 2){
+                                orderService.internationalShipments(orderEntity);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setOrderId(orderId);
         orderDTO.setAmazonOrderId(orderEntity.getAmazonOrderId());
         orderDTO.setBuyDate(orderEntity.getBuyDate());
-        String orderStatus = orderEntity.getOrderStatus();
         orderDTO.setOrderStatus(orderStatus);
         orderDTO.setOrderState(orderEntity.getOrderState());
 
-        String abnormalStatus = orderEntity.getAbnormalStatus();
         orderDTO.setAbnormalStatus(abnormalStatus);
         orderDTO.setAbnormalState(orderEntity.getAbnormalState());
 
@@ -121,7 +167,7 @@ public class OrderController extends AbstractController{
             orderDTO.setAbroadLogistics(abroadLogistics);
         }
 
-        BigDecimal momentRate = orderEntity.getMomentRate();
+
         orderDTO.setMomentRate(momentRate);
         //判断订单异常状态——不属于退货
         if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
@@ -148,25 +194,14 @@ public class OrderController extends AbstractController{
                 //采购价
                 BigDecimal purchasePrice = orderEntity.getPurchasePrice();
                 orderDTO.setPurchasePrice(purchasePrice);
-                // TODO: 2018/12/15  国际运费()\平台佣金(platformCommissions)\利润(orderProfit)
                 //国际运费
                 BigDecimal interFreight = orderEntity.getInterFreight();
                 orderDTO.setInterFreight(interFreight);
                 //平台佣金
                 BigDecimal platformCommissions = orderEntity.getPlatformCommissions();
-                if(platformCommissions.compareTo(new BigDecimal(0.00)) == 0){
-                    BigDecimal companyPoint = deptService.selectById(orderEntity.getDeptId()).getCompanyPoints();
-                    platformCommissions = accountMoney.multiply(companyPoint).setScale(2,BigDecimal.ROUND_HALF_UP);
-                    orderEntity.setPlatformCommissions(platformCommissions);
-                }
                 orderDTO.setPlatformCommissions(platformCommissions);
                 //利润
                 BigDecimal orderProfit = orderEntity.getOrderProfit();
-                if(orderProfit.compareTo(new BigDecimal(0.00)) == 0){
-                    //到账-国际运费-采购价-平台佣金
-                    orderProfit = accountMoneyForeign.multiply(momentRate).subtract(purchasePrice).subtract(interFreight).setScale(2,BigDecimal.ROUND_HALF_UP);
-                    orderEntity.setOrderProfit(orderProfit);
-                }
                 orderDTO.setOrderProfit(orderProfit);
             }else {
                 //属于取消订单不处理
@@ -219,7 +254,8 @@ public class OrderController extends AbstractController{
             BigDecimal orderProfit = orderEntity.getOrderProfit();
             orderDTO.setOrderProfit(orderProfit);
         }
-        List<RemarkEntity> remarkList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","reamrk").eq("order_id",orderId));
+        List<RemarkEntity> remarkList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","remark").eq("order_id",orderId));
+        System.out.println("remarkList:" + remarkList.size());
         List<RemarkEntity> logList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","log").eq("order_id",orderId));
         orderDTO.setRemarkList(remarkList);
         orderDTO.setLogList(logList);
@@ -275,6 +311,11 @@ public class OrderController extends AbstractController{
             if("已采购".equals(orderVM.getOrderState())){
                 remark.setRemark("订单已采购");
             }else if("待签收".equals(orderVM.getOrderState())){
+                //推送订单
+                Map<String,String> result = orderService.pushOrder(orderVM.getOrderId());
+                if("false".equals(result.get("code"))){
+                    return R.error("订单推送失败,错误原因：" + result.get("msg"));
+                }
                 remark.setRemark("订单已发货");
             }else if("完成".equals(orderVM.getOrderState())){
                 remark.setRemark("订单已完成");

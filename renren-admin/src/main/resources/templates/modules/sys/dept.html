@@ -35,7 +35,7 @@
 				<a class="btn up" @click="hebingfunc"><i class="fa fa-compress"></i></i>&nbsp;合并</a>
 			</#if>
 			<#if shiro.hasPermission("sys:dept:delete")>
-				<a class="btn del" @click=""><i class="fa fa-expand"></i>&nbsp;分离</a>
+				<a class="btn del" @click="fenlifunc"><i class="fa fa-expand"></i>&nbsp;分离</a>
 			</#if>
 		</div>
 		<table id="deptTable" data-mobile-responsive="true" data-click-to-select="true">
@@ -62,9 +62,9 @@
 	</div>
 	<!--合并弹框-->
 	<div id="hebing" style="display: none">
-		<h3>合并</h3>
+		<h3>公司合并</h3>
 		<label for="">选择合并公司：</label>
-		<el-select v-model="allGongsiValue" filterable placeholder="请选择公司">
+		<el-select v-model="allGongsiValue1" filterable placeholder="请选择公司">
 			<el-option
 					v-for="item in allGongsi"
 					:key="item.deptId"
@@ -74,15 +74,32 @@
 			</el-option>
 		</el-select>
 
-		<!--<span>-->
-			<!--<label for="">充值金额：</label>-->
-			<!--<input type="text" placeholder="充值金额" v-model="chongzhiData.money">-->
-		<!--</span>-->
-		<!--<br>-->
-		<!--<span>-->
-            <!--<label for="">备注：</label>-->
-            <!--<input type="text" placeholder="备注" v-model="chongzhiData.remark">-->
-        <!--</span>-->
+	</div>
+	<!--分离弹框-->
+	<div id="fenli" style="display: none">
+		<h3>公司分离</h3>
+		<label for="">选择分离到的公司：</label>
+		<el-select v-model="allGongsiValue" filterable @change="chanGongsiFunc" placeholder="请选择公司">
+			<el-option
+					v-for="item in allGongsi"
+					:key="item.deptId"
+					:label="item.name"
+					:value="item.deptId"
+			>
+			</el-option>
+		</el-select>
+		<br>
+		<br>
+		<label for="">选择分离的员工：</label>
+		<el-select v-model="allYUanGValue" multiple placeholder="请选择" @focus="getManList">
+			<el-option
+					v-for="item in allYUanG"
+					:key="item.userId"
+					:label="item.displayName"
+					:value="item.userId">
+			</el-option>
+		</el-select>
+
 	</div>
 
 </div>

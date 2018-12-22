@@ -471,7 +471,7 @@ var vm = new Vue({
         var argsIndex = url.split("?orderid=");
         var orderid = argsIndex[1];
         this.orderid = parseInt(orderid);
-        console.log(url);
+        console.log(this.orderid);
         this.getOrderInfo();
     }
 })
