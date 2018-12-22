@@ -132,23 +132,23 @@ public class UploadEntity implements Serializable {
 	/**
 	 * 商品xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
 	 */
-	private String productsResultStatus;
+	private Integer productsResultStatus;
 	/**
 	 * 关系xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
 	 */
-	private String relationshipsResultStatus;
+	private Integer relationshipsResultStatus;
 	/**
 	 * 图片xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
 	 */
-	private String imagesResultStatus;
+	private Integer imagesResultStatus;
 	/**
 	 * 库存xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
 	 */
-	private String inventoryResultStatus;
+	private Integer inventoryResultStatus;
 	/**
 	 * 价格xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
 	 */
-	private String pricesResultStatus;
+	private Integer pricesResultStatus;
 
 	public String getProductsSubmitId() {
 		return productsSubmitId;
@@ -190,43 +190,43 @@ public class UploadEntity implements Serializable {
 		this.pricesSubmitId = pricesSubmitId;
 	}
 
-	public String getProductsResultStatus() {
+	public Integer getProductsResultStatus() {
 		return productsResultStatus;
 	}
 
-	public void setProductsResultStatus(String productsResultStatus) {
+	public void setProductsResultStatus(Integer productsResultStatus) {
 		this.productsResultStatus = productsResultStatus;
 	}
 
-	public String getRelationshipsResultStatus() {
+	public Integer getRelationshipsResultStatus() {
 		return relationshipsResultStatus;
 	}
 
-	public void setRelationshipsResultStatus(String relationshipsResultStatus) {
+	public void setRelationshipsResultStatus(Integer relationshipsResultStatus) {
 		this.relationshipsResultStatus = relationshipsResultStatus;
 	}
 
-	public String getImagesResultStatus() {
+	public Integer getImagesResultStatus() {
 		return imagesResultStatus;
 	}
 
-	public void setImagesResultStatus(String imagesResultStatus) {
+	public void setImagesResultStatus(Integer imagesResultStatus) {
 		this.imagesResultStatus = imagesResultStatus;
 	}
 
-	public String getInventoryResultStatus() {
+	public Integer getInventoryResultStatus() {
 		return inventoryResultStatus;
 	}
 
-	public void setInventoryResultStatus(String inventoryResultStatus) {
+	public void setInventoryResultStatus(Integer inventoryResultStatus) {
 		this.inventoryResultStatus = inventoryResultStatus;
 	}
 
-	public String getPricesResultStatus() {
+	public Integer getPricesResultStatus() {
 		return pricesResultStatus;
 	}
 
-	public void setPricesResultStatus(String pricesResultStatus) {
+	public void setPricesResultStatus(Integer pricesResultStatus) {
 		this.pricesResultStatus = pricesResultStatus;
 	}
 

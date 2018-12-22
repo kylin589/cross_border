@@ -1021,39 +1021,35 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     @Override
     public void updateFeedUpload(List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList, int uploadState){
 
-        // TODO: 2018/12/22 是获取报告后进行保存
+        // TODO: 2018/12/22 是获取报告后进行保存，改为每个上传
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(feedSubmissionInfoDtoList.get(0).getUploadId());
         uploadEntity.setUploadState(uploadState);
         uploadEntity.setUpdateTime(new Date());
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
-
-            /*
             String feedSubmissionId= feedSubmissionInfoDtoList.get(i).getFeedSubmissionId();
-            String feedProcessingStatus= feedSubmissionInfoDtoList.get(i).getFeedProcessingStatus();
             switch (feedSubmissionInfoDtoList.get(i).getFeedType()){
                 case "_POST_PRODUCT_DATA_":
                     uploadEntity.setProductsSubmitId(feedSubmissionId);
-                    uploadEntity.setProductsResultStatus(feedProcessingStatus);
+                    uploadEntity.setProductsResultStatus(uploadState);
                     break;
                 case "_POST_PRODUCT_RELATIONSHIP_DATA_":
                     uploadEntity.setRelationshipsSubmitId(feedSubmissionId);
-                    uploadEntity.setRelationshipsResultStatus(feedProcessingStatus);
+                    uploadEntity.setRelationshipsResultStatus(uploadState);
                     break;
                 case "_POST_PRODUCT_IMAGE_DATA_":
                     uploadEntity.setImagesSubmitId(feedSubmissionId);
-                    uploadEntity.setImagesResultStatus(feedProcessingStatus);
+                    uploadEntity.setImagesResultStatus(uploadState);
                     break;
                 case "_POST_INVENTORY_AVAILABILITY_DATA_":
                     uploadEntity.setInventorySubmitId(feedSubmissionId);
-                    uploadEntity.setInventoryResultStatus(feedProcessingStatus);
+                    uploadEntity.setInventoryResultStatus(uploadState);
                     break;
                 case "_POST_PRODUCT_PRICING_DATA_":
                     uploadEntity.setPricesSubmitId(feedSubmissionId);
-                    uploadEntity.setPricesResultStatus(feedProcessingStatus);
+                    uploadEntity.setPricesResultStatus(uploadState);
                     break;
             }
-            */
 
         }
         uploadService.updateById(uploadEntity);
