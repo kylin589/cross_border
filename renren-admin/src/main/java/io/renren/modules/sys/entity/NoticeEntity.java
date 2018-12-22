@@ -1,5 +1,6 @@
 package io.renren.modules.sys.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
@@ -39,7 +40,14 @@ public class NoticeEntity implements Serializable {
 	 * 用户id
 	 */
 	private Long userId;
-
+	/**
+	 * 公司id
+	 */
+	private Long deptId;
+	/**
+	 * 时间
+	 */
+	private Date createTime;
 	/**
 	 * 设置：
 	 */
@@ -96,5 +104,21 @@ public class NoticeEntity implements Serializable {
 	 */
 	public Long getUserId() {
 		return userId;
+	}
+
+	public Long getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(Long deptId) {
+		this.deptId = deptId;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 }

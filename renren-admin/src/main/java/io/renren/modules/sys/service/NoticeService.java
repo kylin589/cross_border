@@ -15,6 +15,7 @@ import java.util.Map;
  */
 public interface NoticeService extends IService<NoticeEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(Map<String, Object> params,Long userId);
+
 }
 

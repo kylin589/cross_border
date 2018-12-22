@@ -17,13 +17,12 @@ import io.renren.modules.sys.service.NoticeService;
 public class NoticeServiceImpl extends ServiceImpl<NoticeDao, NoticeEntity> implements NoticeService {
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
+    public PageUtils queryPage(Map<String, Object> params,Long userId) {
         Page<NoticeEntity> page = this.selectPage(
                 new Query<NoticeEntity>(params).getPage(),
-                new EntityWrapper<NoticeEntity>()
+                new EntityWrapper<NoticeEntity>().eq("user_id",userId)
         );
 
         return new PageUtils(page);
     }
-
 }

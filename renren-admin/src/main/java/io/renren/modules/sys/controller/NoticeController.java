@@ -1,9 +1,6 @@
 package io.renren.modules.sys.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
@@ -73,7 +70,7 @@ public class NoticeController extends AbstractController{
      */
     @RequestMapping("/list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = noticeService.queryPage(params);
+        PageUtils page = noticeService.queryPage(params,getUserId());
         return R.ok().put("page", page);
     }
 
@@ -83,23 +80,6 @@ public class NoticeController extends AbstractController{
     @RequestMapping("/delete")
     public R delete(@RequestBody Long[] noticeIds){
         noticeService.deleteBatchIds(Arrays.asList(noticeIds));
-        return R.ok();
-    }
-
-    /**
-     * 发布通知
-     */
-    public R deliverNotice(@RequestBody NoticeEntity notice){
-        List<SysUserEntity> userList = userService.selectList(new EntityWrapper<SysUserEntity>());
-        List<NoticeEntity> noticeList = new ArrayList<NoticeEntity>();
-        for(SysUserEntity user : userList){
-            NoticeEntity no = new NoticeEntity();
-            no.setNoticeType("公告通知");
-            no.setUserId(user.getUserId());
-            no.setNoticeContent(notice.getNoticeContent());
-            noticeList.add(no);
-        }
-        noticeService.insertBatch(noticeList);
         return R.ok();
     }
 
