@@ -111,6 +111,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
     @Override
     public Map<String, Object> queryAllPage(Map<String, Object> params, Long deptId) {
+        //公司
+        String qDeptId = (String) params.get("deptId");
         //用户
         String userId = (String) params.get("userId");
         //店铺名称
@@ -145,19 +147,36 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         String endDate = (String) params.get("endDate");
         //查询条件
         EntityWrapper<OrderEntity> wrapper = new EntityWrapper<OrderEntity>();
-        wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
-                .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
-                .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
-                .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
-                .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
-                .like(StringUtils.isNotBlank(productSku), "product_sku", productSku)
-                .like(StringUtils.isNotBlank(productAsin), "product_asin", productAsin)
-                .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
-                .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
-                .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
-                .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
-                .eq(StringUtils.isNotBlank(userId),"user_id",userId)
-                .eq(deptId!=1L,"dept_id",deptId);
+        if(deptId == 1L){
+            wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
+                    .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                    .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                    .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                    .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
+                    .like(StringUtils.isNotBlank(productSku), "product_sku", productSku)
+                    .like(StringUtils.isNotBlank(productAsin), "product_asin", productAsin)
+                    .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                    .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
+                    .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                    .eq(StringUtils.isNotBlank(userId),"user_id",userId)
+                    .eq(StringUtils.isNotBlank(qDeptId),"dept_id",qDeptId);
+        }else{
+            wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
+                    .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                    .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                    .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                    .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
+                    .like(StringUtils.isNotBlank(productSku), "product_sku", productSku)
+                    .like(StringUtils.isNotBlank(productAsin), "product_asin", productAsin)
+                    .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                    .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
+                    .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                    .eq(StringUtils.isNotBlank(userId),"user_id",userId)
+                    .eq("dept_id",deptId);
+        }
+
 
         Page<OrderEntity> page = this.selectPage(
                 new Query<OrderEntity>(params).getPage(),

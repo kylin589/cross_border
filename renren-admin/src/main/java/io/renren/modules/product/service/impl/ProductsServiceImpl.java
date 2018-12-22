@@ -129,6 +129,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String auditNumber = (String) params.get("auditNumber");
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
+        String qDeptId = (String) params.get("deptId");
         String userId = (String)params.get("userId");
         //条件构造器拼接条件
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
@@ -143,6 +144,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                     .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
                     .eq(StringUtils.isNotBlank(userId),"create_user_id",userId)
+                    .eq(StringUtils.isNotBlank(qDeptId),"dept_id",qDeptId)
                     .eq("is_deleted", 0)
                     .orderBy(true, "create_time", false)//时间排序
                     .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));

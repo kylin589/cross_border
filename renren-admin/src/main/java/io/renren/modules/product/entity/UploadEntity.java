@@ -109,6 +109,126 @@ public class UploadEntity implements Serializable {
 	 * 公司id
 	 */
 	private Long deptId;
+	/**
+	 * 亚马逊返回的商品xml上传id
+	 */
+	private String productsSubmitId;
+	/**
+	 * 亚马逊返回的关系xml上传id
+	 */
+	private String relationshipsSubmitId;
+	/**
+	 * 亚马逊返回的图片xml上传id
+	 */
+	private String imagesSubmitId;
+	/**
+	 * 亚马逊返回的库存xml上传id
+	 */
+	private String inventorySubmitId;
+	/**
+	 * 亚马逊返回的价格xml上传id
+	 */
+	private String pricesSubmitId;
+	/**
+	 * 商品xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
+	 */
+	private Integer productsResultStatus;
+	/**
+	 * 关系xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
+	 */
+	private Integer relationshipsResultStatus;
+	/**
+	 * 图片xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
+	 */
+	private Integer imagesResultStatus;
+	/**
+	 * 库存xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
+	 */
+	private Integer inventoryResultStatus;
+	/**
+	 * 价格xml的上传状态（默认0：等待上传；1：正在上传；2：上传成功；3：上传失败；4：上传成功但有警告）
+	 */
+	private Integer pricesResultStatus;
+
+	public String getProductsSubmitId() {
+		return productsSubmitId;
+	}
+
+	public void setProductsSubmitId(String productsSubmitId) {
+		this.productsSubmitId = productsSubmitId;
+	}
+
+	public String getRelationshipsSubmitId() {
+		return relationshipsSubmitId;
+	}
+
+	public void setRelationshipsSubmitId(String relationshipsSubmitId) {
+		this.relationshipsSubmitId = relationshipsSubmitId;
+	}
+
+	public String getImagesSubmitId() {
+		return imagesSubmitId;
+	}
+
+	public void setImagesSubmitId(String imagesSubmitId) {
+		this.imagesSubmitId = imagesSubmitId;
+	}
+
+	public String getInventorySubmitId() {
+		return inventorySubmitId;
+	}
+
+	public void setInventorySubmitId(String inventorySubmitId) {
+		this.inventorySubmitId = inventorySubmitId;
+	}
+
+	public String getPricesSubmitId() {
+		return pricesSubmitId;
+	}
+
+	public void setPricesSubmitId(String pricesSubmitId) {
+		this.pricesSubmitId = pricesSubmitId;
+	}
+
+	public Integer getProductsResultStatus() {
+		return productsResultStatus;
+	}
+
+	public void setProductsResultStatus(Integer productsResultStatus) {
+		this.productsResultStatus = productsResultStatus;
+	}
+
+	public Integer getRelationshipsResultStatus() {
+		return relationshipsResultStatus;
+	}
+
+	public void setRelationshipsResultStatus(Integer relationshipsResultStatus) {
+		this.relationshipsResultStatus = relationshipsResultStatus;
+	}
+
+	public Integer getImagesResultStatus() {
+		return imagesResultStatus;
+	}
+
+	public void setImagesResultStatus(Integer imagesResultStatus) {
+		this.imagesResultStatus = imagesResultStatus;
+	}
+
+	public Integer getInventoryResultStatus() {
+		return inventoryResultStatus;
+	}
+
+	public void setInventoryResultStatus(Integer inventoryResultStatus) {
+		this.inventoryResultStatus = inventoryResultStatus;
+	}
+
+	public Integer getPricesResultStatus() {
+		return pricesResultStatus;
+	}
+
+	public void setPricesResultStatus(Integer pricesResultStatus) {
+		this.pricesResultStatus = pricesResultStatus;
+	}
 
 	public Long getGrantShopId() {
 		return grantShopId;
