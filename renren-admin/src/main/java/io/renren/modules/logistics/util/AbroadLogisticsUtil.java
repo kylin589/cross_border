@@ -1,7 +1,7 @@
 package io.renren.modules.logistics.util;
 
 import com.alibaba.fastjson.JSONObject;
-import io.renren.modules.logistics.dto.ReceiveOofayData;
+import io.renren.modules.logistics.DTO.ReceiveOofayData;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.*;

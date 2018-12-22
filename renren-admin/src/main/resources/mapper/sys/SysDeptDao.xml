@@ -7,4 +7,175 @@
 		select dept_id from sys_dept where parent_id = #{value} and del_flag = 0
 	</select>
 
+
+	<!-- 合并历史记录表的公司-->
+	<update id="updateCategoryHistory" >
+		update amazon_category_history
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where dept_id=#{fromDeptId}
+	</update>
+
+	<!-- 合并授权店铺表的公司-->
+	<update id="updateGrantShop" >
+		update amazon_grant_shop
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where dept_id=#{fromDeptId}
+	</update>
+
+	<!-- 合并公司消费表的公司-->
+	<update id="updateCompanyConsume" >
+		update company_consume
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where dept_id=#{fromDeptId}
+	</update>
+
+	<!-- 合并充值记录表的公司-->
+	<update id="updateCompanyRecharge" >
+		update company_recharge
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where dept_id=#{fromDeptId}
+	</update>
+
+	<!-- 合并Amazon授权表的公司-->
+	<update id="updateGrant" >
+		update product_amazon_grant
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where dept_id=#{fromDeptId}
+	</update>
+
+	<!-- 合并订单表的公司-->
+	<update id="updateOrder" >
+		update product_order
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where dept_id=#{fromDeptId}
+	</update>
+
+	<!-- 合并产品表的公司-->
+	<update id="updateProduct" >
+		update product_products
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where dept_id=#{fromDeptId}
+	</update>
+
+	<!-- 合并上传表的公司-->
+	<update id="updateProductUpload" >
+		update product_upload
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where dept_id=#{fromDeptId}
+	</update>
+
+
+	<!-- 分离历史记录表的公司-->
+	<update id="separateCategoryHistory" >
+		update amazon_category_history
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where user_id in
+		<foreach collection="userIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<!-- 分离授权店铺表的公司-->
+	<update id="separateGrantShop" >
+		update amazon_grant_shop
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where user_id in
+		<foreach collection="userIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<!-- 分离公司消费表的公司-->
+	<update id="separateCompanyConsume" >
+		update company_consume
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where user_id in
+		<foreach collection="userIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<!-- 分离充值记录表的公司-->
+	<update id="separateCompanyRecharge" >
+		update company_recharge
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where user_id in
+		<foreach collection="userIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<!-- 分离Amazon授权表的公司-->
+	<update id="separateGrant" >
+		update product_amazon_grant
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where user_id in
+		<foreach collection="userIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<!-- 分离订单表的公司-->
+	<update id="separateOrder" >
+		update product_order
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where user_id in
+		<foreach collection="userIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<!-- 分离产品表的公司-->
+	<update id="separateProduct" >
+		update product_products
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where create_user_id in
+		<foreach collection="userIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<!-- 分离上传表的公司-->
+	<update id="separateProductUpload" >
+		update product_upload
+		<set>
+			<if test="toDeptId != null">dept_id=#{toDeptId},</if>
+		</set>
+		where user_id in
+		<foreach collection="userIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+
 </mapper>
