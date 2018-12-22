@@ -32,8 +32,7 @@ var vm = new Vue({
         inputche:[],
         operateItem: [],
         marketplace:[],
-        shopinfo:{
-        },
+        shopinfo:'',
         leven:[],
         arr:[],
         arr2:[],
@@ -157,7 +156,7 @@ var vm = new Vue({
         },
         //立即上传
         addUpload:function () {
-            console.log(vm.inputche)
+            console.log(vm.shopinfo);
             vm.uploadIds = vm.uploadIdsstr.split(',');
             console.log(vm.uploadIds);
             if (vm.inputche[0]==true){

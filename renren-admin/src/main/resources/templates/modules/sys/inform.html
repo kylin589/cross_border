@@ -9,24 +9,31 @@
 <body>
 
 <div id="LAY_app">
-    <p>注：有红点代表未读</p>
+    <p>
+        注：有红点代表未读
+        <button @click="allnoticeStateFunc">标记全部为已读</button>
+    </p>
     <table>
         <tr>
             <th style="width: 10px"></th>
             <th>消息类型</th>
             <th>通知内容</th>
             <th>时间</th>
+            <th>操作</th>
         </tr>
         <tr v-for="item in informList" :data-id="item.id">
             <td style="width: 10px">
-                <span></span>
+                <span v-if="item.noticeState == 0"></span>
             </td>
             <td>
-                {{item.type}}
+                {{item.noticeType}}
 
             </td>
-            <td>{{item.con}}</td>
-            <td>{{item.date}}</td>
+            <td>{{item.noticeContent}}</td>
+            <td>{{item.createTime}}</td>
+            <td>
+                <button v-if="item.noticeState == 0" @click="noticeStateFunc(item.noticeId)">标记为已读</button>
+            </td>
         </tr>
     </table>
 

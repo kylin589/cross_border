@@ -74,13 +74,14 @@ var vm = new Vue({
         // 获取员工列表
         getManList:function () {
             console.log('11111');
-            if(vm.allGongsiValue != '1-1'){
+            var deptId = getDeptId();
+            if(deptId != ''){
                 console.log('@@@@@@');
                 console.log(vm.allYUanGValue);
                 $.ajax({
                     url: '../../sys/user/getUserList',
                     type: 'get',
-                    data:{deptId:vm.allGongsiValue}
+                    data:{deptId:deptId}
                     // 'productIds': JSON.stringify(vm.activeProlist)
                     ,
                     // contentType: "application/json",
@@ -189,13 +190,13 @@ var vm = new Vue({
                     console.log(vm.chongzhiData);
                     layer.confirm('确定合并吗？',function () {
                         console.log(deptId);
-                        console.log(this.allGongsiValue1);
+                        console.log(vm.allGongsiValue1);
                         $.ajax({
                             type: "POST",
                             url: baseURL + "sys/dept/merge",
                             data: JSON.stringify({
                                 'fromDeptId':deptId,
-                                'toDeptId':this.allGongsiValue1
+                                'toDeptId':vm.allGongsiValue1
                             }),
                             contentType: "application/json",
                             success: function(r){
@@ -220,7 +221,7 @@ var vm = new Vue({
             });
 
         },
-        // 合并
+        // 分离
         fenlifunc:function () {
             var deptId = getDeptId();
             if(deptId == null){
@@ -236,15 +237,19 @@ var vm = new Vue({
                 btn: ['合并','取消'],
                 btn1: function (index) {
                     console.log(vm.chongzhiData);
-                    layer.confirm('确定合并吗？',function () {
+                    layer.confirm('确定分离吗？',function () {
                         $.ajax({
                             type: "POST",
-                            url: baseURL + "sys/recharge/recharge",
-                            data: JSON.stringify(vm.chongzhiData),
+                            url: baseURL + "sys/dept/separate",
+                            data: JSON.stringify({
+                                'fromDeptId':deptId,
+                                'toDeptId':vm.allGongsiValue,
+                                'userIds':vm.allYUanGValue
+                            }),
                             contentType: "application/json",
                             success: function(r){
                                 if(r.code === 0){
-                                    layer.msg('合并成功');
+                                    layer.msg('分离成功');
                                     layer.close(index);
 
                                 }else{

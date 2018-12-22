@@ -122,9 +122,9 @@
                     <el-select v-model="shopinfo" placeholder="请选择员工">
                         <el-option
                                 v-for="item in marketplace"
-                                :key="item"
+                                :key="item.grantShopId"
                                 :label="item.shopName"
-                                :value="item">
+                                :value="item.grantShopId">
                         </el-option>
                     </el-select>
 
