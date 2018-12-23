@@ -220,7 +220,6 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/getproductid")
     public R getProductId() {
         Long productId = productsService.getNewProductId(getUserId());
-
         ProductsEntity productsEntity = productsService.selectById(productId);
         //生成SKU
         SysUserEntity user = getUser();
@@ -283,14 +282,10 @@ public class ProductsController extends AbstractController {
         freightCostService.insert(australiaFC);
         productsEntity.setAustraliaFreight(australiaFC.getFreightCostId());
         productsEntity.setAustraliaFC(australiaFC);
-
-
         //各个国家的介绍
         //中文介绍
         IntroductionEntity chinesePRE = new IntroductionEntity();
-
         introductionService.insert(chinesePRE);
-
         productsEntity.setChineseIntroduction(chinesePRE.getIntroductionId());
         productsEntity.setChinesePRE(chinesePRE);
         //英文介绍
@@ -764,11 +759,13 @@ public class ProductsController extends AbstractController {
     public R originalProduct(@RequestBody ProductsEntity products) {
         //通过三级id查出一级二级三级的id字符串，以逗号进行拆分。存入产品
         Long threeId = products.getCategoryThreeId();
-        String idString = categoryService.queryParentByChildId(threeId);
-        String[] id = idString.split(",");
-        products.setCategoryOneId(Long.parseLong(id[0]));
-        products.setCategoryTwoId(Long.parseLong(id[1]));
-        products.setCategoryThreeId(Long.parseLong(id[2]));
+        if(threeId!=null){
+            String idString = categoryService.queryParentByChildId(threeId);
+            String[] id = idString.split(",");
+            products.setCategoryOneId(Long.parseLong(id[0]));
+            products.setCategoryTwoId(Long.parseLong(id[1]));
+            products.setCategoryThreeId(Long.parseLong(id[2]));
+        }
         //美国运费
         FreightCostEntity americanFC = products.getAmericanFC();
         freightCostService.updateById(americanFC);
@@ -881,11 +878,14 @@ public class ProductsController extends AbstractController {
     public R modifyProduct(@RequestBody ProductsEntity products) {
         //通过三级id查出一级二级三级的id字符串，以逗号进行拆分。存入产品
         Long threeId = products.getCategoryThreeId();
-        String idString = categoryService.queryParentByChildId(threeId);
-        String[] id = idString.split(",");
-        products.setCategoryOneId(Long.parseLong(id[0]));
-        products.setCategoryTwoId(Long.parseLong(id[1]));
-        products.setCategoryThreeId(Long.parseLong(id[2]));
+        if (threeId!=null){
+            String idString = categoryService.queryParentByChildId(threeId);
+            String[] id = idString.split(",");
+            products.setCategoryOneId(Long.parseLong(id[0]));
+            products.setCategoryTwoId(Long.parseLong(id[1]));
+            products.setCategoryThreeId(Long.parseLong(id[2]));
+        }
+
         //各个国家的运费信息
         //美国运费
         FreightCostEntity americanFC = products.getAmericanFC();
@@ -1072,7 +1072,17 @@ public class ProductsController extends AbstractController {
         //获取最后操作用户id
         products.setLastOperationUserId(this.getUserId());
         Long productId = products.getProductId();
-
+        //获取尺寸和颜色的变体
+        VariantParameterEntity sizeVP = products.getSizeVP();
+        if (sizeVP!=null){
+            Long paramsId = sizeVP.getParamsId();
+            products.setSizeId(paramsId);
+        }
+        VariantParameterEntity colorVP = products.getColorVP();
+        if(colorVP!=null){
+            Long paramsId = colorVP.getParamsId();
+            products.setColorId(paramsId);
+        }
         //批量删除变体信息
         variantsInfoService.delete(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId));
         //插入变体信息

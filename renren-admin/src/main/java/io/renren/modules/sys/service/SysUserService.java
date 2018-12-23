@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.sys.entity.SysUserEntity;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -60,8 +59,9 @@ public interface SysUserService extends IService<SysUserEntity> {
 	boolean updatePassword(Long userId, String password, String newPassword);
 
 	/**
-	 * 查询指定公司内员工id列表
+	 * 查询指定公司内员工列表
 	 * @param deptId       公司ID
 	 */
 	List<SysUserEntity> selectUserList(Long deptId);
+
 }

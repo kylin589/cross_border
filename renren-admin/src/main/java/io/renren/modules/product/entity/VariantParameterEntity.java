@@ -67,4 +67,13 @@ public class VariantParameterEntity implements Serializable {
 	public String getParamsValue() {
 		return paramsValue;
 	}
+
+	@Override
+	public String toString() {
+		return "VariantParameterEntity{" +
+				"paramsId=" + paramsId +
+				", paramsType='" + paramsType + '\'' +
+				", paramsValue='" + paramsValue + '\'' +
+				'}';
+	}
 }
