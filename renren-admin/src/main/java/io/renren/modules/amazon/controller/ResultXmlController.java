@@ -1,8 +1,10 @@
 package io.renren.modules.amazon.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.validator.ValidatorUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ import io.renren.common.utils.R;
  *
  * @author zjr
  * @email 1981763981@qq.com
- * @date 2018-12-21 22:55:00
+ * @date 2018-12-24 07:26:40
  */
 @RestController
 @RequestMapping("amazon/resultxml")
@@ -36,11 +38,13 @@ public class ResultXmlController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("amazon:resultxml:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = resultXmlService.queryPage(params);
-
-        return R.ok().put("page", page);
+    // @RequiresPermissions("amazon:resultxml:list")
+    public R list(Long uploadId){
+        EntityWrapper<ResultXmlEntity> wrapper = new EntityWrapper<>();
+        wrapper.eq("upload_id",uploadId);
+        wrapper.ne("state",2);
+        List<ResultXmlEntity> resultXmlEntities = resultXmlService.selectList(wrapper);
+        return R.ok().put("data", resultXmlEntities);
     }
 
 

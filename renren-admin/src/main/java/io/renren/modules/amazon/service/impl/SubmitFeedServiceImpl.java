@@ -1002,7 +1002,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     typeStatus.add(tempStatus);
 
                     // 分辨上传类型，在不同的字段中插入xml结果
-                    switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
+                    // TODO: 2018/12/24 zjr 分辨上传类型，在不同的字段中插入xml结果
+                    /*switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
                         case "_POST_PRODUCT_DATA_":
                             resultXmlEntity.setProductsResultXml(tempResultXml);
                             updateUploadEntity.setProductsResultStatus(tempStatus);
@@ -1023,7 +1024,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                             resultXmlEntity.setPricesResultXml(tempResultXml);
                             updateUploadEntity.setPricesResultStatus(tempStatus);
                             break;
-                    }
+                    }*/
                     feedSubmissionResultDtos.get(j).setResultXmlPath(tempPath);
                     feedSubmissionResultDtos.get(j).setFeedType(feedSubmissionInfoDtoList.get(i).getFeedType());
                 }
@@ -1246,7 +1247,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     typeStatus.add(tempStatus);
 
                     // 分辨上传类型，在不同的字段中插入xml结果
-                    switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
+                    // TODO: 2018/12/24 zjr  分辨上传类型，在不同的字段中插入xml结果
+                    /*switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
                         case "_POST_PRODUCT_DATA_":
                             resultXmlEntity.setProductsResultXml(tempResultXml);
                             updateUploadEntity.setProductsResultStatus(tempStatus);
@@ -1267,7 +1269,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                             resultXmlEntity.setPricesResultXml(tempResultXml);
                             updateUploadEntity.setPricesResultStatus(tempStatus);
                             break;
-                    }
+                    }*/
                     feedSubmissionResultDtos.get(j).setResultXmlPath(tempPath);
                     feedSubmissionResultDtos.get(j).setFeedType(feedSubmissionInfoDtoList.get(i).getFeedType());
                 }

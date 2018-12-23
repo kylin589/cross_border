@@ -12,11 +12,14 @@ import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.util.COUNTY;
 import io.renren.modules.job.entity.ScheduleJobEntity;
 import io.renren.modules.job.service.ScheduleJobService;
+import io.renren.modules.product.dto.DetailsDto;
 import io.renren.modules.product.dto.UploadProductDTO;
 import io.renren.modules.product.entity.AmazonCategoryEntity;
+import io.renren.modules.product.entity.FieldMiddleEntity;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.UploadEntity;
 import io.renren.modules.product.service.AmazonCategoryService;
+import io.renren.modules.product.service.FieldMiddleService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.service.UploadService;
 import io.renren.modules.product.vm.AddUploadVM;
@@ -58,6 +61,9 @@ public class UploadController extends AbstractController {
 
     @Autowired
     private ScheduleJobService scheduleJobService;
+
+    @Autowired
+    private FieldMiddleService fieldMiddleService;
 
     //英国
     private static final int GBUTC =0;
@@ -164,6 +170,30 @@ public class UploadController extends AbstractController {
         uploadService.deleteBatchIds(Arrays.asList(uploadIds));
 
         return R.ok();
+    }
+
+    /**
+     * 上传详情
+     * @param uploadId
+     * @return
+     */
+    @RequestMapping("/details")
+    public R details(Long uploadId){
+
+        DetailsDto detailsDto = new DetailsDto();
+
+        UploadEntity uploadEntity = new UploadEntity();
+        uploadEntity.setUploadId(uploadId);
+        UploadEntity uploadEntity2 = uploadService.selectById(uploadEntity);
+
+        // 字段和值
+        Map<String,Object> fieldMap = new HashMap<>();
+        fieldMap.put("upload_id",uploadId);
+        List<FieldMiddleEntity> middleEntitys = fieldMiddleService.selectByMap(fieldMap);
+
+        detailsDto.setUploadEntity(uploadEntity2);
+        detailsDto.setMiddleEntitys(middleEntitys);
+        return R.ok().put("data",detailsDto);
     }
 
     /**
