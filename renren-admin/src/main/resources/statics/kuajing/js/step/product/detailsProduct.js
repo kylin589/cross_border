@@ -524,6 +524,13 @@ var vm = new Vue({
         // 产品上传
         dialogImageUrl: '',
         // dialogVisible: false
+        // 修改变体参数
+        upVariantList:{
+            id:'',
+            type:'',
+        },
+        // 变体参数
+        selVar:0,
 
     },
     methods:{
@@ -622,11 +629,16 @@ var vm = new Vue({
                                 type:vm.proDetails.sizeVP.paramsValue.split(',')
                             })
                         }
+
                         vm.proDetails.variantsInfos.forEach(function (t,i) {
+                            var img = [];
+                            if(JSON.stringify(t.imageUrl) != 'null'){
+                                img = t.imageUrl.split(',');
+                            }
                             vm.recommendAll.push({
                                 id:i,
                                 name:t.variantCombination,
-                                img:t.imageUrl.split(','),
+                                img:img,
                                 sku:t.variantSku,
                                 addPrice:t.variantAddPrice,
                                 stock:t.variantStock,
@@ -634,9 +646,9 @@ var vm = new Vue({
 
 
                             })
-                            vm.drapImg();
+                            // vm.drapImg();
                         })
-                        vm.drapImg();
+                        // vm.drapImg();
                         // setTimeout(function(){ vm.drapImg(); }, 1000);
 
                         console.log('运费')
@@ -694,6 +706,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('产品相册');
                         console.log(r);
+                        vm.proAlbum = [];
                         r.imageInfo.forEach(function (item,index) {
                             vm.proAlbum.push({
                                 index:index,
@@ -1005,6 +1018,7 @@ var vm = new Vue({
             for(var i = 0;i<elList.length;i++){
                 arr.push(elList.eq(i).attr('data-index'));
             }
+            console.log('删除图片id');
             console.log(arr);
             if(arr.length == 0){
                 layer.msg('请选择要删除的图片');
@@ -1017,9 +1031,7 @@ var vm = new Vue({
                         // data: {
                         //     'imageIds':arr
                         // },
-                        data: JSON.stringify({
-                            'imageIds':arr
-                        }),
+                        data: JSON.stringify(arr),
                         success: function (r) {
                             console.log('删除图片');
                             console.log(r);
@@ -1027,6 +1039,8 @@ var vm = new Vue({
                             if (r.code == 0) {
                                 // 重新获取图片相册
                                 vm.getProAlbum();
+                                console.log('@@@@@@')
+                                console.log(vm.proAlbum)
                                 // vm.proDetails.productSku = r.SKU;
 
                                 // layer.close(index);
@@ -1061,59 +1075,68 @@ var vm = new Vue({
         },
         // 变体参数选择图片
         selImgCFcun:function (data) {
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#selImg'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['800px', '500px'],
-                shadeClose: true,
-                scrollbar:false,
-                btn: ['确定','取消',],
-                btn1: function (index) {
-                    console.log(data);
-                    data.img=[];
-                    var arr = vm.getSelImgVerFunc();
-                    arr.forEach(function (v) {
-                        data.img.push(v.url)
-                    })
-                    // vm.recommendAll.forEach(function (t) {
-                    //     if(t.id = data.id){
-                    //         t.img = data.img;
-                    //     }
-                    // })
-                    console.log(vm.recommendAll);
+            if(vm.proAlbum.length == 0){
+                layer.msg('暂无可选图片');
+            }else {
+                layer.open({
+                    type: 1,
+                    title: false,
+                    content: $('#selImg'), //这里content是一个普通的String
+                    skin: 'openClass',
+                    area: ['800px', '500px'],
+                    shadeClose: true,
+                    scrollbar:false,
+                    btn: ['确定','取消',],
+                    btn1: function (index) {
+                        console.log(data);
+                        data.img=[];
+                        var arr = vm.getSelImgVerFunc();
+                        arr.forEach(function (v) {
+                            data.img.push(v.url)
+                        })
+                        // vm.recommendAll.forEach(function (t) {
+                        //     if(t.id = data.id){
+                        //         t.img = data.img;
+                        //     }
+                        // })
+                        console.log(vm.recommendAll);
 
-                    layer.close(index)
-                },
-                btn2: function (index) {
-                    // vm.proAlbum = vm.proStation
-                    layer.close(index);
-                    return false
+                        layer.close(index)
+                    },
+                    btn2: function (index) {
+                        // vm.proAlbum = vm.proStation
+                        layer.close(index);
+                        return false
 
-                }
-            });
+                    }
+                });
+            }
+
         },
         // 一键添加（变体图片）
         yijianAddFunc:function (data) {
 
+            if(vm.proAlbum.length == 0){
+                layer.msg('暂无可选图片');
+            }else{
+                layer.confirm('确定添加所有图片吗？',function (index) {
+                    $('.ul1 li').css({
+                        'position':'relative',
+                        'top':'0px',
+                        'left':'0px',
+                        'margin':'10px'
+                    });
 
-            layer.confirm('确定添加所有图片吗？',function (index) {
-
-                $('.ul1 li').css({
-                    'position':'relative',
-                    'top':'0px',
-                    'left':'0px',
-                    'margin':'10px'
-                });
-
-                data.img = [];
-                vm.proAlbum.forEach(function (t) {
-                    data.img.push(t.url)
+                    data.img = [];
+                    vm.proAlbum.forEach(function (t) {
+                        data.img.push(t.url)
+                    })
+                    // setTimeout(function(){ vm.drapImg(); }, 1000);
+                    layer.msg('添加成功');
+                    layer.close(index);
                 })
-                setTimeout(function(){ vm.drapImg(); }, 1000);
-                layer.close(index);
-            })
+            }
+
 
 
         },
@@ -1272,6 +1295,7 @@ var vm = new Vue({
         variantNamenone:function (event) {
             $(event.target).next().css('visibility','hidden');
         },
+
         // 删除变体参数
         delvariantName:function (index) {
             console.log(index);
@@ -1368,20 +1392,22 @@ var vm = new Vue({
 
         },
         // 修改变体参数
-        upVariant:function () {
+        upVariant:function (a) {
+            vm.upVariantList.id = vm.variantList[a].id;
+            vm.upVariantList.type = vm.variantList[a].type.join(',');
             layer.open({
                 type: 1,
                 title: false,
-                content: $('#addVariant'), //这里content是一个普通的String
+                content: $('#upVariant'), //这里content是一个普通的String
                 skin: 'openClass',
                 area: ['500px', '400px'],
                 shadeClose: true,
                 scrollbar:false,
                 btn: ['<i class="layui-icon layui-icon-ok-circle"></i> 保存','取消'],
                 btn1: function (index) {
-                    var _id = $('#variantName option:selected').val();
-                    var _name = $('#variantName option:selected').text();
-                    var _typeName = $('#variantType').val();
+                    var _id = $('#variantName1 option:selected').val();
+                    var _name = $('#variantName1 option:selected').text();
+                    var _typeName = $('#variantType1').val();
                     var reg = new RegExp( '，' , "g" )
                     var str = _typeName.replace(reg,',');
                     _typeName = str;
@@ -1502,6 +1528,42 @@ var vm = new Vue({
                 }
             });
         },
+        // 点击添加变体信息
+        clickAddV:function () {
+            console.log(11111);
+            console.log($(event.target).text());
+            // vm.upVariantList = vm.variantList[a];
+            // $('#variantName1 option:selected').val();
+            // var _name = $('#variantName1 option:selected').text();
+            // var _typeName = $('#variantType1').val();
+            // $(event.target).toggleClass('active');
+            var _text = $('textarea.variantType').val();
+            if(_text != ''){
+                _text += ','+$(event.target).text();
+            }else {
+                _text += $(event.target).text();
+            }
+            // _text += ','+$(event.target).text();
+            $('textarea.variantType').val(_text);
+        },
+        // 点击添加变体信息
+        clickAddV1:function () {
+            console.log(11111);
+            console.log($(event.target).text());
+            // vm.upVariantList = vm.variantList[a];
+            // $('#variantName1 option:selected').val();
+            // var _name = $('#variantName1 option:selected').text();
+            // var _typeName = $('#variantType1').val();
+            // $(event.target).toggleClass('active');
+            var _text = $('textarea.variantType').eq(1).val();
+            if(_text != ''){
+                _text += ','+$(event.target).text();
+            }else {
+                _text += $(event.target).text();
+            }
+            // _text += ','+$(event.target).text();
+            $('textarea.variantType').val(_text);
+        },
         // 图片拖拽
         drapImg:function () {
             for(var nn = 0;nn<$('.ul1').length;nn++){
@@ -1530,10 +1592,16 @@ var vm = new Vue({
                     aLi[i].style.margin = 0;
                     setDrag(aLi[i],aLi);
                 }
-                var _height = aLiLast[0].offsetTop+60;
+
+                if(aLi.length != 0){
+                    var _height = aLiLast[0].offsetTop+60;
+                    var _height = aLiLast[0].offsetTop+60;
+                    aLiLast.parent().css('height',_height+'px');
+                    aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+                }
+
                 // console.log(_height);
-                aLiLast.parent().css('height',_height+'px');
-                aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+
 
                 aLi.mouseover(function () {
                     $(this).find('i').css('display','inline-block');
@@ -1825,12 +1893,14 @@ var vm = new Vue({
                 v.forEach(function (n) {
                     string+=t.img[n]+','
                 })
+                console.log('11111111');
+                // console.log(v.join(','));
                 vm.proDetails.variantsInfos[i].variantId = i;
                 vm.proDetails.variantsInfos[i].eanCode = t.code;
                 vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
                 vm.proDetails.variantsInfos[i].variantSku = t.sku;
                 vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
-                vm.proDetails.variantsInfos[i].imageUrl = string;
+                vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
             })
 
             // vm.recommendAll.forEach(function (t,i) {
@@ -1886,20 +1956,22 @@ var vm = new Vue({
         },
         // 删除变体列表某条数据
         delVariantList:function (event) {
-            var _index = $(event.target).attr('data-index');
-            // $(event.target).parent().parent().remove();
-            var delId;
-            console.log(vm.recommendAll);
-            for(var i = 0;i<vm.recommendAll.length;i++){
-                if(vm.recommendAll[i].id == _index){
-                    delId = i;
-                    // return
+            layer.confirm('确定删除改组合信息吗？',function (index) {
+                var _index = $(event.target).attr('data-index');
+                // $(event.target).parent().parent().remove();
+                var delId;
+                for(var i = 0;i<vm.recommendAll.length;i++){
+                    if(vm.recommendAll[i].id == _index){
+                        delId = i;
+                        // return
+                    }
                 }
-            }
-            vm.recommendAll.splice(delId,1);
-            vm.proDetails.variantsInfos.splice(delId,1);
-            console.log(vm.proDetails.variantsInfos);
-            console.log(vm.recommendAll);
+                vm.recommendAll.splice(delId,1);
+                vm.proDetails.variantsInfos.splice(delId,1);
+                layer.msg('删除成功');
+                layer.close(index);
+            })
+
 
         },
         // 一键修正SKU
@@ -1945,6 +2017,13 @@ var vm = new Vue({
         },
         imgBigS:function () {
             $('#imgBigDiv').css('display','none')
+        },
+        // 删除参数列表中已选图片
+        delImgRecom:function (data,i) {
+            console.log(data);
+            console.log(i);
+            data.img.splice(i,1);
+            console.log(data.img);
         },
 
         // 返回
