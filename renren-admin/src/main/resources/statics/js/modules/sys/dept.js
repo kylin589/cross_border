@@ -234,7 +234,7 @@ var vm = new Vue({
                 skin: 'openClass',
                 area: ['400px', '220px'],
                 shadeClose: true,
-                btn: ['合并','取消'],
+                btn: ['分离','取消'],
                 btn1: function (index) {
                     console.log(vm.chongzhiData);
                     layer.confirm('确定分离吗？',function () {

@@ -27,12 +27,12 @@ var vm = new Vue({
         amazonCategory: null,
         amazonAllCategory:'',
         amazonAllArr:[],
-        amazonTemplateId: 10,
-        amazonTemplate: 'test模板',
+        amazonTemplateId: 0,
+        amazonTemplate: null,
         inputche:[],
         operateItem: [],
         marketplace:[],
-        shopinfo:'',
+        shopinfo:{},
         leven:[],
         arr:[],
         arr2:[],
@@ -157,7 +157,8 @@ var vm = new Vue({
         //立即上传
         addUpload:function () {
             console.log(vm.shopinfo);
-            vm.uploadIds = vm.uploadIdsstr.split(',');
+            vm.uploadIds = vm.uploadIdsstr;
+            // vm.uploadIds = vm.uploadIdsstr.split(',');
             console.log(vm.uploadIds);
             if (vm.inputche[0]==true){
 

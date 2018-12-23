@@ -120,7 +120,7 @@ var vm = new Vue({
         },
         // 标记全部为已读
         allnoticeStateFunc:function () {
-            layer.confirm('确定标记全部为已读吗？',function () {
+            confirm('确定标记全部为已读吗？',function () {
                 $.ajax({
                     url: '../../sys/notice/signAll',
                     type: 'get',
@@ -130,8 +130,9 @@ var vm = new Vue({
                         console.log('标记为已读');
                         console.log(r);
                         if (r.code === 0) {
+                            console.log('成功')
                             vm.getInformList();
-                            layer.close();
+                            // layer.close(index);
                         } else {
                             layer.alert(r.msg);
                         }
