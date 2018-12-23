@@ -2,6 +2,8 @@ package io.renren.modules.product.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.sys.dto.FranchiseeStatisticsDto;
+import io.renren.modules.sys.dto.PlatformStatisticsDto;
 import io.renren.modules.sys.dto.StatisticsDto;
 import io.renren.modules.sys.dto.UserStatisticsDto;
 import io.renren.modules.sys.entity.SysUserEntity;
@@ -71,5 +73,13 @@ public interface OrderService extends IService<OrderEntity> {
      * 查询总部员工统计
      */
     UserStatisticsDto oneLevelUserStatistics(StatisticsVM vm);
+    /**
+     * 查询总部加盟商统计
+     */
+    FranchiseeStatisticsDto oneLevelFranchiseeStatistics(StatisticsVM vm);
+    /**
+     * 查询平台利润统计
+     */
+    PlatformStatisticsDto platformStatistics(StatisticsVM vm);
 }
 

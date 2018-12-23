@@ -15,11 +15,11 @@ public class StatisticsVM {
     /**
      * 开始日期
      */
-    public String startDate;
+    public Date startDate;
     /**
      * 结束日期
      */
-    public String endDate;
+    public Date endDate;
     /**
      * 公司id
      */
@@ -37,19 +37,19 @@ public class StatisticsVM {
         this.type = type;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

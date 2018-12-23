@@ -79,7 +79,9 @@ public class SysDeptController extends AbstractController {
 		for(SysUserEntity user : fromUserList){
 			user.setDeptId(toDeptId);
 		}
-		userService.updateBatchById(fromUserList);
+		if(fromUserList.size() >0){
+			userService.updateBatchById(fromUserList);
+		}
 		//将对应表中对应公司id替换
 		//历史记录表、授权店铺表、公司消费表、充值记录表、Amazon授权表、订单表、产品表、上传表
 		sysDeptService.merge(fromDeptId, toDeptId);
@@ -108,9 +110,12 @@ public class SysDeptController extends AbstractController {
 			return R.error("总部不能分离");
 		}
 		//将员工全部归到目标公司
-		List<SysUserEntity> userList = userService.selectBatchIds(Arrays.asList(userIds));
-		for(SysUserEntity user : userList){
-			user.setDeptId(toDeptId);
+		if(userIds.length >0){
+			List<SysUserEntity> userList = userService.selectBatchIds(Arrays.asList(userIds));
+			for(SysUserEntity user : userList){
+				user.setDeptId(toDeptId);
+			}
+			userService.updateBatchById(userList);
 		}
 		//将对应表中对应员工的公司id替换
 		//历史记录表、授权店铺表、公司消费表、充值记录表、Amazon授权表、订单表、产品表、上传表

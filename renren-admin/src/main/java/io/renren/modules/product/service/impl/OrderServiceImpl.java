@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.ProductsService;
+import io.renren.modules.sys.dto.FranchiseeStatisticsDto;
+import io.renren.modules.sys.dto.PlatformStatisticsDto;
 import io.renren.modules.sys.dto.UserStatisticsDto;
 import io.renren.modules.util.DateUtils;
 import io.renren.common.utils.PageUtils;
@@ -471,6 +473,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Override
     public UserStatisticsDto oneLevelUserStatistics(StatisticsVM vm) {
+        UserStatisticsDto dto = new UserStatisticsDto();
         Map<String, Object> params = new HashMap<String,Object>();
         String type = vm.getType();
         String startDate = null;
@@ -479,33 +482,29 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             //查询年
             startDate = DateUtils.getYearFirst();
             endDate = DateUtils.getYearEnd();
-            params.put("startDate", startDate);
-            params.put("endDate", endDate);
-            params.put("deptId",vm.getDeptId());
-            params.put("userIdId",vm.getUserId());
         }else if("month".equals(type)){
             //查询月
             startDate = DateUtils.getMonthFirst();
             endDate = DateUtils.getMonthEnd();
-            params.put("startDate", startDate);
-            params.put("endDate", endDate);
-            params.put("deptId",vm.getDeptId());
-            params.put("userIdId",vm.getUserId());
         }else if("day".equals(type)){
             //查询日
             startDate = DateUtils.getDayFirst();
             endDate = DateUtils.getDayEnd();
-            params.put("startDate", startDate);
-            params.put("endDate", endDate);
-            params.put("deptId",vm.getDeptId());
-            params.put("userIdId",vm.getUserId());
         }else{
             //按时间查询
             startDate = DateUtils.startFormat.format(vm.getStartDate());
             endDate = DateUtils.endFormat.format(vm.getEndDate());
+        }
+        if(StringUtils.isNotBlank(startDate)){
             params.put("startDate", startDate);
+        }
+        if(StringUtils.isNotBlank(endDate)){
             params.put("endDate", endDate);
+        }
+        if (StringUtils.isNotBlank(vm.getDeptId())){
             params.put("deptId",vm.getDeptId());
+        }
+        if(StringUtils.isNotBlank(vm.getUserId())){
             params.put("userIdId",vm.getUserId());
         }
         EntityWrapper orderWrapper = new EntityWrapper<OrderEntity>();
@@ -518,14 +517,122 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 .le(StringUtils.isNotBlank(endDate), "create_time", endDate)
                 .eq(StringUtils.isNotBlank(vm.getDeptId()),"dept_id",vm.getDeptId())
                 .eq(StringUtils.isNotBlank(vm.getUserId()),"create_user_id",vm.getUserId());
-        UserStatisticsDto dto = baseMapper.oneLevelUserStatistics1(params);
+        if(baseMapper.userStatistics(params) != null){
+            dto = baseMapper.userStatistics(params);
+        }
+
         dto.setAddProductsCounts(productsService.selectCount(productWrapper));
-        dto.setSalesVolume(new BigDecimal(baseMapper.oneLevelUserStatistics2(params)));
+        if(baseMapper.salesVolumeStatistics(params) != null){
+            dto.setSalesVolume(new BigDecimal(baseMapper.salesVolumeStatistics(params)));
+        }
         dto.setAddOrderCounts(this.selectCount(orderWrapper));
         dto.setReturnCounts(this.selectCount(orderWrapper));
         dto.setAbnormalCounts(this.selectCount(orderWrapper.isNotNull("abnormal_status")));
-        dto.setProfitRate(dto.getProfit().divide(dto.getSalesVolume(),2,BigDecimal.ROUND_HALF_UP));
+        if(dto.getSalesVolume().compareTo(new BigDecimal(0.00)) != 0){
+            dto.setProfitRate(dto.getProfit().divide(dto.getSalesVolume(),2,BigDecimal.ROUND_HALF_UP));
+        }
         return dto;
+    }
+
+    @Override
+    public FranchiseeStatisticsDto oneLevelFranchiseeStatistics(StatisticsVM vm) {
+        FranchiseeStatisticsDto dto = new FranchiseeStatisticsDto();
+        Map<String, Object> params = new HashMap<String,Object>();
+        String type = vm.getType();
+        String startDate = null;
+        String endDate = null;
+        if("year".equals(type)){
+            //查询年
+            startDate = DateUtils.getYearFirst();
+            endDate = DateUtils.getYearEnd();
+        }else if("month".equals(type)){
+            //查询月
+            startDate = DateUtils.getMonthFirst();
+            endDate = DateUtils.getMonthEnd();
+        }else if("day".equals(type)){
+            //查询日
+            startDate = DateUtils.getDayFirst();
+            endDate = DateUtils.getDayEnd();
+        }else{
+            //按时间查询
+            startDate = DateUtils.startFormat.format(vm.getStartDate());
+            endDate = DateUtils.endFormat.format(vm.getEndDate());
+        }
+        if(StringUtils.isNotBlank(startDate)){
+            params.put("startDate", startDate);
+        }
+        if(StringUtils.isNotBlank(endDate)){
+            params.put("endDate", endDate);
+        }
+        if (StringUtils.isNotBlank(vm.getDeptId())){
+            params.put("deptId",vm.getDeptId());
+        }
+        if(StringUtils.isNotBlank(vm.getUserId())){
+            params.put("userIdId",vm.getUserId());
+        }
+        EntityWrapper orderWrapper = new EntityWrapper<OrderEntity>();
+        orderWrapper.ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                .eq(StringUtils.isNotBlank(vm.getDeptId()),"dept_id",vm.getDeptId())
+                .eq(StringUtils.isNotBlank(vm.getUserId()),"user_id",vm.getUserId());
+        if(baseMapper.franchiseeStatistics(params) != null){
+            dto = baseMapper.franchiseeStatistics(params);
+        };
+        if(baseMapper.salesVolumeStatistics(params) != null){
+            dto.setSalesVolume(new BigDecimal(baseMapper.salesVolumeStatistics(params)));
+        }
+        dto.setAddOrderCounts(this.selectCount(orderWrapper));
+        dto.setAllCost(dto.getCost().add(dto.getOrderFreight().add(dto.getServicePrice())));
+        if(dto.getSalesVolume().compareTo(new BigDecimal(0.00)) != 0){
+            dto.setProfitRate(dto.getProfit().divide(dto.getSalesVolume(),2,BigDecimal.ROUND_HALF_UP));
+        }
+        return dto;
+    }
+    @Override
+    public PlatformStatisticsDto platformStatistics(StatisticsVM vm){
+        Map<String, Object> params = new HashMap<String,Object>();
+        String type = vm.getType();
+        String startDate = null;
+        String endDate = null;
+        if("year".equals(type)){
+            //查询年
+            startDate = DateUtils.getYearFirst();
+            endDate = DateUtils.getYearEnd();
+        }else if("month".equals(type)){
+            //查询月
+            startDate = DateUtils.getMonthFirst();
+            endDate = DateUtils.getMonthEnd();
+        }else if("day".equals(type)){
+            //查询日
+            startDate = DateUtils.getDayFirst();
+            endDate = DateUtils.getDayEnd();
+        }else{
+            //按时间查询
+            startDate = DateUtils.startFormat.format(vm.getStartDate());
+            endDate = DateUtils.endFormat.format(vm.getEndDate());
+        }
+        if(StringUtils.isNotBlank(startDate)){
+            params.put("startDate", startDate);
+        }
+        if(StringUtils.isNotBlank(endDate)){
+            params.put("endDate", endDate);
+        }
+        PlatformStatisticsDto platformStatisticsDto = new PlatformStatisticsDto();
+        BigDecimal choucheng = platformStatisticsDto.getChoucheng();
+        if(baseMapper.chouchengStatistics(params) != null){
+            choucheng = new BigDecimal(baseMapper.chouchengStatistics(params));
+        }
+
+        params.put("dept_id",1);
+        BigDecimal userProfit = platformStatisticsDto.getUserProfit();
+        if(baseMapper.hqUserProfit(params) != null){
+            userProfit = new BigDecimal(baseMapper.hqUserProfit(params));
+        }
+        BigDecimal allProfit = choucheng.add(userProfit);
+        platformStatisticsDto.setChoucheng(choucheng);
+        platformStatisticsDto.setUserProfit(userProfit);
+        platformStatisticsDto.setAllProfit(allProfit);
+        return platformStatisticsDto;
     }
 }
 

@@ -85,6 +85,14 @@ public class SysUserController extends AbstractController {
 		}
 	}
 	/**
+	 * 总部员工列表
+	 */
+	@RequestMapping("/selectOneLevelUserList")
+	public R selectOneLevelUserList(){
+		List<SysUserEntity> userList = sysUserService.selectList(new EntityWrapper<SysUserEntity>().eq("dept_id",1));
+		return R.ok().put("userList",userList);
+	}
+	/**
 	 * 获取登录的用户信息
 	 */
 	@RequestMapping("/info")
@@ -173,7 +181,7 @@ public class SysUserController extends AbstractController {
 		if(ArrayUtils.contains(userIds, 1L)){
 			return R.error("系统管理员不能删除");
 		}
-		
+
 		if(ArrayUtils.contains(userIds, getUserId())){
 			return R.error("当前用户不能删除");
 		}

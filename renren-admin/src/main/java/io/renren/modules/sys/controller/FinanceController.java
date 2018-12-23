@@ -1,8 +1,9 @@
 package io.renren.modules.sys.controller;
 
-import com.baomidou.mybatisplus.plugins.Page;
 import io.renren.common.utils.R;
 import io.renren.modules.product.service.OrderService;
+import io.renren.modules.sys.dto.FranchiseeStatisticsDto;
+import io.renren.modules.sys.dto.PlatformStatisticsDto;
 import io.renren.modules.sys.dto.StatisticsDto;
 import io.renren.modules.sys.dto.UserStatisticsDto;
 import io.renren.modules.sys.vm.StatisticsVM;
@@ -33,26 +34,33 @@ public class FinanceController extends AbstractController{
         vm.setType("day");
         vm.setDeptId("1");
         StatisticsDto dto = new StatisticsDto();
+        //总部员工统计数据模型
         UserStatisticsDto userStatisticsDto = orderService.oneLevelUserStatistics(vm);
         dto.setUserStatisticsDto(userStatisticsDto);
-//        System.out.println("userSt:" + userStatisticsDto.toString());
+        //加盟商统计数据模型
+        FranchiseeStatisticsDto franchiseeStatisticsDto = orderService.oneLevelFranchiseeStatistics(vm);
+        dto.setFranchiseeStatisticsDto(franchiseeStatisticsDto);
+        //平台利润统计
+        PlatformStatisticsDto platformStatisticsDto = orderService.platformStatistics(vm);
+        dto.setPlatformStatisticsDto(platformStatisticsDto);
         return R.ok().put("dto",dto);
     }
-    @RequestMapping("/oneLevelStatisticsQuery")
-    public R oneLevelStatisticsQuery(@RequestBody StatisticsVM vm){
-        String type = vm.getType();
-        String startDate = vm.getStartDate();
-        String endDate = vm.getEndDate();
-        if("year".equals(type)){
-            //查询年
-
-        }else if("month".equals(type)){
-            //查询月
-        }else if("day".equals(type)){
-            //查询日
-        }else{
-            //按时间查询
-        }
-        return R.ok();
+    @RequestMapping("/oneLevelQueryUser")
+    public R oneLevelQueryUser(@RequestBody StatisticsVM vm){
+        //总部员工统计数据模型
+        UserStatisticsDto userStatisticsDto = orderService.oneLevelUserStatistics(vm);
+        return R.ok().put("userStatisticsDto",userStatisticsDto);
+    }
+    @RequestMapping("/oneLevelQueryFranchisee")
+    public R oneLevelQueryFranchisee(@RequestBody StatisticsVM vm){
+        //加盟商统计数据模型
+        FranchiseeStatisticsDto franchiseeStatisticsDto = orderService.oneLevelFranchiseeStatistics(vm);
+        return R.ok().put("franchiseeStatisticsDto",franchiseeStatisticsDto);
+    }
+    @RequestMapping("/oneLevelQueryPlatform")
+    public R oneLevelQueryPlatform(@RequestBody StatisticsVM vm){
+        //平台利润统计
+        PlatformStatisticsDto platformStatisticsDto = orderService.platformStatistics(vm);
+        return R.ok().put("platformStatisticsDto",platformStatisticsDto);
     }
 }

@@ -48,7 +48,14 @@
         <result property="orderFreight" column="order_freight"/>
     </resultMap>
 
-    <resultMap type="io.renren.modules.sys.dto.UserStatisticsDto" id="statisticsDtoMap">
+    <resultMap type="io.renren.modules.sys.dto.UserStatisticsDto" id="userStatisticsDtoMap">
+        <result property="cost" column="cost"/>
+        <result property="orderFreight" column="order_freight"/>
+        <result property="servicePrice" column="service_price"/>
+        <result property="profit" column="profit"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.sys.dto.FranchiseeStatisticsDto" id="franchiseeStatisticsDtoMap">
         <result property="cost" column="cost"/>
         <result property="orderFreight" column="order_freight"/>
         <result property="servicePrice" column="service_price"/>
@@ -83,17 +90,35 @@
         <include refid="sql_Where_Clause" />
     </select>
 
-    <!-- 统计员工 -->
-    <select id="oneLevelUserStatistics1"  resultMap="statisticsDtoMap">
+    <!-- 总部统计员工 -->
+    <select id="userStatistics"  resultMap="userStatisticsDtoMap">
         select sum(order_profit) AS profit, sum(purchase_price) AS cost, sum(inter_freight) AS order_freight, sum(platform_commissions) AS service_price
         from product_order
         <include refid="sql_Where_Clause" />
     </select>
-    <!-- 统计员工 -->
-        <select id="oneLevelUserStatistics2"  resultType="String">
+    <!-- 统计销售额 -->
+    <select id="salesVolumeStatistics"  resultType="String">
         select sum(order_money_cny)
         from product_order
         <include refid="sql_Where_Clause" />
         and abnormal_state is null
+    </select>
+    <!-- 加盟商统计 -->
+    <select id="franchiseeStatistics"  resultMap="franchiseeStatisticsDtoMap">
+        select sum(order_profit) AS profit, sum(purchase_price) AS cost, sum(inter_freight) AS order_freight, sum(platform_commissions) AS service_price
+        from product_order
+        <include refid="sql_Where_Clause" />
+    </select>
+    <!-- 所有加盟商抽成统计 -->
+    <select id="chouchengStatistics"  resultType="String">
+        select sum(platform_commissions)
+        from product_order
+        <include refid="sql_Where_Clause" />
+    </select>
+    <!-- 总部员工利润统计 -->
+    <select id="hqUserProfit"  resultType="String">
+        select sum(order_profit)
+        from product_order
+        <include refid="sql_Where_Clause" />
     </select>
 </mapper>
