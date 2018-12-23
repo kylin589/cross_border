@@ -1028,8 +1028,9 @@ var vm = new Vue({
                                 // 重新获取图片相册
                                 vm.getProAlbum();
                                 // vm.proDetails.productSku = r.SKU;
+
+                                // layer.close(index);
                                 layer.msg('删除成功');
-                                layer.close(index);
 
                                 // window.location.href = document.referrer;
 

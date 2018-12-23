@@ -67,9 +67,84 @@ var vm = new Vue({
 
         // 获取消息列表
         getInformList: function (event) {
+            $.ajax({
+                url: '../../sys/notice/list',
+                type: 'get',
+                data: '',
+                dataType: 'json',
+                success: function (r) {
+                    console.log('消息列表');
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.informList = r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                    } else {
+                        layer.alert(r.message);
+                    }
+
+
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        // 标记为已读
+        noticeStateFunc:function (id) {
+            layer.confirm('确定标记为已读吗？',function () {
+                $.ajax({
+                    url: '../../sys/notice/sign',
+                    type: 'get',
+                    data: {
+                        'noticeId':id
+                    },
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('标记为已读');
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.getInformList();
+                            layer.close();
+                        } else {
+                            layer.alert(r.message);
+                        }
+
+
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            })
 
         },
+        // 标记全部为已读
+        allnoticeStateFunc:function () {
+            confirm('确定标记全部为已读吗？',function () {
+                $.ajax({
+                    url: '../../sys/notice/signAll',
+                    type: 'get',
+                    data: '',
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('标记为已读');
+                        console.log(r);
+                        if (r.code === 0) {
+                            console.log('成功')
+                            vm.getInformList();
+                            // layer.close(index);
+                        } else {
+                            layer.alert(r.msg);
+                        }
 
+
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            })
+        }
     },
     created: function(){
         this.getInformList();

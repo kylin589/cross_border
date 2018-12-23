@@ -116,7 +116,7 @@
                     :value="item.dataNumber">
             </el-option>
         </el-select>
-        <span class="stateBtn" v-if="yichangListValue!=''" @click="updateAbnormalState" >确定</span>
+        <span class="stateBtn" v-if="yichangListValue!=''" @click="updateAbnormalState" style="cursor:pointer;">确定</span>
         <!--统计-->
         <div class="statistics" style="">
             核算订单数: <span>{{ statistics.orderNum }}</span>
@@ -189,8 +189,8 @@
                 </span>
             </td>
             <td>
-                <span v-if="item.abnormalStatus != '正常' " style="padding: 2px 6px;border-radius: 3px;background: #ff6154;color: #fff;">{{item.abnormalStatus}}</span>
-                <span v-if="item.abnormalStatus == '正常' " style="padding: 2px 6px;border-radius: 3px;background: #4da7ff;color: #fff;">{{item.abnormalStatus}}</span>
+                <span v-if="JSON.stringify(item.abnormalStatus) != 'null' " style="padding: 2px 6px;border-radius: 3px;background: #ff6154;color: #fff;">{{item.abnormalStatus}}</span>
+                <span v-if="JSON.stringify(item.abnormalStatus) == 'null' " style="padding: 2px 6px;border-radius: 3px;background: #4da7ff;color: #fff;">正常</span>
             </td>
             <td>{{ item.abroadWaybill }}</td>
             <td>{{ item.domesticWaybill }}</td>

@@ -1,6 +1,7 @@
 
 .item{
     margin-bottom: 15px;
+    position: relative;
 }
 .item h4{
     font-weight: bold;
@@ -17,9 +18,10 @@
     background: linear-gradient(to bottom, #1e9fff , #63e3f0);
     margin-right: 5px;
 }
-.item div.nav_title{
+div.nav_title{
     border-bottom: 1px solid #ddd;
     overflow: hidden;
+    margin-bottom: 16px;
 }
 .nav_title ul{
     display: inline-block;
@@ -36,8 +38,11 @@
     font-weight: bold;
     border-bottom: 3px solid #00a3e8;
 }
-.nav_title select{
-    float: right;
+.item select{
+    position: absolute;
+    right: 10px;
+    top: -4px;
+    /* float: right; */
     height: 28px;
     width: 180px;
     background: none;
