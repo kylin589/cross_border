@@ -43,7 +43,7 @@ public class UKExcel {
         File file = new File("C:\\Users\\asus\\Desktop\\法国商品分类FR");
         File[] files = file.listFiles();
         //System.out.println(files.length);
-        for (int i = 12; i <files.length ; i++) {
+        for (int i = 0; i <files.length ; i++) {
         this.insertCategory(file);
          }
     }

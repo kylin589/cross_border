@@ -6,13 +6,42 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class XMLUtil {
+
+    public static AnalysisFeedSubmissionResultDto analysisFeedSubmissionResult(String xmlPath) {
+        AnalysisFeedSubmissionResultDto analysisFeedSubmissionResultDto = new AnalysisFeedSubmissionResultDto();
+        SAXReader reader = new SAXReader();
+        try {
+            // 通过reader对象的read方法加载books.xml文件,获取docuemnt对象。
+            Document document = reader.read(new File(xmlPath));
+            Element amazonEnvelope = document.getRootElement();
+            Element message = amazonEnvelope.element("Message");
+            analysisFeedSubmissionResultDto.setMessageContent(message.asXML());
+            Element processingReport = message.element("ProcessingReport");
+            analysisFeedSubmissionResultDto.setFeedSubmissionId(processingReport.element("DocumentTransactionID").getTextTrim());
+            Element processingSummary = processingReport.element("ProcessingSummary");
+            String messagesProcessedStr = processingSummary.element("MessagesProcessed").getTextTrim();
+            analysisFeedSubmissionResultDto.setMessagesProcessed(Integer.parseInt(messagesProcessedStr));
+            String messagesSuccessfulStr = processingSummary.element("MessagesSuccessful").getTextTrim();
+            analysisFeedSubmissionResultDto.setMessagesSuccessful(Integer.parseInt(messagesSuccessfulStr));
+            String messagesWithErrorStr = processingSummary.element("MessagesWithError").getTextTrim();
+            analysisFeedSubmissionResultDto.setMessagesWithError(Integer.parseInt(messagesWithErrorStr));
+            String messagesWithWarningStr = processingSummary.element("MessagesWithWarning").getTextTrim();
+            analysisFeedSubmissionResultDto.setMessagesWithWarning(Integer.parseInt(messagesWithWarningStr));
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        return analysisFeedSubmissionResultDto;
+    }
 
     /**
      * 将文档对象写入对应的文件中

@@ -70,11 +70,12 @@ table tr td, table tr th{
 table tr td{
     color: #444;
     border-bottom: 2px solid #f2f2f2;
+    text-align: left;
 }
 table tr th{
     font-size: 15px;
     font-weight: bold;
-    /*text-align: left;*/
+    text-align: left;
     color: #555;
 }
 

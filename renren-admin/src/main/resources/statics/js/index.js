@@ -153,11 +153,39 @@ var vm = new Vue({
                 shadeClose: false,
                 content: ['http://cdn.renren.io/donate.jpg', 'no']
             });
+        },
+		// 获取未读通知数量
+		getinformNum:function () {
+            $.ajax({
+                url: 'sys/notice/count',
+                type: 'get',
+                data: '',
+                dataType: 'json',
+                success: function (r) {
+                    // console.log('未读数量');
+                    // console.log(r);
+                    if (r.code === 0) {
+                        vm.informNum = r.count;
+                        // layer.close();
+                    } else {
+                        alert(r.msg);
+                    }
+
+
+                },
+                error: function () {
+                    alert("网络故障");
+                }
+            });
         }
 	},
 	created: function(){
 		this.getMenuList();
 		this.getUser();
+        this.getinformNum();
+        // setInterval(function () {
+			// vm.getinformNum();
+        // },1000)
 	},
 	updated: function(){
 		//路由

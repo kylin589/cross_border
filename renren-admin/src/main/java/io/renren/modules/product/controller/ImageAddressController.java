@@ -8,15 +8,21 @@ import io.renren.modules.product.entity.ImageAddressEntity;
 import io.renren.modules.product.service.ImageAddressService;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.util.FtpUtil;
+import io.renren.modules.util.UUIDUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.List;
 
 
 /**
@@ -97,7 +103,7 @@ public class ImageAddressController extends AbstractController {
      * @date: 2018/11/6 15:54
      */
     //保存到数据库的Url前缀
-    private static final String fileUrl = "http://hgjfsdg.top/image/";
+    private static final String fileUrl = "http://www.threeee.cn/";
     @RequestMapping("/upload")
     public R upload(@RequestParam("file") MultipartFile file, Long productId) throws Exception {
         //判断文件是否为空
@@ -112,20 +118,44 @@ public class ImageAddressController extends AbstractController {
             if (!suffixName.equalsIgnoreCase(".jpg")){
                 return R.error(1,"图片格式不正确，请上传jpg格式的图片");
             }
-            //获取图片的输入流
-            InputStream inputStream = file.getInputStream();
+            //新文件名以uuid为名
+            String fileUUID = UUIDUtils.getUUID();
             //获取年月日以年月日来分目录
             Calendar calendar = Calendar.getInstance();
             String year = String.valueOf(calendar.get(Calendar.YEAR));
             String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
             String date = String.valueOf(calendar.get(Calendar.DATE));
-           // 文件上传到ftp的地址上
-            String filePath = "/image/" + year + "/" + month + "/" + date + "/" + productId + "/";
+            // 文件上传后是保存在本地的路径
+            String filePath = "E:/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
+            File dest = new File(filePath);
+            if (!dest.getParentFile().exists()) {
+                // 检测是否存在目录不存在创建一个文件
+                dest.getParentFile().mkdirs();
+            }
+            //上传图片到本地
+            file.transferTo(dest);
+            // 从本地读入文件
+            File files = new File(filePath);
+            Image srcImg = ImageIO.read(files);
+            //修改图片的尺寸大小
+            BufferedImage buffImg = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+            buffImg.getGraphics().drawImage(srcImg.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH), 0, 0, null);
+            //修改图片大小后保存到本地
+            String filePathGB="D:/"+fileUUID+suffixName;
+            //保存到ftp上的文件名字
+            String fileNameFTP=fileUUID+suffixName;
+            //修改后写到本地
+            ImageIO.write(buffImg, "jpg", new File(filePathGB));
+            //再把修改后的图片读取出来
+            File fileFtp = new File(filePathGB);
+            InputStream input = new FileInputStream(fileFtp);
+            String filePathFTP = "/images/" + year + "/" + month + "/" + date + "/" + productId + "/";
             //调用FtpUtil的方法，连接ftp服务器，并把图片上传到服务器上
-            Boolean flag = FtpUtil.uploadFile(fileName, inputStream, filePath);
+            Boolean flag = FtpUtil.uploadFile(fileNameFTP, input, filePathFTP);
             if (flag == true) {
                 ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
-                String url = year + "/" + month + "/" + date + "/" + productId + "/" + fileName;
+                //保存到数据库的地址
+                String url = "images/"+year + "/" + month + "/" + date + "/" + productId + "/" + fileNameFTP;
                 String urlOne = fileUrl + url;
                 imageAddressEntity.setImageUrl(urlOne);
                 imageAddressEntity.setProductId(productId);
