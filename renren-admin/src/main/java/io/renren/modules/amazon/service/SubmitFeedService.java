@@ -2,9 +2,14 @@ package io.renren.modules.amazon.service;
 
 import com.amazonaws.mws.MarketplaceWebService;
 import com.amazonaws.mws.model.GetFeedSubmissionListRequest;
+import com.amazonaws.mws.model.GetFeedSubmissionResultRequest;
+import com.amazonaws.mws.model.SubmitFeedRequest;
+import io.renren.modules.amazon.dto.AnalysisFeedSubmissionResultDto;
 import io.renren.modules.amazon.dto.FeedSubmissionInfoDto;
+import io.renren.modules.amazon.dto.FeedSubmissionResultDto;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.UploadEntity;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.Map;
@@ -104,13 +109,15 @@ public interface SubmitFeedService {
 
     /**
      * 保存上传id和处理状态
+     *
      * @param feedSubmissionInfoDtoList
-     * @param uploadState 默认0：等待上传；1：正在上传；2：上传成功；3：上传失败； 4？
+     * @param uploadState               总状态，默认0：等待上传；1：正在上传；2：上传成功；3：上传失败； 4？
      */
     void updateFeedUpload(List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList, int uploadState);
 
     // 上传产品
-    void singleSubmitFeed(UploadEntity uploadEntity);
+    @Async
+    void submitFeed(UploadEntity uploadEntity);
 
     // 同步上传数据
     List<FeedSubmissionInfoDto> submitProductFeed(Long uploadId, String serviceURL, String merchantId, String sellerDevAuthToken, String feedType, String filePath, List<String> marketplaceIdList);
@@ -121,4 +128,32 @@ public interface SubmitFeedService {
     List<FeedSubmissionInfoDto> getFeedSubmissionListAsync(Long uploadId, String serviceURL, String merchantId, String sellerDevAuthToken, List<String> feedSubmissionIdList);
 
     List<FeedSubmissionInfoDto> invokeGetFeedSubmissionList(Long uploadId, MarketplaceWebService service, List<GetFeedSubmissionListRequest> requests);
+
+    List<FeedSubmissionResultDto> getFeedSubmissionResultAsync(Long uploadId, String path, String serviceURL, String merchantId, String sellerDevAuthToken, List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList);
+
+    List<FeedSubmissionResultDto> invokeGetFeedSubmissionResult(Long uploadId, MarketplaceWebService service, List<GetFeedSubmissionResultRequest> requests);
+
+    /**
+     * 子分类状态判断
+     *
+     * @param analysisFeedSubmissionResultDto
+     * @return
+     */
+    int judgementState(AnalysisFeedSubmissionResultDto analysisFeedSubmissionResultDto);
+
+    /**
+     * 总分类状态判断
+     *
+     * @param substate 子状态列表
+     * @return
+     */
+    int judgingTheTotalState(List<Integer> substate);
+
+    List<FeedSubmissionInfoDto> invokeSubmitFeedAsync(Long uploadId, MarketplaceWebService service, List<SubmitFeedRequest> requests);
+
+    /**
+     * 重新提交
+     * @param uploadEntity
+     */
+    void ReUploadFeed(UploadEntity uploadEntity);
 }
