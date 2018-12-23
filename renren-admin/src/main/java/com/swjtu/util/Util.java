@@ -7,10 +7,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Util {
     public static List<NameValuePair> map2list(Map<String, String> mapParams) {
@@ -133,5 +130,30 @@ public class Util {
             resultCharArray[index++] = hexDigits[b & 0xf];
         }
         return new String(resultCharArray);
+    }
+
+    public static Map<String, String> getProxies(){
+        Map<String, String> map = new HashMap<>();
+        Properties prop = new Properties();
+        try {
+//            InputStream in = Object.class.getResourceAsStream("/ip.properties");
+            InputStream in = null;
+            in = new BufferedInputStream(new FileInputStream("ip.properties"));
+            prop.load(in);     ///加载属性列表
+            List<String> list = new ArrayList<>(prop.stringPropertyNames());
+            Random random = new Random();
+            int n = random.nextInt(list.size());
+            String key = list.get(n);
+            System.out.println("key:" + key);
+            System.out.println("port:" + prop.getProperty(key));
+            map.put("ip",key);
+            map.put("port",prop.getProperty(key));
+            in.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 }
