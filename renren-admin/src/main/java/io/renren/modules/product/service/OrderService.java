@@ -54,7 +54,7 @@ public interface OrderService extends IService<OrderEntity> {
     /**
      * 更新订单列表
      */
-    void updateOrder(SysUserEntity user, List<OrderModel> orderModelList);
+    void updateOrder(List<OrderModel> orderModelList);
     /**
      * 国际已发货
      * 扣款

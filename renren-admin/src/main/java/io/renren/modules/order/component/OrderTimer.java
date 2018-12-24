@@ -14,6 +14,7 @@ import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.util.XMLUtil;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
+import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.vm.OrderModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,9 @@ public class OrderTimer {
 
     @Autowired
     private AmazonGrantService amazonGrantService;
+
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 功能描述：发送订单请求，返回订单列表的响应数据
@@ -102,7 +106,6 @@ public class OrderTimer {
                         isSuccess = true;
                     }
                 }
-                // TODO: 2018/11/23 星期五写到这里
                 listOrdersResponseDtos.add(listOrdersResponseDto);//封装解析出来的
                 while (listOrdersResponseDto.getNextToken() != null && isSuccess == true) {
                     //只有有NextToken标识，就一直获取
@@ -114,7 +117,6 @@ public class OrderTimer {
                     listOrdersByNextTokenRequest.setMWSAuthToken(mwsAuthToken);
                     listOrdersByNextTokenRequest.setNextToken(listOrdersResponseDto.getNextToken());
                     listOrdersByNextTokenRequests.add(listOrdersByNextTokenRequest);
-                    // TODO: 2018/12/21 星期五写到这里
                     /**
                      * 获得订单下一页的响应列表
                      */
@@ -157,6 +159,7 @@ public class OrderTimer {
                         }
                         orderItemResponseDtos.add(orderItemResponseDto);
                         for(int k=0;k<orderItemResponseDtos.size();k++){
+                            List<OrderModel> orderModelList = new ArrayList<OrderModel>();
                             for(int m=0;m<orderItemResponseDtos.get(k).getOrderItems().size();m++){
                                 String product_asin=orderItemResponseDtos.get(k).getOrderItems().get(m).getASIN();
                                 String product_sku=orderItemResponseDtos.get(k).getOrderItems().get(m).getSellerSKU();
@@ -175,6 +178,8 @@ public class OrderTimer {
                                 //进行数据库表查询根据AmazonOrderId，有就更新，没有就插入
                                 OrderModel orderModel=new OrderModel();
                                 orderModel.setAmazonOrderId(AmazonOrderId);
+                                orderModel.setUserId(shop.getUserId());
+                                orderModel.setDeptId(shop.getDeptId());
                                 SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 Date date = null;//拿到Date对象
                                 try {
@@ -263,8 +268,12 @@ public class OrderTimer {
                                     addressEntity.setShipZip("");
                                 }
                                 orderModel.setProductShipAddressEntity(addressEntity);
+                                orderModelList.add(orderModel);
                             }
-
+                            //开启一个线程去对接业务逻辑并保存到数据库
+                            if(orderModelList.size() > 0){
+                                new SaveOrUpdateOrderThread(orderModelList).start();
+                            }
                         }
 
 
@@ -580,5 +589,15 @@ public class OrderTimer {
         return responseList;
     }
 
+    class SaveOrUpdateOrderThread extends Thread   {
+        private List<OrderModel> list;
+        public SaveOrUpdateOrderThread(List<OrderModel> list) {
+            this.list = list;
+        }
 
+        @Override
+        public void run() {
+            orderService.updateOrder(list);
+        }
+    }
 }

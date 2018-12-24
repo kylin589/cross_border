@@ -49,6 +49,7 @@ public class AmazonGrantController extends AbstractController {
     @RequestMapping("/list")
 //    @RequiresPermissions("amazon:amazongrant:list")
     public R list(@RequestParam Map<String, Object> params) {
+        params.put("userId",getUserId());
         PageUtils page = amazonGrantService.queryPage(params);
 
         return R.ok().put("page", page);
