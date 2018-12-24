@@ -213,6 +213,8 @@ public class ProductsController extends AbstractController {
         SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
         String companySku = sysDeptEntity.getCompanySku();
         String SKU = companySku + "-" + productSku;
+        productsEntity.setProductSku(SKU);
+        productsService.updateById(productsEntity);
         return R.ok().put("SKU", SKU);
     }
 
