@@ -471,41 +471,9 @@ var vm = new Vue({
         // 成本运费
         costFreight:{},
         // 产品相册
-        proAlbum:[{
-            id:'0',
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            id:'0',
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            id:'0',
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            id:'0',
-            url:'../../statics/kuajing/img/img2.jpg'
-        }],
+        proAlbum:[],
         // 产品回收站
-        proStation:[{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            url:'../../statics/kuajing/img/img2.jpg'
-        },],
+        proStation:[],
         // 产品介绍列表
         proDecList:{
             'productTitle':'',
@@ -543,6 +511,16 @@ var vm = new Vue({
         categoryThreeName:'',
         // nowategoryThreeName:'',
         nowProTypeId:'',
+        // 产品上传
+        dialogImageUrl: '',
+        // dialogVisible: false
+        // 修改变体参数
+        upVariantList:{
+            id:'',
+            type:'',
+        },
+        // 变体参数
+        selVar:0,
 
     },
     methods:{
@@ -561,7 +539,142 @@ var vm = new Vue({
 
                         vm.proDetails = r.productsEntity;
                         vm.id = r.productsEntity.productId;
+                        vm.getProStation();
+                        vm.getProAlbum();
 
+
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 产品上传方法
+        handleRemove:function(file, fileList) {
+            layer.confirm('确定删除吗？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                // return true
+                // layer.msg('的确很重要', {icon: 1});
+
+            }, function(){
+                console.log(file);
+                console.log(fileList);
+                fileList.splice(file.index , 0, file)
+                // fileList.push(file);
+                // return false
+                // layer.msg('也可以这样', {
+                //     time: 20000, //20s后自动关闭
+                //     btn: ['明白了', '知道了']
+                // });
+            });
+            // console.log(file, fileList);
+        },
+        // 上传图片移上去的方法
+        handlePictureCardPreview:function(file) {
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
+        },
+        // 图片上传成功
+        upSuccessFunc:function (file,fileList) {
+            layer.confirm('确定上传改图片吗',{
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                // 确定方法
+
+            }, function(){
+                // 取消方法
+
+
+            })
+        },
+        // 图片上传失败
+        upErrorFunc:function (file) {
+            console.log(file);
+            layer.msg('上传失败')
+        },
+        // 删除上传图片
+        delImgFunc:function (file) {
+            layer.confirm('您是如何看待前端开发？', {
+                btn: ['重要','奇葩'] //按钮
+            }, function(){
+                return true
+                // layer.msg('的确很重要', {icon: 1});
+
+            }, function(){
+                return false
+                // layer.msg('也可以这样', {
+                //     time: 20000, //20s后自动关闭
+                //     btn: ['明白了', '知道了']
+                // });
+            });
+        },
+        // 获取产品详情
+        getProDetails:function () {
+            $.ajax({
+                url: '../../product/products/productdetails',
+                type: 'get',
+                data: {
+                    'productId': this.id
+                },
+                dataType: 'json',
+                success: function (r) {
+                    // console.log(r);
+                    if (r.code === 0) {
+
+                        vm.proDetails = r.productsEntity;
+                        console.log('产品详情');
+                        console.log(vm.proDetails);
+                        console.log(111111111);
+                        vm.proDecList = vm.proDetails.chinesePRE;
+                        console.log(vm.proDecList);
+                        console.log(JSON.stringify(vm.proDetails.colorVP) == 'null');
+                        console.log(typeof(vm.proDetails.colorVP));
+                        if(JSON.stringify(vm.proDetails.colorVP) != 'null'){
+                            vm.variantList.push({
+                                id:0,
+                                name:'颜色（color）',
+                                type:vm.proDetails.colorVP.paramsValue.split(',')
+                            })
+                        }
+                        if(JSON.stringify(vm.proDetails.sizeVP) != 'null'){
+                            vm.variantList.push({
+                                id:1,
+                                name:'尺寸（size）',
+                                type:vm.proDetails.sizeVP.paramsValue.split(',')
+                            })
+                        }
+
+                        vm.proDetails.variantsInfos.forEach(function (t,i) {
+                            var img = [];
+                            if(JSON.stringify(t.imageUrl) != 'null'){
+                                img = t.imageUrl.split(',');
+                            }
+                            vm.recommendAll.push({
+                                id:i,
+                                name:t.variantCombination,
+                                img:img,
+                                sku:t.variantSku,
+                                addPrice:t.variantAddPrice,
+                                stock:t.variantStock,
+                                code:t.eanCode
+
+
+                            })
+                            // vm.drapImg();
+                        })
+                        // vm.drapImg();
+                        setTimeout(function(){ vm.drapImg(); }, 1000);
+
+                        console.log('运费')
+                        console.log(vm.proDetails.americanFC.freight)
+
+                        // console.log(this.proDetails.chinesePRE);
+                        // console.log(this.proDetails.chinesePRE.productTitle);
+                        // console.log(this.proDetails.chinesePRE[productTitle]);
 
                     } else {
                         layer.alert(r.msg);
@@ -586,6 +699,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('产品回收站');
                         console.log(r);
+                        vm.proStation = r.isdeleteList;
 
                     } else {
                         layer.alert(r.msg);
@@ -610,6 +724,24 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('产品相册');
                         console.log(r);
+                        vm.proAlbum = [];
+                        r.imageInfo.forEach(function (item,index) {
+                            vm.proAlbum.push({
+                                index:index,
+                                imgId:item.imageId,
+                                url:item.imageUrl,
+                                isDeleted:item.isDeleted,
+                                createUserId:item.createUserId,
+                                createTime:item.createTime,
+                                lastOperationTime:item.lastOperationTime,
+                                lastOperationUserId:item.lastOperationUserId,
+                                productId:item.productId,
+                                status:item.status,
+                                uid:item.uid
+
+                            })
+                        })
+                        // vm.proAlbum = r.imageInfo;
 
                     } else {
                         layer.alert(r.msg);
@@ -775,36 +907,259 @@ var vm = new Vue({
                 }
             });
         },
+        // 图片回收站
         prostation:function () {
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#proStation'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['800px', '500px'],
-                shadeClose: true,
-                scrollbar:false,
-                btn: ['<i class="layui-icon layui-icon-refresh"></i> 恢复','取消',],
-                btn1: function (index) {
-                    vm.proAlbum = [];
-                    var _length = $('.proStationUl li.action').length;
-                    console.log(_length);
-                    for(var i =0;i<_length;i++){
-                        var _index = $('.proStationUl li.action').eq(i).attr('data-index');
-                        vm.proAlbum.push({
-                            url:vm.proStation[_index].url
-                        })
-                    }
-                    console.log(vm.proAlbum)
-                    layer.close(index)
-                },
-                btn2: function (index) {
-                    vm.proAlbum = vm.proStation
-                    layer.close(index);
-                    return false
+            vm.getProStation();
+            if(vm.proStation.length == 0){
+                layer.msg("暂无回收站图片");
+            }else {
+                layer.open({
+                    type: 1,
+                    title: false,
+                    content: $('#proStation'), //这里content是一个普通的String
+                    skin: 'openClass openClass1',
+                    area: ['800px', '500px'],
+                    shadeClose: true,
+                    scrollbar:false,
+                    btn: ['彻底删除','<i class="layui-icon layui-icon-refresh"></i> 恢复','取消',],
+                    btn1: function (index) {
+                        var activeImg = $('#proStation .proStationUl li.action');
+                        var arr = [];
+                        for(var i = 0;i<activeImg.length;i++){
+                            arr.push(activeImg.eq(i).attr('data-index'));
+                        }
+                        if(arr.length == 0){
+                            layer.msg("请选择要删除的图片");
+                        }else {
+                            layer.confirm('确定删除吗',function (index) {
+                                $.ajax({
+                                    url: '../../product/imageaddress/deleteimage',
+                                    type: 'post',
+                                    data: JSON.stringify(arr),
+                                    // dataType: 'json',
+                                    contentType: "application/json",
+                                    success: function (r) {
+                                        console.log('彻底删除');
+                                        console.log(r);
+                                        console.log(arr);
+                                        if (r.code === 0) {
+                                            // 重新获取图片回收站
+                                            vm.getProStation();
+                                            layer.msg("删除成功");
+                                            // vm.proAlbum = r.imageInfo;
 
-                }
-            });
+                                        } else {
+                                            layer.alert(r.msg);
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("网络故障");
+                                    }
+                                })
+                            })
+                        }
+
+
+                    },
+                    btn2: function (index) {
+                        var activeImg = $('#proStation .proStationUl li.action');
+                        var arr = [];
+                        for(var i = 0;i<activeImg.length;i++){
+                            arr.push(activeImg.eq(i).attr('data-index'));
+                        }
+                        if(arr.length == 0){
+                            layer.msg("请选择要恢复的图片");
+                        }else {
+                            layer.confirm('确定要恢复吗',function (index) {
+                                $.ajax({
+                                    url: '../../product/imageaddress/recoverdelete',
+                                    type: 'post',
+                                    data: JSON.stringify(arr),
+                                    // dataType: 'json',
+                                    contentType: "application/json",
+                                    success: function (r) {
+                                        // console.log('恢复图片');
+                                        // console.log(r);
+                                        // console.log(arr);
+                                        if (r.code === 0) {
+                                            // 重新获取图片回收站
+                                            vm.getProStation();
+                                            vm.getProAlbum();
+                                            layer.close(index);
+                                            layer.msg("恢复成功");
+                                            // vm.proAlbum = r.imageInfo;
+
+                                        } else {
+                                            layer.alert(r.msg);
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("网络故障");
+                                    }
+                                })
+                            })
+                        }
+
+                        // vm.proAlbum = [];
+                        // var _length = $('.proStationUl li.action').length;
+                        // console.log(_length);
+                        // for(var i =0;i<_length;i++){
+                        //     var _index = $('.proStationUl li.action').eq(i).attr('data-index');
+                        //     vm.proAlbum.push({
+                        //         url:vm.proStation[_index].url
+                        //     })
+                        // }
+                        // console.log(vm.proAlbum)
+                        // layer.close(index)
+                    },
+                    btn3: function (index) {
+                        // vm.proAlbum = vm.proStation
+                        layer.close(index);
+                        return false
+
+                    }
+                });
+            }
+
+        },
+        // 点击每个图片选中（变体参数选中图片弹框）
+        activeImg:function (i) {
+            $('#selImg .proStationUl li').eq(i).toggleClass('action');
+
+        },
+        // 点击图片相册选中
+        clickActiveImg:function () {
+            console.log(111);
+            $(event.target).parent().toggleClass('active');
+        },
+        // 相册图片删除
+        proDel:function () {
+            var elList = $('.imgAlbum.active');
+            var arr = [];
+            for(var i = 0;i<elList.length;i++){
+                arr.push(elList.eq(i).attr('data-index'));
+            }
+            console.log('删除图片id');
+            console.log(arr);
+            if(arr.length == 0){
+                layer.msg('请选择要删除的图片');
+            }else {
+                layer.confirm('确定删除吗？',function () {
+                    $.ajax({
+                        type: 'post',
+                        url: '../../product/imageaddress/updateimage',
+                        contentType: "application/json",
+                        // data: {
+                        //     'imageIds':arr
+                        // },
+                        data: JSON.stringify(arr),
+                        success: function (r) {
+                            console.log('删除图片');
+                            console.log(r);
+                            // console.log(vm.proDetails);
+                            if (r.code == 0) {
+                                // 重新获取图片相册
+                                vm.getProAlbum();
+                                console.log('@@@@@@')
+                                console.log(vm.proAlbum)
+                                // vm.proDetails.productSku = r.SKU;
+
+                                // layer.close(index);
+                                layer.msg('删除成功');
+
+                                // window.location.href = document.referrer;
+
+                            } else {
+                                alert(r.msg);
+                            }
+                        }
+                    });
+                })
+            }
+
+
+
+        },
+        // 获取选中的变体参数图片
+        getSelImgVerFunc:function () {
+            var els = $('#selImg .proStationUl li.action');
+            var arr = [];
+            for(var i = 0;i<els.length;i++){
+                arr.push({
+                    id:els.eq(i).attr('data-index'),
+                    url:els.eq(i).attr('data-url')
+                })
+            }
+            // console.log($('#selImg .proStationUl li.active'));
+            // console.log(arr);
+            return arr
+        },
+        // 变体参数选择图片
+        selImgCFcun:function (data) {
+            if(vm.proAlbum.length == 0){
+                layer.msg('暂无可选图片');
+            }else {
+                layer.open({
+                    type: 1,
+                    title: false,
+                    content: $('#selImg'), //这里content是一个普通的String
+                    skin: 'openClass',
+                    area: ['800px', '500px'],
+                    shadeClose: true,
+                    scrollbar:false,
+                    btn: ['确定','取消',],
+                    btn1: function (index) {
+                        console.log(data);
+                        data.img=[];
+                        var arr = vm.getSelImgVerFunc();
+                        arr.forEach(function (v) {
+                            data.img.push(v.url)
+                        })
+                        // vm.recommendAll.forEach(function (t) {
+                        //     if(t.id = data.id){
+                        //         t.img = data.img;
+                        //     }
+                        // })
+                        console.log(vm.recommendAll);
+
+                        layer.close(index)
+                    },
+                    btn2: function (index) {
+                        // vm.proAlbum = vm.proStation
+                        layer.close(index);
+                        return false
+
+                    }
+                });
+            }
+
+        },
+        // 一键添加（变体图片）
+        yijianAddFunc:function (data) {
+
+            if(vm.proAlbum.length == 0){
+                layer.msg('暂无可选图片');
+            }else{
+                layer.confirm('确定添加所有图片吗？',function (index) {
+                    $('.ul1 li').css({
+                        'position':'relative',
+                        'top':'0px',
+                        'left':'0px',
+                        'margin':'10px'
+                    });
+
+                    data.img = [];
+                    vm.proAlbum.forEach(function (t) {
+                        data.img.push(t.url)
+                    })
+                    // setTimeout(function(){ vm.drapImg(); }, 1000);
+                    layer.msg('添加成功');
+                    layer.close(index);
+                })
+            }
+
+
+
         },
         // 变体添加
         addVariant:function () {
@@ -925,7 +1280,7 @@ var vm = new Vue({
             // }else {
             //     $('.proStationUl li').eq(i).removeClass('action');
             // }
-            $('.proStationUl li').eq(i).toggleClass('action');
+            $('#proStation .proStationUl li').eq(i).toggleClass('action');
         },
         imgItem:function (index) {
             $('.imgDiv>div').eq(index).find('img').css('opacity','.5');
@@ -961,6 +1316,7 @@ var vm = new Vue({
         variantNamenone:function (event) {
             $(event.target).next().css('visibility','hidden');
         },
+
         // 删除变体参数
         delvariantName:function (index) {
             console.log(index);
@@ -1057,20 +1413,22 @@ var vm = new Vue({
 
         },
         // 修改变体参数
-        upVariant:function () {
+        upVariant:function (a) {
+            vm.upVariantList.id = vm.variantList[a].id;
+            vm.upVariantList.type = vm.variantList[a].type.join(',');
             layer.open({
                 type: 1,
                 title: false,
-                content: $('#addVariant'), //这里content是一个普通的String
+                content: $('#upVariant'), //这里content是一个普通的String
                 skin: 'openClass',
                 area: ['500px', '400px'],
                 shadeClose: true,
                 scrollbar:false,
                 btn: ['<i class="layui-icon layui-icon-ok-circle"></i> 保存','取消'],
                 btn1: function (index) {
-                    var _id = $('#variantName option:selected').val();
-                    var _name = $('#variantName option:selected').text();
-                    var _typeName = $('#variantType').val();
+                    var _id = $('#variantName1 option:selected').val();
+                    var _name = $('#variantName1 option:selected').text();
+                    var _typeName = $('#variantType1').val();
                     var reg = new RegExp( '，' , "g" )
                     var str = _typeName.replace(reg,',');
                     _typeName = str;
@@ -1191,56 +1549,105 @@ var vm = new Vue({
                 }
             });
         },
+        // 点击添加变体信息
+        clickAddV:function () {
+            console.log(11111);
+            console.log($(event.target).text());
+            // vm.upVariantList = vm.variantList[a];
+            // $('#variantName1 option:selected').val();
+            // var _name = $('#variantName1 option:selected').text();
+            // var _typeName = $('#variantType1').val();
+            // $(event.target).toggleClass('active');
+            var _text = $('textarea.variantType').val();
+            if(_text != ''){
+                _text += ','+$(event.target).text();
+            }else {
+                _text += $(event.target).text();
+            }
+            // _text += ','+$(event.target).text();
+            $('textarea.variantType').val(_text);
+        },
+        // 点击添加变体信息
+        clickAddV1:function () {
+            console.log(11111);
+            console.log($(event.target).text());
+            // vm.upVariantList = vm.variantList[a];
+            // $('#variantName1 option:selected').val();
+            // var _name = $('#variantName1 option:selected').text();
+            // var _typeName = $('#variantType1').val();
+            // $(event.target).toggleClass('active');
+            var _text = $('textarea.variantType').eq(1).val();
+            if(_text != ''){
+                _text += ','+$(event.target).text();
+            }else {
+                _text += $(event.target).text();
+            }
+            // _text += ','+$(event.target).text();
+            $('textarea.variantType').val(_text);
+        },
+        // 图片拖拽
         drapImg:function () {
             for(var nn = 0;nn<$('.ul1').length;nn++){
                 //      console.log(nn);
                 var _index = nn;
                 var aLi = $(".ul1").eq(_index).find('li');
-                var aLiLast = $(".ul1").eq(_index).find('li:last-child');
-                // console.log(aLiLast);
-                var disX = 0;
-                var disY = 0;
-                var minZindex = 1;
-                var aPos = [];
-                for(var i = 0; i < aLi.length; i++) {
-                    var t = aLi[i].offsetTop;
-                    var l = aLi[i].offsetLeft;
-                    aLi[i].style.top = t + "px";
-                    aLi[i].style.left = l + "px";
-                    aPos[i] = {
-                        left: l,
-                        top: t
-                    };
-                    aLi[i].index = i;
-                }
-                for(var i = 0; i < aLi.length; i++) {
-                    aLi[i].style.position = "absolute";
-                    aLi[i].style.margin = 0;
-                    setDrag(aLi[i],aLi);
-                }
-                var _height = aLiLast[0].offsetTop+60;
-                // console.log(_height);
-                aLiLast.parent().css('height',_height+'px');
-                aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+                if(aLi.length != 0){
+                    var aLiLast = $(".ul1").eq(_index).find('li:last-child');
+                    // console.log(aLiLast);
+                    var disX = 0;
+                    var disY = 0;
+                    var minZindex = 1;
+                    var aPos = [];
+                    for(var i = 0; i < aLi.length; i++) {
+                        var t = aLi[i].offsetTop;
+                        var l = aLi[i].offsetLeft;
+                        aLi[i].style.top = t + "px";
+                        aLi[i].style.left = l + "px";
+                        aPos[i] = {
+                            left: l,
+                            top: t
+                        };
+                        aLi[i].index = i;
+                    }
+                    for(var i = 0; i < aLi.length; i++) {
+                        aLi[i].style.position = "absolute";
+                        aLi[i].style.margin = 0;
+                        setDrag(aLi[i],aLi);
+                    }
 
-                aLi.mouseover(function () {
-                    $(this).find('i').css('display','inline-block');
-                    $(this).find('i').mouseover(function () {
-                        $(this).css('display','inline-block');
+                    // if(aLi.length != 0){
+                    //     // var _height = aLiLast[0].offsetTop+60;
+                    //     var _height = aLiLast[0].offsetTop+60;
+                    //     aLiLast.parent().css('height',_height+'px');
+                    //     aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+                    // }
+                    var _height = aLiLast[0].offsetTop+60;
+                    aLiLast.parent().css('height',_height+'px');
+                    aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+
+                    // console.log(_height);
+
+
+                    aLi.mouseover(function () {
+                        $(this).find('i').css('display','inline-block');
+                        $(this).find('i').mouseover(function () {
+                            $(this).css('display','inline-block');
+                        })
+                        $(this).find('i').mouseout(function () {
+                            $(this).css('display','none');
+                        })
                     })
-                    $(this).find('i').mouseout(function () {
-                        $(this).css('display','none');
+                    aLi.mouseout(function () {
+                        $(this).find('i').css('display','none');
+                        $(this).find('i').mouseover(function () {
+                            $(this).css('display','inline-block');
+                        })
+                        $(this).find('i').mouseout(function () {
+                            $(this).css('display','none');
+                        })
                     })
-                })
-                aLi.mouseout(function () {
-                    $(this).find('i').css('display','none');
-                    $(this).find('i').mouseover(function () {
-                        $(this).css('display','inline-block');
-                    })
-                    $(this).find('i').mouseout(function () {
-                        $(this).css('display','none');
-                    })
-                })
+                }
+
             }
             //拖拽
             function setDrag(obj,all) {
@@ -1375,6 +1782,8 @@ var vm = new Vue({
             }
             function startMove(obj,json,fun){
                 clearInterval(obj.timer);
+
+                // console.log(11111);
                 obj.timer = setInterval(function(){
                     var isStop = true;
                     for(var attr in json){
@@ -1417,19 +1826,29 @@ var vm = new Vue({
             vm.proDetails.variantsInfos = [];
 
             if(this.variantList.length == 2){
-                var recommend = this.variantList[0].type;
-                var recommend1 = this.variantList[1].type;
+                var recommend;
+                var recommend1;
+                this.variantList.forEach(function (t) {
+                    if(t.id == 0){
+                        recommend = t.type;
+                    }
+                    if(t.id == 1){
+                        recommend1 = t.type;
+                    }
+                })
+
+                // console.log(recommend.length * recommend1.length);
+
 
                 for(var i = 0;i<recommend.length;i++){
                     for(var j = 0;j<recommend1.length;j++){
                         vm.recommendAll.push({
                             id:i+j,
                             name:recommend[i]+'*'+recommend1[j],
-                            img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-                                '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                            img:[],
                             sku:'',
                             addPrice:'',
-                            stock:'',
+                            stock:(Math.round(Math.random()*10) + 60),
                             code:''
                         });
 
@@ -1440,7 +1859,7 @@ var vm = new Vue({
                             variantCombination:recommend[i]+'*'+recommend1[j],
                             variantSku:'',
                             variantAddPrice:null,
-                            variantStock:null,
+                            variantStock:(Math.round(Math.random()*10) + 60),
                             eanCode:null,
                             imageUrl:''
                         })
@@ -1453,10 +1872,10 @@ var vm = new Vue({
                     vm.recommendAll.push({
                         id:i,
                         name:recommend[i],
-                        img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                        img:[],
                         sku:'',
                         addPrice:'',
-                        stock:'',
+                        stock:(Math.round(Math.random())*10 + 60),
                         code:''
                     });
 
@@ -1467,16 +1886,176 @@ var vm = new Vue({
                         variantCombination:recommend[i],
                         variantSku:'',
                         variantAddPrice:null,
-                        variantStock:null,
+                        variantStock:(Math.round(Math.random())*10 + 60),
                         eanCode:null,
                         imageUrl:''
                     })
                 }
+                // console.log(recommend.length);
             }
 
             console.log('1111111');
-            setTimeout(function(){ vm.drapImg(); }, 3000);
+            // setTimeout(function(){ vm.drapImg(); }, 2000);
 
+        },
+        // 修改保存
+        savePro:function () {
+
+            var u = $('.ul1');
+            var shunx = [];
+            for(var j = 0;j<u.length;j++){
+                var arr = u.eq(j).find('li');
+                shunx[j] = []
+                for(var i = 0;i<arr.length;i++){
+                    shunx[j].push(arr.eq(i).attr('data-index'))
+                }
+            }
+
+            // var arr = $('.ul1 li');
+            // var shunx = [];
+            // for(var i = 0;i<arr.length;i++){
+            //     shunx.push(arr.eq(i).attr('data-index'))
+            // }
+            console.log(shunx);
+
+            shunx.forEach(function (v,i) {
+                var t = vm.recommendAll[i];
+                console.log(t);
+                var string = '';
+                v.forEach(function (n) {
+                    string+=t.img[n]+','
+                })
+                console.log('11111111');
+                // console.log(v.join(','));
+                vm.proDetails.variantsInfos[i].variantId = i;
+                vm.proDetails.variantsInfos[i].eanCode = t.code;
+                vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
+                vm.proDetails.variantsInfos[i].variantSku = t.sku;
+                vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+                vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
+            })
+
+            // vm.recommendAll.forEach(function (t,i) {
+            //     vm.proDetails.variantsInfos[i].variantId = i;
+            //     vm.proDetails.variantsInfos[i].eanCode = t.code;
+            //     vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
+            //     vm.proDetails.variantsInfos[i].variantSku = t.sku;
+            //     vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+            //     vm.proDetails.variantsInfos[i].imageUrl = (t.img).join(',');
+            // })
+
+            // vm.proDetails.variantsInfos.eanCode = vm.recommendAll.code;
+            // vm.proDetails.variantsInfos.variantAddPrice = vm.recommendAll.addPrice;
+            // vm.proDetails.variantsInfos.variantSku = vm.recommendAll.sku;
+            // vm.proDetails.variantsInfos.variantStock = vm.recommendAll.stock;
+            console.log(vm.proDetails);
+
+
+
+            layer.confirm('确定修改吗？', function(index){
+
+
+
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                $.ajax({
+                    type: 'post',
+                    url: '../../product/products/modifyproduct',
+                    contentType: "application/json",
+                    data: JSON.stringify(vm.proDetails),
+                    success: function (r) {
+                        console.log('修改产品');
+                        console.log(r);
+                        console.log(vm.proDetails);
+                        if (r.code == 0) {
+                            layer.close(index);
+
+                            window.location.href = document.referrer;
+
+                        } else {
+                            alert(r.msg);
+                        }
+                    }
+                });
+
+
+
+            });
+
+
+
+        },
+        // 删除变体列表某条数据
+        delVariantList:function (event) {
+            layer.confirm('确定删除改组合信息吗？',function (index) {
+                var _index = $(event.target).attr('data-index');
+                // $(event.target).parent().parent().remove();
+                var delId;
+                for(var i = 0;i<vm.recommendAll.length;i++){
+                    if(vm.recommendAll[i].id == _index){
+                        delId = i;
+                        // return
+                    }
+                }
+                vm.recommendAll.splice(delId,1);
+                vm.proDetails.variantsInfos.splice(delId,1);
+                layer.msg('删除成功');
+                layer.close(index);
+            })
+
+
+        },
+        // 一键修正SKU
+        skuChFunc:function () {
+            $.ajax({
+                type: 'get',
+                url: '../../product/products/modifySKU',
+                contentType: "application/json",
+                data: {productId:vm.id},
+                success: function (r) {
+                    console.log('修改sku');
+                    console.log(r);
+                    // console.log(vm.proDetails);
+                    if (r.code == 0) {
+                        vm.proDetails.productSku = r.SKU;
+                        layer.msg('修改成功');
+
+                        // window.location.href = document.referrer;
+
+                    } else {
+                        alert(r.msg);
+                    }
+                }
+            });
+        },
+        // 上传
+        shangchuan:function () {
+            console.log('上传文件');
+            $('.selImg')[0].files;
+        },
+        // 图片放大
+        imgBig:function (event){
+            var top = $(event.target).offset().top - 428;
+            var left = $(event.target).offset().left - 350;
+            // console.log(right);
+            $('#imgBigDiv').css({
+                'display':'inline-block',
+                'top':top+'px',
+                'left':left+'px'
+            })
+            $('#imgBigDiv img').attr('src',$(event.target).attr('data-url'));
+
+        },
+        imgBigS:function () {
+            $('#imgBigDiv').css('display','none')
+        },
+        // 删除参数列表中已选图片
+        delImgRecom:function (data,i) {
+            console.log(data);
+            console.log(i);
+            data.img.splice(i,1);
+            console.log(data.img);
         },
         // 原创保存
         createSava:function () {
@@ -1546,23 +2125,7 @@ var vm = new Vue({
 
 
         },
-        // 删除变体列表某条数据
-        delVariantList:function (event) {
-            var _index = $(event.target).attr('data-index');
-            $(event.target).parent().parent().remove();
-            var delId;
-            console.log(vm.recommendAll);
-            for(var i = 0;i<vm.recommendAll.length;i++){
-                if(vm.recommendAll[i].id == _index){
-                    delId = i;
-                    // return
-                }
-            }
-            vm.recommendAll.splice(delId,1);
-            vm.proDetails.variantsInfos.splice(delId,1);
-            console.log(vm.proDetails.variantsInfos);
 
-        },
         // 原创返回
         returnYuanc:function () {
             layer.confirm('确定取消原创吗？',function () {

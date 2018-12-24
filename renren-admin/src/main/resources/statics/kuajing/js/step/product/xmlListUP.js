@@ -19,13 +19,15 @@ window.onload = function (ev) {
 var vm = new Vue({
     el:'#step',
     data:{
+        id:'',
         // 当前页码
         proCurr:1,
         // 每页数量限制
         pageLimit:12,
-        prolist:[],
+        xmllist:[],
         // 总页数
         totalCount:'',
+        xml:'',
     },
     methods:{
         // 分页器
@@ -60,21 +62,20 @@ var vm = new Vue({
                 });
             });
         },
-        //上传列表
+        //xml列表
         getMyUploadList:function () {
             $.ajax({
-                url: '../../product/upload/getMyUploadList',
-                type: 'post',
-                data: JSON.stringify({
-                    page:this.proCurr,
-                    limit:this.pageLimit
-                }),
+                url: '../../amazon/resultxml/list',
+                type: 'get',
+                data: {
+                    'uploadId':this.id
+                },
                 dataType: 'json',
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
-                        vm.prolist = r.page.list;
-                        vm.totalCount = r.page.totalCount;
+                        vm.xmllist = r.data;
+                        // vm.totalCount = r.page.totalCount;
                     } else {
                         layer.alert(r.msg);
                     }
@@ -86,75 +87,35 @@ var vm = new Vue({
                 }
             });
         },
-        // 编辑
-        upFunc:function (id) {
-            window.location.href="detailsUpload.html?id="+id;
-        },
-        // 删除
-        delFunc:function (id) {
-            layer.confirm('确定删除吗？',function (index) {
-                $.ajax({
-                    url: '../../product/upload/delete',
-                    type: 'get',
-                    data: {
-                        uploadId:id
-                    },
-                    dataType: 'json',
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-                            layer.close(index);
-                            layer.msg('删除成功');
-                            vm.getMyUploadList();
-                        } else {
-                            layer.alert(r.msg);
-                        }
+        tankXml:function (d) {
+            vm.xml = d;
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#xmlDiv'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['530px', '430px'],
+                shadeClose: true,
+                btn: [],
+                btn1: function (index) {
+
+                },
+                btn2: function (index) {
 
 
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                });
-            })
-        },
-        // 重新上传
-        reUpFunc:function (id) {
-            layer.confirm('确定重新上传吗？',function (index) {
-                console.log(id);
-                $.ajax({
-                    url: '../../product/upload/againUploadByButton',
-                    type: 'post',
-                    data: {
-                        uploadId:id
-                    },
-                    dataType: 'json',
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-
-                            layer.close(index);
-                            layer.msg('重新上传成功');
-                        } else {
-                            layer.alert(r.msg);
-                        }
-
-
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                });
-            })
-        },
-        // xml列表
-        xmlFunc:function (id) {
-            window.location.href="xmlListUP.html?id="+id;
+                }
+            });
         }
+
     },
     created:function () {
+        var url = decodeURI(window.location.href);
+        var argsIndex = url.split("?id=");
+        var id = argsIndex[1];
+        // console.log(id)
+        this.id = parseInt(id);
 
         this.getMyUploadList();
-        this.laypage();
+        // this.laypage();
     }
 })
