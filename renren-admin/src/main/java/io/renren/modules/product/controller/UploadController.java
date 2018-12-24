@@ -355,7 +355,7 @@ public class UploadController extends AbstractController {
     /**
      *
      */
-    @RequestMapping("/saveTimingUpload")
+    @RequestMapping("/againUpload")
     public R againUpload(Long uploadId){
         // 查找基本信息
         UploadEntity uploadEntity = new UploadEntity();
