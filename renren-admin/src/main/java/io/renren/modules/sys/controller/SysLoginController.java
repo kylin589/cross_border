@@ -115,8 +115,9 @@ public class SysLoginController extends AbstractController{
 	class CalculationThread extends Thread   {
 		@Override
 		public void run() {
+
 			//总部查询MEN码
-			if(getDeptId() == 1L && getUser().getRoleIdList().contains(1)){
+			if(getUserId() == 1L){
 				int count = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>().eq("state",0));
 				if(count<1000){
 					NoticeEntity notice = new NoticeEntity();

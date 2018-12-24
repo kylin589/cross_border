@@ -366,7 +366,7 @@ public class OrderController extends AbstractController{
      * 手动更新订单状态
      * orderVM: orderId,
      */
-    @RequestMapping("/synchronization")
+    @RequestMapping("/manualUpdateOrder")
     public R manualUpdateOrder(@RequestBody OrderVM orderVM){
         Long orderId = orderVM.getOrderId();
         // TODO: 2018/12/25 amazon状态更新
