@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.ProductsService;
+import io.renren.modules.product.vm.OrderModel;
 import io.renren.modules.sys.dto.FranchiseeStatisticsDto;
 import io.renren.modules.sys.dto.PlatformStatisticsDto;
 import io.renren.modules.sys.dto.UserStatisticsDto;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -357,39 +359,65 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      * 获取（更新）订单
      * 是否区分不同国家还是区分不同区域
      * 有没有国家的字段、币种字段
-     * @param objList
+     * @param orderModelList
      */
     @Override
-    public void updateOrder(SysUserEntity user, List<OrderEntity> objList) {
-        for(OrderEntity i : objList ){
+    public void updateOrder(SysUserEntity user, List<OrderModel> orderModelList) {
+        for(OrderModel orderModel : orderModelList ){
             //获取亚马逊订单id
-            String amazonOrderId = i.getAmazonOrderId();
+            String amazonOrderId = orderModel.getAmazonOrderId();
             //判断该订单是否存在
             OrderEntity orderEntity = this.selectOne(new EntityWrapper<OrderEntity>().eq("amazon_order_id",amazonOrderId));
             if(orderEntity == null){
                 //新增订单
-                // TODO: 2018/12/21 设置基本属性*
-                orderEntity.setUserId(user.getUserId());
-                orderEntity.setDeptId(user.getDeptId());
-                orderEntity.setUpdateTime(new Date());
-                //设置汇率*
-                BigDecimal rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("","countryCode")).getRate();
-                orderEntity.setMomentRate(rate);
-                //获取订单金额（外币）*
-                BigDecimal orderMoney = orderEntity.getOrderMoney();
-                //获取Amazon佣金（外币）
-                BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15));
-                //到账金额
-                BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
-                //TODO: 2018/12/21设置金额*(同时设置人民币)
-                //设置订单金额（人民币：外币*当时汇率）
+                String modelStatus = orderModel.getOrderStatus();
+                if(!"Canceled".equals(modelStatus)){
+                    // TODO: 2018/12/21 设置基本属性*
+                    orderEntity.setAmazonOrderId(orderModel.getAmazonOrderId());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+                    try {
+                        orderEntity.setBuyDate(sdf.parse(orderModel.getBuyDate()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)){
+                        //未付款
+                        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING);
+                        orderEntity.setOrderState("待付款");
+                    }else if("Unshipped".equals(modelStatus) || "PartiallyShipped".equals(modelStatus)){
+                        //已付款
+                        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED);
+                        orderEntity.setOrderState("已付款");
+                    }
+                    if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
+                        orderEntity.setCountryCode(orderModel.getProductShipAddressEntity().getShipCountry());
+                    }
+//                    orderEntity.setShopName();
+                    orderEntity.setProductSku(orderModel.getProductSku());
+                    orderEntity.setProductAsin(orderModel.getProductAsin());
+                    productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));
+                    orderEntity.setUserId(user.getUserId());
+                    orderEntity.setDeptId(user.getDeptId());
+                    orderEntity.setUpdateTime(new Date());
+                    //设置汇率*
+                    BigDecimal rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("","countryCode")).getRate();
+                    orderEntity.setMomentRate(rate);
+                    //获取订单金额（外币）*
+                    BigDecimal orderMoney = orderEntity.getOrderMoney();
+                    //获取Amazon佣金（外币）
+                    BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15));
+                    //到账金额
+                    BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
+                    //TODO: 2018/12/21设置金额*(同时设置人民币)
+                    //设置订单金额（人民币：外币*当时汇率）
 //                orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
-                //设置Amazon佣金（人民币：外币*当时汇率）
+                    //设置Amazon佣金（人民币：外币*当时汇率）
 //                orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
-                //设置到账金额（人民币）
+                    //设置到账金额（人民币）
 //                BigDecimal accountMoney = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
 //                orderDTO.setAccountMoney(accountMoney);
-                // TODO: 2018/12/21 新增收货人信息*
+                    // TODO: 2018/12/21 新增收货人信息*
+                }
             }else{
                 //更新订单
                 if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals("")){//获取状态判断是否为取消*
@@ -634,5 +662,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         platformStatisticsDto.setAllProfit(allProfit);
         return platformStatisticsDto;
     }
+
+/*    public static void main(String[] args) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String d = "2018-12-14T15:13:03.290Z";
+        String[] b = d.split(".");
+        System.out.println(b.length);
+//        Date a = sdf.parse(b);
+//        System.out.println(a);
+    }*/
 }
 

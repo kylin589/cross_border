@@ -40,15 +40,25 @@ public class UKExcel {
      */
     @Test
     public void poiExcel() throws Exception {
-        File file = new File("C:\\Users\\asus\\Desktop\\法国商品分类FR");
+        //读取文件夹
+        File file = new File("C:\\Users\\asus\\Desktop\\墨西哥商品分类MX");
+        //读取所有的文件
         File[] files = file.listFiles();
         //System.out.println(files.length);
+        //遍历每一个文件夹
         for (int i = 0; i <files.length ; i++) {
-        this.insertCategory(file);
+        this.insertCategory(files[i]);
          }
     }
 
-    //根据分类名称获取IdString nodeIdUk,.eq("node_id_uk",nodeIdUk)
+
+    /**
+     * @methodname: queryByNameId 查询数据库是否有这条数据
+     * @param: [categoryName, countryCode, categoryQ] 分类名，国家代码，分类截取的前缀
+     * @return: java.lang.Long  返回id
+     * @auther: jhy
+     * @date: 2018/12/24 10:18
+     */
     private Long queryByNameId(String categoryName,String countryCode,String categoryQ) {
         AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("category_name",categoryName).eq("country_code",countryCode).eq("category_q",categoryQ));
         if (amazonCategoryEntity == null) {
@@ -97,6 +107,7 @@ public class UKExcel {
     private String DetoZh(String name) {
         Querier<AbstractTranslator> querierTrans = new Querier<>(); // 获取查询器
         querierTrans.setParams(LANG.DE, LANG.ZH, name);// 设置参数：传过来的参数
+
         //querierTrans.attach(new GoogleTranslator());// 向查询器中添加 Google 翻译器
         querierTrans.attach(new BaiduTranslator());// 向查询器中添加 Baidu 翻译器
         // 执行查询并接收查询结果
@@ -127,7 +138,7 @@ public class UKExcel {
         querierTrans.setParams(LANG.SPA, LANG.ZH, name);// 设置参数：传过来的参数
         //querierTrans.attach(new GoogleTranslator());// 向查询器中添加 Google 翻译器
         querierTrans.attach(new BaiduTranslator());// 向查询器中添加 Baidu 翻译器
-        // 执行查询并接收查询结果
+        //        // 执行查询并接收查询结果
         List<String> nameList = querierTrans.execute();//翻译
         if (nameList.get(0) != "" && nameList.get(0) != null) {
             return nameList.get(0);
@@ -152,9 +163,17 @@ public class UKExcel {
 
 
 
-    //excel的分类方法插入到数据库
+    /**
+     * @methodname: insertCategory POI解析excel，插入到数据库
+     * @param: [fileName] 文件名
+     * @return: void
+     * @auther: jhy
+     * @date: 2018/12/24 10:07
+     */
     public  void  insertCategory(File fileName) throws Exception {
+
         Workbook workbook=null;
+        //以.进行分割，获取后缀名进行判断
         String[] split = fileName.getName().split("\\.");
         if (split[split.length-1].equals("xlsx")){
             //创建Excel文档对象XSSFWorkbook
@@ -167,7 +186,7 @@ public class UKExcel {
         Sheet sheet = workbook.getSheet("sheet");
         //遍历标签页
         for (Row row : sheet) {
-            //获取单元格，如果第一行直接跳过 就是总的
+            //获取单元格，如果第一行直接跳过
             if (row.getRowNum() == 0) {
                 continue;
             }
@@ -176,6 +195,7 @@ public class UKExcel {
             String[] categoryNameArr = categoryNameString.split("/");
             //定义父id为零
             Long parentId = 0L;
+            //遍历拆分后的数据
             for (int i = 0; i < categoryNameArr.length; i++) {
                 //定义亚马逊分类实体
                 AmazonCategoryEntity amazonCategoryEntity = new AmazonCategoryEntity();
@@ -184,10 +204,10 @@ public class UKExcel {
                 if (categoryNameQArr.length !=0){
                     amazonCategoryEntity.setCategoryQ(categoryNameQArr[0]);
                     //根据分类名称查找判断数据库中是否有此条数据
-                    id = this.queryByNameId(categoryNameArr[i],"FR",categoryNameQArr[0]);
+                    id = this.queryByNameId(categoryNameArr[i],"MX",categoryNameQArr[0]);
                 }else {
                     //根据分类名称查找判断数据库中是否有此条数据
-                    id = this.queryByNameId(categoryNameArr[i],"FR","");
+                    id = this.queryByNameId(categoryNameArr[i],"MX","");
                 }
 
                 if (id == 0L) {
@@ -195,22 +215,26 @@ public class UKExcel {
                     if (i == 0) {
                         parentId = 0L;
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setCountryCode("FR");//英国
-                        String categoryNameChina = this.EntoZh(categoryNameArr[i]);
+                        //设置国家代码
+                        amazonCategoryEntity.setCountryCode("MX");
+                        String categoryNameChina = this.EstoZh(categoryNameArr[i]);
                         String categoryNameChinaReplace = categoryNameChina.replace("\"", "").replace("\"", "");//去掉双引号
                         amazonCategoryEntity.setDisplayName(categoryNameChinaReplace + "/" + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                         row.getCell(0).setCellType(CellType.STRING);
-                        amazonCategoryEntity.setNodeIdFr(row.getCell(0).getStringCellValue());
+                        //设置国家节点id
+                        amazonCategoryEntity.setNodeIdMx(row.getCell(0).getStringCellValue());
                     } else {
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setCountryCode("FR");//英国
-                        String categoryNameChina = this.EntoZh(categoryNameArr[i]);
+                        //设置国家代码
+                        amazonCategoryEntity.setCountryCode("MX");
+                        String categoryNameChina = this.EstoZh(categoryNameArr[i]);
                         String categoryNameChinaReplace = categoryNameChina.replace("\"", "").replace("\"", "");//去掉双引号
                         amazonCategoryEntity.setDisplayName(categoryNameChinaReplace + "/" + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                         row.getCell(0).setCellType(CellType.STRING);
-                        amazonCategoryEntity.setNodeIdFr(row.getCell(0).getStringCellValue());
+                        //设置国家节点id
+                        amazonCategoryEntity.setNodeIdMx(row.getCell(0).getStringCellValue());
                     }
                     parentId = this.insert(amazonCategoryEntity);
                 } else {

@@ -1,7 +1,12 @@
 package com.swjtu.http;
 
 import com.swjtu.lang.LANG;
+import com.swjtu.util.Util;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.NoHttpResponseException;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -12,10 +17,12 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +38,9 @@ public abstract class AbstractHttpAttribute {
     public Map<String, String> formData;
     public Map<LANG, String> langMap;
     public CloseableHttpClient httpClient;
-    private static PoolingHttpClientConnectionManager cm = null;
+    private static PoolingHttpClientConnectionManager pccm = null;
+    private static RequestConfig params = null;
+    private static HttpRequestRetryHandler retryHandler = null;
     /**
      * static initializer:构建httpclient
      * @param:
@@ -40,20 +49,32 @@ public abstract class AbstractHttpAttribute {
      * @date: 2018/11/6 16:56
      */
     static {
+        Map<String, String> map = Util.getProxies();
+        // 初始化线程池
+         params = RequestConfig.custom().setConnectTimeout(3000).setConnectionRequestTimeout(1000).setSocketTimeout(4000)
+            .setProxy(new HttpHost(map.get("ip"), Integer.parseInt(map.get("port")))).setExpectContinueEnabled(true).build();
 
-        LayeredConnectionSocketFactory sslsf = null;
-        try {
-            sslsf = new SSLConnectionSocketFactory(SSLContext.getDefault());
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println(e);
-        }
-        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("https", sslsf)
-                .register("http", new PlainConnectionSocketFactory())
-                .build();
-        cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        cm.setMaxTotal(200);
-        cm.setDefaultMaxPerRoute(20);
+        PoolingHttpClientConnectionManager pccm = new PoolingHttpClientConnectionManager();
+        pccm.setMaxTotal(300); // 连接池最大并发连接数
+        pccm.setDefaultMaxPerRoute(50); // 单路由最大并发数
+
+        retryHandler = new HttpRequestRetryHandler() {
+            @Override
+            public boolean retryRequest(IOException exception , int executionCount , HttpContext context) {
+                // 重试1次,从1开始
+                if (executionCount > 0) {
+
+                    return false;
+                }
+                if (exception instanceof NoHttpResponseException) {
+                    return true;
+                }
+                else if (exception instanceof SocketException) {
+                    return true;
+                }
+                return false;
+            }
+        };
     }
 
     /**
@@ -64,8 +85,7 @@ public abstract class AbstractHttpAttribute {
      * @date: 2018/11/6 16:57
      */
     public static CloseableHttpClient getHttpClient() {
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setConnectionManager(cm)
+        CloseableHttpClient httpClient =  HttpClients.custom().setConnectionManager(pccm).setDefaultRequestConfig(params).setRetryHandler(retryHandler)
                 .build();
         return httpClient;
     }

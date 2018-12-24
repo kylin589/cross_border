@@ -41,7 +41,7 @@ public class AmazonGrantEntity implements Serializable {
 	/**
 	 * 开户区域(0：北美、1：欧洲、2：日本、3：澳大利亚)
 	 */
-	private Integer area;
+	private Integer region;
 	/**
 	 * 卖家编号
 	 */
@@ -50,6 +50,7 @@ public class AmazonGrantEntity implements Serializable {
 	 * 授权令牌
 	 */
 	private String grantToken;
+
 	private Date createTime;
 	/**
 	 * 设置：授权id
@@ -99,18 +100,15 @@ public class AmazonGrantEntity implements Serializable {
 	public String getAmazonAccount() {
 		return amazonAccount;
 	}
-	/**
-	 * 设置：开户区域(0：北美、1：欧洲、2：日本、3：澳大利亚)
-	 */
-	public void setArea(Integer area) {
-		this.area = area;
+
+	public Integer getRegion() {
+		return region;
 	}
-	/**
-	 * 获取：开户区域(0：北美、1：欧洲、2：日本、3：澳大利亚)
-	 */
-	public Integer getArea() {
-		return area;
+
+	public void setRegion(Integer region) {
+		this.region = region;
 	}
+
 	/**
 	 * 设置：卖家编号
 	 */

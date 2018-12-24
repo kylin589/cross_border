@@ -1,8 +1,11 @@
 package io.renren.modules.product.vm;
 
+import io.renren.modules.product.controller.TemplateCategoryFieldsController;
+import io.renren.modules.product.entity.TemplateCategoryFieldsEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Auther: wdh
@@ -32,7 +35,12 @@ public class AddUploadVM {
     private String amazonTemplate;
     //是否有分类属性（默认0：没有  1：有）
     private Integer isAttribute;
-    // TODO: 2018/11/27 分类属性
+    //分类属性
+    private List<TemplateCategoryFieldsEntity> fieldsEntityList;
+    // 操作类型（默认0：上传 1：修改）
+    private int operateType;
+    //上传id,只有在修改时候需要
+    private Long uploadId;
     //接受前台传过来的时间；
     private String time;
 
@@ -161,6 +169,14 @@ public class AddUploadVM {
 
     public void setIsAttribute(Integer isAttribute) {
         this.isAttribute = isAttribute;
+    }
+
+    public List<TemplateCategoryFieldsEntity> getFieldsEntityList() {
+        return fieldsEntityList;
+    }
+
+    public void setFieldsEntityList(List<TemplateCategoryFieldsEntity> fieldsEntityList) {
+        this.fieldsEntityList = fieldsEntityList;
     }
 
     @Override

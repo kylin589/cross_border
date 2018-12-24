@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.FieldMiddleDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.FieldMiddleEntity" id="fieldMiddleMap">
+        <result property="middleId" column="middle_id"/>
+        <result property="uploadId" column="upload_id"/>
+        <result property="fieldId" column="field_id"/>
+        <result property="fieldName" column="field_name"/>
+        <result property="fieldDisplayName" column="field_display_name"/>
+        <result property="value" column="value"/>
+    </resultMap>
+
+
+</mapper>

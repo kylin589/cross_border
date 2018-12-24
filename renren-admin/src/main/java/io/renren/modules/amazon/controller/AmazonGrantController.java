@@ -26,10 +26,9 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 
 
-
 /**
- * 
  * Amazon授权
+ *
  * @author wdh
  * @email 594340717@qq.com
  * @date 2018-11-27 10:43:39
@@ -43,12 +42,13 @@ public class AmazonGrantController extends AbstractController {
     private AmazonGrantShopService amazonGrantShopService;
     @Autowired
     private AmazonMarketplaceService amazonMarketplaceService;
+
     /**
      * 列表
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("amazon:amazongrant:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = amazonGrantService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -60,7 +60,7 @@ public class AmazonGrantController extends AbstractController {
      */
     @RequestMapping("/info/{grantId}")
 //    @RequiresPermissions("amazon:amazongrant:info")
-    public R info(@PathVariable("grantId") Long grantId){
+    public R info(@PathVariable("grantId") Long grantId) {
         AmazonGrantEntity amazonGrant = amazonGrantService.selectById(grantId);
 
         return R.ok().put("amazonGrant", amazonGrant);
@@ -71,10 +71,10 @@ public class AmazonGrantController extends AbstractController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("amazon:amazongrant:update")
-    public R update(@RequestBody AmazonGrantEntity amazonGrant){
+    public R update(@RequestBody AmazonGrantEntity amazonGrant) {
         ValidatorUtils.validateEntity(amazonGrant);
         amazonGrantService.updateAllColumnById(amazonGrant);//全部更新
-        
+
         return R.ok();
     }
 
@@ -83,11 +83,11 @@ public class AmazonGrantController extends AbstractController {
      */
     @RequestMapping("/delete")
 //    @RequiresPermissions("amazon:amazongrant:delete")
-    public R delete(@RequestBody Long[] grantIds){
+    public R delete(@RequestBody Long[] grantIds) {
         List<Long> idList = Arrays.asList(grantIds);
         amazonGrantService.deleteBatchIds(idList);
-        for(Long id : idList){
-            amazonGrantShopService.delete(new EntityWrapper<AmazonGrantShopEntity>().eq("grant_id",id));
+        for (Long id : idList) {
+            amazonGrantShopService.delete(new EntityWrapper<AmazonGrantShopEntity>().eq("grant_id", id));
         }
         return R.ok();
     }
@@ -97,8 +97,8 @@ public class AmazonGrantController extends AbstractController {
      */
     @RequestMapping("/addAmazonGrant")
 //    @RequiresPermissions("amazon:amazongrant:save")
-    public R addAmazonGrant(@RequestBody AmazonGrantEntity amazonGrant){
-        List<AmazonGrantShopEntity> shopList= new ArrayList<AmazonGrantShopEntity>();
+    public R addAmazonGrant(@RequestBody AmazonGrantEntity amazonGrant) {
+        List<AmazonGrantShopEntity> shopList = new ArrayList<AmazonGrantShopEntity>();
         String shopName = amazonGrant.getShopName();
         String amazonAccount = amazonGrant.getAmazonAccount();
         amazonGrant.setUserId(getUserId());
@@ -107,7 +107,7 @@ public class AmazonGrantController extends AbstractController {
         //添加到Amazon授权表
         amazonGrantService.insert(amazonGrant);
         //生成店铺
-        if(amazonGrant.getArea() == 0){
+        if (amazonGrant.getRegion() == 0) {
             //北美 (墨西哥/加拿大/美国)
             AmazonGrantShopEntity one = new AmazonGrantShopEntity();
             one.setCountryCode(COUNTY.US.toString());
@@ -124,7 +124,7 @@ public class AmazonGrantController extends AbstractController {
             three.setShopName(shopName + "(墨西哥)");
             three.setShopAccount(amazonAccount);
             shopList.add(three);
-        }else if(amazonGrant.getArea() == 1){
+        } else if (amazonGrant.getRegion() == 1) {
             //欧洲 (意大利/法国/西班牙/英国/德国)
             AmazonGrantShopEntity one = new AmazonGrantShopEntity();
             one.setCountryCode(COUNTY.IT.toString());
@@ -151,14 +151,14 @@ public class AmazonGrantController extends AbstractController {
             five.setShopName(shopName + "(德国)");
             five.setShopAccount(amazonAccount);
             shopList.add(five);
-        }else if(amazonGrant.getArea() == 2){
+        } else if (amazonGrant.getRegion() == 2) {
             //日本
             AmazonGrantShopEntity one = new AmazonGrantShopEntity();
             one.setCountryCode(COUNTY.JP.toString());
             one.setShopName(shopName + "(日本)");
             one.setShopAccount(amazonAccount);
             shopList.add(one);
-        }else if(amazonGrant.getArea() == 3){
+        } else if (amazonGrant.getRegion() == 3) {
             //澳大利亚
             AmazonGrantShopEntity one = new AmazonGrantShopEntity();
             one.setCountryCode(COUNTY.AU.toString());
@@ -173,16 +173,16 @@ public class AmazonGrantController extends AbstractController {
         return R.ok();
     }
 
-    private void relationMwsPoint(Long grantId, List<AmazonGrantShopEntity> shopList){
-        for(AmazonGrantShopEntity amazonGrantShop : shopList){
+    private void relationMwsPoint(Long grantId, List<AmazonGrantShopEntity> shopList) {
+        for (AmazonGrantShopEntity amazonGrantShop : shopList) {
             amazonGrantShop.setGrantId(grantId);
             amazonGrantShop.setUserId(getUserId());
             amazonGrantShop.setDeptId(getDeptId());
             AmazonMarketplaceEntity amazonMarketplace = amazonMarketplaceService.selectOne(
                     new EntityWrapper<AmazonMarketplaceEntity>()
-                            .eq("country_code",amazonGrantShop.getCountryCode())
-                            .eq("is_deleted",0));
-            if (amazonMarketplace != null){
+                            .eq("country_code", amazonGrantShop.getCountryCode())
+                            .eq("is_deleted", 0));
+            if (amazonMarketplace != null) {
                 amazonGrantShop.setAmazonSite(amazonMarketplace.getAmazonSite());
                 amazonGrantShop.setGrantCounty(amazonMarketplace.getCountry());
                 amazonGrantShop.setMarketplaceId(amazonMarketplace.getMarketplaceId());
@@ -197,16 +197,16 @@ public class AmazonGrantController extends AbstractController {
      */
     @RequestMapping("/countryList")
 //    @RequiresPermissions("amazon:amazongrant:save")
-    public R addAmazonGrant(@RequestParam Long grantId){
+    public R addAmazonGrant(@RequestParam Long grantId) {
         List<CountryListVM> countryList = new ArrayList<CountryListVM>();
-        List<AmazonGrantShopEntity> shopList = amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("grant_id",grantId));
-        for(AmazonGrantShopEntity shop : shopList){
+        List<AmazonGrantShopEntity> shopList = amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("grant_id", grantId));
+        for (AmazonGrantShopEntity shop : shopList) {
             CountryListVM vm = new CountryListVM();
             vm.setShopName(shop.getShopName());
             vm.setCountry(shop.getGrantCounty());
             vm.setAmazonSite(shop.getAmazonSite());
             countryList.add(vm);
         }
-        return R.ok().put("countryList",countryList);
+        return R.ok().put("countryList", countryList);
     }
 }
