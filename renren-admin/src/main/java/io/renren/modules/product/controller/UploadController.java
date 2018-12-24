@@ -197,15 +197,29 @@ public class UploadController extends AbstractController {
 
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(uploadId);
-        UploadEntity uploadEntity2 = uploadService.selectById(uploadEntity);
+        uploadEntity = uploadService.selectById(uploadEntity);
 
         // 字段和值
         Map<String, Object> fieldMap = new HashMap<>();
         fieldMap.put("upload_id", uploadId);
         List<FieldMiddleEntity> middleEntitys = fieldMiddleService.selectByMap(fieldMap);
 
-        detailsDto.setUploadEntity(uploadEntity2);
+        // 获取所有分类
+        String allCategories = "";
+        Long id = uploadEntity.getAmazonCategoryId();
+        String[] allId =  amazonCategoryService.queryByChindIdParentId(id).split(",");
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < allId.length; i++) {
+            AmazonCategoryEntity amazonCategoryEntity = new AmazonCategoryEntity();
+            amazonCategoryEntity.setAmazonCategoryId(Long.valueOf(allId[i]));
+            amazonCategoryEntity = amazonCategoryService.selectById(amazonCategoryEntity);
+            list.add(amazonCategoryEntity.getDisplayName());
+        }
+        allCategories = StringUtils.join(list,"/");
+
+        detailsDto.setUploadEntity(uploadEntity);
         detailsDto.setMiddleEntitys(middleEntitys);
+        detailsDto.setAllCategories(allCategories);
         return R.ok().put("data", detailsDto);
     }
 
@@ -478,9 +492,13 @@ public class UploadController extends AbstractController {
         map.put("upload_id", uploadId);
         resultXmlService.deleteByMap(map);
         //获取需要上传的商品id
-        List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
-        uploadEntity.setUploadProductsList(productsService.selectBatchIds(ids));
-        submitFeedService.submitFeed(uploadEntity);
+        if (uploadEntity.getUploadProductsIds() != null) {
+            List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
+            uploadEntity.setUploadProductsList(productsService.selectBatchIds(ids));
+            submitFeedService.submitFeed(uploadEntity);
+        } else {
+
+        }
         return R.ok();
     }
 
