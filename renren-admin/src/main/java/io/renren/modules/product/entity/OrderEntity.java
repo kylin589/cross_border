@@ -62,7 +62,7 @@ public class OrderEntity implements Serializable {
 	/**
 	 * 关联产品id
 	 */
-	private String productId;
+	private Long productId;
 	/**
 	 * 产品sku
 	 */
@@ -240,11 +240,11 @@ public class OrderEntity implements Serializable {
 		return shopName;
 	}
 
-	public String getProductId() {
+	public Long getProductId() {
 		return productId;
 	}
 
-	public void setProductId(String productId) {
+	public void setProductId(Long productId) {
 		this.productId = productId;
 	}
 

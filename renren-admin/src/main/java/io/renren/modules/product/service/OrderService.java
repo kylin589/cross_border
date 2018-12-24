@@ -52,10 +52,6 @@ public interface OrderService extends IService<OrderEntity> {
      */
     boolean updateAbnormalState(Long[] orderIds, String abnormalStatus, String abnormalState);
     /**
-     * 取消订单
-     */
-    void cancleOrder(String amazonOrderId);
-    /**
      * 更新订单列表
      */
     void updateOrder(SysUserEntity user, List<OrderModel> orderModelList);

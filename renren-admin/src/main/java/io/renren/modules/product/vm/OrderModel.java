@@ -2,15 +2,17 @@ package io.renren.modules.product.vm;
 
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 /**
  * 订单实体类
  */
 public class OrderModel {
-    private  Long order_id;//主键id
 
     private  String amazonOrderId;//亚马孙订单id
 
-    private  String buyDate;//购买日期
+    private Date buyDate;//购买日期
 
     private  String orderStatus;//订单状态
 
@@ -18,19 +20,15 @@ public class OrderModel {
 
     private  String productAsin;//产品asin
 
-    private String orderMoney;//订单金额
+    private BigDecimal orderMoney;//订单金额
 
     private int orderNumber;//订单总量
+    //店铺名称
+    private String shopName;
+    //币种代码
+    private String currencyCode;
 
-    private io.renren.modules.order.entity.ProductShipAddressEntity ProductShipAddressEntity;//地址信息
-
-    public Long getOrder_id() {
-        return order_id;
-    }
-
-    public void setOrder_id(Long order_id) {
-        this.order_id = order_id;
-    }
+    private ProductShipAddressEntity productShipAddressEntity;//地址信息
 
     public String getAmazonOrderId() {
         return amazonOrderId;
@@ -40,13 +38,6 @@ public class OrderModel {
         this.amazonOrderId = amazonOrderId;
     }
 
-    public String getBuyDate() {
-        return buyDate;
-    }
-
-    public void setBuyDate(String buyDate) {
-        this.buyDate = buyDate;
-    }
 
     public String getOrderStatus() {
         return orderStatus;
@@ -72,20 +63,12 @@ public class OrderModel {
         this.productAsin = productAsin;
     }
 
-    public String getOrderMoney() {
-        return orderMoney;
-    }
-
-    public void setOrderMoney(String orderMoney) {
-        this.orderMoney = orderMoney;
-    }
-
     public ProductShipAddressEntity getProductShipAddressEntity() {
-        return ProductShipAddressEntity;
+        return productShipAddressEntity;
     }
 
     public void setProductShipAddressEntity(ProductShipAddressEntity productShipAddressEntity) {
-        ProductShipAddressEntity = productShipAddressEntity;
+        this.productShipAddressEntity = productShipAddressEntity;
     }
 
     public int getOrderNumber() {
@@ -94,5 +77,37 @@ public class OrderModel {
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    public Date getBuyDate() {
+        return buyDate;
+    }
+
+    public void setBuyDate(Date buyDate) {
+        this.buyDate = buyDate;
+    }
+
+    public BigDecimal getOrderMoney() {
+        return orderMoney;
+    }
+
+    public void setOrderMoney(BigDecimal orderMoney) {
+        this.orderMoney = orderMoney;
     }
 }
