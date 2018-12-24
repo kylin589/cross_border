@@ -17,7 +17,6 @@ import java.util.Date;
 @TableName("product_amazon_category")
 public class AmazonCategoryEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
-
 	/**
 	 * 亚马逊分类id
 	 */

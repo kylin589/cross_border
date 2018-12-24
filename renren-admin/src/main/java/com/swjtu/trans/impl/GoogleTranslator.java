@@ -1,30 +1,40 @@
 package com.swjtu.trans.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swjtu.lang.LANG;
 import com.swjtu.trans.AbstractTranslator;
+import com.swjtu.util.Util;
+import io.renren.modules.sys.entity.AgentIpEntity;
+import io.renren.modules.sys.service.AgentIpService;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.net.ssl.SSLContext;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
+@RestController
 public final class GoogleTranslator extends AbstractTranslator {
-    private static final String url = "https://translate.google.cn/translate_a/single";
 
+    private static final String url = "https://translate.google.cn/translate_a/single";
     public GoogleTranslator(){
         super(url);
     }
-
 
     @Override
     public void setLangSupport() {
@@ -74,6 +84,16 @@ public final class GoogleTranslator extends AbstractTranslator {
         }
         HttpUriRequest request = new HttpGet(uri.toString());
         CloseableHttpClient httpClient = getHttpClient();
+        /*RequestConfig defaultRequestConfig = RequestConfig.custom()
+                .setSocketTimeout(3000)
+                .setConnectTimeout(5000)
+                .setConnectionRequestTimeout(5000)
+                .build();
+
+        RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig)
+                .setProxy(new HttpHost(Util.getProxies().get("ip"), Integer.parseInt(Util.getProxies().get("port"))))
+                .build();
+        request.setConfig(requestConfig);*/
         CloseableHttpResponse response = httpClient.execute(request);
         HttpEntity entity = response.getEntity();
 
@@ -84,7 +104,6 @@ public final class GoogleTranslator extends AbstractTranslator {
         response.close();
         return result;
     }
-
     @Override
     public String parses(String text) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -109,6 +128,7 @@ public final class GoogleTranslator extends AbstractTranslator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("token:" + text);
         return tk;
     }
 }
