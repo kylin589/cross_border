@@ -8,6 +8,8 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.product.dao.ProductsDao;
 import io.renren.modules.product.dto.UploadProductDTO;
+import io.renren.modules.product.entity.FreightCostEntity;
+import io.renren.modules.product.entity.IntroductionEntity;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.VariantsInfoEntity;
 import io.renren.modules.product.service.ImageAddressService;
@@ -458,13 +460,68 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      * @date 2018-11-07 14:54:47
      */
     @Override
-    public Long getNewProductId(Long userId) {
-        ProductsEntity product = new ProductsEntity();
-        product.setCreateTime(new Date());
-        product.setCreateUserId(userId);
-        product.setIsDeleted(0);
-        this.insert(product);
-        return product.getProductId();
+    public ProductsEntity getNewProductId(Long userId) {
+        ProductsEntity productsEntity = new ProductsEntity();
+        //美国运费
+        FreightCostEntity americanFC = new FreightCostEntity();
+        productsEntity.setAmericanFC(americanFC);
+        // 加拿大运费
+        FreightCostEntity canadaFC = new FreightCostEntity();
+        productsEntity.setCanadaFC(canadaFC);
+        // 墨西哥运费
+        FreightCostEntity mexicoFC = new FreightCostEntity();
+        productsEntity.setMexicoFC(mexicoFC);
+        //英国运费
+        FreightCostEntity britainFC = new FreightCostEntity();
+        productsEntity.setBritainFC(britainFC);
+        // 法国运费
+        FreightCostEntity franceFC = new FreightCostEntity();
+        productsEntity.setFranceFC(franceFC);
+        // 德国运费
+        FreightCostEntity germanyFC = new FreightCostEntity();
+        productsEntity.setGermanyFC(germanyFC);
+        //意大利运费
+        FreightCostEntity italyFC = new FreightCostEntity();
+        productsEntity.setItalyFC(italyFC);
+
+        //西班牙运费
+        FreightCostEntity spainFC = new FreightCostEntity();
+        productsEntity.setSpainFC(spainFC);
+
+        // 日本运费
+        FreightCostEntity japanFC = new FreightCostEntity();
+        productsEntity.setJapanFC(japanFC);
+
+        //澳大利亚运费
+        FreightCostEntity australiaFC = new FreightCostEntity();
+        productsEntity.setAustraliaFC(australiaFC);
+        //各个国家的介绍
+        //中文介绍
+        IntroductionEntity chinesePRE = new IntroductionEntity();
+        productsEntity.setChinesePRE(chinesePRE);
+        //英文介绍
+        IntroductionEntity britainPRE = new IntroductionEntity();
+        productsEntity.setBritainPRE(britainPRE);
+        //法语介绍
+        IntroductionEntity francePRE = new IntroductionEntity();
+        productsEntity.setFrancePRE(francePRE);
+        //德语介绍
+        IntroductionEntity germanyPRE = new IntroductionEntity();
+        productsEntity.setGermanyPRE(germanyPRE);
+        //意大利语介绍
+        IntroductionEntity italyPRE = new IntroductionEntity();
+        productsEntity.setItalyPRE(italyPRE);
+        //西班牙语介绍
+        IntroductionEntity spainPRE = new IntroductionEntity();
+        productsEntity.setSpainPRE(spainPRE);
+        //日语介绍
+        IntroductionEntity japanPRE = new IntroductionEntity();
+        productsEntity.setJapanPRE(japanPRE);
+        productsEntity.setCreateTime(new Date());
+        productsEntity.setCreateUserId(userId);
+        productsEntity.setIsDeleted(0);
+        this.insert(productsEntity);
+        return productsEntity;
     }
 
 

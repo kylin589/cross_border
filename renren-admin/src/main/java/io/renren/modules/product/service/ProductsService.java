@@ -130,7 +130,7 @@ public interface ProductsService extends IService<ProductsEntity> {
      * @author zjr
      * @date 2018-11-07 14:54:47
      */
-    Long getNewProductId(Long userId);
+    ProductsEntity getNewProductId(Long userId);
 
     //公司审核状态每个分类总数
     int auditCountAll(String number, String del, Long deptId);
