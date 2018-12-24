@@ -87,6 +87,13 @@ var vm = new Vue({
             });
         },
 
+        // 选择店铺更改
+        chanDianFunc:function () {
+            vm.flModleList = [];
+            vm.flModleValue = '';
+            vm.modelAttr = [];
+
+        },
         // 定时上传
         timeUpFunc:function () {
             if (this.shopinfo.region!=undefined) {
@@ -187,6 +194,22 @@ var vm = new Vue({
                     }
                 }
                 console.log(vm.shopinfo);
+                var grantShop = '';
+                vm.marketplace.forEach(function (t) {
+                    if(t.grantShopId == vm.shopinfo){
+                        grantShop = t.shopName
+                    }
+                })
+
+                var templateDisplayName = '';
+                vm.flModleList.forEach(function (t) {
+                    if(t.templateId = vm.flModleValue){
+                        templateDisplayName = t.templateDisplayName;
+                    }
+                })
+                console.log(grantShop)
+                console.log(templateDisplayName)
+
                 // vm.grantShopId = vm.shopinfo.grantShopId;
                 // vm.grantShop = vm.shopinfo.shopName;
                 // console.log(vm.grantShopId);
@@ -200,12 +223,13 @@ var vm = new Vue({
                         'grantShopId': parseInt(vm.shopinfo),
                         // 'grantShopId': parseInt(vm.grantShopId),
                         'isAttribute': vm.isAttribute,
-                        'grantShop':'66',
+                        'grantShop':grantShop,
                         'amazonCategoryId': vm.amazonCategoryId,
                         'amazonCategory': vm.amazonCategory,
-                        'amazonTemplateId': vm.amazonTemplateId,
-                        'amazonTemplate': vm.amazonTemplate,
+                        'amazonTemplateId': vm.flModleValue,
+                        'amazonTemplate': templateDisplayName,
                         'operateItem': vm.operateItem,
+                        'fieldsEntityList':vm.modelAttr,
                     }),
                     contentType: "application/json",
                     // dataType: 'json',
@@ -440,10 +464,14 @@ var vm = new Vue({
         lishiSelFunc:function () {
             vm.amazonCategory = $(event.target).attr('data-val');
             vm.amazonCategoryId = $(event.target).attr('id');
+            vm.amazonAllCategory = $(event.target).attr('data-allV');
         },
         // 选择模版
         selFlFunc:function () {
             if (this.shopinfo!='') {
+                // vm.flModleList = [];
+                // vm.flModleValue = '';
+                // vm.modelAttr = [];
                 $.ajax({
                     url: '../../product/template/list',
                     type: 'get',
@@ -480,6 +508,7 @@ var vm = new Vue({
                     countryCode = t.countryCode
                 }
             })
+            console.log('countryCode' ,countryCode);
             $.ajax({
                 url: '../../product/template/getOptionalValues',
                 type: 'get',
@@ -505,9 +534,13 @@ var vm = new Vue({
             });
         },
         // 点击模版分类属性可选值选中
-        clickValActive:function () {
+        clickValActive:function (v) {
             // $(event.target).siblings().removeClass('active');
             // $(event.target).addClass('active');
+            // console.log(v);
+            // console.log($(event.target).attr('data-index'));
+            // console.log($(event.target).text());
+            v.value = $(event.target).attr('data-index');
 
         }
     },

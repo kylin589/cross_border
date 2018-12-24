@@ -17,7 +17,9 @@ var vm = new Vue({
     data:{
         id:'',
         // 上传产品详情
-        upProDetails:'',
+        upProDetails:{
+            uploadEntity:{}
+        },
         value9:null,
 
         uploadIds:[],
@@ -102,6 +104,39 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         vm.upProDetails = r.data;
+                        vm.shopinfo = r.data.uploadEntity.grantShopId;
+                        vm.amazonCategoryId = r.data.uploadEntity.amazonCategoryId;
+                        vm.amazonCategory = r.data.uploadEntity.amazonCategory;
+                        vm.flModleValue = r.data.uploadEntity.amazonTemplate;
+                        console.log('111');
+                        console.log(r.data.uploadEntity.operateItem.split(','));
+                        if(r.data.uploadEntity.operateItem.split(',').length == 5){
+                            vm.inputche = ['true','true','true','true','true','true'];
+                            // $('#operateItem input').prop('checked',true)
+                        }else {
+                            var arr = r.data.uploadEntity.operateItem.split(',');
+                            arr.forEach(function (t) {
+                                if(t == 0){
+                                    vm.inputche[1] = 'true';
+                                    console.log(t);
+                                    // $('#operateItem input').eq(1).prop('checked',true);
+                                    // console.log($('#operateItem input').eq(1));
+                                }else if(t == 1){
+                                    vm.inputche[2] = true;
+                                    // $('#operateItem input').eq(2).prop('checked',true);
+                                }else if(t == 2){
+                                    vm.inputche[3] = true;
+                                    // $('#operateItem input').eq(3).prop('checked',true);
+                                }else if(t == 3){
+                                    vm.inputche[4] = true;
+                                    // $('#operateItem input').eq(4).prop('checked',true);
+                                }else if(t == 4){
+                                    vm.inputche[5] = true;
+                                    // $('#operateItem input').eq(5).prop('checked',true);
+                                }
+                            })
+                        }
+                        console.log(vm.inputche);
                     } else {
                         layer.alert(r.message);
                     }
@@ -197,7 +232,7 @@ var vm = new Vue({
             layer.confirm('确定上传吗？',function (index) {
                 // console.log(vm.shopinfo);
                 // vm.uploadIds = vm.uploadIdsstr;
-                vm.uploadIds = vm.uploadIdsstr.split(',');
+                // vm.uploadIds = vm.uploadIdsstr.split(',');
                 // console.log(vm.uploadIds);
                 if (vm.inputche[0]==true){
 
@@ -215,21 +250,23 @@ var vm = new Vue({
                 // vm.grantShop = vm.shopinfo.shopName;
                 // console.log(vm.grantShopId);
                 $.ajax({
-                    url: '../../product/upload/addUpload',
+                    url: '../../product/upload/againUploadByForm',
                     type: 'post',
                     data: JSON.stringify({
-                        'startId': parseInt(vm.startId),
-                        'endId': parseInt(vm.endId),
-                        'uploadIds': vm.uploadIds,
-                        'grantShopId': parseInt(vm.shopinfo),
+                        'uploadId':vm.id,
+                        // 'startId': parseInt(vm.startId),
+                        // 'endId': parseInt(vm.endId),
+                        // 'uploadIds': vm.uploadIds,
+                        // 'grantShopId': parseInt(vm.shopinfo),
                         // 'grantShopId': parseInt(vm.grantShopId),
-                        'isAttribute': vm.isAttribute,
-                        'grantShop':'66',
+                        'isAttribute': '',
+                        // 'grantShop':'66',
                         'amazonCategoryId': vm.amazonCategoryId,
                         'amazonCategory': vm.amazonCategory,
                         'amazonTemplateId': vm.amazonTemplateId,
                         'amazonTemplate': vm.amazonTemplate,
                         'operateItem': vm.operateItem,
+                        'fieldsEntityList':vm.modelAttr
                     }),
                     contentType: "application/json",
                     // dataType: 'json',
@@ -280,7 +317,7 @@ var vm = new Vue({
         amazonOneCategory:function () {
             // console.log(this.shopinfo.region);
             if (vm.shopinfo!='') {
-                console.log(this.shopinfo.countryCode);
+                // console.log(this.shopinfo.countryCode);
                 var countryCode;
                 vm.marketplace.forEach(function (t) {
                     if(t.grantShopId == vm.shopinfo){
@@ -464,6 +501,7 @@ var vm = new Vue({
         lishiSelFunc:function () {
             vm.amazonCategory = $(event.target).attr('data-val');
             vm.amazonCategoryId = $(event.target).attr('id');
+            vm.amazonAllCategory = $(event.target).attr('data-allV');
         },
         // 选择模版
         selFlFunc:function () {
@@ -529,13 +567,15 @@ var vm = new Vue({
             });
         },
         // 点击模版分类属性可选值选中
-        clickValActive:function () {
+        clickValActive:function (v) {
             // $(event.target).siblings().removeClass('active');
             // $(event.target).addClass('active');
+            v.value = $(event.target).attr('data-index');
 
         }
     },
     created:function () {
+        // this.selFlFunc();
         var url = decodeURI(window.location.href);
         var argsIndex = url.split("?id=");
         var id = argsIndex[1];
@@ -544,6 +584,7 @@ var vm = new Vue({
         console.log(this.id);
         this.getDetails();
         this.getmarketplace();
+        // this.selFlFunc();
 
     }
 })

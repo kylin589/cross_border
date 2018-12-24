@@ -95,18 +95,17 @@ var vm = new Vue({
             layer.confirm('确定删除吗？',function (index) {
                 $.ajax({
                     url: '../../product/upload/delete',
-                    type: 'post',
-                    data: JSON.stringify({
-                        page:this.proCurr,
-                        limit:this.pageLimit
-                    }),
+                    type: 'get',
+                    data: {
+                        uploadId:id
+                    },
                     dataType: 'json',
                     success: function (r) {
                         console.log(r);
                         if (r.code === 0) {
-
                             layer.close(index);
                             layer.msg('删除成功');
+                            vm.getMyUploadList();
                         } else {
                             layer.alert(r.msg);
                         }
@@ -122,19 +121,20 @@ var vm = new Vue({
         // 重新上传
         reUpFunc:function (id) {
             layer.confirm('确定重新上传吗？',function (index) {
+                console.log(id);
                 $.ajax({
                     url: '../../product/upload/againUploadByButton',
                     type: 'post',
-                    data: JSON.stringify({
+                    data: {
                         uploadId:id
-                    }),
+                    },
                     dataType: 'json',
                     success: function (r) {
                         console.log(r);
                         if (r.code === 0) {
 
                             layer.close(index);
-                            layer.msg('删除成功');
+                            layer.msg('重新上传成功');
                         } else {
                             layer.alert(r.msg);
                         }

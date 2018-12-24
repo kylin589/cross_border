@@ -119,7 +119,7 @@
                         <!--</option>-->
                     <!--</select>-->
 
-                    <el-select v-model="shopinfo" placeholder="请选择店铺">
+                    <el-select v-model="shopinfo" placeholder="请选择店铺" @change="chanDianFunc">
                         <el-option
                                 v-for="item in marketplace"
                                 :key="item.grantShopId"
@@ -184,19 +184,16 @@
 
                     <div v-for="item in modelAttr" style="width: 100%;">
                         <label for="">{{item.fieldDisplayName}}：</label>
-                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 0">
-                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 1" disabled>
+                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 0" v-model="item.value">
+                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 1" disabled v-model="item.value">
                         <br>
                         <div class="valDiv">
                             <div>
                                 <span class="title">可选值：</span>
                             </div>
                             <div>
-                                <span v-for="val in item.templateFieldValueDtos" class="val" :data-val="val.value" @click="clickValActive">
-                                {{val.cnValue}}
-                            </span>
+                                <span v-for="val in item.templateFieldValueDtos" class="val" :data-index="val.value" @click="clickValActive(item)">{{val.cnValue}}</span>
                             </div>
-
                         </div>
 
                     </div>
@@ -257,7 +254,7 @@
         <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
             <div class="inner-content-div2" style="">
                 <ul>
-                    <li v-for="item in lishiList" :id="item.amazonCategoryId" :data-val="item.amazonCategory" @click="lishiSelFunc"> {{item.amazonAllCategory}} </li>
+                    <li v-for="item in lishiList" :id="item.amazonCategoryId" :data-val="item.amazonCategory" :data-allV="item.amazonAllCategory" @click="lishiSelFunc"> {{item.amazonAllCategory}} </li>
                 </ul>
             </div>
         </div>
