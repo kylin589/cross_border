@@ -583,7 +583,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
             ProductsEntity productsEntity = productsList.get(i);
 
-            // TODO: 2018/12/23 根据不同的国家运费id,获取最终售价。 查询product_freight_cost
             Long freightCostId = null;
             String money = "USD";
             switch (countryCode) {
@@ -643,7 +642,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
             // 价格
             EntityWrapper<FreightCostEntity> wrapper = new EntityWrapper<>();
-            wrapper.eq("freight_cost_id",freightCostId);
+            wrapper.eq("freight_cost_id", freightCostId);
             FreightCostEntity freightCostEntity = freightCostService.selectOne(wrapper);
             // 最终售价，当前国家的货币价格。
             BigDecimal final_price = freightCostEntity.getFinalPrice();
@@ -817,7 +816,13 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         Long uploadId = uploadEntity.getUploadId();
 
         // 商品列表
-        List<ProductsEntity> productsEntityList = uploadEntity.getUploadProductsList();
+        List<ProductsEntity> productsEntityList;
+        if (uploadEntity.getUploadProductsList()!=null){
+            productsEntityList = uploadEntity.getUploadProductsList();
+        }else {
+            List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
+            productsEntityList = productsService.selectBatchIds(ids);
+        }
 
         // 授权店铺信息
         AmazonGrantShopEntity amazonGrantShopEntity = amazonGrantShopService.selectById(uploadEntity.getGrantShopId());
@@ -871,6 +876,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     break;
             }
         }
+
 
         // 上传xml
         FeedSubmissionInfoDto productFeedSubmissionInfoDto = null;
@@ -979,9 +985,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             }
         }
 
-        ResultXmlEntity resultXmlEntity = new ResultXmlEntity();
-        resultXmlEntity.setUploadId(uploadId);
-
         UploadEntity updateUploadEntity = new UploadEntity();
         updateUploadEntity.setUpdateTime(new Date());
         updateUploadEntity.setUploadId(uploadId);
@@ -1002,29 +1005,35 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     typeStatus.add(tempStatus);
 
                     // 分辨上传类型，在不同的字段中插入xml结果
-                    // TODO: 2018/12/24 zjr 分辨上传类型，在不同的字段中插入xml结果
-                    /*switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
+                    ResultXmlEntity resultXmlEntity = new ResultXmlEntity();
+                    resultXmlEntity.setUploadId(uploadId);
+                    resultXmlEntity.setCreationTime(new Date());
+                    resultXmlEntity.setState(tempStatus);
+                    resultXmlEntity.setXml(tempResultXml);
+                    // 分辨上传类型，在不同的字段中插入xml结果
+                    switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
                         case "_POST_PRODUCT_DATA_":
-                            resultXmlEntity.setProductsResultXml(tempResultXml);
+                            resultXmlEntity.setType("products");
                             updateUploadEntity.setProductsResultStatus(tempStatus);
                             break;
                         case "_POST_PRODUCT_RELATIONSHIP_DATA_":
-                            resultXmlEntity.setRelationshipsResultXml(tempResultXml);
+                            resultXmlEntity.setType("relationships");
                             updateUploadEntity.setRelationshipsResultStatus(tempStatus);
                             break;
                         case "_POST_PRODUCT_IMAGE_DATA_":
-                            resultXmlEntity.setImagesResultXml(tempResultXml);
+                            resultXmlEntity.setType("images");
                             updateUploadEntity.setImagesResultStatus(tempStatus);
                             break;
                         case "_POST_INVENTORY_AVAILABILITY_DATA_":
-                            resultXmlEntity.setInventoryResultXml(tempResultXml);
+                            resultXmlEntity.setType("inventory");
                             updateUploadEntity.setInventoryResultStatus(tempStatus);
                             break;
                         case "_POST_PRODUCT_PRICING_DATA_":
-                            resultXmlEntity.setPricesResultXml(tempResultXml);
+                            resultXmlEntity.setType("prices");
                             updateUploadEntity.setPricesResultStatus(tempStatus);
                             break;
-                    }*/
+                    }
+                    resultXmlService.insert(resultXmlEntity);
                     feedSubmissionResultDtos.get(j).setResultXmlPath(tempPath);
                     feedSubmissionResultDtos.get(j).setFeedType(feedSubmissionInfoDtoList.get(i).getFeedType());
                 }
@@ -1037,16 +1046,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         //保存xml结果，保存状态
         uploadService.updateById(updateUploadEntity);
 
-        // 以前是否提交过？是就覆盖原来的结果。
-        EntityWrapper<ResultXmlEntity> wrapper = new EntityWrapper<>();
-        wrapper.eq("upload_id", uploadId);
-        ResultXmlEntity resultXmlEntity1 = resultXmlService.selectOne(wrapper);
-        if (resultXmlEntity1 == null) {
-            resultXmlService.insert(resultXmlEntity);
-        } else {
-            resultXmlEntity.setId(resultXmlEntity1.getId());
-            resultXmlService.updateById(resultXmlEntity);
-        }
     }
 
     @Override
@@ -1224,15 +1223,13 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             }
         }
 
-        ResultXmlEntity resultXmlEntity = new ResultXmlEntity();
-        resultXmlEntity.setUploadId(uploadId);
-
         UploadEntity updateUploadEntity = new UploadEntity();
         updateUploadEntity.setUpdateTime(new Date());
         updateUploadEntity.setUploadId(uploadId);
         String tempPath;
         List<Integer> typeStatus = new ArrayList();
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
+
             tempPath = "";
             String submissionId = feedSubmissionInfoDtoList.get(i).getFeedSubmissionId();
             tempPath = fileStoragePath + "FeedSubmissionResult/" + submissionId + "_SubmissionResult.xml";
@@ -1246,30 +1243,35 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     String tempResultXml = analysisFeedSubmissionResultDto.getMessageContent();
                     typeStatus.add(tempStatus);
 
+                    ResultXmlEntity resultXmlEntity = new ResultXmlEntity();
+                    resultXmlEntity.setUploadId(uploadId);
+                    resultXmlEntity.setCreationTime(new Date());
+                    resultXmlEntity.setState(tempStatus);
+                    resultXmlEntity.setXml(tempResultXml);
                     // 分辨上传类型，在不同的字段中插入xml结果
-                    // TODO: 2018/12/24 zjr  分辨上传类型，在不同的字段中插入xml结果
-                    /*switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
+                    switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
                         case "_POST_PRODUCT_DATA_":
-                            resultXmlEntity.setProductsResultXml(tempResultXml);
+                            resultXmlEntity.setType("products");
                             updateUploadEntity.setProductsResultStatus(tempStatus);
                             break;
                         case "_POST_PRODUCT_RELATIONSHIP_DATA_":
-                            resultXmlEntity.setRelationshipsResultXml(tempResultXml);
+                            resultXmlEntity.setType("relationships");
                             updateUploadEntity.setRelationshipsResultStatus(tempStatus);
                             break;
                         case "_POST_PRODUCT_IMAGE_DATA_":
-                            resultXmlEntity.setImagesResultXml(tempResultXml);
+                            resultXmlEntity.setType("images");
                             updateUploadEntity.setImagesResultStatus(tempStatus);
                             break;
                         case "_POST_INVENTORY_AVAILABILITY_DATA_":
-                            resultXmlEntity.setInventoryResultXml(tempResultXml);
+                            resultXmlEntity.setType("inventory");
                             updateUploadEntity.setInventoryResultStatus(tempStatus);
                             break;
                         case "_POST_PRODUCT_PRICING_DATA_":
-                            resultXmlEntity.setPricesResultXml(tempResultXml);
+                            resultXmlEntity.setType("prices");
                             updateUploadEntity.setPricesResultStatus(tempStatus);
                             break;
-                    }*/
+                    }
+                    resultXmlService.insert(resultXmlEntity);
                     feedSubmissionResultDtos.get(j).setResultXmlPath(tempPath);
                     feedSubmissionResultDtos.get(j).setFeedType(feedSubmissionInfoDtoList.get(i).getFeedType());
                 }
@@ -1281,17 +1283,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
         //保存xml结果，保存状态
         uploadService.updateById(updateUploadEntity);
-
-        // 以前是否提交过？是就覆盖原来的结果。
-        EntityWrapper<ResultXmlEntity> wrapper = new EntityWrapper<>();
-        wrapper.eq("upload_id", uploadId);
-        ResultXmlEntity resultXmlEntity1 = resultXmlService.selectOne(wrapper);
-        if (resultXmlEntity1 == null) {
-            resultXmlService.insert(resultXmlEntity);
-        } else {
-            resultXmlEntity.setId(resultXmlEntity1.getId());
-            resultXmlService.updateById(resultXmlEntity);
-        }
     }
 
     @Override

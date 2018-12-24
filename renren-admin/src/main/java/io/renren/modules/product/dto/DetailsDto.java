@@ -11,6 +11,16 @@ public class DetailsDto {
 
     private List<FieldMiddleEntity> middleEntitys;
 
+    private String AllCategories;
+
+    public String getAllCategories() {
+        return AllCategories;
+    }
+
+    public void setAllCategories(String allCategories) {
+        AllCategories = allCategories;
+    }
+
     public UploadEntity getUploadEntity() {
         return uploadEntity;
     }
