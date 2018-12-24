@@ -85,6 +85,67 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             });
+        },
+        // 编辑
+        upFunc:function (id) {
+            window.location.href="detailsUpload.html?id="+id;
+        },
+        // 删除
+        delFunc:function (id) {
+            layer.confirm('确定删除吗？',function (index) {
+                $.ajax({
+                    url: '../../product/upload/delete',
+                    type: 'post',
+                    data: JSON.stringify({
+                        page:this.proCurr,
+                        limit:this.pageLimit
+                    }),
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+
+                            layer.close(index);
+                            layer.msg('删除成功');
+                        } else {
+                            layer.alert(r.msg);
+                        }
+
+
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            })
+        },
+        // 重新上传
+        reUpFunc:function (id) {
+            layer.confirm('确定重新上传吗？',function (index) {
+                $.ajax({
+                    url: '../../product/upload/againUploadByButton',
+                    type: 'post',
+                    data: JSON.stringify({
+                        uploadId:id
+                    }),
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+
+                            layer.close(index);
+                            layer.msg('删除成功');
+                        } else {
+                            layer.alert(r.msg);
+                        }
+
+
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            })
         }
     },
     created:function () {

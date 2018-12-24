@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>添加上传</title>
+    <title>编辑上传</title>
     <#include "/header_kuajing.html">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/addUpload.css" media="all">
@@ -58,6 +58,9 @@
             height: 270px;
             overflow: hidden;
         }
+        /*input{*/
+            /*border:0;*/
+        }
 
     </style>
 </head>
@@ -84,11 +87,11 @@
                 </div>
                 <div class="pro_inf daochu">
                     <span>
-                        <label for="">开始编号：</label><input type="text" placeholder="建议填写" v-model="startId">
+                        <label for="">开始编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.startId">
                         <p>产品编号都是递增的，本次要导出产品起始编号</p>
                     </span> &nbsp;&nbsp;&nbsp;&nbsp;
                     <span>
-                        <label for="">结束编号：</label><input type="text" placeholder="建议填写" v-model="endId">
+                        <label for="">结束编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.endId">
                         <p>要导出产品的结束编号，结束编号起始编号</p>
                     </span>
                 </div>
@@ -100,7 +103,7 @@
                     <h4>产品ID</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><textarea placeholder="产品ID" v-model="uploadIdsstr"></textarea></span><br>
+                    <span><textarea placeholder="产品ID" v-model="upProDetails.uploadEntity.uploadIds"></textarea></span><br>
                     <p>填写产品ID后（逗号隔开），将只上传填写的ID列表，不填写则上传其他条件的筛选出的产品</p>
                 </div>
             </div>
@@ -156,7 +159,7 @@
                 <div class="pro_inf">
                     <span><input type="text" class="changeType" style="width: 350px" placeholder="--选择--" @click="amazonOneCategory" v-model="amazonCategory"></span>
                     <input type="button" value="历史选择" @click="lishiFunc" />
-                    <p>{{amazonAllCategory}}</p>
+                    <p></p>
                 </div>
             </div>
             <div class="item">
@@ -264,7 +267,7 @@
 
     </div>
 
-    <script src="${request.contextPath}/statics/kuajing/js/step/product/addUpload.js"></script>
+    <script src="${request.contextPath}/statics/kuajing/js/step/product/detailsUpload.js"></script>
     <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
 </div>
 </body>

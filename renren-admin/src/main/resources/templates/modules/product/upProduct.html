@@ -38,19 +38,19 @@
             <td>{{ item.state }}</td>
             <td>
                 <div class="operation">
-                    <div>
+                    <div @click="delFunc(item.uploadId)">
                         <i class="layui-icon layui-icon-delete"></i>
                         <p>删除</p>
                     </div>
-                    <div>
+                    <div @click="upFunc(item.uploadId)">
                         <i class="layui-icon layui-icon-survey"></i>
                         <p>编辑</p>
                     </div>
                     <div>
-                        <i class="layui-icon layui-icon-survey"></i>
+                        <i class="layui-icon layui-icon-form"></i>
                         <p>报告列表</p>
                     </div>
-                    <div>
+                    <div @click="reUpFunc(item.uploadId)">
                         <i class="layui-icon layui-icon-refresh-1"></i>
                         <p>重新上传</p>
                     </div>

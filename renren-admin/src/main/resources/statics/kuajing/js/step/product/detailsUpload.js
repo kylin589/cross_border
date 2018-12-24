@@ -15,10 +15,11 @@ window.onload = function () {
 var vm = new Vue({
     el:'#step',
     data:{
+        id:'',
+        // 上传产品详情
+        upProDetails:'',
         value9:null,
-        startId: null,
-        endId: null,
-        uploadIdsstr:'',
+
         uploadIds:[],
         grantShopId: 0,
         isAttribute: 0,
@@ -87,6 +88,29 @@ var vm = new Vue({
             });
         },
 
+        // 获取详情
+        getDetails:function () {
+            $.ajax({
+                url: '../../product/upload/details',
+                type: 'get',
+                data: {
+                    'uploadId':this.id
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('详情');
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.upProDetails = r.data;
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
         // 定时上传
         timeUpFunc:function () {
             if (this.shopinfo.region!=undefined) {
@@ -315,45 +339,45 @@ var vm = new Vue({
             vm.amazonAllArr.splice(_index);
             console.log(list);
             // if (list.ifNext=='true') {
-                $.ajax({
-                    url: '../../product/amazoncategory/childCategoryList',
-                    type: 'get',
-                    data: {
-                        amazonCategoryId:list.amazonCategoryId
-                    },
-                    dataType: 'json',
-                    success: function (r) {
-                        console.log('子集分类')
-                        console.log(r);
-                        if (r.code === 0) {
-                            if(r.amazonCategoryEntityChildList.length != 0){
-                                vm.leven.push(r.amazonCategoryEntityChildList);
-                                console.log(vm.leven);
-                                vm.amazonCategoryId = list.amazonCategoryId;
-                                vm.amazonCategory = list.displayName;
-                                vm.amazonAllArr.push(list.displayName);
-                                console.log(vm.amazonAllArr);
-                            }else {
-                                vm.amazonCategoryId = list.amazonCategoryId;
-                                vm.amazonCategory = list.displayName;
-                                // vm.amazonAllArr.push(list.displayName);
-                                console.log(vm.amazonAllArr);
-                                vm.amazonAllArr.forEach(function (t) {
-                                    vm.amazonAllCategory+=t+'/'
-                                })
-                                vm.amazonAllCategory+=list.displayName;
-                                console.log(vm.amazonAllCategory);
-                                // amazonAllCategory =
-                            }
-
-                        } else {
-                            layer.alert(r.message);
+            $.ajax({
+                url: '../../product/amazoncategory/childCategoryList',
+                type: 'get',
+                data: {
+                    amazonCategoryId:list.amazonCategoryId
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('子集分类')
+                    console.log(r);
+                    if (r.code === 0) {
+                        if(r.amazonCategoryEntityChildList.length != 0){
+                            vm.leven.push(r.amazonCategoryEntityChildList);
+                            console.log(vm.leven);
+                            vm.amazonCategoryId = list.amazonCategoryId;
+                            vm.amazonCategory = list.displayName;
+                            vm.amazonAllArr.push(list.displayName);
+                            console.log(vm.amazonAllArr);
+                        }else {
+                            vm.amazonCategoryId = list.amazonCategoryId;
+                            vm.amazonCategory = list.displayName;
+                            // vm.amazonAllArr.push(list.displayName);
+                            console.log(vm.amazonAllArr);
+                            vm.amazonAllArr.forEach(function (t) {
+                                vm.amazonAllCategory+=t+'/'
+                            })
+                            vm.amazonAllCategory+=list.displayName;
+                            console.log(vm.amazonAllCategory);
+                            // amazonAllCategory =
                         }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
+
+                    } else {
+                        layer.alert(r.message);
                     }
-                });
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
             // }else {
 
             // }
@@ -512,6 +536,13 @@ var vm = new Vue({
         }
     },
     created:function () {
+        var url = decodeURI(window.location.href);
+        var argsIndex = url.split("?id=");
+        var id = argsIndex[1];
+        // console.log(id)
+        this.id = parseInt(id);
+        console.log(this.id);
+        this.getDetails();
         this.getmarketplace();
 
     }
