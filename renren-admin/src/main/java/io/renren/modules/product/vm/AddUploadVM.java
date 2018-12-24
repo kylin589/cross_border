@@ -1,8 +1,11 @@
 package io.renren.modules.product.vm;
 
+import io.renren.modules.product.controller.TemplateCategoryFieldsController;
+import io.renren.modules.product.entity.TemplateCategoryFieldsEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Auther: wdh
@@ -10,6 +13,10 @@ import java.util.Arrays;
  * @Description:
  */
 public class AddUploadVM {
+
+    //上传id,只有在修改时候需要
+    private Long uploadId;
+
     //开始id
     private Long startId;
     //结束id
@@ -32,7 +39,9 @@ public class AddUploadVM {
     private String amazonTemplate;
     //是否有分类属性（默认0：没有  1：有）
     private Integer isAttribute;
-    // TODO: 2018/11/27 分类属性
+    //分类属性
+    private List<TemplateCategoryFieldsEntity> fieldsEntityList;
+
     //接受前台传过来的时间；
     private String time;
 
@@ -42,6 +51,14 @@ public class AddUploadVM {
     private Long userId;
     //公司id
     private Long deptId;
+
+    public Long getUploadId() {
+        return uploadId;
+    }
+
+    public void setUploadId(Long uploadId) {
+        this.uploadId = uploadId;
+    }
 
     public SysUserEntity getUser() {
         return user;
@@ -161,6 +178,14 @@ public class AddUploadVM {
 
     public void setIsAttribute(Integer isAttribute) {
         this.isAttribute = isAttribute;
+    }
+
+    public List<TemplateCategoryFieldsEntity> getFieldsEntityList() {
+        return fieldsEntityList;
+    }
+
+    public void setFieldsEntityList(List<TemplateCategoryFieldsEntity> fieldsEntityList) {
+        this.fieldsEntityList = fieldsEntityList;
     }
 
     @Override

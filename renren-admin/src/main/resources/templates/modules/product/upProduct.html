@@ -20,7 +20,7 @@
     <table>
         <tr>
             <th>序号</th>
-            <th>图片</th>
+            <!--<th>图片</th>-->
             <th>授权账户</th>
             <th>AMAZON类目</th>
             <th>分类类型</th>
@@ -30,25 +30,36 @@
         </tr>
         <tr v-for = '(item,index) in prolist'>
             <td>{{ index }}</td>
-            <td><img :src="item.mainUrl" alt=""></td>
+            <!--<td><img :src="item.mainUrl" alt=""></td>-->
             <td>{{ item.grantShop }}</td>
             <td>{{ item.amazonCategory }}</td>
-            <td>{{ item.type }}</td>
+            <td>{{ item.amazonTemplate }}</td>
             <td>{{ item.updateTime }}</td>
-            <td>{{ item.state }}</td>
+            <td>
+                <!--{{ item.uploadState }}-->
+                <span v-if="item.uploadState == 0" class="bule1">等待上传</span>
+                <span v-if="item.uploadState == 1" class="bule1">正在上传</span>
+                <span v-if="item.uploadState == 2" class="bule">上传成功</span>
+                <span v-if="item.uploadState == 3" class="red">上传失败</span>
+                <span v-if="item.uploadState == 4" class="org">有警告</span>
+            </td>
             <td>
                 <div class="operation">
-                    <div>
+                    <div @click="delFunc(item.uploadId)">
                         <i class="layui-icon layui-icon-delete"></i>
                         <p>删除</p>
                     </div>
-                    <div>
+                    <div @click="upFunc(item.uploadId)">
                         <i class="layui-icon layui-icon-survey"></i>
                         <p>编辑</p>
                     </div>
                     <div>
+                        <i class="layui-icon layui-icon-form"></i>
+                        <p>报告列表</p>
+                    </div>
+                    <div @click="reUpFunc(item.uploadId)" v-if="item.uploadState != 2">
                         <i class="layui-icon layui-icon-refresh-1"></i>
-                        <p>刷新</p>
+                        <p>重新上传</p>
                     </div>
                 </div>
             </td>

@@ -490,7 +490,7 @@
                 <div class="inner-content-div2">
                     <!--要加滚动条的具体内容-->
                     <ul class="proStationUl">
-                        <li v-for="(item,index) in proStation" @click="choicePro(index)" :data-index="imageId">
+                        <li v-for="(item,index) in proStation" @click="choicePro(index)" :data-index="item.imageId">
                             <img :src="item.imageUrl" alt="">
                         </li>
                     </ul>

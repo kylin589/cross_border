@@ -75,3 +75,34 @@
 #lishi ul li:hover , #lishi ul li.active{
     background: #dbedf7;
 }
+
+.pro_inf .valDiv{
+    display: flex;
+    margin: 10px 0 18px 0;
+}
+.pro_inf .valDiv>div:nth-child(1){
+    width: 70px;
+    vertical-align: middle;
+    padding-top: 5px;
+    color: #666;
+}
+.pro_inf .valDiv>div:nth-child(2){
+    flex:1;
+}
+.pro_inf .valDiv>div:nth-child(2) span{
+    color: #666;
+    margin: 4px!important;
+}
+.pro_inf .valDiv>div:nth-child(1) span.title{
+    font-weight: bold;
+}
+.pro_inf .valDiv>div:nth-child(2) span.val{
+    padding: 1px 8px;
+    border-radius: 3px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.pro_inf .valDiv>div:nth-child(2) span.val:hover , .pro_inf .valDiv>div:nth-child(2) span.val.active{
+    background: #00a3e8;
+    color: #fff;
+}

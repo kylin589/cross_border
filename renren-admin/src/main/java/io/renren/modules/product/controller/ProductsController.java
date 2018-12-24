@@ -194,7 +194,7 @@ public class ProductsController extends AbstractController {
      */
     @RequestMapping("/generateSKU")
     public R generateSKU() {
-        // TODO: 2018/11/7 根据用户的英文缩写生成SKU
+
         String SKU = null;
         return R.ok().put("SKU", SKU);
     }
@@ -213,6 +213,8 @@ public class ProductsController extends AbstractController {
         SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
         String companySku = sysDeptEntity.getCompanySku();
         String SKU = companySku + "-" + productSku;
+        productsEntity.setProductSku(SKU);
+        productsService.updateById(productsEntity);
         return R.ok().put("SKU", SKU);
     }
 

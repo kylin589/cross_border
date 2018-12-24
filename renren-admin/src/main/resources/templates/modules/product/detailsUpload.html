@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>添加上传</title>
+    <title>编辑上传</title>
     <#include "/header_kuajing.html">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/addUpload.css" media="all">
@@ -58,6 +58,9 @@
             height: 270px;
             overflow: hidden;
         }
+        /*input{*/
+            /*border:0;*/
+        }
 
     </style>
 </head>
@@ -84,11 +87,11 @@
                 </div>
                 <div class="pro_inf daochu">
                     <span>
-                        <label for="">开始编号：</label><input type="text" placeholder="建议填写" v-model="startId">
+                        <label for="">开始编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.startId" disabled>
                         <p>产品编号都是递增的，本次要导出产品起始编号</p>
                     </span> &nbsp;&nbsp;&nbsp;&nbsp;
                     <span>
-                        <label for="">结束编号：</label><input type="text" placeholder="建议填写" v-model="endId">
+                        <label for="">结束编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.endId" disabled>
                         <p>要导出产品的结束编号，结束编号起始编号</p>
                     </span>
                 </div>
@@ -100,7 +103,7 @@
                     <h4>产品ID</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><textarea placeholder="产品ID" v-model="uploadIdsstr"></textarea></span><br>
+                    <span><textarea placeholder="产品ID" v-model="upProDetails.uploadEntity.uploadIds" disabled></textarea></span><br>
                     <p>填写产品ID后（逗号隔开），将只上传填写的ID列表，不填写则上传其他条件的筛选出的产品</p>
                 </div>
             </div>
@@ -119,16 +122,16 @@
                         <!--</option>-->
                     <!--</select>-->
 
-                    <el-select v-model="shopinfo" placeholder="请选择店铺" @change="chanDianFunc">
-                        <el-option
-                                v-for="item in marketplace"
-                                :key="item.grantShopId"
-                                :label="item.shopName"
-                                :value="item.grantShopId">
-                        </el-option>
-                    </el-select>
+                    <!--<el-select v-model="shopinfo" placeholder="请选择店铺">-->
+                        <!--<el-option-->
+                                <!--v-for="item in marketplace"-->
+                                <!--:key="item.grantShopId"-->
+                                <!--:label="item.shopName"-->
+                                <!--:value="item.grantShopId">-->
+                        <!--</el-option>-->
+                    <!--</el-select>-->
 
-                    <span></span>
+                    <span style="color: #666">{{upProDetails.uploadEntity.grantShop}}</span>
 
                 </div>
             </div>
@@ -166,13 +169,13 @@
                 <div class="pro_inf">
                     <span>
                         <el-select v-model="flModleValue" placeholder="请选择分类模版" @focus="selFlFunc" @change="chanFunc">
-                        <el-option
-                                v-for="item in flModleList"
-                                :key="item.templateId"
-                                :label="item.templateDisplayName"
-                                :value="item.templateId">
-                        </el-option>
-                    </el-select>
+                            <el-option
+                                    v-for="item in flModleList"
+                                    :key="item.templateId"
+                                    :label="item.templateDisplayName"
+                                    :value="item.templateId">
+                            </el-option>
+                        </el-select>
                     </span>
                 </div>
             </div>
@@ -184,16 +187,17 @@
 
                     <div v-for="item in modelAttr" style="width: 100%;">
                         <label for="">{{item.fieldDisplayName}}：</label>
-                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 0" v-model="item.value">
-                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 1" disabled v-model="item.value">
+                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 0">
+                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 1" disabled>
                         <br>
                         <div class="valDiv">
                             <div>
                                 <span class="title">可选值：</span>
                             </div>
                             <div>
-                                <span v-for="val in item.templateFieldValueDtos" class="val" :data-index="val.value" @click="clickValActive(item)">{{val.cnValue}}</span>
+                                <span v-for="val in item.templateFieldValueDtos" class="val" :data-val="val.value" @click="clickValActive(item)">{{val.cnValue}}</span>
                             </div>
+
                         </div>
 
                     </div>
@@ -254,14 +258,14 @@
         <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
             <div class="inner-content-div2" style="">
                 <ul>
-                    <li v-for="item in lishiList" :id="item.amazonCategoryId" :data-val="item.amazonCategory" :data-allV="item.amazonAllCategory" @click="lishiSelFunc"> {{item.amazonAllCategory}} </li>
+                    <li v-for="item in lishiList" :id="item.amazonCategoryId" :data-allV="item.amazonAllCategory" :data-val="item.amazonCategory" @click="lishiSelFunc"> {{item.amazonAllCategory}} </li>
                 </ul>
             </div>
         </div>
 
     </div>
 
-    <script src="${request.contextPath}/statics/kuajing/js/step/product/addUpload.js"></script>
+    <script src="${request.contextPath}/statics/kuajing/js/step/product/detailsUpload.js"></script>
     <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
 </div>
 </body>

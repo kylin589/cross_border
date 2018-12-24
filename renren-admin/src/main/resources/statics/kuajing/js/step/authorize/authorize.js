@@ -46,7 +46,7 @@ var vm = new Vue({
                         data: JSON.stringify({
                             shopName:vm.shopName,
                             amazonAccount:vm.amazonAccount,
-                            area:vm.area,
+                            region:vm.area,
                             merchantId:vm.merchantId,
                             grantToken:vm.grantToken
                         }),

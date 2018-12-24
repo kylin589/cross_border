@@ -58,7 +58,7 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
         requestList.add(request);
 
         Boolean isSuccess = false;
-
+        // 写道这里
         List<ListOrdersResponseDto> listOrdersResponseDtos = new ArrayList<>();
         ListOrdersResponseDto listOrdersResponseDto = null;
 
@@ -78,8 +78,6 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
             }
         }
 
-        // TODO: 2018/11/23 星期五写到这里
-
         listOrdersResponseDtos.add(listOrdersResponseDto);
         if (listOrdersResponseDto.getNextToken() != null && isSuccess == true) {
             ListOrdersResponseDto listOrdersByNextTokenResponseDto;
@@ -89,7 +87,8 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
             listOrdersByNextTokenRequest.setMWSAuthToken(mwsAuthToken);
             listOrdersByNextTokenRequest.setNextToken(listOrdersResponseDto.getNextToken());
             listOrdersByNextTokenRequests.add(listOrdersByNextTokenRequest);
-            // TODO: 2018/11/25 星期日写到这里
+
+            // 写道这里
             invokeListOrdersByNextToken(client, listOrdersByNextTokenRequests);
         }
     }
@@ -164,7 +163,7 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
             } catch (ExecutionException ee) {
                 Throwable cause = ee.getCause();
                 if (cause instanceof MarketplaceWebServiceOrdersException) {
-                    // TODO: 2018/11/21 报错怎么办？
+
                     // Exception properties are important for diagnostics.
                     MarketplaceWebServiceOrdersException ex =
                             (MarketplaceWebServiceOrdersException) cause;
@@ -386,7 +385,7 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
 
     @Override
     public List<OrderEntity> analysisListOrders(List<Object> responseList) {
-        // TODO: 2018/11/20 解析 responseList，调用 xml 方法
+
         for (int i = 0; i < responseList.size(); i++) {
 
         }

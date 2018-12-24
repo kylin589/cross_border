@@ -19,17 +19,17 @@
         <div class="sousuoArea">
             <div class="areaOne">
                 <ul>
-                    <li v-for="categoryOneItem in categoryOneList" :data-id="categoryOneItem.categoryId" :data-pId="categoryOneItem.parentId" :data-if="categoryOneItem.ifNext" :data-val = 'categoryOneItem.categoryName' @click="clickTypeItem"> {{ categoryOneItem.categoryName }}（{{categoryOneItem.count}}）</li>
+                    <li v-for="categoryOneItem in categoryOneList" :data-id="categoryOneItem.categoryId" :data-pId="categoryOneItem.parentId" :data-val = 'categoryOneItem.categoryName' @click="clickTypeItem"> {{ categoryOneItem.categoryName }}（{{categoryOneItem.count}}）</li>
                 </ul>
             </div>
             <div class="areaTwo" v-if="categoryTwoList.length != 0">
                 <ul>
-                    <li v-for="categoryTwoItem in categoryTwoList" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-if="categoryTwoItem.ifNext" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
+                    <li v-for="categoryTwoItem in categoryTwoList" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
                 </ul>
             </div>
             <div class="areaThree" v-if="categoryThreeList.length != 0">
                 <ul>
-                    <li v-for="categoryThreeItem in categoryThreeList" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-if="categoryThreeItem.ifNext" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
+                    <li v-for="categoryThreeItem in categoryThreeList" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
                 </ul>
             </div>
         </div>

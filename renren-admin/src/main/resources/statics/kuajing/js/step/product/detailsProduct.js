@@ -649,7 +649,7 @@ var vm = new Vue({
                             // vm.drapImg();
                         })
                         // vm.drapImg();
-                        // setTimeout(function(){ vm.drapImg(); }, 1000);
+                        setTimeout(function(){ vm.drapImg(); }, 1000);
 
                         console.log('运费')
                         console.log(vm.proDetails.americanFC.freight)
@@ -913,19 +913,21 @@ var vm = new Vue({
                         if(arr.length == 0){
                             layer.msg("请选择要删除的图片");
                         }else {
-                            layer.confirm('确定删除吗',function () {
+                            layer.confirm('确定删除吗',function (index) {
                                 $.ajax({
                                     url: '../../product/imageaddress/deleteimage',
-                                    type: 'get',
-                                    data: {
-                                        'imageIds': arr
-                                    },
-                                    dataType: 'json',
+                                    type: 'post',
+                                    data: JSON.stringify(arr),
+                                    // dataType: 'json',
+                                    contentType: "application/json",
                                     success: function (r) {
-                                        // console.log(r);
+                                        console.log('彻底删除');
+                                        console.log(r);
+                                        console.log(arr);
                                         if (r.code === 0) {
                                             // 重新获取图片回收站
                                             vm.getProStation();
+                                            layer.msg("删除成功");
                                             // vm.proAlbum = r.imageInfo;
 
                                         } else {
@@ -950,22 +952,23 @@ var vm = new Vue({
                         if(arr.length == 0){
                             layer.msg("请选择要恢复的图片");
                         }else {
-                            layer.confirm('确定要恢复吗',function () {
+                            layer.confirm('确定要恢复吗',function (index) {
                                 $.ajax({
                                     url: '../../product/imageaddress/recoverdelete',
                                     type: 'post',
-                                    data: JSON.stringify({
-                                        'imageIds': arr
-                                    }),
+                                    data: JSON.stringify(arr),
                                     // dataType: 'json',
                                     contentType: "application/json",
                                     success: function (r) {
+                                        // console.log('恢复图片');
                                         // console.log(r);
+                                        // console.log(arr);
                                         if (r.code === 0) {
                                             // 重新获取图片回收站
                                             vm.getProStation();
                                             vm.getProAlbum();
                                             layer.close(index);
+                                            layer.msg("恢复成功");
                                             // vm.proAlbum = r.imageInfo;
 
                                         } else {
@@ -1570,57 +1573,63 @@ var vm = new Vue({
                 //      console.log(nn);
                 var _index = nn;
                 var aLi = $(".ul1").eq(_index).find('li');
-                var aLiLast = $(".ul1").eq(_index).find('li:last-child');
-                // console.log(aLiLast);
-                var disX = 0;
-                var disY = 0;
-                var minZindex = 1;
-                var aPos = [];
-                for(var i = 0; i < aLi.length; i++) {
-                    var t = aLi[i].offsetTop;
-                    var l = aLi[i].offsetLeft;
-                    aLi[i].style.top = t + "px";
-                    aLi[i].style.left = l + "px";
-                    aPos[i] = {
-                        left: l,
-                        top: t
-                    };
-                    aLi[i].index = i;
-                }
-                for(var i = 0; i < aLi.length; i++) {
-                    aLi[i].style.position = "absolute";
-                    aLi[i].style.margin = 0;
-                    setDrag(aLi[i],aLi);
-                }
-
                 if(aLi.length != 0){
-                    var _height = aLiLast[0].offsetTop+60;
+                    var aLiLast = $(".ul1").eq(_index).find('li:last-child');
+                    // console.log(aLiLast);
+                    var disX = 0;
+                    var disY = 0;
+                    var minZindex = 1;
+                    var aPos = [];
+                    for(var i = 0; i < aLi.length; i++) {
+                        var t = aLi[i].offsetTop;
+                        var l = aLi[i].offsetLeft;
+                        aLi[i].style.top = t + "px";
+                        aLi[i].style.left = l + "px";
+                        aPos[i] = {
+                            left: l,
+                            top: t
+                        };
+                        aLi[i].index = i;
+                    }
+                    for(var i = 0; i < aLi.length; i++) {
+                        aLi[i].style.position = "absolute";
+                        aLi[i].style.margin = 0;
+                        setDrag(aLi[i],aLi);
+                    }
+
+                    // if(aLi.length != 0){
+                    //     // var _height = aLiLast[0].offsetTop+60;
+                    //     var _height = aLiLast[0].offsetTop+60;
+                    //     aLiLast.parent().css('height',_height+'px');
+                    //     aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+                    // }
                     var _height = aLiLast[0].offsetTop+60;
                     aLiLast.parent().css('height',_height+'px');
                     aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+
+                    // console.log(_height);
+
+
+                    aLi.mouseover(function () {
+                        $(this).find('i').css('display','inline-block');
+                        $(this).find('i').mouseover(function () {
+                            $(this).css('display','inline-block');
+                        })
+                        $(this).find('i').mouseout(function () {
+                            $(this).css('display','none');
+                        })
+                    })
+                    aLi.mouseout(function () {
+                        $(this).find('i').css('display','none');
+                        $(this).find('i').mouseover(function () {
+                            $(this).css('display','inline-block');
+                        })
+                        $(this).find('i').mouseout(function () {
+                            $(this).css('display','none');
+                        })
+                    })
                 }
 
-                // console.log(_height);
-
-
-                aLi.mouseover(function () {
-                    $(this).find('i').css('display','inline-block');
-                    $(this).find('i').mouseover(function () {
-                        $(this).css('display','inline-block');
-                    })
-                    $(this).find('i').mouseout(function () {
-                        $(this).css('display','none');
-                    })
-                })
-                aLi.mouseout(function () {
-                    $(this).find('i').css('display','none');
-                    $(this).find('i').mouseover(function () {
-                        $(this).css('display','inline-block');
-                    })
-                    $(this).find('i').mouseout(function () {
-                        $(this).css('display','none');
-                    })
-                })
             }
             //拖拽
             function setDrag(obj,all) {
@@ -1755,6 +1764,8 @@ var vm = new Vue({
             }
             function startMove(obj,json,fun){
                 clearInterval(obj.timer);
+
+                // console.log(11111);
                 obj.timer = setInterval(function(){
                     var isStop = true;
                     for(var attr in json){
@@ -1808,6 +1819,8 @@ var vm = new Vue({
                     }
                 })
 
+                // console.log(recommend.length * recommend1.length);
+
 
                 for(var i = 0;i<recommend.length;i++){
                     for(var j = 0;j<recommend1.length;j++){
@@ -1817,7 +1830,7 @@ var vm = new Vue({
                             img:[],
                             sku:'',
                             addPrice:'',
-                            stock:'',
+                            stock:(Math.round(Math.random()*10) + 60),
                             code:''
                         });
 
@@ -1828,7 +1841,7 @@ var vm = new Vue({
                             variantCombination:recommend[i]+'*'+recommend1[j],
                             variantSku:'',
                             variantAddPrice:null,
-                            variantStock:null,
+                            variantStock:(Math.round(Math.random()*10) + 60),
                             eanCode:null,
                             imageUrl:''
                         })
@@ -1844,7 +1857,7 @@ var vm = new Vue({
                         img:[],
                         sku:'',
                         addPrice:'',
-                        stock:'',
+                        stock:(Math.round(Math.random())*10 + 60),
                         code:''
                     });
 
@@ -1855,15 +1868,16 @@ var vm = new Vue({
                         variantCombination:recommend[i],
                         variantSku:'',
                         variantAddPrice:null,
-                        variantStock:null,
+                        variantStock:(Math.round(Math.random())*10 + 60),
                         eanCode:null,
                         imageUrl:''
                     })
                 }
+                // console.log(recommend.length);
             }
 
             console.log('1111111');
-            setTimeout(function(){ vm.drapImg(); }, 2000);
+            // setTimeout(function(){ vm.drapImg(); }, 2000);
 
         },
         // 修改保存

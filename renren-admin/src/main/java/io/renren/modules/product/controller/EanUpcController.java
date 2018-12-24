@@ -38,11 +38,16 @@ public class EanUpcController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("product:eanupc:list")
+    //@RequiresPermissions("product:eanupc:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = eanUpcService.queryPage(params);
-
-        return R.ok().put("page", page);
+        //码的总数
+        int count = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>());
+        //未使用的
+        int noStateCount = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>().eq("state", 0));
+        //已使用的
+        int YesStateCount = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>().eq("state", 1));
+        return R.ok().put("page", page).put("count",count).put("noStateCount",noStateCount).put("YesStateCount",YesStateCount);
     }
 
 
@@ -122,24 +127,6 @@ public class EanUpcController {
             }
         }
         eanUpcService.insertBatch(eanUpcEntities);
-        return R.ok().put("eanUpcEntities",eanUpcEntities);
-    }
-
-    /**
-     * @methodname: count 码的总数
-     * @param: []
-     * @return: io.renren.common.utils.R
-     * @auther: jhy
-     * @date: 2018/12/23 19:33
-     */
-    @RequestMapping("/count")
-    public R count(){
-        //码的总数
-        int count = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>());
-        //未使用的
-        int noStateCount = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>().eq("state", 0));
-        //已使用的
-        int YesStateCount = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>().eq("state", 1));
-        return R.ok().put("count",count).put("noStateCount",noStateCount).put("YesStateCount",YesStateCount);
+        return R.ok();
     }
 }
