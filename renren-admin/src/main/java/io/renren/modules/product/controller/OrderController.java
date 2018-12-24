@@ -160,6 +160,7 @@ public class OrderController extends AbstractController{
                             }
                         }
                     }
+                    abroadLogisticsEntity.setUpdateTime(new Date());
                     abroadLogisticsService.updateById(abroadLogisticsEntity);
                 }
             }

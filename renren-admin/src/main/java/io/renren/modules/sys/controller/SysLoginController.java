@@ -22,9 +22,13 @@ import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import io.renren.common.utils.R;
 import io.renren.modules.amazon.util.ConstantDictionary;
+import io.renren.modules.product.entity.EanUpcEntity;
 import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.product.service.EanUpcService;
 import io.renren.modules.product.service.OrderService;
+import io.renren.modules.sys.entity.NoticeEntity;
 import io.renren.modules.sys.entity.SysDeptEntity;
+import io.renren.modules.sys.service.NoticeService;
 import io.renren.modules.sys.service.SysDeptService;
 import io.renren.modules.sys.shiro.ShiroUtils;
 import org.apache.shiro.authc.*;
@@ -41,6 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 登录相关
@@ -57,6 +62,10 @@ public class SysLoginController extends AbstractController{
 	private SysDeptService deptService;
 	@Autowired
 	private OrderService orderService;
+	@Autowired
+	private EanUpcService eanUpcService;
+	@Autowired
+	private NoticeService noticeService;
 
 	@RequestMapping("captcha.jpg")
 	public void captcha(HttpServletResponse response)throws IOException {
@@ -108,7 +117,16 @@ public class SysLoginController extends AbstractController{
 		public void run() {
 			//总部查询MEN码
 			if(getDeptId() == 1L && getUser().getRoleIdList().contains(1)){
-
+				int count = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>().eq("state",0));
+				if(count<1000){
+					NoticeEntity notice = new NoticeEntity();
+					notice.setDeptId(getDeptId());
+					notice.setUserId(getUserId());
+					notice.setNoticeContent("UPC/EAN码已不足，请及时添加。");
+					notice.setCreateTime(new Date());
+					notice.setNoticeType("UPC/EAN");
+					noticeService.insert(notice);
+				}
 			}
 			SysDeptEntity dept = deptService.selectById(getDeptId());
 			//未发货订单
