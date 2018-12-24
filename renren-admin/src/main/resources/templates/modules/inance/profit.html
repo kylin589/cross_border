@@ -14,30 +14,30 @@
         <h4>平台利润</h4>
         <div class="nav_title">
             <ul>
-                <li class="action">年统计</li>
-                <li>月统计</li>
-                <li>日统计</li>
+                <li class="action" @click="oneLevelQueryPlatform('day')">日统计</li>
+                <li @click="oneLevelQueryPlatform('month')">月统计</li>
+                <li @click="oneLevelQueryPlatform('year')">年统计</li>
             </ul>
 
         </div>
         <!--统计-->
         <div class="statistics">
-            <span>所有加盟商订单抽成：<span>{{ statisticsProfit.percentage }}</span></span>
-            <span>总部员工销售利润：<span>{{ statisticsProfit.profit }}</span></span>
+            <span>所有加盟商订单抽成：<span>{{ statisticsProfit.choucheng }}</span></span>
+            <span>总部员工销售利润：<span>{{ statisticsProfit.userProfit }}</span></span>
             <span>总盈利：<span>{{ statisticsProfit.allProfit }}</span></span>
         </div>
         <!--统计图-->
         <div class="chart chart2" style="height:152px">
             <div>
-                {{ statisticsProfit.percentage }}   <span>万元</span>
+                {{ statisticsProfit.allProfit }}   <span>万元</span>
                 <p>总盈利</p>
             </div>
             <div>
-                {{ statisticsProfit.profit }}   <span>万元</span>
+                {{ statisticsProfit.choucheng }}   <span>万元</span>
                 <p>所有加盟商订单抽成</p>
             </div>
             <div>
-                {{ statisticsProfit.allProfit }}   <span>万元</span>
+                {{ statisticsProfit.userProfit }}   <span>万元</span>
                 <p>总部员工销售利润</p>
             </div>
         </div>
@@ -47,25 +47,25 @@
         <h4>总部员工</h4>
         <div class="nav_title">
             <ul>
-                <li class="action">年统计</li>
-                <li>月统计</li>
-                <li>日统计</li>
+                <li class="action" @click="oneLevelQueryUser('day')">日统计</li>
+                <li @click="oneLevelQueryUser('month')">月统计</li>
+                <li @click="oneLevelQueryUser('year')">年统计</li>
             </ul>
-            <select name="" id="">
+            <select name="" v-model="yuangonguserid" >
                 <option value="0">全部</option>
-                <option v-for="item in staff" :value="item.value">{{ item.name }}</option>
+                <option v-for="item in staff" :value="item.userId">{{ item.username }}</option>
             </select>
         </div>
         <!--统计-->
         <div class="statistics">
             <span>{{ statistics.name }}</span>
-            <span>新增产品数：<span>{{ statistics.proNum }}</span></span>
-            <span>订单数：<span>{{ statistics.orderNum }}</span></span>
-            <span>退货情况：<span>{{ statistics.return }}</span></span>
-            <span>销售额：<span>{{ statistics.sales }}</span></span>
-            <span>成本：<span>{{ statistics.cost }}</span></span>
-            <span>利润：<span>{{ statistics.profit }}</span></span>
-            <span>平均利润率：<span>{{ statistics.aveProfit }}</span></span>
+            <span>新增产品数：<span v-model="allChart1Data[0]">{{ statistics.addProductsCounts }}</span></span>
+            <span>订单数：<span v-model="allChart1Data[1]">{{ statistics.addOrderCounts }}</span></span>
+            <span>退货订单数：<span v-model="allChart1Data[2]">{{ statistics.returnCounts }}</span></span>
+            <span>销售额：<span v-model="allChart2Data[0]">{{ statistics.salesVolume }}</span></span>
+            <span>成本：<span v-model="allChart2Data[1]">{{ statistics.cost+statistics.orderFreight}}</span></span>
+            <span>利润：<span v-model="allChart2Data[2]">{{ statistics.profit }}</span></span>
+            <span>平均利润率：<span v-model="allChart3Data">{{ statistics.profitRate }}</span></span>
         </div>
         <!--统计图-->
         <div class="chart">
@@ -85,23 +85,23 @@
         <h4>加盟商</h4>
         <div class="nav_title">
             <ul>
-                <li class="action">年统计</li>
-                <li>月统计</li>
-                <li>日统计</li>
+                <li class="action" @click="oneLevelQueryFranchisee('day')">日统计</li>
+                <li @click="oneLevelQueryFranchisee('month')">月统计</li>
+                <li @click="oneLevelQueryFranchisee('year')">年统计</li>
             </ul>
-            <select name="" id="">
+            <select name="" id="" v-model="jiamenguserid">
                 <option value="0">全部</option>
-                <option v-for="item in shop" :value="item.value">{{ item.name }}</option>
+                <option v-for="item in staff" :value="item.userId">{{ item.username }}</option>
             </select>
         </div>
         <!--统计-->
         <div class="statistics">
             <span>{{ statisticsShop.name }}</span>
-            <span>订单数：<span>{{ statisticsShop.orderNum }}</span></span>
-            <span>销售额：<span>{{ statisticsShop.sales }}</span></span>
-            <span>成本：<span>{{ statisticsShop.cost }}</span></span>
-            <span>利润：<span>{{ statisticsShop.profit }}</span></span>
-            <span>平均利润率：<span>{{ statisticsShop.aveProfit }}</span></span>
+            <span>订单数：<span>{{ statisticsShop.addOrderCounts }}</span></span>
+            <span>销售额：<span v-model="shopChart3Data[0]">{{ statisticsShop.salesVolume }}</span></span>
+            <span>成本：<span v-model="shopChart3Data[1]">{{ statisticsShop.allCost }}</span></span>
+            <span>利润：<span v-model="shopChart3Data[2]">{{ statisticsShop.profit }}</span></span>
+            <span>平均利润率：<span v-model="shopChart2Data">{{ statisticsShop.profitRate }}</span></span>
         </div>
         <!--统计图-->
         <div class="chart chart1">
