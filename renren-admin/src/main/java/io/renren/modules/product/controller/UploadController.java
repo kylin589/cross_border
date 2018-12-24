@@ -71,7 +71,6 @@ public class UploadController extends AbstractController {
     @Autowired
     private ResultXmlService resultXmlService;
 
-
     //英国
     private static final int GBUTC = 0;
     // 美国
@@ -174,8 +173,13 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/delete")
     // @RequiresPermissions("product:upload:delete")
-    public R delete(@RequestBody Long[] uploadIds) {
-        uploadService.deleteBatchIds(Arrays.asList(uploadIds));
+    public R delete(Long uploadId) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("upload_id", uploadId);
+        fieldMiddleService.deleteByMap(map);
+        resultXmlService.deleteByMap(map);
+        uploadService.deleteById(uploadId);
 
         return R.ok();
     }
@@ -353,22 +357,130 @@ public class UploadController extends AbstractController {
     }
 
     /**
-     *
+     * 表单重新提交
      */
-    @RequestMapping("/againUpload")
-    public R againUpload(Long uploadId){
+    @RequestMapping("/againUploadByForm")
+    public R againUploadByForm(@RequestBody AddUploadVM addUploadVM) {
+
+        // 查找基本信息
+        UploadEntity uploadEntity = new UploadEntity();
+        uploadEntity.setUploadId(addUploadVM.getUploadId());
+        uploadEntity = uploadService.selectById(uploadEntity);
+
+        // 删除xml报告
+        Map<String, Object> map = new HashMap<>();
+        map.put("upload_id", addUploadVM.getUploadId());
+        resultXmlService.deleteByMap(map);
+        fieldMiddleService.deleteByMap(map);
+
+        //获取分类对象
+        AmazonCategoryEntity amazonCategory = amazonCategoryService.selectById(addUploadVM.getAmazonCategoryId());
+
+        String county = uploadEntity.getCountryCode();
+        COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
+        switch (countyEnum) {
+            case GB:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdUk());
+                break;
+            case DE:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdDe());
+                break;
+            case FR:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdFr());
+                break;
+            case IT:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdIt());
+                break;
+            case ES:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdEs());
+                break;
+            case US:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdUs());
+                break;
+            case MX:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdMx());
+                break;
+            case CA:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdCa());
+                break;
+            case AU:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdAu());
+                break;
+            case JP:
+                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdJp());
+                break;
+            default:
+                break;
+        }
+        //设置模板
+        uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
+        uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+        //设置操作类型（0：上传;1：修改）
+        uploadEntity.setOperateType(1);
+        //数组转','号隔开的字符串
+        String operateItem = StringUtils.join(addUploadVM.getOperateItem(), ",");
+        //设置操作项
+        uploadEntity.setOperateItem(operateItem);
+        //设置常用属性
+        uploadEntity.setUpdateTime(new Date());
+        //更新到上传表
+        uploadService.updateById(uploadEntity);
+
+        //获取需要上传的商品id
+        List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
+        uploadEntity.setUploadProductsList(productsService.selectBatchIds(ids));
+
+        List<TemplateCategoryFieldsEntity> fieldsEntityList = addUploadVM.getFieldsEntityList();
+        for (int i = 0; i < fieldsEntityList.size(); i++) {
+            FieldMiddleEntity middleEntity = new FieldMiddleEntity();
+            middleEntity.setUploadId(uploadEntity.getUploadId());
+            middleEntity.setFieldId(fieldsEntityList.get(i).getFieldId());
+            middleEntity.setFieldName(fieldsEntityList.get(i).getFieldName());
+            middleEntity.setFieldDisplayName(fieldsEntityList.get(i).getFieldDisplayName());
+            middleEntity.setValue(fieldsEntityList.get(i).getValue());
+            fieldMiddleService.insert(middleEntity);
+        }
+
+        //添加到分类历史记录表
+        AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        //如果有历史数据，则累加数量1
+        if (categoryHistory != null) {
+            int count = categoryHistory.getCount() + 1;
+            categoryHistory.setCount(count);
+            amazonCategoryHistoryService.updateAllColumnById(categoryHistory);
+        } else {
+            //如果没有历史数据，则新增历史数据
+            AmazonCategoryHistoryEntity categoryHistoryNew = new AmazonCategoryHistoryEntity();
+            categoryHistoryNew.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+            categoryHistoryNew.setAmazonCategory(amazonCategory.getDisplayName());
+            categoryHistoryNew.setAmazonAllCategory(addUploadVM.getAmazonCategory());
+            categoryHistoryNew.setCount(1);
+            categoryHistoryNew.setUserId(getUserId());
+            categoryHistoryNew.setDeptId(getDeptId());
+            amazonCategoryHistoryService.insert(categoryHistoryNew);
+        }
+        submitFeedService.submitFeed(uploadEntity);
+        return R.ok();
+    }
+
+
+    /**
+     * 按钮重新提交
+     */
+    @RequestMapping("/againUploadByButton")
+    public R againUploadByButton(Long uploadId) {
         // 查找基本信息
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(uploadId);
         uploadEntity = uploadService.selectById(uploadEntity);
         // 删除xml基本信息
-        Map<String,Object> map = new HashMap<>();
-        map.put("upload_id",uploadId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("upload_id", uploadId);
         resultXmlService.deleteByMap(map);
         //获取需要上传的商品id
-        List<String> ids= Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
+        List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
         uploadEntity.setUploadProductsList(productsService.selectBatchIds(ids));
-
+        submitFeedService.submitFeed(uploadEntity);
         return R.ok();
     }
 
