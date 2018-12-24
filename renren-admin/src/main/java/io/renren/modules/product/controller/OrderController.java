@@ -384,7 +384,7 @@ public class OrderController extends AbstractController{
         Long orderId = orderVM.getOrderId();
         Random random = new Random();
         StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("YT2");
+        stringBuffer.append("YT3");
         for (int i = 0; i < 15; i++) {
             stringBuffer.append(random.nextInt(10));
         }
@@ -402,9 +402,12 @@ public class OrderController extends AbstractController{
         abroadLogistics = new AbroadLogisticsEntity();
         abroadLogistics.setOrderId(orderId);
         abroadLogistics.setAbroadWaybill(abroadWaybill);
+        abroadLogistics.setIsSynchronization(0);
+        abroadLogistics.setCreateTime(new Date());
+        abroadLogistics.setUpdateTime(new Date());
         abroadLogisticsService.insert(abroadLogistics);
         // TODO: 2018/12/18 将运单号同步到亚马逊平台
-        return R.ok();
+        return R.ok().put("abroadLogistics",abroadLogistics);
     }
     /**
      * 同步国际运单号
