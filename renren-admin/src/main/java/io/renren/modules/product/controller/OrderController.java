@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -177,20 +178,16 @@ public class OrderController extends AbstractController{
                 BigDecimal orderMoneyForeign = orderEntity.getOrderMoney();
                 //设置订单金额（外币）
                 orderDTO.setOrderMoneyForeign(orderMoneyForeign);
-                //设置订单金额（人民币：外币*当时汇率）
-                orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
-                //获取Amazon佣金（外币）
-                BigDecimal amazonCommissionForeign = orderEntity.getAmazonCommission();
-                //订单表保存数据
+                //设置订单金额（人民币）
+                orderDTO.setOrderMoney(orderEntity.getOrderMoneyCny());
                 //设置Amazon佣金（外币）
-                orderDTO.setAmazonCommissionForeign(amazonCommissionForeign);
-                //设置Amazon佣金（人民币：外币*当时汇率）
-                orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
-                //到账金额
-                BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
-                orderDTO.setAccountMoneyForeign(accountMoneyForeign);
-                BigDecimal accountMoney = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
-                orderDTO.setAccountMoney(accountMoney);
+                orderDTO.setAmazonCommissionForeign(orderEntity.getAmazonCommission());
+                //设置Amazon佣金（人民币）
+                orderDTO.setAmazonCommission(orderEntity.getAmazonCommissionCny());
+                //设置到账金额（外币）
+                orderDTO.setAccountMoneyForeign(orderEntity.getAccountMoney());
+                //设置到账金额（人民币）
+                orderDTO.setAccountMoney(orderEntity.getAccountMoneyCny());
                 //采购价
                 BigDecimal purchasePrice = orderEntity.getPurchasePrice();
                 orderDTO.setPurchasePrice(purchasePrice);
@@ -213,18 +210,16 @@ public class OrderController extends AbstractController{
                     BigDecimal orderMoneyForeign = orderEntity.getOrderMoney();
                     //设置订单金额（外币）
                     orderDTO.setOrderMoneyForeign(orderMoneyForeign);
-                    //设置订单金额（人民币：外币*当时汇率）
-                    orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
-                    //获取Amazon佣金（外币）
-                    BigDecimal amazonCommissionForeign = orderEntity.getAmazonCommission();
+                    //设置订单金额（人民币）
+                    orderDTO.setOrderMoney(orderEntity.getOrderMoneyCny());
                     //设置Amazon佣金（外币）
-                    orderDTO.setAmazonCommissionForeign(amazonCommissionForeign);
-                    //设置Amazon佣金（人民币：外币*当时汇率）
-                    orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
-                    //到账金额
-                    BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
-                    orderDTO.setAccountMoneyForeign(accountMoneyForeign);
-                    orderDTO.setAccountMoney(accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                    orderDTO.setAmazonCommissionForeign(orderEntity.getAmazonCommission());
+                    //设置Amazon佣金（人民币）
+                    orderDTO.setAmazonCommission(orderEntity.getAmazonCommissionCny());
+                    //设置到账金额（外币）
+                    orderDTO.setAccountMoneyForeign(orderEntity.getAccountMoney());
+                    //设置到账金额（人民币）
+                    orderDTO.setAccountMoney(orderEntity.getAccountMoneyCny());
                 }
             }
         }else{

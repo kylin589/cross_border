@@ -1,7 +1,6 @@
 
 .item{
     margin-bottom: 15px;
-    position: relative;
 }
 .item h4{
     font-weight: bold;
@@ -18,10 +17,9 @@
     background: linear-gradient(to bottom, #1e9fff , #63e3f0);
     margin-right: 5px;
 }
-div.nav_title{
+.item div.nav_title{
     border-bottom: 1px solid #ddd;
     overflow: hidden;
-    margin-bottom: 16px;
 }
 .nav_title ul{
     display: inline-block;
@@ -38,11 +36,8 @@ div.nav_title{
     font-weight: bold;
     border-bottom: 3px solid #00a3e8;
 }
-.item select{
-    position: absolute;
-    right: 10px;
-    top: -4px;
-    /* float: right; */
+.nav_title select{
+    float: right;
     height: 28px;
     width: 180px;
     background: none;
@@ -101,4 +96,50 @@ div.nav_title{
 }
 .chart1>div:nth-child(3){
     flex: 3;
+}
+
+.chart2>div{
+    flex: 1!important;
+    /*margin-right: 30px;*/
+}
+.chart2>div:nth-child(1){
+    margin-right: 6%;
+    background: -webkit-linear-gradient(left top, #ff5aa0,#f8526a,#f5a94c); /* Safari 5.1 - 6.0 */
+    background: -o-linear-gradient(bottom right, #ff5aa0,#f8526a,#f5a94c); /* Opera 11.1 - 12.0 */
+    background: -moz-linear-gradient(bottom right, #ff5aa0,#f8526a,#f5a94c); /* Firefox 3.6 - 15 */
+    background: linear-gradient(to bottom right, #ff5aa0,#f8526a,#f5a94c); /* 标准的语法（必须放在最后） */
+    box-shadow: 0 3px 25px #fc4f65;
+}
+.chart2>div:nth-child(2){
+    background: -webkit-linear-gradient(left top, #c687fe,#4e95ff,#27c6fc); /* Safari 5.1 - 6.0 */
+    background: -o-linear-gradient(bottom right, #c687fe,#4e95ff,#27c6fc); /* Opera 11.1 - 12.0 */
+    background: -moz-linear-gradient(bottom right, #c687fe,#4e95ff,#27c6fc); /* Firefox 3.6 - 15 */
+    background: linear-gradient(to bottom right, #c687fe,#4e95ff,#27c6fc); /* 标准的语法（必须放在最后） */
+    box-shadow: 0 3px 25px #709ff1;
+    margin-right: 6%;
+}
+.chart2>div:nth-child(3){
+    background: -webkit-linear-gradient(left top, #33c5ae,#36c776,#69e355); /* Safari 5.1 - 6.0 */
+    background: -o-linear-gradient(bottom right, #33c5ae,#36c776,#69e355); /* Opera 11.1 - 12.0 */
+    background: -moz-linear-gradient(bottom right, #33c5ae,#36c776,#69e355); /* Firefox 3.6 - 15 */
+    background: linear-gradient(to bottom right, #33c5ae,#36c776,#69e355); /* 标准的语法（必须放在最后） */
+    box-shadow: 0 3px 25px #39c196;
+    margin-right: 0px;
+}
+.chart2>div{
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: transparent;
+    padding-top: 36px;
+    opacity:.8;
+}
+.chart2>div span , .chart2>div p {
+    font-size: 14px;
+    font-weight: normal;
+    letter-spacing: 0px;
+}
+.chart2>div p {
+    padding-top: 4px;
 }

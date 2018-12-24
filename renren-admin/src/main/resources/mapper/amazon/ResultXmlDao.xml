@@ -7,11 +7,10 @@
     <resultMap type="io.renren.modules.amazon.entity.ResultXmlEntity" id="resultXmlMap">
         <result property="id" column="id"/>
         <result property="uploadId" column="upload_id"/>
-        <result property="productsResultXml" column="products_result_xml"/>
-        <result property="relationshipsResultXml" column="relationships_result_xml"/>
-        <result property="imagesResultXml" column="images_result_xml"/>
-        <result property="inventoryResultXml" column="inventory_result_xml"/>
-        <result property="pricesResultXml" column="prices_result_xml"/>
+        <result property="type" column="type"/>
+        <result property="state" column="state"/>
+        <result property="xml" column="xml"/>
+        <result property="creationTime" column="creation_time"/>
     </resultMap>
 
 

@@ -68,9 +68,9 @@ var vm = new Vue({
             aveProfit:'56%',
         },
         statisticsProfit:{
-            percentage:'348937万元',
-            profit:'564654万元',
-            allProfit:'2387654万元',
+            percentage:'348937',
+            profit:'564654',
+            allProfit:'2387654',
         },
         allChart1Data:[12, 32, 91],
         allChart2Data:[66, 23, 87],
@@ -82,6 +82,13 @@ var vm = new Vue({
     },
     methods:{
 
+    },
+    mounted:function () {
+        $('.chart2>div').css('color','#fff');
+    },
+    updated:function () {
+        $('.chart2>div').css('color','#fff');
+        console.log($('.chart2>div'));
     }
 
 })

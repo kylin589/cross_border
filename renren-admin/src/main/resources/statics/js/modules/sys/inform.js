@@ -91,7 +91,7 @@ var vm = new Vue({
         },
         // 标记为已读
         noticeStateFunc:function (id) {
-            layer.confirm('确定标记为已读吗？',function () {
+            layer.confirm('确定标记为已读吗？',function (index) {
                 $.ajax({
                     url: '../../sys/notice/sign',
                     type: 'get',
@@ -104,7 +104,7 @@ var vm = new Vue({
                         console.log(r);
                         if (r.code === 0) {
                             vm.getInformList();
-                            layer.close();
+                            layer.close(index);
                         } else {
                             layer.alert(r.message);
                         }
@@ -120,7 +120,7 @@ var vm = new Vue({
         },
         // 标记全部为已读
         allnoticeStateFunc:function () {
-            confirm('确定标记全部为已读吗？',function () {
+            layer.confirm('确定标记全部为已读吗？',function (index) {
                 $.ajax({
                     url: '../../sys/notice/signAll',
                     type: 'get',
@@ -132,7 +132,7 @@ var vm = new Vue({
                         if (r.code === 0) {
                             console.log('成功')
                             vm.getInformList();
-                            // layer.close(index);
+                            layer.close(index);
                         } else {
                             layer.alert(r.msg);
                         }

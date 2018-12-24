@@ -9,7 +9,7 @@
         <result property="userId" column="user_id"/>
         <result property="shopName" column="shop_name"/>
         <result property="amazonAccount" column="amazon_account"/>
-        <result property="area" column="area"/>
+        <result property="region" column="region"/>
         <result property="merchantId" column="merchant_id"/>
         <result property="grantToken" column="grant_token"/>
     </resultMap>

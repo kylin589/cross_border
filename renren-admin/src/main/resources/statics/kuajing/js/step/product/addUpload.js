@@ -95,7 +95,7 @@ var vm = new Vue({
                     btn1: function (index) {
                         console.log(vm.inputche)
                         vm.uploadIds = vm.uploadIdsstr.split(',');
-                        console.log(vm.uploadIds);
+                        console.log(typeof(vm.uploadIds));
                         if (vm.inputche[0]==true){
 
                             vm.operateItem = [0,1,2,3,4];
@@ -154,11 +154,18 @@ var vm = new Vue({
                 layer.msg("请选择店铺");
             }
         },
+        // 全选
+        allSelFunc:function () {
+
+            var _if = $(event.target).prop('checked');
+            console.log(vm.inputche);
+            $('#operateItem input').prop('checked',_if);
+        },
         //立即上传
         addUpload:function () {
             console.log(vm.shopinfo);
-            vm.uploadIds = vm.uploadIdsstr;
-            // vm.uploadIds = vm.uploadIdsstr.split(',');
+            // vm.uploadIds = vm.uploadIdsstr;
+            vm.uploadIds = vm.uploadIdsstr.split(',');
             console.log(vm.uploadIds);
             if (vm.inputche[0]==true){
 
@@ -171,7 +178,7 @@ var vm = new Vue({
                     }
                 }
             }
-            console.log(vm.operateItem);
+            console.log(vm.inputche);
             vm.grantShopId = vm.shopinfo.grantShopId;
             vm.grantShop = vm.shopinfo.shopName;
             console.log(vm.grantShopId);
@@ -338,8 +345,9 @@ var vm = new Vue({
                 url: '../../product/upload/timeZoneConversion',
                 type: 'get',
                 data: {
-                    countryCode:vm.value9,
-                    countryTime:vm.shopinfo.countryCode
+                    countryCode:vm.shopinfo.countryCode,
+                    // countryCode:vm.value9,
+                    countryTime:vm.value9
                 },
                 // contentType: "application/json",
                 dataType: 'json',

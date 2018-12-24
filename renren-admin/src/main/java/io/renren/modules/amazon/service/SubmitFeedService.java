@@ -155,5 +155,6 @@ public interface SubmitFeedService {
      * 重新提交
      * @param uploadEntity
      */
-    void ReUploadFeed(UploadEntity uploadEntity);
+    @Async
+    void reUploadFeed(UploadEntity uploadEntity);
 }

@@ -11,7 +11,7 @@ import java.util.Date;
  * 
  * @author zjr
  * @email 1981763981@qq.com
- * @date 2018-12-21 22:55:00
+ * @date 2018-12-24 07:26:40
  */
 @TableName("amazon_result_xml")
 public class ResultXmlEntity implements Serializable {
@@ -27,25 +27,21 @@ public class ResultXmlEntity implements Serializable {
 	 */
 	private Long uploadId;
 	/**
-	 * 商品上传返回的xml结果
+	 * 上传类型(products：商品，relationships：关系，images：图片，inventory：库存，prices：价格)
 	 */
-	private String productsResultXml;
+	private String type;
 	/**
-	 * 关系上传返回的xml结果
+	 * 0：等待上传；1：正在上传；2：上传成功；3：上传失败，4：有警告
 	 */
-	private String relationshipsResultXml;
+	private Integer state;
 	/**
-	 * 图片上传返回的xml结果
+	 * 上传返回的xml结果
 	 */
-	private String imagesResultXml;
+	private String xml;
 	/**
-	 * 库存上传返回的xml结果
+	 * 创建时间
 	 */
-	private String inventoryResultXml;
-	/**
-	 * 价格上传返回的xml结果
-	 */
-	private String pricesResultXml;
+	private Date creationTime;
 
 	/**
 	 * 设置：主键id
@@ -72,63 +68,51 @@ public class ResultXmlEntity implements Serializable {
 		return uploadId;
 	}
 	/**
-	 * 设置：商品上传返回的xml结果
+	 * 设置：上传类型(products：商品，relationships：关系，images：图片，inventory：库存，prices：价格)
 	 */
-	public void setProductsResultXml(String productsResultXml) {
-		this.productsResultXml = productsResultXml;
+	public void setType(String type) {
+		this.type = type;
 	}
 	/**
-	 * 获取：商品上传返回的xml结果
+	 * 获取：上传类型(products：商品，relationships：关系，images：图片，inventory：库存，prices：价格)
 	 */
-	public String getProductsResultXml() {
-		return productsResultXml;
+	public String getType() {
+		return type;
 	}
 	/**
-	 * 设置：关系上传返回的xml结果
+	 * 设置：0：等待上传；1：正在上传；2：上传成功；3：上传失败，4：有警告
 	 */
-	public void setRelationshipsResultXml(String relationshipsResultXml) {
-		this.relationshipsResultXml = relationshipsResultXml;
+	public void setState(Integer state) {
+		this.state = state;
 	}
 	/**
-	 * 获取：关系上传返回的xml结果
+	 * 获取：0：等待上传；1：正在上传；2：上传成功；3：上传失败，4：有警告
 	 */
-	public String getRelationshipsResultXml() {
-		return relationshipsResultXml;
+	public Integer getState() {
+		return state;
 	}
 	/**
-	 * 设置：图片上传返回的xml结果
+	 * 设置：上传返回的xml结果
 	 */
-	public void setImagesResultXml(String imagesResultXml) {
-		this.imagesResultXml = imagesResultXml;
+	public void setXml(String xml) {
+		this.xml = xml;
 	}
 	/**
-	 * 获取：图片上传返回的xml结果
+	 * 获取：上传返回的xml结果
 	 */
-	public String getImagesResultXml() {
-		return imagesResultXml;
+	public String getXml() {
+		return xml;
 	}
 	/**
-	 * 设置：库存上传返回的xml结果
+	 * 设置：创建时间
 	 */
-	public void setInventoryResultXml(String inventoryResultXml) {
-		this.inventoryResultXml = inventoryResultXml;
+	public void setCreationTime(Date creationTime) {
+		this.creationTime = creationTime;
 	}
 	/**
-	 * 获取：库存上传返回的xml结果
+	 * 获取：创建时间
 	 */
-	public String getInventoryResultXml() {
-		return inventoryResultXml;
-	}
-	/**
-	 * 设置：价格上传返回的xml结果
-	 */
-	public void setPricesResultXml(String pricesResultXml) {
-		this.pricesResultXml = pricesResultXml;
-	}
-	/**
-	 * 获取：价格上传返回的xml结果
-	 */
-	public String getPricesResultXml() {
-		return pricesResultXml;
+	public Date getCreationTime() {
+		return creationTime;
 	}
 }

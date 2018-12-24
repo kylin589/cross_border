@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.TemplateFieldValueDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.TemplateFieldValueEntity" id="templateFieldValueMap">
+        <result property="valueId" column="value_id"/>
+        <result property="fieldId" column="field_id"/>
+        <result property="cnValue" column="cn_value"/>
+        <result property="ukValue" column="uk_value"/>
+        <result property="frValue" column="fr_value"/>
+        <result property="deValue" column="de_value"/>
+        <result property="itValue" column="it_value"/>
+        <result property="esValue" column="es_value"/>
+        <result property="jpValue" column="jp_value"/>
+        <result property="auValue" column="au_value"/>
+        <result property="caValue" column="ca_value"/>
+        <result property="usValue" column="us_value"/>
+        <result property="mxValue" column="mx_value"/>
+    </resultMap>
+
+
+</mapper>

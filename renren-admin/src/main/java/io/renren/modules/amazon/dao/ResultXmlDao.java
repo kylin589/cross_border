@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  * 
  * @author zjr
  * @email 1981763981@qq.com
- * @date 2018-12-21 22:55:00
+ * @date 2018-12-24 07:26:40
  */
 public interface ResultXmlDao extends BaseMapper<ResultXmlEntity> {
 	
