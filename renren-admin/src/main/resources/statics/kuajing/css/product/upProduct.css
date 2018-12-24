@@ -20,10 +20,12 @@ p button{
 
 .operation{
     width: 100%;
-    display: flex;
+    /* display: flex; */
+    text-align: center;
 }
 .operation>div{
     /* flex: 1; */
+    display: inline-block;
     text-align: center;
     cursor: pointer;
     margin-right: 18px;

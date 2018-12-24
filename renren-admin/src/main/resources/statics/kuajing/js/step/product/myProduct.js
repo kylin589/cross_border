@@ -492,42 +492,45 @@ var vm = new Vue({
                         }
                     });
                 // }else if($(event.target).attr('data-pid') == '0' && vm.categoryThreeList){
-                }else if(0<parseInt($(event.target).attr('data-pid')) <= vm.categoryOneList[vm.categoryOneList.length-1].categoryId){
-                    vm.categoryThreeList = [];
-                    $.ajax({
-                        type: 'get',
-                        url: '../../product/category/querycategorybyparentid',
-                        contentType: "application/json",
-                        data: {categoryId:id},
-                        success: function (r) {
-                            if (r.code == 0) {
-                                // vm.categoryThreeList = r.categoryList;
-                                if(r.categoryList.length != 0){
-                                    vm.categoryThreeList = r.categoryList;
-                                    vm.nowproTypearr[1] = $(event.target).attr('data-val');
-                                }else {
-                                    vm.nowproTypearr[1] = $(event.target).attr('data-val');
-                                    vm.nowProTypeId = id;
-                                    vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1];
-                                    $('.sousuoArea').css('display','none');
-                                    // vm.nowproTypearr.forEach(function (t) {
-                                    //     vm.nowProType+=t+'/'
-                                    // })
-                                    // vm.nowProType.slice(0,vm.nowProType.length-1);
+                }else if($(event.target).attr('data-pid') != 0){
+                    if($(event.target).attr('data-index') == 2){
+                        vm.categoryThreeList = [];
+                        $.ajax({
+                            type: 'get',
+                            url: '../../product/category/querycategorybyparentid',
+                            contentType: "application/json",
+                            data: {categoryId:id},
+                            success: function (r) {
+                                if (r.code == 0) {
+                                    // vm.categoryThreeList = r.categoryList;
+                                    if(r.categoryList.length != 0){
+                                        vm.categoryThreeList = r.categoryList;
+                                        vm.nowproTypearr[1] = $(event.target).attr('data-val');
+                                    }else {
+                                        vm.nowproTypearr[1] = $(event.target).attr('data-val');
+                                        vm.nowProTypeId = id;
+                                        vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1];
+                                        $('.sousuoArea').css('display','none');
+                                        // vm.nowproTypearr.forEach(function (t) {
+                                        //     vm.nowProType+=t+'/'
+                                        // })
+                                        // vm.nowProType.slice(0,vm.nowProType.length-1);
+                                    }
+
+                                    console.log(vm.categoryThreeList)
+                                } else {
+                                    alert(r.msg);
                                 }
-
-                                console.log(vm.categoryThreeList)
-                            } else {
-                                alert(r.msg);
                             }
-                        }
-                    });
-                }else if(parseInt($(event.target).attr('data-pid')) > vm.categoryOneList[vm.categoryOneList.length-1].categoryId){
-                    vm.nowproTypearr[2] = $(event.target).attr('data-val');
-                    vm.nowProTypeId = id;
+                        });
+                    }else {
+                        vm.nowproTypearr[2] = $(event.target).attr('data-val');
+                        vm.nowProTypeId = id;
 
-                    vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1] + '/' + vm.nowproTypearr[2];
-                    $('.sousuoArea').css('display','none');
+                        vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1] + '/' + vm.nowproTypearr[2];
+                        $('.sousuoArea').css('display','none');
+                    }
+
                 }
             // }else {
             //     vm.nowproTypearr[2] = $(event.target).attr('data-val');
@@ -604,7 +607,7 @@ var vm = new Vue({
                     btn: ['修改','取消'],
                     btn1: function (index) {
                         console.log(vm.xiugaiData);
-                        layer.confirm('确定修改吗？',function () {
+                        layer.confirm('确定修改吗？',function (index1) {
                             $.ajax({
                                 url: '../../product/products/batchmodify',
                                 type: 'post',
@@ -615,6 +618,8 @@ var vm = new Vue({
                                     console.log(r);
                                     if (r.code === 0) {
                                         layer.msg('修改成功');
+                                        layer.close(index1);
+                                        layer.close(index);
 
                                     } else {
                                         layer.alert(r.msg);
@@ -666,25 +671,38 @@ var vm = new Vue({
             // $(event.target)
             var pId = $(event.target).attr('data-pid');
             var id = $(event.target).attr('data-id');
-            if($(event.target).attr('data-if') == 'true'){
-                if($(event.target).attr('data-pid') == '0'){
-                    vm.categoryThreeList = [];
-                    $.ajax({
-                        type: 'get',
-                        url: '../../product/category/querycategorybyparentid',
-                        contentType: "application/json",
-                        data: {categoryId:id},
-                        success: function (r) {
-                            if (r.code == 0) {
+
+            if($(event.target).attr('data-pid') == '0'){
+                vm.categoryThreeList = [];
+                $.ajax({
+                    type: 'get',
+                    url: '../../product/category/querycategorybyparentid',
+                    contentType: "application/json",
+                    data: {categoryId:id},
+                    success: function (r) {
+                        if (r.code == 0) {
+
+                            if(r.categoryList.length != 0){
                                 vm.categoryTwoList = r.categoryList;
                                 vm.pilTypePro[0] = $(event.target).attr('data-val');
-                                console.log(vm.categoryTwoList)
-                            } else {
-                                alert(r.msg);
+                            }else {
+                                console.log('&&&&');
+                                vm.pilTypePro[0] = $(event.target).attr('data-val');
+                                vm.xiugaiData.categoryThreeId = id;
+                                vm.xiugaiData.productCategory = vm.nowproTypearr[0];
+                                $('.sousuoArea').css('display','none');
                             }
+                            // vm.nowproTypearr[0] = $(event.target).attr('data-val');
+
+                            console.log(r.categoryList)
+                        } else {
+                            alert(r.msg);
                         }
-                    });
-                }else if($(event.target).attr('data-pid') != '0'){
+                    }
+                });
+                // }else if($(event.target).attr('data-pid') == '0' && vm.categoryThreeList){
+            }else if($(event.target).attr('data-pid') != 0){
+                if($(event.target).attr('data-index') == 2){
                     vm.categoryThreeList = [];
                     $.ajax({
                         type: 'get',
@@ -693,22 +711,42 @@ var vm = new Vue({
                         data: {categoryId:id},
                         success: function (r) {
                             if (r.code == 0) {
-                                vm.categoryThreeList = r.categoryList;
-                                vm.pilTypePro[1] = $(event.target).attr('data-val');
+                                // vm.categoryThreeList = r.categoryList;
+                                if(r.categoryList.length != 0){
+                                    vm.categoryThreeList = r.categoryList;
+                                    vm.pilTypePro[1] = $(event.target).attr('data-val');
+                                }else {
+                                    vm.pilTypePro[1] = $(event.target).attr('data-val');
+                                    vm.xiugaiData.categoryThreeId = id;
+                                    vm.xiugaiData.productCategory = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1];
+                                    $('.sousuoArea').css('display','none');
+                                    // vm.nowproTypearr.forEach(function (t) {
+                                    //     vm.nowProType+=t+'/'
+                                    // })
+                                    // vm.nowProType.slice(0,vm.nowProType.length-1);
+                                }
+
                                 console.log(vm.categoryThreeList)
                             } else {
                                 alert(r.msg);
                             }
                         }
                     });
-                }
-            }else {
+                }else {
+                    vm.pilTypePro[2] = $(event.target).attr('data-val');
+                    vm.xiugaiData.productCategory = vm.pilTypePro[0] + '/' + vm.pilTypePro[1] + '/' + vm.pilTypePro[2];
+                    vm.xiugaiData.categoryThreeId = parseInt(id);
+                    $('.sousuoArea').css('display','none');
 
-                vm.pilTypePro[2] = $(event.target).attr('data-val');
-                vm.xiugaiData.productCategory = vm.pilTypePro[0] + '/' + vm.pilTypePro[1] + '/' + vm.pilTypePro[2];
-                vm.xiugaiData.categoryThreeId = parseInt(id);
-                $('.sousuoArea').css('display','none');
+                    // vm.nowproTypearr[2] = $(event.target).attr('data-val');
+                    // vm.nowProTypeId = id;
+                    //
+                    // vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1] + '/' + vm.nowproTypearr[2];
+                    // $('.sousuoArea').css('display','none');
+                }
+
             }
+
 
 
         },

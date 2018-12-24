@@ -226,13 +226,12 @@ public class ProductsController extends AbstractController {
      */
     @RequestMapping("/getproductid")
     public R getProductId() {
-        Long productId = productsService.getNewProductId(getUserId());
-        ProductsEntity productsEntity = productsService.selectById(productId);
+        ProductsEntity productsEntity = productsService.getNewProductId(getUserId());
         //生成SKU
         SysUserEntity user = getUser();
         String enName = user.getEnName();
         String enBrand = user.getEnBrand();
-        String SKU = enName + "-" + enBrand + "-" + productId;
+        String SKU = enName + "-" + enBrand + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
@@ -243,101 +242,9 @@ public class ProductsController extends AbstractController {
             //修改状态
             eanUpcEntity.setState(1);
             //关联产品id
-            eanUpcEntity.setProductId(productId);
+            eanUpcEntity.setProductId(productsEntity.getProductId());
             eanUpcService.updateById(eanUpcEntity);
         }
-
-        //美国运费
-        FreightCostEntity americanFC = new FreightCostEntity();
-        freightCostService.insert(americanFC);
-        productsEntity.setAmericanFreight(americanFC.getFreightCostId());
-        productsEntity.setAmericanFC(americanFC);
-        // 加拿大运费
-        FreightCostEntity canadaFC = new FreightCostEntity();
-        freightCostService.insert(canadaFC);
-        productsEntity.setCanadaFreight(canadaFC.getFreightCostId());
-        productsEntity.setCanadaFC(canadaFC);
-        // 墨西哥运费
-        FreightCostEntity mexicoFC = new FreightCostEntity();
-        freightCostService.insert(mexicoFC);
-        productsEntity.setMexicoFreight(mexicoFC.getFreightCostId());
-        productsEntity.setMexicoFC(mexicoFC);
-
-        //英国运费
-        FreightCostEntity britainFC = new FreightCostEntity();
-        freightCostService.insert(britainFC);
-        productsEntity.setBritainFreight(britainFC.getFreightCostId());
-        productsEntity.setBritainFC(britainFC);
-
-        // 法国运费
-        FreightCostEntity franceFC = new FreightCostEntity();
-        freightCostService.insert(franceFC);
-        productsEntity.setFranceFreight(franceFC.getFreightCostId());
-        productsEntity.setFranceFC(franceFC);
-
-        // 德国运费
-        FreightCostEntity germanyFC = new FreightCostEntity();
-        freightCostService.insert(germanyFC);
-        productsEntity.setGermanyFreight(germanyFC.getFreightCostId());
-        productsEntity.setGermanyFC(germanyFC);
-
-        //意大利运费
-        FreightCostEntity italyFC = new FreightCostEntity();
-        freightCostService.insert(italyFC);
-        productsEntity.setItalyFreight(italyFC.getFreightCostId());
-        productsEntity.setItalyFC(italyFC);
-
-        //西班牙运费
-        FreightCostEntity spainFC = new FreightCostEntity();
-        freightCostService.insert(spainFC);
-        productsEntity.setSpainFreight(spainFC.getFreightCostId());
-        productsEntity.setSpainFC(spainFC);
-        // 日本运费
-        FreightCostEntity japanFC = new FreightCostEntity();
-        freightCostService.insert(japanFC);
-        productsEntity.setJapanFreight(japanFC.getFreightCostId());
-        productsEntity.setJapanFC(japanFC);
-        //澳大利亚运费
-        FreightCostEntity australiaFC = new FreightCostEntity();
-        freightCostService.insert(australiaFC);
-        productsEntity.setAustraliaFreight(australiaFC.getFreightCostId());
-        productsEntity.setAustraliaFC(australiaFC);
-        //各个国家的介绍
-        //中文介绍
-        IntroductionEntity chinesePRE = new IntroductionEntity();
-        introductionService.insert(chinesePRE);
-        productsEntity.setChineseIntroduction(chinesePRE.getIntroductionId());
-        productsEntity.setChinesePRE(chinesePRE);
-        //英文介绍
-        IntroductionEntity britainPRE = new IntroductionEntity();
-        introductionService.insert(britainPRE);
-        productsEntity.setBritainIntroduction(britainPRE.getIntroductionId());
-        productsEntity.setBritainPRE(britainPRE);
-        //法语介绍
-        IntroductionEntity francePRE = new IntroductionEntity();
-        introductionService.insert(francePRE);
-        productsEntity.setFranceIntroduction(francePRE.getIntroductionId());
-        productsEntity.setFrancePRE(francePRE);
-        //德语介绍
-        IntroductionEntity germanyPRE = new IntroductionEntity();
-        introductionService.insert(germanyPRE);
-        productsEntity.setGermanyIntroduction(germanyPRE.getIntroductionId());
-        productsEntity.setGermanyPRE(germanyPRE);
-        //意大利语介绍
-        IntroductionEntity italyPRE = new IntroductionEntity();
-        introductionService.insert(italyPRE);
-        productsEntity.setItalyIntroduction(italyPRE.getIntroductionId());
-        productsEntity.setItalyPRE(italyPRE);
-        //西班牙语介绍
-        IntroductionEntity spainPRE = new IntroductionEntity();
-        introductionService.insert(spainPRE);
-        productsEntity.setSpainIntroduction(spainPRE.getIntroductionId());
-        productsEntity.setSpainPRE(spainPRE);
-        //日语介绍
-        IntroductionEntity japanPRE = new IntroductionEntity();
-        introductionService.insert(japanPRE);
-        productsEntity.setJapanIntroduction(japanPRE.getIntroductionId());
-        productsEntity.setJapanPRE(japanPRE);
         productsService.updateById(productsEntity);
         return R.ok().put("productsEntity", productsEntity);
     }
@@ -755,37 +662,10 @@ public class ProductsController extends AbstractController {
      */
     @RequestMapping("/cancelOriginal")
     public R cancelOriginal(Long productId) {
-        ProductsEntity productsEntity = productsService.selectById(productId);
-        Long americanid = productsEntity.getAmericanFreight();
-        freightCostService.deleteById(americanid);
-
-        Long canadaid = productsEntity.getCanadaFreight();
-        freightCostService.deleteById(canadaid);
-
-        Long mexicoid = productsEntity.getMexicoFreight();
-        freightCostService.deleteById(mexicoid);
-
-        Long britainid = productsEntity.getBritainFreight();
-        freightCostService.deleteById(britainid);
-
-        Long franceid = productsEntity.getFranceFreight();
-        freightCostService.deleteById(franceid);
-
-        Long germanyid = productsEntity.getGermanyFreight();
-        freightCostService.deleteById(germanyid);
-
-        Long italyid = productsEntity.getItalyFreight();
-        freightCostService.deleteById(italyid);
-
-        Long spainid = productsEntity.getSpainFreight();
-        freightCostService.deleteById(spainid);
-
-        Long japanid = productsEntity.getJapanFreight();
-        freightCostService.deleteById(japanid);
-
-        Long australiaid = productsEntity.getAustraliaFreight();
-        freightCostService.deleteById(australiaid);
-
+        List<ImageAddressEntity> ImageAddressEntitys = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId));
+        if (ImageAddressEntitys != null && ImageAddressEntitys.size() != 0) {
+                imageAddressService.delete(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId));
+                }
         productsService.deleteById(productId);
         return R.ok();
     }
@@ -808,83 +688,198 @@ public class ProductsController extends AbstractController {
             products.setCategoryTwoId(Long.parseLong(id[1]));
             products.setCategoryThreeId(Long.parseLong(id[2]));
         }
+        //各个国家的运费信息
         //美国运费
         FreightCostEntity americanFC = products.getAmericanFC();
-        freightCostService.updateById(americanFC);
-
+        if (americanFC != null) {
+            if (americanFC.getFreightCostId() != null) {
+                freightCostService.updateById(americanFC);
+            } else {
+                freightCostService.insert(americanFC);
+                products.setAmericanFreight(americanFC.getFreightCostId());
+            }
+        }
         // 加拿大运费
         FreightCostEntity canadaFC = products.getCanadaFC();
-        freightCostService.updateById(canadaFC);
-
+        if (canadaFC != null) {
+            if (canadaFC.getFreightCostId() != null) {
+                freightCostService.updateById(canadaFC);
+            } else {
+                freightCostService.insert(canadaFC);
+                products.setCanadaFreight(canadaFC.getFreightCostId());
+            }
+        }
         // 墨西哥运费
         FreightCostEntity mexicoFC = products.getMexicoFC();
-        freightCostService.updateById(mexicoFC);
-
+        if (mexicoFC != null) {
+            if (mexicoFC.getFreightCostId() != null) {
+                freightCostService.updateById(mexicoFC);
+            } else {
+                freightCostService.insert(mexicoFC);
+                products.setMexicoFreight(mexicoFC.getFreightCostId());
+            }
+        }
         //英国运费
         FreightCostEntity britainFC = products.getBritainFC();
-        freightCostService.updateById(britainFC);
-
+        if (britainFC != null) {
+            if (britainFC.getFreightCostId() != null) {
+                freightCostService.updateById(britainFC);
+            } else {
+                freightCostService.insert(britainFC);
+                products.setBritainFreight(britainFC.getFreightCostId());
+            }
+        }
         // 法国运费
         FreightCostEntity franceFC = products.getFranceFC();
-        freightCostService.updateById(franceFC);
-
+        if (franceFC != null) {
+            if (franceFC.getFreightCostId() != null) {
+                freightCostService.updateById(franceFC);
+            } else {
+                freightCostService.insert(franceFC);
+                products.setFranceFreight(franceFC.getFreightCostId());
+            }
+        }
         // 德国运费
         FreightCostEntity germanyFC = products.getGermanyFC();
-        freightCostService.updateById(germanyFC);
-
+        if (germanyFC != null) {
+            if (germanyFC.getFreightCostId() != null) {
+                freightCostService.updateById(germanyFC);
+            } else {
+                freightCostService.insert(germanyFC);
+                products.setGermanyFreight(germanyFC.getFreightCostId());
+            }
+        }
         //意大利运费
         FreightCostEntity italyFC = products.getItalyFC();
-        freightCostService.updateById(italyFC);
-
+        if (italyFC != null) {
+            if (italyFC.getFreightCostId() != null) {
+                freightCostService.updateById(italyFC);
+            } else {
+                freightCostService.insert(italyFC);
+                products.setItalyFreight(italyFC.getFreightCostId());
+            }
+        }
         //西班牙运费
         FreightCostEntity spainFC = products.getSpainFC();
-        freightCostService.updateById(spainFC);
-
+        if (spainFC != null) {
+            if (spainFC.getFreightCostId() != null) {
+                freightCostService.updateById(spainFC);
+            } else {
+                freightCostService.insert(spainFC);
+                products.setSpainFreight(spainFC.getFreightCostId());
+            }
+        }
         // 日本运费
         FreightCostEntity japanFC = products.getJapanFC();
-        freightCostService.updateById(japanFC);
-
+        if (japanFC != null) {
+            if (japanFC.getFreightCostId() != null) {
+                freightCostService.updateById(japanFC);
+            } else {
+                freightCostService.insert(japanFC);
+                products.setJapanFreight(japanFC.getFreightCostId());
+            }
+        }
         //澳大利亚运费
         FreightCostEntity australiaFC = products.getAustraliaFC();
-        freightCostService.updateById(australiaFC);
-
+        if (australiaFC != null) {
+            if (australiaFC.getFreightCostId() != null) {
+                freightCostService.updateById(australiaFC);
+            } else {
+                freightCostService.insert(australiaFC);
+                products.setAustraliaFreight(australiaFC.getFreightCostId());
+            }
+        }
 
         //中文介绍
         IntroductionEntity chinesePRE = products.getChinesePRE();
-        introductionService.updateById(chinesePRE);
-        //products.setProductTitle(chinesePRE.getProductTitle());
-
+        if (chinesePRE != null) {
+            if (chinesePRE.getIntroductionId() != null) {
+                introductionService.updateById(chinesePRE);
+            } else {
+                introductionService.insert(chinesePRE);
+                products.setChineseIntroduction(chinesePRE.getIntroductionId());
+            }
+        }
         //英文介绍
         IntroductionEntity britainPRE = products.getBritainPRE();
-        introductionService.updateById(britainPRE);
-
+        System.out.println("=========================" + britainPRE);
+        if (britainPRE != null) {
+            if (britainPRE.getIntroductionId() != null) {
+                introductionService.updateById(britainPRE);
+            } else {
+                introductionService.insert(britainPRE);
+                products.setBritainIntroduction(britainPRE.getIntroductionId());
+            }
+        }
         //产品标题
         if (chinesePRE.getProductTitle() != null) {
             products.setProductTitle(chinesePRE.getProductTitle());
         } else if (britainPRE.getProductTitle() != null) {
             products.setProductTitle(britainPRE.getProductTitle());
         }
-
         //法语介绍
         IntroductionEntity francePRE = products.getFrancePRE();
-        introductionService.updateById(francePRE);
+        if (francePRE != null) {
+            if (francePRE.getIntroductionId() != null) {
+                introductionService.updateById(francePRE);
+            } else {
+                introductionService.insert(francePRE);
+                products.setFranceIntroduction(francePRE.getIntroductionId());
+            }
 
+        }
         //德语介绍
         IntroductionEntity germanyPRE = products.getGermanyPRE();
-        introductionService.updateById(germanyPRE);
-
+        if (germanyPRE != null) {
+            if (germanyPRE.getIntroductionId() != null) {
+                introductionService.updateById(germanyPRE);
+            } else {
+                introductionService.insert(germanyPRE);
+                products.setGermanyIntroduction(germanyPRE.getIntroductionId());
+            }
+        }
         //意大利语介绍
         IntroductionEntity italyPRE = products.getItalyPRE();
-        introductionService.updateById(italyPRE);
+        if (italyPRE != null) {
+            if (italyPRE.getIntroductionId() != null) {
+                introductionService.updateById(italyPRE);
+            } else {
+                introductionService.insert(italyPRE);
+                products.setItalyIntroduction(italyPRE.getIntroductionId());
+            }
 
+        }
         //西班牙语介绍
         IntroductionEntity spainPRE = products.getSpainPRE();
-        introductionService.updateById(spainPRE);
-
+        if (spainPRE != null) {
+            if (spainPRE.getIntroductionId() != null) {
+                introductionService.updateById(spainPRE);
+            } else {
+                introductionService.insert(spainPRE);
+                products.setSpainIntroduction(spainPRE.getIntroductionId());
+            }
+        }
         //日语介绍
         IntroductionEntity japanPRE = products.getJapanPRE();
-        introductionService.updateById(japanPRE);
-
+        if (japanPRE != null) {
+            if (japanPRE.getIntroductionId() != null) {
+                introductionService.updateById(japanPRE);
+            } else {
+                introductionService.insert(japanPRE);
+                products.setJapanIntroduction(japanPRE.getIntroductionId());
+            }
+        }
+        //获取尺寸和颜色的变体
+        VariantParameterEntity sizeVP = products.getSizeVP();
+        if (sizeVP != null) {
+            Long paramsId = sizeVP.getParamsId();
+            products.setSizeId(paramsId);
+        }
+        VariantParameterEntity colorVP = products.getColorVP();
+        if (colorVP != null) {
+            Long paramsId = colorVP.getParamsId();
+            products.setColorId(paramsId);
+        }
         //创建时间
         products.setCreateTime(new Date());
         //创建用户id

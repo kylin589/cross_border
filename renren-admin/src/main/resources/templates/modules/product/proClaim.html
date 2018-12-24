@@ -148,8 +148,8 @@
             <!--<img src="${request.contextPath}/statics/kuajing/img/img1.jpg">-->
             <img v-if="JSON.stringify(item.mainImageUrl) != 'null'" :src="item.mainImageUrl">
             <img v-if="JSON.stringify(item.mainImageUrl) == 'null'" src="${request.contextPath}/statics/kuajing/img/img1.jpg">
-            <h3 v-if="JSON.stringify(item.productTitle) != 'null' "><a :href="'detailsProduct.html?id='+item.productId">{{ item.productTitle }}</a></h3>
-            <h3 v-if="JSON.stringify(item.productTitle) == 'null' "><a :href="'detailsProduct.html?id='+item.productId">产品标题</a></h3>
+            <h3 v-if="JSON.stringify(item.productTitle) != 'null' "><a :href="'detailsProduct1.html?id='+item.productId">{{ item.productTitle }}</a></h3>
+            <h3 v-if="JSON.stringify(item.productTitle) == 'null' "><a :href="'detailsProduct1.html?id='+item.productId">产品标题</a></h3>
             <div class="footer">
                 <p>时间：{{ item.createTime }}</p>
                 <p>编号：{{ item.productId }}</p>

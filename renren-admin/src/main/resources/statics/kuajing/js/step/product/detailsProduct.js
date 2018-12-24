@@ -780,26 +780,50 @@ var vm = new Vue({
             // $(event.target)
             var pId = $(event.target).attr('data-pid');
             var id = $(event.target).attr('data-id');
-            if($(event.target).attr('data-if') == 'true'){
-                if($(event.target).attr('data-pid') == '0'){
-                    vm.categoryThreeList = [];
-                    $.ajax({
-                        type: 'get',
-                        url: '../../product/category/querycategorybyparentid',
-                        contentType: "application/json",
-                        data: {categoryId:id},
-                        success: function (r) {
-                            if (r.code == 0) {
+
+            console.log(parseInt($(event.target).attr('data-pid')));
+            console.log(vm.categoryOneList[vm.categoryOneList.length-1]);
+            console.log(parseInt($(event.target).attr('data-pid')) > vm.categoryOneList[vm.categoryOneList.length-1].categoryId);
+
+            // if($(event.target).attr('data-if') == 'true'){
+            if($(event.target).attr('data-pid') == '0'){
+                vm.categoryThreeList = [];
+                $.ajax({
+                    type: 'get',
+                    url: '../../product/category/querycategorybyparentid',
+                    contentType: "application/json",
+                    data: {categoryId:id},
+                    success: function (r) {
+                        if (r.code == 0) {
+
+                            if(r.categoryList.length != 0){
                                 vm.categoryTwoList = r.categoryList;
                                 vm.proDetails.categoryOneId = parseInt(id);
                                 vm.categoryOneName = $(event.target).attr('data-val');
-                                // console.log(vm.categoryTwoList)
-                            } else {
-                                alert(r.msg);
+
+                                // vm.categoryTwoList = r.categoryList;
+                                // vm.nowproTypearr[0] = $(event.target).attr('data-val');
+                            }else {
+                                vm.categoryOneName = $(event.target).attr('data-val');
+                                vm.proDetails.productCategory = vm.categoryOneName;
+
+                                // console.log('&&&&');
+                                // vm.nowproTypearr[0] = $(event.target).attr('data-val');
+                                // vm.nowProTypeId = id;
+                                // vm.nowProType = vm.nowproTypearr[0];
+                                $('.sousuoArea').css('display','none');
                             }
+                            // vm.nowproTypearr[0] = $(event.target).attr('data-val');
+
+                            console.log(r.categoryList)
+                        } else {
+                            alert(r.msg);
                         }
-                    });
-                }else if($(event.target).attr('data-pid') != '0'){
+                    }
+                });
+                // }else if($(event.target).attr('data-pid') == '0' && vm.categoryThreeList){
+            }else if($(event.target).attr('data-pid') != 0){
+                if($(event.target).attr('data-index') == 2){
                     vm.categoryThreeList = [];
                     $.ajax({
                         type: 'get',
@@ -808,25 +832,52 @@ var vm = new Vue({
                         data: {categoryId:id},
                         success: function (r) {
                             if (r.code == 0) {
-                                vm.categoryThreeList = r.categoryList;
-                                vm.proDetails.categoryTwoId = parseInt(id);
-                                vm.categoryTwoName = $(event.target).attr('data-val');
+                                // vm.categoryThreeList = r.categoryList;
+                                if(r.categoryList.length != 0){
+                                    vm.categoryThreeList = r.categoryList;
+                                    vm.proDetails.categoryTwoId = parseInt(id);
+                                    vm.categoryTwoName = $(event.target).attr('data-val');
+
+                                    // vm.categoryThreeList = r.categoryList;
+                                    // vm.nowproTypearr[1] = $(event.target).attr('data-val');
+                                }else {
+                                    vm.categoryTwoName = $(event.target).attr('data-val');
+                                    vm.proDetails.productCategory = vm.categoryOneName + '/'+ vm.categoryTwoName;
+                                    // vm.nowproTypearr[1] = $(event.target).attr('data-val');
+                                    // vm.nowProTypeId = id;
+                                    // vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1];
+                                    $('.sousuoArea').css('display','none');
+                                    // vm.nowproTypearr.forEach(function (t) {
+                                    //     vm.nowProType+=t+'/'
+                                    // })
+                                    // vm.nowProType.slice(0,vm.nowProType.length-1);
+                                }
+
                                 console.log(vm.categoryThreeList)
                             } else {
                                 alert(r.msg);
                             }
                         }
                     });
+                }else {
+                    vm.proDetails.categoryThreeId = parseInt(id);
+                    vm.categoryThreeName = $(event.target).attr('data-val');
+                    vm.proDetails.productCategory = vm.categoryOneName + '/'+ vm.categoryTwoName + '/' + vm.categoryThreeName;
+                    $('.sousuoArea').css('display','none');
                 }
-            }else {
-                vm.proDetails.categoryThreeId = parseInt(id);
-                vm.categoryThreeName = $(event.target).attr('data-val');
-                vm.proDetails.productCategory = vm.categoryOneName + '/'+ vm.categoryTwoName + '/' + vm.categoryThreeName;
-                $('.sousuoArea').css('display','none');
+
             }
+            // }else {
+            //     vm.nowproTypearr[2] = $(event.target).attr('data-val');
+            //     vm.nowProTypeId = id;
+            //
+            //     vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1] + '/' + vm.nowproTypearr[2];
+            //     $('.sousuoArea').css('display','none');
+            // }
 
 
         },
+
         // 成本运费
         getcostFreight:function () {
             $.ajax({
