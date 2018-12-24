@@ -649,7 +649,7 @@ var vm = new Vue({
                             // vm.drapImg();
                         })
                         // vm.drapImg();
-                        // setTimeout(function(){ vm.drapImg(); }, 1000);
+                        setTimeout(function(){ vm.drapImg(); }, 1000);
 
                         console.log('运费')
                         console.log(vm.proDetails.americanFC.freight)
@@ -1573,57 +1573,63 @@ var vm = new Vue({
                 //      console.log(nn);
                 var _index = nn;
                 var aLi = $(".ul1").eq(_index).find('li');
-                var aLiLast = $(".ul1").eq(_index).find('li:last-child');
-                // console.log(aLiLast);
-                var disX = 0;
-                var disY = 0;
-                var minZindex = 1;
-                var aPos = [];
-                for(var i = 0; i < aLi.length; i++) {
-                    var t = aLi[i].offsetTop;
-                    var l = aLi[i].offsetLeft;
-                    aLi[i].style.top = t + "px";
-                    aLi[i].style.left = l + "px";
-                    aPos[i] = {
-                        left: l,
-                        top: t
-                    };
-                    aLi[i].index = i;
-                }
-                for(var i = 0; i < aLi.length; i++) {
-                    aLi[i].style.position = "absolute";
-                    aLi[i].style.margin = 0;
-                    setDrag(aLi[i],aLi);
-                }
-
                 if(aLi.length != 0){
-                    var _height = aLiLast[0].offsetTop+60;
+                    var aLiLast = $(".ul1").eq(_index).find('li:last-child');
+                    // console.log(aLiLast);
+                    var disX = 0;
+                    var disY = 0;
+                    var minZindex = 1;
+                    var aPos = [];
+                    for(var i = 0; i < aLi.length; i++) {
+                        var t = aLi[i].offsetTop;
+                        var l = aLi[i].offsetLeft;
+                        aLi[i].style.top = t + "px";
+                        aLi[i].style.left = l + "px";
+                        aPos[i] = {
+                            left: l,
+                            top: t
+                        };
+                        aLi[i].index = i;
+                    }
+                    for(var i = 0; i < aLi.length; i++) {
+                        aLi[i].style.position = "absolute";
+                        aLi[i].style.margin = 0;
+                        setDrag(aLi[i],aLi);
+                    }
+
+                    // if(aLi.length != 0){
+                    //     // var _height = aLiLast[0].offsetTop+60;
+                    //     var _height = aLiLast[0].offsetTop+60;
+                    //     aLiLast.parent().css('height',_height+'px');
+                    //     aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+                    // }
                     var _height = aLiLast[0].offsetTop+60;
                     aLiLast.parent().css('height',_height+'px');
                     aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+
+                    // console.log(_height);
+
+
+                    aLi.mouseover(function () {
+                        $(this).find('i').css('display','inline-block');
+                        $(this).find('i').mouseover(function () {
+                            $(this).css('display','inline-block');
+                        })
+                        $(this).find('i').mouseout(function () {
+                            $(this).css('display','none');
+                        })
+                    })
+                    aLi.mouseout(function () {
+                        $(this).find('i').css('display','none');
+                        $(this).find('i').mouseover(function () {
+                            $(this).css('display','inline-block');
+                        })
+                        $(this).find('i').mouseout(function () {
+                            $(this).css('display','none');
+                        })
+                    })
                 }
 
-                // console.log(_height);
-
-
-                aLi.mouseover(function () {
-                    $(this).find('i').css('display','inline-block');
-                    $(this).find('i').mouseover(function () {
-                        $(this).css('display','inline-block');
-                    })
-                    $(this).find('i').mouseout(function () {
-                        $(this).css('display','none');
-                    })
-                })
-                aLi.mouseout(function () {
-                    $(this).find('i').css('display','none');
-                    $(this).find('i').mouseover(function () {
-                        $(this).css('display','inline-block');
-                    })
-                    $(this).find('i').mouseout(function () {
-                        $(this).css('display','none');
-                    })
-                })
             }
             //拖拽
             function setDrag(obj,all) {
@@ -1758,6 +1764,8 @@ var vm = new Vue({
             }
             function startMove(obj,json,fun){
                 clearInterval(obj.timer);
+
+                // console.log(11111);
                 obj.timer = setInterval(function(){
                     var isStop = true;
                     for(var attr in json){
