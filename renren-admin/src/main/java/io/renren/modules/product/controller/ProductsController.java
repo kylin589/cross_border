@@ -115,6 +115,7 @@ public class ProductsController extends AbstractController {
         Map<String, Object> map = productsService.queryAllPage(params, getDeptId());
         return R.ok().put("page", map.get("page")).put("proNum", map.get("proCount")).put("via", map.get("approvedCount")).put("variant", map.get("numberOfVariants")).put("allVariant", map.get("variantsCount"));
     }
+
     /**
      * @methodname: getClaimList 所有认领产品列表
      * @param: [params]
@@ -127,9 +128,10 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/getClaimList")
     public R getClaimList(@RequestParam Map<String, Object> params) {
         //公司所有产品列表(认领产品不在其中)
-        PageUtils page = productsService.queryClaimPage(params,getDeptId());
+        PageUtils page = productsService.queryClaimPage(params, getDeptId());
         return R.ok().put("page", page);
     }
+
     /**
      * @return R
      * @methodname: 更改产品的审核、上架、产品状态
@@ -210,7 +212,7 @@ public class ProductsController extends AbstractController {
         Long deptId = getDeptId();
         SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
         String companySku = sysDeptEntity.getCompanySku();
-        String SKU = companySku+"-"+productSku;
+        String SKU = companySku + "-" + productSku;
         return R.ok().put("SKU", SKU);
     }
 
@@ -228,18 +230,20 @@ public class ProductsController extends AbstractController {
         SysUserEntity user = getUser();
         String enName = user.getEnName();
         String enBrand = user.getEnBrand();
-        String SKU =enName+"-"+enBrand+"-"+productId;
+        String SKU = enName + "-" + enBrand + "-" + productId;
         productsEntity.setProductSku(SKU);
         //获取码
-        EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type","EAN").eq("state", 0).orderBy(true, "state", true));
-        String code = eanUpcEntity.getCode();
-        //设置Ean码
-        productsEntity.setEanCode(code);
-        //修改状态
-        eanUpcEntity.setState(1);
-        //关联产品id
-        eanUpcEntity.setProductId(productId);
-        eanUpcService.updateById(eanUpcEntity);
+        EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
+        if (eanUpcEntity != null) {
+            String code = eanUpcEntity.getCode();
+            //设置Ean码
+            productsEntity.setEanCode(code);
+            //修改状态
+            eanUpcEntity.setState(1);
+            //关联产品id
+            eanUpcEntity.setProductId(productId);
+            eanUpcService.updateById(eanUpcEntity);
+        }
 
         //美国运费
         FreightCostEntity americanFC = new FreightCostEntity();
@@ -667,10 +671,10 @@ public class ProductsController extends AbstractController {
         SysUserEntity user = getUser();
         String enName = user.getEnName();
         String enBrand = user.getEnBrand();
-        String SKU =enName+"-"+enBrand+"-"+productId;
+        String SKU = enName + "-" + enBrand + "-" + productId;
         productsEntity.setProductSku(SKU);
         //获取码
-        EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type","EAN").eq("state", 0).orderBy(true, "state", true));
+        EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         String code = eanUpcEntity.getCode();
         //设置Ean码
         productsEntity.setEanCode(code);
@@ -795,7 +799,7 @@ public class ProductsController extends AbstractController {
     public R originalProduct(@RequestBody ProductsEntity products) {
         //通过三级id查出一级二级三级的id字符串，以逗号进行拆分。存入产品
         Long threeId = products.getCategoryThreeId();
-        if(threeId!=null){
+        if (threeId != null) {
             String idString = categoryService.queryParentByChildId(threeId);
             String[] id = idString.split(",");
             products.setCategoryOneId(Long.parseLong(id[0]));
@@ -914,7 +918,7 @@ public class ProductsController extends AbstractController {
     public R modifyProduct(@RequestBody ProductsEntity products) {
         //通过三级id查出一级二级三级的id字符串，以逗号进行拆分。存入产品
         Long threeId = products.getCategoryThreeId();
-        if (threeId!=null){
+        if (threeId != null) {
             String idString = categoryService.queryParentByChildId(threeId);
             String[] id = idString.split(",");
             products.setCategoryOneId(Long.parseLong(id[0]));
@@ -1110,12 +1114,12 @@ public class ProductsController extends AbstractController {
         Long productId = products.getProductId();
         //获取尺寸和颜色的变体
         VariantParameterEntity sizeVP = products.getSizeVP();
-        if (sizeVP!=null){
+        if (sizeVP != null) {
             Long paramsId = sizeVP.getParamsId();
             products.setSizeId(paramsId);
         }
         VariantParameterEntity colorVP = products.getColorVP();
-        if(colorVP!=null){
+        if (colorVP != null) {
             Long paramsId = colorVP.getParamsId();
             products.setColorId(paramsId);
         }
