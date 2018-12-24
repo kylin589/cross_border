@@ -41,6 +41,17 @@ public class TemplateCategoryFieldsEntity implements Serializable {
     private Integer isCustom;
 
     @TableField(exist = false)
+    private String value;
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @TableField(exist = false)
     private List<TemplateFieldValueDto> templateFieldValueDtos;
 
     public List<TemplateFieldValueDto> getTemplateFieldValueDtos() {

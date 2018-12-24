@@ -58,7 +58,7 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
         requestList.add(request);
 
         Boolean isSuccess = false;
-
+        // 写道这里
         List<ListOrdersResponseDto> listOrdersResponseDtos = new ArrayList<>();
         ListOrdersResponseDto listOrdersResponseDto = null;
 
@@ -78,8 +78,6 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
             }
         }
 
-        // TODO: 2018/11/23 星期五写到这里
-
         listOrdersResponseDtos.add(listOrdersResponseDto);
         if (listOrdersResponseDto.getNextToken() != null && isSuccess == true) {
             ListOrdersResponseDto listOrdersByNextTokenResponseDto;
@@ -89,7 +87,8 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
             listOrdersByNextTokenRequest.setMWSAuthToken(mwsAuthToken);
             listOrdersByNextTokenRequest.setNextToken(listOrdersResponseDto.getNextToken());
             listOrdersByNextTokenRequests.add(listOrdersByNextTokenRequest);
-            // TODO: 2018/11/25 星期日写到这里
+
+            // 写道这里
             invokeListOrdersByNextToken(client, listOrdersByNextTokenRequests);
         }
     }

@@ -1,7 +1,7 @@
 package io.renren.modules.amazon.dto;
 
 public class OrderDto {
-    // TODO: 2018/11/19 日本缺少 PaymentExecutionDetail 参考：http://docs.developer.amazonservices.com/zh_CN/orders/2013-09-01/Orders_Datatypes.html#PaymentExecutionDetailItem
+    // 日本缺少 PaymentExecutionDetail 参考：http://docs.developer.amazonservices.com/zh_CN/orders/2013-09-01/Orders_Datatypes.html#PaymentExecutionDetailItem
 
     /**
      * 亚马逊所定义的订单编码，格式为 3-7-7。

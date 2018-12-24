@@ -189,7 +189,7 @@ public class ProductsController extends AbstractController {
      */
     @RequestMapping("/generateSKU")
     public R generateSKU() {
-        // TODO: 2018/11/7 根据用户的英文缩写生成SKU
+
         String SKU = null;
         return R.ok().put("SKU", SKU);
     }
