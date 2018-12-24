@@ -153,8 +153,10 @@ public class IntroductionController {
         //翻译标题
         List<String> titleList = querierTrans.execute();
         if (titleList.get(0) != "" && titleList.get(0) != null){
+            //谷歌
             introductionEn.setProductTitle(toUpperCase(titleList.get(0)));
         }else{
+            //百度
             introductionEn.setProductTitle(toUpperCase(titleList.get(1)));
         }
 
