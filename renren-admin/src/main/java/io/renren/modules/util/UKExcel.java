@@ -40,11 +40,11 @@ public class UKExcel {
      */
     @Test
     public void poiExcel() throws Exception {
-        File file = new File("C:\\Users\\asus\\Desktop\\法国商品分类FR");
+        File file = new File("C:\\Users\\asus\\Desktop\\墨西哥商品分类MX");
         File[] files = file.listFiles();
         //System.out.println(files.length);
         for (int i = 0; i <files.length ; i++) {
-        this.insertCategory(file);
+        this.insertCategory(files[i]);
          }
     }
 
@@ -97,6 +97,7 @@ public class UKExcel {
     private String DetoZh(String name) {
         Querier<AbstractTranslator> querierTrans = new Querier<>(); // 获取查询器
         querierTrans.setParams(LANG.DE, LANG.ZH, name);// 设置参数：传过来的参数
+
         //querierTrans.attach(new GoogleTranslator());// 向查询器中添加 Google 翻译器
         querierTrans.attach(new BaiduTranslator());// 向查询器中添加 Baidu 翻译器
         // 执行查询并接收查询结果
@@ -127,7 +128,7 @@ public class UKExcel {
         querierTrans.setParams(LANG.SPA, LANG.ZH, name);// 设置参数：传过来的参数
         //querierTrans.attach(new GoogleTranslator());// 向查询器中添加 Google 翻译器
         querierTrans.attach(new BaiduTranslator());// 向查询器中添加 Baidu 翻译器
-        // 执行查询并接收查询结果
+        //        // 执行查询并接收查询结果
         List<String> nameList = querierTrans.execute();//翻译
         if (nameList.get(0) != "" && nameList.get(0) != null) {
             return nameList.get(0);
@@ -184,10 +185,10 @@ public class UKExcel {
                 if (categoryNameQArr.length !=0){
                     amazonCategoryEntity.setCategoryQ(categoryNameQArr[0]);
                     //根据分类名称查找判断数据库中是否有此条数据
-                    id = this.queryByNameId(categoryNameArr[i],"FR",categoryNameQArr[0]);
+                    id = this.queryByNameId(categoryNameArr[i],"MX",categoryNameQArr[0]);
                 }else {
                     //根据分类名称查找判断数据库中是否有此条数据
-                    id = this.queryByNameId(categoryNameArr[i],"FR","");
+                    id = this.queryByNameId(categoryNameArr[i],"MX","");
                 }
 
                 if (id == 0L) {
@@ -195,22 +196,22 @@ public class UKExcel {
                     if (i == 0) {
                         parentId = 0L;
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setCountryCode("FR");//英国
-                        String categoryNameChina = this.EntoZh(categoryNameArr[i]);
+                        amazonCategoryEntity.setCountryCode("MX");//英国
+                        String categoryNameChina = this.EstoZh(categoryNameArr[i]);
                         String categoryNameChinaReplace = categoryNameChina.replace("\"", "").replace("\"", "");//去掉双引号
                         amazonCategoryEntity.setDisplayName(categoryNameChinaReplace + "/" + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                         row.getCell(0).setCellType(CellType.STRING);
-                        amazonCategoryEntity.setNodeIdFr(row.getCell(0).getStringCellValue());
+                        amazonCategoryEntity.setNodeIdMx(row.getCell(0).getStringCellValue());
                     } else {
                         amazonCategoryEntity.setParentId(parentId);
-                        amazonCategoryEntity.setCountryCode("FR");//英国
-                        String categoryNameChina = this.EntoZh(categoryNameArr[i]);
+                        amazonCategoryEntity.setCountryCode("MX");//英国
+                        String categoryNameChina = this.EstoZh(categoryNameArr[i]);
                         String categoryNameChinaReplace = categoryNameChina.replace("\"", "").replace("\"", "");//去掉双引号
                         amazonCategoryEntity.setDisplayName(categoryNameChinaReplace + "/" + categoryNameArr[i]);
                         amazonCategoryEntity.setCategoryName(categoryNameArr[i]);
                         row.getCell(0).setCellType(CellType.STRING);
-                        amazonCategoryEntity.setNodeIdFr(row.getCell(0).getStringCellValue());
+                        amazonCategoryEntity.setNodeIdMx(row.getCell(0).getStringCellValue());
                     }
                     parentId = this.insert(amazonCategoryEntity);
                 } else {

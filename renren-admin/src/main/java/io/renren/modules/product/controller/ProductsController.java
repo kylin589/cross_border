@@ -9,6 +9,7 @@ import io.renren.modules.product.dto.BatchModifyDto;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
 import io.renren.modules.product.vm.ChangeAuditStatusVM;
+import io.renren.modules.product.vm.EanUpcvm;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
@@ -52,6 +53,8 @@ public class ProductsController extends AbstractController {
     private ImageAddressService imageAddressService;
     @Autowired
     private SysDeptService sysDeptService;
+    @Autowired
+    private EanUpcService eanUpcService;
 
     private static final String US = "US";//美国
     private static final String CA = "CA";//加拿大
@@ -227,6 +230,17 @@ public class ProductsController extends AbstractController {
         String enBrand = user.getEnBrand();
         String SKU =enName+"-"+enBrand+"-"+productId;
         productsEntity.setProductSku(SKU);
+        //获取码
+        EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type","EAN").eq("state", 0).orderBy(true, "state", true));
+        String code = eanUpcEntity.getCode();
+        //设置Ean码
+        productsEntity.setEanCode(code);
+        //修改状态
+        eanUpcEntity.setState(1);
+        //关联产品id
+        eanUpcEntity.setProductId(productId);
+        eanUpcService.updateById(eanUpcEntity);
+
         //美国运费
         FreightCostEntity americanFC = new FreightCostEntity();
         freightCostService.insert(americanFC);
@@ -637,12 +651,34 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/collectproduct")
     public R collectProduct(@RequestParam("productId") Long productId) {
         ProductsEntity productsEntity = productsService.selectById(productId);
+        //产品重量
+        productsEntity.setProductWeight(0.00);
+        //产品长度
+        productsEntity.setProductLength(0.00);
+        //产品宽度
+        productsEntity.setProductWide(0.00);
+        //产品高度
+        productsEntity.setProductHeight(0.00);
+        //国内运费
+        productsEntity.setDomesticFreight(new BigDecimal("0.00"));
+        //折扣系数
+        productsEntity.setDiscount(new BigDecimal("1.00"));
         //生成SKU
         SysUserEntity user = getUser();
         String enName = user.getEnName();
         String enBrand = user.getEnBrand();
         String SKU =enName+"-"+enBrand+"-"+productId;
         productsEntity.setProductSku(SKU);
+        //获取码
+        EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type","EAN").eq("state", 0).orderBy(true, "state", true));
+        String code = eanUpcEntity.getCode();
+        //设置Ean码
+        productsEntity.setEanCode(code);
+        //修改状态
+        eanUpcEntity.setState(1);
+        //关联产品id
+        eanUpcEntity.setProductId(productId);
+        eanUpcService.updateById(eanUpcEntity);
 
         Long categoryThreeId = productsEntity.getCategoryThreeId();
         String s = categoryService.queryParentByChildIdAndCategory(categoryThreeId, productsEntity);
