@@ -13,6 +13,10 @@ import java.util.List;
  * @Description:
  */
 public class AddUploadVM {
+
+    //上传id,只有在修改时候需要
+    private Long uploadId;
+
     //开始id
     private Long startId;
     //结束id
@@ -37,10 +41,7 @@ public class AddUploadVM {
     private Integer isAttribute;
     //分类属性
     private List<TemplateCategoryFieldsEntity> fieldsEntityList;
-    // 操作类型（默认0：上传 1：修改）
-    private int operateType;
-    //上传id,只有在修改时候需要
-    private Long uploadId;
+
     //接受前台传过来的时间；
     private String time;
 
@@ -50,6 +51,14 @@ public class AddUploadVM {
     private Long userId;
     //公司id
     private Long deptId;
+
+    public Long getUploadId() {
+        return uploadId;
+    }
+
+    public void setUploadId(Long uploadId) {
+        this.uploadId = uploadId;
+    }
 
     public SysUserEntity getUser() {
         return user;
