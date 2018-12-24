@@ -137,7 +137,10 @@ var vm = new Vue({
         logistics:{
         },
         remark:'',
-        remarkType:''
+        remarkType:'',
+        caigou:'',
+        wulDanh:''
+
     },
     methods:{
         addorder:function () {
@@ -318,7 +321,25 @@ var vm = new Vue({
                                 success: function (r) {
                                     console.log(r);
                                     if (r.code === 0) {
+                                        $.ajax({
+                                            url: '../../order/remark/updateLog',
+                                            type: 'get',
+                                            data: {
+                                                orderId:this.orderId,
+                                            },
+                                            dataType: 'json',
+                                            success: function (r) {
+                                                console.log(r);
+                                                if (r.code === 0) {
 
+                                                } else {
+                                                    layer.alert(r.msg);
+                                                }
+                                            },
+                                            error: function () {
+                                                layer.msg("网络故障");
+                                            }
+                                        });
                                     } else {
                                         layer.alert(r.msg);
                                     }
@@ -399,7 +420,45 @@ var vm = new Vue({
                 btn: ['添加','取消'],
                 btn1: function (index) {
 
+                    $.ajax({
+                        url: '../../domestic/getLogisticsCompany',
+                        type: 'get',
+                        data: {
+                            orderId:this.orderId,
+                            price:vm.caigou,
+                            waybill:vm.wulDanh
+                        },
+                        dataType: 'json',
+                        success: function (r) {
+                            console.log(r);
+                            if (r.code === 0) {
+                                $.ajax({
+                                    url: '../../order/remark/addLog',
+                                    type: 'get',
+                                    data: {
+                                        orderId:this.orderId,
+                                    },
+                                    dataType: 'json',
+                                    success: function (r) {
+                                        console.log(r);
+                                        if (r.code === 0) {
 
+                                        } else {
+                                            layer.alert(r.msg);
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("网络故障");
+                                    }
+                                });
+                            } else {
+                                layer.alert(r.msg);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
+                        }
+                    });
                 },
                 btn2: function (index) {
 

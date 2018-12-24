@@ -51,12 +51,12 @@
             </div>
             <div class="areaTwo" v-if="categoryTwoList.length != 0">
                 <ul>
-                    <li v-for="categoryTwoItem in categoryTwoList" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-if="categoryTwoItem.ifNext" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
+                    <li v-for="categoryTwoItem in categoryTwoList" :data-index="2" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-if="categoryTwoItem.ifNext" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
                 </ul>
             </div>
             <div class="areaThree" v-if="categoryThreeList.length != 0">
                 <ul>
-                    <li v-for="categoryThreeItem in categoryThreeList" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-if="categoryThreeItem.ifNext" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
+                    <li v-for="categoryThreeItem in categoryThreeList" :data-index="3" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-if="categoryThreeItem.ifNext" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
                 </ul>
             </div>
         </div>
@@ -131,8 +131,8 @@
             <!--<img src="${request.contextPath}/statics/kuajing/img/img1.jpg">-->
             <img v-if="JSON.stringify(item.mainImageUrl) != 'null'" :src="item.mainImageUrl">
             <img v-if="JSON.stringify(item.mainImageUrl) == 'null'" src="${request.contextPath}/statics/kuajing/img/img1.jpg">
-            <h3 v-if="item.productTitle != ' ' "><a :href="'detailsProduct.html?id='+item.productId">{{ item.productTitle }}</a></h3>
-            <h3 v-if="item.productTitle == ' ' "><a :href="'detailsProduct.html?id='+item.productId">产品标题</a></h3>
+            <h3 v-if="item.productTitle != ' ' "><a :href="'detailsProduct1.html?id='+item.productId">{{ item.productTitle }}</a></h3>
+            <h3 v-if="item.productTitle == ' ' "><a :href="'detailsProduct1.html?id='+item.productId">产品标题</a></h3>
             <div class="footer">
                 <p>时间：{{ item.createTime }}</p>
                 <p>编号：{{ item.productId }}</p>
