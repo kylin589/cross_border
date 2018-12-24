@@ -913,19 +913,21 @@ var vm = new Vue({
                         if(arr.length == 0){
                             layer.msg("请选择要删除的图片");
                         }else {
-                            layer.confirm('确定删除吗',function () {
+                            layer.confirm('确定删除吗',function (index) {
                                 $.ajax({
                                     url: '../../product/imageaddress/deleteimage',
-                                    type: 'get',
-                                    data: {
-                                        'imageIds': arr
-                                    },
-                                    dataType: 'json',
+                                    type: 'post',
+                                    data: JSON.stringify(arr),
+                                    // dataType: 'json',
+                                    contentType: "application/json",
                                     success: function (r) {
-                                        // console.log(r);
+                                        console.log('彻底删除');
+                                        console.log(r);
+                                        console.log(arr);
                                         if (r.code === 0) {
                                             // 重新获取图片回收站
                                             vm.getProStation();
+                                            layer.msg("删除成功");
                                             // vm.proAlbum = r.imageInfo;
 
                                         } else {
@@ -950,22 +952,23 @@ var vm = new Vue({
                         if(arr.length == 0){
                             layer.msg("请选择要恢复的图片");
                         }else {
-                            layer.confirm('确定要恢复吗',function () {
+                            layer.confirm('确定要恢复吗',function (index) {
                                 $.ajax({
                                     url: '../../product/imageaddress/recoverdelete',
                                     type: 'post',
-                                    data: JSON.stringify({
-                                        'imageIds': arr
-                                    }),
+                                    data: JSON.stringify(arr),
                                     // dataType: 'json',
                                     contentType: "application/json",
                                     success: function (r) {
+                                        // console.log('恢复图片');
                                         // console.log(r);
+                                        // console.log(arr);
                                         if (r.code === 0) {
                                             // 重新获取图片回收站
                                             vm.getProStation();
                                             vm.getProAlbum();
                                             layer.close(index);
+                                            layer.msg("恢复成功");
                                             // vm.proAlbum = r.imageInfo;
 
                                         } else {
@@ -1808,6 +1811,8 @@ var vm = new Vue({
                     }
                 })
 
+                // console.log(recommend.length * recommend1.length);
+
 
                 for(var i = 0;i<recommend.length;i++){
                     for(var j = 0;j<recommend1.length;j++){
@@ -1817,7 +1822,7 @@ var vm = new Vue({
                             img:[],
                             sku:'',
                             addPrice:'',
-                            stock:'',
+                            stock:(Math.round(Math.random()*10) + 60),
                             code:''
                         });
 
@@ -1828,7 +1833,7 @@ var vm = new Vue({
                             variantCombination:recommend[i]+'*'+recommend1[j],
                             variantSku:'',
                             variantAddPrice:null,
-                            variantStock:null,
+                            variantStock:(Math.round(Math.random()*10) + 60),
                             eanCode:null,
                             imageUrl:''
                         })
@@ -1844,7 +1849,7 @@ var vm = new Vue({
                         img:[],
                         sku:'',
                         addPrice:'',
-                        stock:'',
+                        stock:(Math.round(Math.random())*10 + 60),
                         code:''
                     });
 
@@ -1855,15 +1860,16 @@ var vm = new Vue({
                         variantCombination:recommend[i],
                         variantSku:'',
                         variantAddPrice:null,
-                        variantStock:null,
+                        variantStock:(Math.round(Math.random())*10 + 60),
                         eanCode:null,
                         imageUrl:''
                     })
                 }
+                // console.log(recommend.length);
             }
 
             console.log('1111111');
-            setTimeout(function(){ vm.drapImg(); }, 2000);
+            // setTimeout(function(){ vm.drapImg(); }, 2000);
 
         },
         // 修改保存

@@ -32,13 +32,17 @@ var vm = new Vue({
         inputche:[],
         operateItem: [],
         marketplace:[],
-        shopinfo:{},
+        shopinfo:'',
+        // shopinfo:{},
         leven:[],
         arr:[],
         arr2:[],
         // 转换时间
         changeTime:'',
         lishiList:[],
+        // 分类模版
+        flModleList:[],
+        flModleValue:''
     },
     methods:{
         fenleiTankuang:function () {
@@ -163,56 +167,66 @@ var vm = new Vue({
         },
         //立即上传
         addUpload:function () {
-            console.log(vm.shopinfo);
-            // vm.uploadIds = vm.uploadIdsstr;
-            vm.uploadIds = vm.uploadIdsstr.split(',');
-            console.log(vm.uploadIds);
-            if (vm.inputche[0]==true){
 
-                vm.operateItem = [0,1,2,3,4];
-            }else {
-                for (var i=0;i<vm.inputche.length;i++){
-                    if (vm.inputche[i]==true){
-                        console.log('2222');
-                        vm.operateItem.push(i-1);
+            layer.confirm('确定上传吗？',function (index) {
+                // console.log(vm.shopinfo);
+                // vm.uploadIds = vm.uploadIdsstr;
+                vm.uploadIds = vm.uploadIdsstr.split(',');
+                // console.log(vm.uploadIds);
+                if (vm.inputche[0]==true){
+
+                    vm.operateItem = [0,1,2,3,4];
+                }else {
+                    for (var i=0;i<vm.inputche.length;i++){
+                        if (vm.inputche[i]==true){
+                            console.log('2222');
+                            vm.operateItem.push(i-1);
+                        }
                     }
                 }
-            }
-            console.log(vm.inputche);
-            vm.grantShopId = vm.shopinfo.grantShopId;
-            vm.grantShop = vm.shopinfo.shopName;
-            console.log(vm.grantShopId);
-            $.ajax({
-                url: '../../product/upload/addUpload',
-                type: 'post',
-                data: JSON.stringify({
-                    'startId': parseInt(vm.startId),
-                    'endId': parseInt(vm.endId),
-                    'uploadIds': vm.uploadIds,
-                    'grantShopId': parseInt(vm.grantShopId),
-                    'isAttribute': vm.isAttribute,
-                    'grantShop':vm.grantShop,
-                    'amazonCategoryId': vm.amazonCategoryId,
-                    'amazonCategory': vm.amazonCategory,
-                    'amazonTemplateId': vm.amazonTemplateId,
-                    'amazonTemplate': vm.amazonTemplate,
-                    'operateItem': vm.operateItem,
-                }),
-                contentType: "application/json",
-                // dataType: 'json',
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                    } else {
-                        layer.alert(r.msg);
+                console.log(vm.shopinfo);
+                // vm.grantShopId = vm.shopinfo.grantShopId;
+                // vm.grantShop = vm.shopinfo.shopName;
+                // console.log(vm.grantShopId);
+                $.ajax({
+                    url: '../../product/upload/addUpload',
+                    type: 'post',
+                    data: JSON.stringify({
+                        'startId': parseInt(vm.startId),
+                        'endId': parseInt(vm.endId),
+                        'uploadIds': vm.uploadIds,
+                        'grantShopId': parseInt(vm.shopinfo),
+                        // 'grantShopId': parseInt(vm.grantShopId),
+                        'isAttribute': vm.isAttribute,
+                        'grantShop':'66',
+                        'amazonCategoryId': vm.amazonCategoryId,
+                        'amazonCategory': vm.amazonCategory,
+                        'amazonTemplateId': vm.amazonTemplateId,
+                        'amazonTemplate': vm.amazonTemplate,
+                        'operateItem': vm.operateItem,
+                    }),
+                    contentType: "application/json",
+                    // dataType: 'json',
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+
+                            layer.msg("上传成功");
+                            layer.close(index)
+
+                        } else {
+                            layer.alert(r.msg);
+                        }
+
+
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
                     }
-
-
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
+                });
             });
+
+
         },
         //授权店铺
         getmarketplace:function () {
@@ -239,14 +253,20 @@ var vm = new Vue({
         //亚马逊一级分类
         amazonOneCategory:function () {
             // console.log(this.shopinfo.region);
-            if (this.shopinfo.region!=undefined) {
+            if (vm.shopinfo!='') {
                 console.log(this.shopinfo.countryCode);
+                var countryCode;
+                vm.marketplace.forEach(function (t) {
+                    if(t.grantShopId == vm.shopinfo){
+                        countryCode = t.countryCode
+                    }
+                })
 
                 $.ajax({
                     url: '../../product/amazoncategory/amazonOneCategory',
                     type: 'get',
                     data: {
-                        countryCode:this.shopinfo.countryCode
+                        countryCode:countryCode
                     },
                     dataType: 'json',
                     success: function (r) {
@@ -418,6 +438,33 @@ var vm = new Vue({
         lishiSelFunc:function () {
             vm.amazonCategory = $(event.target).attr('data-val');
             vm.amazonCategoryId = $(event.target).attr('id');
+        },
+        // 选择模版
+        selFlFunc:function () {
+            if (this.shopinfo!='') {
+                $.ajax({
+                    url: '../../product/template/list',
+                    type: 'get',
+                    data: {
+                    },
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('分类模版');
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.flModleList = r.templates;
+                        } else {
+                            layer.alert(r.message);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            }else {
+                layer.msg("请选择分类");
+            }
+
         }
     },
     created:function () {

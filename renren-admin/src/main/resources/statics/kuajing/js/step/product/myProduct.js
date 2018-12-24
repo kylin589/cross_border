@@ -457,7 +457,12 @@ var vm = new Vue({
             // $(event.target)
             var pId = $(event.target).attr('data-pid');
             var id = $(event.target).attr('data-id');
-            if($(event.target).attr('data-if') == 'true'){
+
+            console.log(parseInt($(event.target).attr('data-pid')));
+            console.log(vm.categoryOneList[vm.categoryOneList.length-1]);
+            console.log(parseInt($(event.target).attr('data-pid')) > vm.categoryOneList[vm.categoryOneList.length-1].categoryId);
+
+            // if($(event.target).attr('data-if') == 'true'){
                 if($(event.target).attr('data-pid') == '0'){
                     vm.categoryThreeList = [];
                     $.ajax({
@@ -467,16 +472,27 @@ var vm = new Vue({
                         data: {categoryId:id},
                         success: function (r) {
                             if (r.code == 0) {
-                                vm.categoryTwoList = r.categoryList;
-                                vm.nowproTypearr[0] = $(event.target).attr('data-val');
 
-                                console.log(vm.categoryTwoList)
+                                if(r.categoryList.length != 0){
+                                    vm.categoryTwoList = r.categoryList;
+                                    vm.nowproTypearr[0] = $(event.target).attr('data-val');
+                                }else {
+                                    console.log('&&&&');
+                                    vm.nowproTypearr[0] = $(event.target).attr('data-val');
+                                    vm.nowProTypeId = id;
+                                    vm.nowProType = vm.nowproTypearr[0];
+                                    $('.sousuoArea').css('display','none');
+                                }
+                                // vm.nowproTypearr[0] = $(event.target).attr('data-val');
+
+                                console.log(r.categoryList)
                             } else {
                                 alert(r.msg);
                             }
                         }
                     });
-                }else if($(event.target).attr('data-pid') != '0'){
+                // }else if($(event.target).attr('data-pid') == '0' && vm.categoryThreeList){
+                }else if(0<parseInt($(event.target).attr('data-pid')) <= vm.categoryOneList[vm.categoryOneList.length-1].categoryId){
                     vm.categoryThreeList = [];
                     $.ajax({
                         type: 'get',
@@ -485,22 +501,41 @@ var vm = new Vue({
                         data: {categoryId:id},
                         success: function (r) {
                             if (r.code == 0) {
-                                vm.categoryThreeList = r.categoryList;
-                                vm.nowproTypearr[1] = $(event.target).attr('data-val');
+                                // vm.categoryThreeList = r.categoryList;
+                                if(r.categoryList.length != 0){
+                                    vm.categoryThreeList = r.categoryList;
+                                    vm.nowproTypearr[1] = $(event.target).attr('data-val');
+                                }else {
+                                    vm.nowproTypearr[1] = $(event.target).attr('data-val');
+                                    vm.nowProTypeId = id;
+                                    vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1];
+                                    $('.sousuoArea').css('display','none');
+                                    // vm.nowproTypearr.forEach(function (t) {
+                                    //     vm.nowProType+=t+'/'
+                                    // })
+                                    // vm.nowProType.slice(0,vm.nowProType.length-1);
+                                }
+
                                 console.log(vm.categoryThreeList)
                             } else {
                                 alert(r.msg);
                             }
                         }
                     });
-                }
-            }else {
-                vm.nowproTypearr[2] = $(event.target).attr('data-val');
-                vm.nowProTypeId = id;
+                }else if(parseInt($(event.target).attr('data-pid')) > vm.categoryOneList[vm.categoryOneList.length-1].categoryId){
+                    vm.nowproTypearr[2] = $(event.target).attr('data-val');
+                    vm.nowProTypeId = id;
 
-                vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1] + '/' + vm.nowproTypearr[2];
-                $('.sousuoArea').css('display','none');
-            }
+                    vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1] + '/' + vm.nowproTypearr[2];
+                    $('.sousuoArea').css('display','none');
+                }
+            // }else {
+            //     vm.nowproTypearr[2] = $(event.target).attr('data-val');
+            //     vm.nowProTypeId = id;
+            //
+            //     vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1] + '/' + vm.nowproTypearr[2];
+            //     $('.sousuoArea').css('display','none');
+            // }
 
 
         },
