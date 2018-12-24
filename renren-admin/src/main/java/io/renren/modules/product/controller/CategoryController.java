@@ -126,12 +126,12 @@ public class CategoryController {
         Map<String, Object> map = new HashMap<>();
         map.put("parent_id", 0);
         List<CategoryEntity> parentList = categoryService.selectByMap(map);
-        /*for (CategoryEntity categoryEntity : parentList) {
+        for (CategoryEntity categoryEntity : parentList) {
             //根据分类id查出一级分类产品总数
             int oneCategoryProductCount = productsService.selectCount(new EntityWrapper<ProductsEntity>().eq("category_one_id", categoryEntity.getCategoryId()).eq("is_deleted", del));
             categoryEntity.setCount(oneCategoryProductCount);
-            categoryEntity.setIfNext("true");
-        }*/
+//            categoryEntity.setIfNext("true");
+        }
         return R.ok().put("categoryOneList", parentList);
     }
 

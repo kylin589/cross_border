@@ -3,7 +3,6 @@ package io.renren.modules.util;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 /**
  * @Auther: wdh
  * @Date: 2018/12/23 02:28
@@ -105,4 +104,5 @@ public class DateUtils {
         System.out.println(getYearFirst());
         System.out.println(getYearEnd());
     }
+
 }

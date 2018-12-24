@@ -11,10 +11,13 @@ import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.product.entity.IntroductionEntity;
 import io.renren.modules.product.service.IntroductionService;
+import io.renren.modules.product.vm.TranslateVM;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +95,7 @@ public class IntroductionController {
     public R update(@RequestBody IntroductionEntity introduction){
         ValidatorUtils.validateEntity(introduction);
         introductionService.updateAllColumnById(introduction);//全部更新
-        
+
         return R.ok();
     }
 
@@ -130,8 +133,13 @@ public class IntroductionController {
      * @auther: wdh
      * @date: 2018/11/5 16:16
      */
-    @RequestMapping("/translate")
-    public R ZhtoEn(String productTitle, String keyWord, String keyPoints, String productDescription){
+    @RequestMapping("/zhtoEn")
+    public R zhtoEn(@RequestBody TranslateVM translateVM){
+//    public List<IntroductionEntity> ZhtoEn(String productTitle,String keyWord,String keyPoints,String productDescription){
+        String productTitle = translateVM.getProductTitle();
+        String keyWord = translateVM.getKeyWord();
+        String keyPoints = translateVM.getKeyPoints();
+        String productDescription = translateVM.getProductDescription();
         IntroductionEntity introductionEn = new IntroductionEntity();
         // 获取查询器
         Querier<AbstractTranslator> querierTrans = new Querier<>();
@@ -145,8 +153,10 @@ public class IntroductionController {
         //翻译标题
         List<String> titleList = querierTrans.execute();
         if (titleList.get(0) != "" && titleList.get(0) != null){
+            //谷歌
             introductionEn.setProductTitle(toUpperCase(titleList.get(0)));
         }else{
+            //百度
             introductionEn.setProductTitle(toUpperCase(titleList.get(1)));
         }
 
@@ -177,11 +187,6 @@ public class IntroductionController {
             introductionEn.setProductDescription(productDescriptionList.get(1));
         }
         introductionEn.setCountry("EN");
-        System.out.println("country:" + introductionEn.getCountry());
-        System.out.println("title:" + introductionEn.getProductTitle());
-        System.out.println("keyWord:" + introductionEn.getKeyWord());
-        System.out.println("keyPoints:" + introductionEn.getKeyPoints());
-        System.out.println("productDescription:" + introductionEn.getProductDescription());
         IntroductionEntity introductionFra = EntoOther(introductionEn,"FRA");
         IntroductionEntity introductionDe = EntoOther(introductionEn,"DE");
         IntroductionEntity introductionIt = EntoOther(introductionEn,"IT");
@@ -293,7 +298,38 @@ public class IntroductionController {
         System.out.println("productDescription:" + introduction.getProductDescription());
         return introduction;
     }
+    /**
+     * ZhtoEn 中译英
+     * @param: [productTitle, keyWord, keyPoints, productDescription]
+     * @return: java.lang.String
+     * @auther: wdh
+     * @date: 2018/11/5 16:16
+     */
+    @RequestMapping("/entoOthers")
+    public R entoOthers(@RequestBody IntroductionEntity introductionEn){
+//    public List<IntroductionEntity> ZhtoEn(String productTitle,String keyWord,String keyPoints,String productDescription){
 
+        IntroductionEntity introductionFra = EntoOther(introductionEn,"FRA");
+        IntroductionEntity introductionDe = EntoOther(introductionEn,"DE");
+        IntroductionEntity introductionIt = EntoOther(introductionEn,"IT");
+        IntroductionEntity introductionSpa = EntoOther(introductionEn,"SPA");
+        IntroductionEntity introductionJp = EntoOther(introductionEn,"JP");
+
+        return R.ok().put("introductionEn",introductionEn)
+                .put("introductionFra",introductionFra)
+                .put("introductionDe",introductionDe)
+                .put("introductionIt",introductionIt)
+                .put("introductionSpa",introductionSpa)
+                .put("introductionJp",introductionJp);
+//        List<IntroductionEntity> list = new ArrayList<>();
+//        list.add(introductionEn);
+//        list.add(introductionFra);
+//        list.add(introductionDe);
+//        list.add(introductionIt);
+//        list.add(introductionSpa);
+//        list.add(introductionJp);
+//        return list;
+    }
     /**
      * toUpperCase 所有首字母转为大写
      * @param: [text]
@@ -302,16 +338,21 @@ public class IntroductionController {
      * @date: 2018/11/5 17:16
      */
     public String toUpperCase(String text) {
-        String[] strs = text.split(" ");
-        StringBuilder sb = new StringBuilder();
-        for (String strTmp : strs) {
-            char[] ch = strTmp.toCharArray();
-            if (ch[0] >= 'a' && ch[0] <= 'z') {
-                ch[0] = (char) (ch[0] - 32);
+        if(text != null && !"".equals(text)){
+            String[] strs = text.split(" ");
+            StringBuilder sb = new StringBuilder();
+            for (String strTmp : strs) {
+                char[] ch = strTmp.toCharArray();
+                if(ch.length>0){
+                    if (ch[0] >= 'a' && ch[0] <= 'z') {
+                        ch[0] = (char) (ch[0] - 32);
+                    }
+                    String strT = new String(ch);
+                    sb.append(strT).append(" ");
+                }
             }
-            String strT = new String(ch);
-            sb.append(strT).append(" ");
+            return sb.toString().trim();
         }
-        return sb.toString().trim();
+        return null;
     }
 }

@@ -2,6 +2,7 @@ package io.renren.modules.product.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.product.vm.OrderModel;
 import io.renren.modules.sys.dto.FranchiseeStatisticsDto;
 import io.renren.modules.sys.dto.PlatformStatisticsDto;
 import io.renren.modules.sys.dto.StatisticsDto;
@@ -57,7 +58,7 @@ public interface OrderService extends IService<OrderEntity> {
     /**
      * 更新订单列表
      */
-    void updateOrder(SysUserEntity user, List<OrderEntity> objList);
+    void updateOrder(SysUserEntity user, List<OrderModel> orderModelList);
     /**
      * 国际已发货
      * 扣款
