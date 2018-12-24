@@ -12,8 +12,8 @@ import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
+import io.renren.modules.amazon.util.XMLUtil;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
-import io.renren.modules.product.entity.OrderEntity;
 import io.renren.modules.product.vm.OrderModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,9 +26,6 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static io.renren.modules.amazon.util.XMLUtil.analysisListOrderItemsByNextTokenResponse;
-import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersByNextTokenResponse;
-import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersResponse;
 
 
 @Component("OrderTimer")
@@ -101,7 +98,7 @@ public class OrderTimer {
                     } else if ((ListOrdersResponse.class.getName()).equals(className) == true) {
                         System.out.println("responseList 类型是 ListOrdersResponse。");
                         ListOrdersResponse response = (ListOrdersResponse) tempResponse;
-                        listOrdersResponseDto = analysisListOrdersResponse(response.toXML());
+                        listOrdersResponseDto = XMLUtil.analysisListOrdersResponse(response.toXML());
                         isSuccess = true;
                     }
                 }
@@ -129,7 +126,7 @@ public class OrderTimer {
                             System.out.println("responseList2 类型是 ListOrdersByNextTokenResponse。");
                             ListOrdersByNextTokenResponse response = (ListOrdersByNextTokenResponse) tempResponse;
                             //解析订单下一页的响应列表
-                            listOrdersByNextTokenResponseDto = analysisListOrdersByNextTokenResponse(response.toXML());
+                            listOrdersByNextTokenResponseDto = XMLUtil.analysisListOrdersByNextTokenResponse(response.toXML());
                         }
                     }
                     listOrdersResponseDtos.add(listOrdersByNextTokenResponseDto);
@@ -154,7 +151,7 @@ public class OrderTimer {
                             if ((ListOrderItemsResponse.class.getName()).equals(className) == true) {
                                 System.out.println("responseList3 类型是 ListOrderItemsByNextTokenResponse。");
                                 ListOrderItemsResponse  response= (ListOrderItemsResponse) tempResponse;
-                                orderItemResponseDto= analysisListOrderItemsByNextTokenResponse(response.toXML());
+                                orderItemResponseDto= XMLUtil.analysisListOrderItemsByNextTokenResponseFanWei(response.toXML());
 
                             }
                         }
@@ -167,6 +164,7 @@ public class OrderTimer {
                                 ProductShipAddressEntity addressEntity=new ProductShipAddressEntity();
                                 String shipname=listOrdersResponseDtos.get(i).getOrders().get(j).getName();
                                 String shipaddress=listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
+                                String shipaddress2=listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine2();
                                 String shipcity=listOrdersResponseDtos.get(i).getOrders().get(j).getCity();
                                 String shipCountry=listOrdersResponseDtos.get(i).getOrders().get(j).getCounty();
                                 String shipdistrict=listOrdersResponseDtos.get(i).getOrders().get(j).getDistrict();
@@ -225,6 +223,8 @@ public class OrderTimer {
                                 }
                                 if(shipaddress!=null){
                                     addressEntity.setShipAddressLine1(shipaddress);
+                                }else if(shipaddress2!=null){
+                                    addressEntity.setShipAddressLine1(shipaddress2);
                                 }else{
                                     addressEntity.setShipAddressLine1("");
                                 }
