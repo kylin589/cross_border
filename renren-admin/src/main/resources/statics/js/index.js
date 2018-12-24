@@ -188,6 +188,11 @@ var vm = new Vue({
         // },1000)
 	},
 	updated: function(){
+		var el = $('#LAY-system-side-menu>li');
+		el.css('display','none');
+		for(var i = 0;i<vm.menuList.length;i++){
+			el.eq(i).css('display','block');
+		}
 		//路由
 		// var router = new Router();
 		// routerList(router, vm.menuList);

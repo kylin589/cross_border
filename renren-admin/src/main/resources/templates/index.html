@@ -245,6 +245,36 @@
                             </template>
                         </dl>
                     </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <a href="javascript:;" lay-direction="2">
+                            <template v-if="menuList.length>=8">
+                                <i :class="menuList[7].icon"></i>
+                                <cite>{{menuList[7].name}}</cite>
+                            </template>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <template v-if="menuList.length>=8">
+                                <dd v-for="list in menuList[7].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </template>
+                        </dl>
+                    </li>
+                    <li data-name="home" class="layui-nav-item">
+                        <a href="javascript:;" lay-direction="2">
+                            <template v-if="menuList.length>=9">
+                                <i :class="menuList[8].icon"></i>
+                                <cite>{{menuList[8].name}}</cite>
+                            </template>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <template v-if="menuList.length>=9">
+                                <dd v-for="list in menuList[8].list" :data-name="list.name" class="">
+                                    <a :lay-href="list.url">{{ list.name }}</a>
+                                </dd>
+                            </template>
+                        </dl>
+                    </li>
                     <!--<li data-name="home" class="layui-nav-item">-->
                         <!--<a href="javascript:;" lay-direction="2">-->
                             <!--<template v-if="menuList.length>=8">-->
@@ -326,19 +356,19 @@
                             <!--</dl>-->
                         <!--</template>-->
                     <!--</li>-->
-                    <li data-name="home" class="layui-nav-item">
-                        <template v-if="menuList.length>=8">
-                            <a href="javascript:;" :lay-tips="menuList[7].name" lay-direction="2">
-                                <i :class="menuList[7].icon"></i>
-                                <cite>{{menuList[7].name}}</cite>
-                            </a>
-                            <dl class="layui-nav-child">
-                                <dd v-for="list in menuList[7].list" :data-name="list.name" class="">
-                                    <a :lay-href="list.url">{{ list.name }}</a>
-                                </dd>
-                            </dl>
-                        </template>
-                    </li>
+                    <!--<li data-name="home" class="layui-nav-item">-->
+                        <!--<template v-if="menuList.length>=8">-->
+                            <!--<a href="javascript:;" :lay-tips="menuList[7].name" lay-direction="2">-->
+                                <!--<i :class="menuList[7].icon"></i>-->
+                                <!--<cite>{{menuList[7].name}}</cite>-->
+                            <!--</a>-->
+                            <!--<dl class="layui-nav-child">-->
+                                <!--<dd v-for="list in menuList[7].list" :data-name="list.name" class="">-->
+                                    <!--<a :lay-href="list.url">{{ list.name }}</a>-->
+                                <!--</dd>-->
+                            <!--</dl>-->
+                        <!--</template>-->
+                    <!--</li>-->
                     <!--<li data-name="home" class="layui-nav-item">-->
                         <!--<a href="javascript:;" lay-direction="2">-->
                             <!--<template v-if="menuList.length>=5">-->

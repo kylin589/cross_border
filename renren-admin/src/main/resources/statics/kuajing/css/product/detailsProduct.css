@@ -338,10 +338,45 @@ form .chengben label{
     background: transparent;
     cursor: pointer;
 }
-#addVariant>div span:hover{
+#addVariant>div span:hover , #addVariant>div span.active{
     background: #00a3e8;
     color: #fff;
 }
+
+
+#upVariant>div{
+    /*display: flex;*/
+    padding: 10px 20px;
+    margin-bottom: 8px;
+}
+#upVariant>div label{
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #666;
+}
+#upVariant>div select , #upVariant>div textarea{
+    display: block;
+    width: 100%;
+    padding: 4px;
+    border: 1px solid #d8dce5;
+    border-radius: 4px;
+    color: #444;
+}
+#upVariant>div span{
+    display: inline-block;
+    color: #444;
+    font-size: 13px;
+    padding: 4px;
+    border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+}
+#upVariant>div span:hover , #upVariant>div span.active{
+    background: #00a3e8;
+    color: #fff;
+}
+
 
 /*变体*/
 .variantName{

@@ -224,6 +224,8 @@ var vm = new Vue({
         // 分离
         fenlifunc:function () {
             var deptId = getDeptId();
+            // console.log('与昂工给恢复光滑');
+
             if(deptId == null){
                 return ;
             }
@@ -237,6 +239,14 @@ var vm = new Vue({
                 btn: ['分离','取消'],
                 btn1: function (index) {
                     console.log(vm.chongzhiData);
+                    console.log('与昂工给恢复光滑');
+                    console.log(vm.allYUanGValue);
+                    console.log(typeof (vm.allYUanGValue[0]))
+                    var ygV = [];
+                    vm.allYUanGValue.forEach(function (t) {
+                        ygV.push(JSON.stringify(t));
+                    })
+                    console.log(ygV);
                     layer.confirm('确定分离吗？',function () {
                         $.ajax({
                             type: "POST",
@@ -244,7 +254,7 @@ var vm = new Vue({
                             data: JSON.stringify({
                                 'fromDeptId':deptId,
                                 'toDeptId':vm.allGongsiValue,
-                                'userIds':vm.allYUanGValue
+                                'userIds':ygV
                             }),
                             contentType: "application/json",
                             success: function(r){
@@ -259,6 +269,7 @@ var vm = new Vue({
                         });
 
                     })
+                    // layer.close(index);
 
 
                 },

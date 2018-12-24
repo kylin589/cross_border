@@ -436,7 +436,7 @@
                     <span><label for="">变体参数：</label><input type="button" value="添加" @click="addVariant"></span>
                     <div class="variantName">
                         <span v-for="(item,index) in variantList">
-                            <a @click="upVariant" href="javascript:;" :data-id="item.id" @mouseover="variantName" @mouseout="variantNamenone">{{ item.name }}</a><i @click="delvariantName(index)" class="layui-icon layui-icon-close-fill"></i>
+                            <a @click="upVariant(index)" href="javascript:;" :data-id="item.id" @mouseover="variantName" @mouseout="variantNamenone">{{ item.name }}</a><i @click="delvariantName(index)" class="layui-icon layui-icon-close-fill"></i>
                         </span>
                     </div>
 
@@ -468,9 +468,9 @@
                             <td><input type="button" class="chan" value="选择图片" @click="selImgCFcun(item)"> <input type="button" class="all" value="一键添加" @click="yijianAddFunc(item)"></td>
                             <td>
                                 <ul class="ul1">
-                                    <li v-for="(img,index) in item.img" @mouseover="imgBig" :data-url="img" :data-index="index" @mouseout="imgBigS">
+                                    <li v-for="(img,i) in item.img" @mouseover="imgBig" :data-url="img" :data-index="i" @mouseout="imgBigS">
                                         <img :src="img" alt="" :data-url="img">
-                                        <i class="layui-icon layui-icon-close-fill"></i>
+                                        <i class="layui-icon layui-icon-close-fill" @click="delImgRecom(item,i)"></i>
                                     </li>
                                 </ul>
                             </td>
@@ -490,8 +490,8 @@
                 <div class="inner-content-div2">
                     <!--要加滚动条的具体内容-->
                     <ul class="proStationUl">
-                        <li v-for="(item,index) in proStation" @click="choicePro(index)" :data-index="index">
-                            <img :src="item.url" alt="">
+                        <li v-for="(item,index) in proStation" @click="choicePro(index)" :data-index="imageId">
+                            <img :src="item.imageUrl" alt="">
                         </li>
                     </ul>
                 </div>
@@ -519,22 +519,45 @@
             <h3>添加变体</h3>
             <div>
                 <label for="">变体名称</label>
-                <select name="" id="variantName"  placeholder="变体名称">
+                <select name="" id="variantName" v-model="selVar"  placeholder="变体名称">
                     <option value="0">颜色（color）</option>
                     <option value="1">尺寸（sizeNam）</option>
                 </select>
             </div>
             <div>
                 <label for="">变体值:(多个值用逗号隔开如:red,white,black)</label>
-                <textarea name="" id="variantType" placeholder="变体名称"></textarea>
+                <textarea name="" id="variantType" class="variantType" placeholder="变体名称"></textarea>
             </div>
             <div>
                 <label for="">推荐：</label>
-                <span v-for="item in recommend">{{ item }}</span>
-                <br>
-                <span v-for="item in recommend1">{{ item }}</span>
+                <span v-if="selVar == 0" v-for="item in recommend" @click="clickAddV">{{ item }}</span>
+                <!--<br>-->
+                <span v-if="selVar == 1" v-for="item in recommend1" @click="clickAddV">{{ item }}</span>
             </div>
         </div>
+
+        <!--变体修改-->
+        <div id="upVariant" class="tankuang" style="display: none">
+            <h3>添加变体</h3>
+            <div>
+                <label for="">变体名称</label>
+                <select name="" id="variantName1" v-model="upVariantList.id"  placeholder="变体名称">
+                    <option value="0">颜色（color）</option>
+                    <option value="1">尺寸（sizeNam）</option>
+                </select>
+            </div>
+            <div>
+                <label for="">变体值:(多个值用逗号隔开如:red,white,black)</label>
+                <textarea name="" id="variantType1" v-model="upVariantList.type" class="variantType" placeholder="变体名称"></textarea>
+            </div>
+            <div>
+                <label for="">推荐：</label>
+                <span v-if="upVariantList.id == 0" v-for="item in recommend" @click="clickAddV1">{{ item }}</span>
+                <br>
+                <span v-if="upVariantList.id == 1" v-for="item in recommend1" @click="clickAddV1">{{ item }}</span>
+            </div>
+        </div>
+
 
         <div id="imgBigDiv" style="display: none">
             <img src="" alt="">

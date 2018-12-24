@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<#if shiro.hasPermission("product:templatefieldvalue:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("product:templatefieldvalue:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("product:templatefieldvalue:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">字段id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.fieldId" placeholder="字段id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">中国值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.cnValue" placeholder="中国值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">英国值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.ukValue" placeholder="英国值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">法国值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.frValue" placeholder="法国值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">德国值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.deValue" placeholder="德国值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">意大利值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.itValue" placeholder="意大利值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">西班牙值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.esValue" placeholder="西班牙值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">日本值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.jpValue" placeholder="日本值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">澳大利亚值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.auValue" placeholder="澳大利亚值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">加拿大值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.caValue" placeholder="加拿大值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">美国值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.usValue" placeholder="美国值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">墨西哥值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="templateFieldValue.mxValue" placeholder="墨西哥值"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/product/templatefieldvalue.js?_${.now?long}"></script>
+</body>
+</html>
