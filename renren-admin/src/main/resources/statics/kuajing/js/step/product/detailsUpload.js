@@ -15,10 +15,13 @@ window.onload = function () {
 var vm = new Vue({
     el:'#step',
     data:{
+        id:'',
+        // 上传产品详情
+        upProDetails:{
+            uploadEntity:{}
+        },
         value9:null,
-        startId: null,
-        endId: null,
-        uploadIdsstr:'',
+
         uploadIds:[],
         grantShopId: 0,
         isAttribute: 0,
@@ -87,12 +90,61 @@ var vm = new Vue({
             });
         },
 
-        // 选择店铺更改
-        chanDianFunc:function () {
-            vm.flModleList = [];
-            vm.flModleValue = '';
-            vm.modelAttr = [];
-
+        // 获取详情
+        getDetails:function () {
+            $.ajax({
+                url: '../../product/upload/details',
+                type: 'get',
+                data: {
+                    'uploadId':this.id
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('详情');
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.upProDetails = r.data;
+                        vm.shopinfo = r.data.uploadEntity.grantShopId;
+                        vm.amazonCategoryId = r.data.uploadEntity.amazonCategoryId;
+                        vm.amazonCategory = r.data.uploadEntity.amazonCategory;
+                        vm.flModleValue = r.data.uploadEntity.amazonTemplate;
+                        console.log('111');
+                        console.log(r.data.uploadEntity.operateItem.split(','));
+                        if(r.data.uploadEntity.operateItem.split(',').length == 5){
+                            vm.inputche = ['true','true','true','true','true','true'];
+                            // $('#operateItem input').prop('checked',true)
+                        }else {
+                            var arr = r.data.uploadEntity.operateItem.split(',');
+                            arr.forEach(function (t) {
+                                if(t == 0){
+                                    vm.inputche[1] = 'true';
+                                    console.log(t);
+                                    // $('#operateItem input').eq(1).prop('checked',true);
+                                    // console.log($('#operateItem input').eq(1));
+                                }else if(t == 1){
+                                    vm.inputche[2] = true;
+                                    // $('#operateItem input').eq(2).prop('checked',true);
+                                }else if(t == 2){
+                                    vm.inputche[3] = true;
+                                    // $('#operateItem input').eq(3).prop('checked',true);
+                                }else if(t == 3){
+                                    vm.inputche[4] = true;
+                                    // $('#operateItem input').eq(4).prop('checked',true);
+                                }else if(t == 4){
+                                    vm.inputche[5] = true;
+                                    // $('#operateItem input').eq(5).prop('checked',true);
+                                }
+                            })
+                        }
+                        console.log(vm.inputche);
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
         },
         // 定时上传
         timeUpFunc:function () {
@@ -180,7 +232,7 @@ var vm = new Vue({
             layer.confirm('确定上传吗？',function (index) {
                 // console.log(vm.shopinfo);
                 // vm.uploadIds = vm.uploadIdsstr;
-                vm.uploadIds = vm.uploadIdsstr.split(',');
+                // vm.uploadIds = vm.uploadIdsstr.split(',');
                 // console.log(vm.uploadIds);
                 if (vm.inputche[0]==true){
 
@@ -194,42 +246,27 @@ var vm = new Vue({
                     }
                 }
                 console.log(vm.shopinfo);
-                var grantShop = '';
-                vm.marketplace.forEach(function (t) {
-                    if(t.grantShopId == vm.shopinfo){
-                        grantShop = t.shopName
-                    }
-                })
-
-                var templateDisplayName = '';
-                vm.flModleList.forEach(function (t) {
-                    if(t.templateId = vm.flModleValue){
-                        templateDisplayName = t.templateDisplayName;
-                    }
-                })
-                console.log(grantShop)
-                console.log(templateDisplayName)
-
                 // vm.grantShopId = vm.shopinfo.grantShopId;
                 // vm.grantShop = vm.shopinfo.shopName;
                 // console.log(vm.grantShopId);
                 $.ajax({
-                    url: '../../product/upload/addUpload',
+                    url: '../../product/upload/againUploadByForm',
                     type: 'post',
                     data: JSON.stringify({
-                        'startId': parseInt(vm.startId),
-                        'endId': parseInt(vm.endId),
-                        'uploadIds': vm.uploadIds,
-                        'grantShopId': parseInt(vm.shopinfo),
+                        'uploadId':vm.id,
+                        // 'startId': parseInt(vm.startId),
+                        // 'endId': parseInt(vm.endId),
+                        // 'uploadIds': vm.uploadIds,
+                        // 'grantShopId': parseInt(vm.shopinfo),
                         // 'grantShopId': parseInt(vm.grantShopId),
-                        'isAttribute': vm.isAttribute,
-                        'grantShop':grantShop,
+                        'isAttribute': '',
+                        // 'grantShop':'66',
                         'amazonCategoryId': vm.amazonCategoryId,
                         'amazonCategory': vm.amazonCategory,
-                        'amazonTemplateId': vm.flModleValue,
-                        'amazonTemplate': templateDisplayName,
+                        'amazonTemplateId': vm.amazonTemplateId,
+                        'amazonTemplate': vm.amazonTemplate,
                         'operateItem': vm.operateItem,
-                        'fieldsEntityList':vm.modelAttr,
+                        'fieldsEntityList':vm.modelAttr
                     }),
                     contentType: "application/json",
                     // dataType: 'json',
@@ -280,7 +317,7 @@ var vm = new Vue({
         amazonOneCategory:function () {
             // console.log(this.shopinfo.region);
             if (vm.shopinfo!='') {
-                console.log(this.shopinfo.countryCode);
+                // console.log(this.shopinfo.countryCode);
                 var countryCode;
                 vm.marketplace.forEach(function (t) {
                     if(t.grantShopId == vm.shopinfo){
@@ -339,45 +376,45 @@ var vm = new Vue({
             vm.amazonAllArr.splice(_index);
             console.log(list);
             // if (list.ifNext=='true') {
-                $.ajax({
-                    url: '../../product/amazoncategory/childCategoryList',
-                    type: 'get',
-                    data: {
-                        amazonCategoryId:list.amazonCategoryId
-                    },
-                    dataType: 'json',
-                    success: function (r) {
-                        console.log('子集分类')
-                        console.log(r);
-                        if (r.code === 0) {
-                            if(r.amazonCategoryEntityChildList.length != 0){
-                                vm.leven.push(r.amazonCategoryEntityChildList);
-                                console.log(vm.leven);
-                                vm.amazonCategoryId = list.amazonCategoryId;
-                                vm.amazonCategory = list.displayName;
-                                vm.amazonAllArr.push(list.displayName);
-                                console.log(vm.amazonAllArr);
-                            }else {
-                                vm.amazonCategoryId = list.amazonCategoryId;
-                                vm.amazonCategory = list.displayName;
-                                // vm.amazonAllArr.push(list.displayName);
-                                console.log(vm.amazonAllArr);
-                                vm.amazonAllArr.forEach(function (t) {
-                                    vm.amazonAllCategory+=t+'/'
-                                })
-                                vm.amazonAllCategory+=list.displayName;
-                                console.log(vm.amazonAllCategory);
-                                // amazonAllCategory =
-                            }
-
-                        } else {
-                            layer.alert(r.message);
+            $.ajax({
+                url: '../../product/amazoncategory/childCategoryList',
+                type: 'get',
+                data: {
+                    amazonCategoryId:list.amazonCategoryId
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('子集分类')
+                    console.log(r);
+                    if (r.code === 0) {
+                        if(r.amazonCategoryEntityChildList.length != 0){
+                            vm.leven.push(r.amazonCategoryEntityChildList);
+                            console.log(vm.leven);
+                            vm.amazonCategoryId = list.amazonCategoryId;
+                            vm.amazonCategory = list.displayName;
+                            vm.amazonAllArr.push(list.displayName);
+                            console.log(vm.amazonAllArr);
+                        }else {
+                            vm.amazonCategoryId = list.amazonCategoryId;
+                            vm.amazonCategory = list.displayName;
+                            // vm.amazonAllArr.push(list.displayName);
+                            console.log(vm.amazonAllArr);
+                            vm.amazonAllArr.forEach(function (t) {
+                                vm.amazonAllCategory+=t+'/'
+                            })
+                            vm.amazonAllCategory+=list.displayName;
+                            console.log(vm.amazonAllCategory);
+                            // amazonAllCategory =
                         }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
+
+                    } else {
+                        layer.alert(r.message);
                     }
-                });
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
             // }else {
 
             // }
@@ -469,9 +506,6 @@ var vm = new Vue({
         // 选择模版
         selFlFunc:function () {
             if (this.shopinfo!='') {
-                // vm.flModleList = [];
-                // vm.flModleValue = '';
-                // vm.modelAttr = [];
                 $.ajax({
                     url: '../../product/template/list',
                     type: 'get',
@@ -508,7 +542,6 @@ var vm = new Vue({
                     countryCode = t.countryCode
                 }
             })
-            console.log('countryCode' ,countryCode);
             $.ajax({
                 url: '../../product/template/getOptionalValues',
                 type: 'get',
@@ -537,15 +570,21 @@ var vm = new Vue({
         clickValActive:function (v) {
             // $(event.target).siblings().removeClass('active');
             // $(event.target).addClass('active');
-            // console.log(v);
-            // console.log($(event.target).attr('data-index'));
-            // console.log($(event.target).text());
             v.value = $(event.target).attr('data-index');
 
         }
     },
     created:function () {
+        // this.selFlFunc();
+        var url = decodeURI(window.location.href);
+        var argsIndex = url.split("?id=");
+        var id = argsIndex[1];
+        // console.log(id)
+        this.id = parseInt(id);
+        console.log(this.id);
+        this.getDetails();
         this.getmarketplace();
+        // this.selFlFunc();
 
     }
 })

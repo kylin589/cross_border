@@ -163,7 +163,7 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
             } catch (ExecutionException ee) {
                 Throwable cause = ee.getCause();
                 if (cause instanceof MarketplaceWebServiceOrdersException) {
-                    // TODO: 2018/11/21 报错怎么办？
+
                     // Exception properties are important for diagnostics.
                     MarketplaceWebServiceOrdersException ex =
                             (MarketplaceWebServiceOrdersException) cause;
@@ -385,7 +385,7 @@ public class ListOrdersAsyncServiceImpl implements ListOrdersAsyncService {
 
     @Override
     public List<OrderEntity> analysisListOrders(List<Object> responseList) {
-        // TODO: 2018/11/20 解析 responseList，调用 xml 方法
+
         for (int i = 0; i < responseList.size(); i++) {
 
         }

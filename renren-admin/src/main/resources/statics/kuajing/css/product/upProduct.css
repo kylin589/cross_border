@@ -4,7 +4,7 @@
     overflow: hidden;
 }
 
-button{
+p button{
     float: right;
     margin-right: 20px;
     height: 28px;
@@ -26,7 +26,7 @@ button{
     /* flex: 1; */
     text-align: center;
     cursor: pointer;
-    margin-right: 10px;
+    margin-right: 18px;
 }
 .operation>div i{
     font-size: 18px!important;
@@ -42,6 +42,9 @@ button{
 }
 .operation>div:nth-child(3){
     color: #32ace9;
+}
+.operation>div:nth-child(4){
+    color: #fe8060;
 }
 table{
     width: 100%;
@@ -83,6 +86,34 @@ table tr th{
 table tr td img{
     width: 50px;
     border-radius: 3px;
+}
+td span.org{
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 13px;
+    background: orange;
+}
+td span.red{
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 13px;
+    background: orangered;
+}
+td span.bule{
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 13px;
+    background: #32ace9;
+}
+td span.bule1{
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 13px;
+    background: #2ecfd8;
 }
 
 
