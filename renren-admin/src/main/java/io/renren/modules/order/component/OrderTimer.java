@@ -31,8 +31,8 @@ import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersByNextToke
 import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersResponse;
 
 
-@Component("rateTimer2")
-public class RateTimer {
+@Component("OrderTimer")
+public class OrderTimer {
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
 
