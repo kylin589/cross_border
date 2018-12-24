@@ -15,6 +15,10 @@ public class OmsOrder {
      */
     public String order_sn;
     /**
+     * 物流公司
+     */
+    public String delivery_deanname = null;
+    /**
      * 币种单位：EUR,USD,CAD,JPY
      */
     public String order_currency;
@@ -128,5 +132,13 @@ public class OmsOrder {
 
     public void setSaleamount(BigDecimal saleamount) {
         this.saleamount = saleamount;
+    }
+
+    public String getDelivery_deanname() {
+        return delivery_deanname;
+    }
+
+    public void setDelivery_deanname(String delivery_deanname) {
+        this.delivery_deanname = delivery_deanname;
     }
 }

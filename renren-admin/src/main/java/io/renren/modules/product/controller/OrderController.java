@@ -20,8 +20,11 @@ import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.vm.OrderVM;
 import io.renren.modules.sys.controller.AbstractController;
+import io.renren.modules.sys.entity.NoticeEntity;
 import io.renren.modules.sys.entity.SysDeptEntity;
+import io.renren.modules.sys.service.NoticeService;
 import io.renren.modules.sys.service.SysDeptService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,6 +62,8 @@ public class OrderController extends AbstractController{
     private ProductsService productsService;
     @Autowired
     private SysDeptService deptService;
+    @Autowired
+    private NoticeService noticeService;
     /**
      * 我的订单
      */
@@ -91,16 +96,44 @@ public class OrderController extends AbstractController{
         if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
             //如果订单状态在待签收和入库时，更新订单的国际物流信息
             if(ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus) || ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING.equals(orderStatus)){
-                Map<String,Object> map = AbroadLogisticsUtil.getOrderDetail(orderId);
+                Map<String,Object> map = AbroadLogisticsUtil.getOrderDetail(orderEntity.getAmazonOrderId());
                 int status = 0;
                 if("true".equals(map.get("code"))){
                     orderEntity.setUpdateTime(new Date());
                     ReceiveOofayData receiveOofayData = (ReceiveOofayData)map.get("receiveOofayData");
+                    //国际物流对象
+                    AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
+                    if(StringUtils.isBlank(abroadLogisticsEntity.getDestChannel())){
+                        abroadLogisticsEntity.setDestChannel(receiveOofayData.getDestChannel());
+                    }
+                    if(StringUtils.isBlank(abroadLogisticsEntity.getDestTransportCompany())){
+                        abroadLogisticsEntity.setDestTransportCompany(receiveOofayData.getDestTransportCompany());
+                    }
+                    if(StringUtils.isBlank(abroadLogisticsEntity.getTrackWaybill())){
+                        abroadLogisticsEntity.setTrackWaybill(receiveOofayData.getTrackWaybill());
+                        NoticeEntity noticeEntity = new NoticeEntity();
+                        noticeEntity.setCreateTime(new Date());
+                        noticeEntity.setNoticeContent("订单编号：" + orderId + "的物流跟踪号以生成，请尽快同步。");
+                        noticeEntity.setUserId(orderEntity.getUserId());
+                        noticeEntity.setDeptId(orderEntity.getDeptId());
+                        noticeService.insert(noticeEntity);
+                    }else if(StringUtils.isBlank(abroadLogisticsEntity.getTrackWaybill()) && !abroadLogisticsEntity.getTrackWaybill().equals(receiveOofayData.getTrackWaybill())){
+                        abroadLogisticsEntity.setTrackWaybill(receiveOofayData.getTrackWaybill());
+                        abroadLogisticsEntity.setIsSynchronization(0);
+                        NoticeEntity noticeEntity = new NoticeEntity();
+                        noticeEntity.setCreateTime(new Date());
+                        noticeEntity.setNoticeContent("订单编号：" + orderId + "的物流跟踪号发生变化，请尽快同步。");
+                        noticeEntity.setUserId(orderEntity.getUserId());
+                        noticeEntity.setDeptId(orderEntity.getDeptId());
+                        noticeService.insert(noticeEntity);
+                    }
+
                     //有运费
-                    if(receiveOofayData.getInterFreight() != null && receiveOofayData.getInterFreight() != "" && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
+                    if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
                         //计算国际运费、平台佣金、利润
                         //国际运费
                         BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
+                        abroadLogisticsEntity.setInterFreight(interFreight);
                         orderEntity.setInterFreight(interFreight);
                         //平台佣金
                         BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
@@ -117,15 +150,17 @@ public class OrderController extends AbstractController{
                     if(receiveOofayData.isWarehousing && ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus)){
                         orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING);
                         orderEntity.setOrderState("入库");
+                        abroadLogisticsEntity.setState("入库");
                     }else{
                         if(receiveOofayData.getStatusStr() != null && receiveOofayData.getStatusStr() != ""){
                             status = Integer.parseInt(receiveOofayData.getStatusStr());
                             if(status == 2){
                                 orderService.internationalShipments(orderEntity);
+                                abroadLogisticsEntity.setState("出库");
                             }
                         }
                     }
-
+                    abroadLogisticsService.updateById(abroadLogisticsEntity);
                 }
             }
         }
@@ -362,17 +397,11 @@ public class OrderController extends AbstractController{
         order.setAbroadWaybill(abroadWaybill);
         orderService.updateById(order);
         //生成国际物流对象
-        AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
-        if(abroadLogistics == null){
-            abroadLogistics = new AbroadLogisticsEntity();
-            abroadLogistics.setOrderId(orderId);
-            abroadLogistics.setAbroadWaybill(abroadWaybill);
-            abroadLogisticsService.insert(abroadLogistics);
-        }else{
-            abroadLogistics.setAbroadWaybill(abroadWaybill);
-            abroadLogisticsService.updateById(abroadLogistics);
-        }
-
+        AbroadLogisticsEntity abroadLogistics = new AbroadLogisticsEntity();
+        abroadLogistics = new AbroadLogisticsEntity();
+        abroadLogistics.setOrderId(orderId);
+        abroadLogistics.setAbroadWaybill(abroadWaybill);
+        abroadLogisticsService.insert(abroadLogistics);
         // TODO: 2018/12/18 将运单号同步到亚马逊平台
         return R.ok();
     }

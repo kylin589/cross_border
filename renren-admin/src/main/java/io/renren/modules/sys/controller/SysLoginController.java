@@ -106,6 +106,10 @@ public class SysLoginController extends AbstractController{
 	class CalculationThread extends Thread   {
 		@Override
 		public void run() {
+			//总部查询MEN码
+			if(getDeptId() == 1L && getUser().getRoleIdList().contains(1)){
+
+			}
 			SysDeptEntity dept = deptService.selectById(getDeptId());
 			//未发货订单
 			int unshippedNumber = orderService.selectCount(

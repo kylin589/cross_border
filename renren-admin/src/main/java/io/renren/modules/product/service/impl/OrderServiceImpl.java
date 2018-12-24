@@ -3,6 +3,7 @@ package io.renren.modules.product.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.vm.OrderModel;
@@ -256,7 +257,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderId));
         //推送--订单基本信息
         OmsOrder omsOrder = new OmsOrder();
-        omsOrder.setOrder_sn(orderId.toString());
+        omsOrder.setOrder_sn(orderEntity.getAmazonOrderId());
+        String deanname = domesticLogisticsService.selectOne(new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderId)).getLogisticsCompany();
+        if(StringUtils.isNotBlank(deanname)){
+            omsOrder.setDelivery_deanname(deanname);
+        }
         omsOrder.setOrder_currency(orderEntity.getRateCode());
         //设置时间
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS+08:00");
@@ -276,6 +281,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         omsShippingAddr.setCustcity(shipAddressEntity.getShipCity());
         omsShippingAddr.setCustcountry(shipAddressEntity.getShipCountry());
         omsShippingAddr.setCustomer(shipAddressEntity.getShipName());
+        omsShippingAddr.setCustcompany(shipAddressEntity.getShipName());
         omsShippingAddr.setCustphone(shipAddressEntity.getShipTel());
         omsShippingAddr.setCuststate(shipAddressEntity.getShipRegion());
         omsShippingAddr.setCustzipcode(shipAddressEntity.getShipZip());

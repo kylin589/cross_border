@@ -1,5 +1,6 @@
 package io.renren.modules.logistics.util;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.renren.modules.logistics.DTO.ReceiveOofayData;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -40,7 +41,7 @@ public class AbroadLogisticsUtil {
         //推送订单
 //        pushOrder("1");
         //获取订单国际物流状态
-        getOrderDetail(20181214L);
+        getOrderDetail("20181214");
         //修改订单国际物流状态
 //        updateOrder(20181214L,4);
 //        String orderData = "{\"order\":{\"order_sn\":\"20181214\",\"order_currency\":\"null\",\"order_date\":\"null\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
@@ -99,13 +100,13 @@ public class AbroadLogisticsUtil {
         return map;
     }
 
-    public static Map<String,Object> getOrderDetail(Long orderId){
+    public static Map<String,Object> getOrderDetail(String amazonOrderId){
         Map<String,Object> map = new HashMap<>();
         //传输参数
         Map<String, String> paramList = new HashMap<>();
         paramList.put("userdean", String.valueOf(userdean));
         paramList.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
-        paramList.put("orderSn",String.valueOf(orderId));
+        paramList.put("orderSn",amazonOrderId);
         String asin = null;
         String result = null;
         //参数根据ASCII码排序并加密得到签名
@@ -124,7 +125,24 @@ public class AbroadLogisticsUtil {
                 JSONObject a = JSONObject.parseObject(data1);
                 ReceiveOofayData receiveOofayData = new ReceiveOofayData();
                 JSONObject detail = a.getJSONArray("OmsOrderDetailext").getJSONObject(0);
-//                String status =
+                //获取状态码
+                receiveOofayData.setStatusStr(detail.getString("status"));
+                //获取跟踪号
+                receiveOofayData.setTrackWaybill(detail.getString("supply_express_no"));
+                //获取运费(feedamount)
+                receiveOofayData.setInterFreight(detail.getString("feedamount"));
+                //获取是否有入库信息
+                JSONArray recordList = detail.getJSONArray("warehousing_record_list");
+                if(recordList.size() > 0 && recordList.getJSONObject(0).getString("storage_time") != null){
+                    receiveOofayData.setWarehousing(true);
+                }else{
+                    receiveOofayData.setWarehousing(false);
+                }
+                JSONObject destInfo = detail.getJSONObject("ChannelQueryInfo");
+                if(destInfo != null){
+                    receiveOofayData.setDestTransportCompany(destInfo.getString("dest_transport_company"));
+                    receiveOofayData.setDestChannel(destInfo.getString("dest_channel"));
+                }
                 map.put("code","true");
                 map.put("receiveOofayData",receiveOofayData);
             }
