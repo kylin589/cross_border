@@ -20,7 +20,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeDao, NoticeEntity> impl
     public PageUtils queryPage(Map<String, Object> params,Long userId) {
         Page<NoticeEntity> page = this.selectPage(
                 new Query<NoticeEntity>(params).getPage(),
-                new EntityWrapper<NoticeEntity>().eq("user_id",userId)
+                new EntityWrapper<NoticeEntity>().eq("user_id",userId).orderBy("create_time",false)
         );
 
         return new PageUtils(page);

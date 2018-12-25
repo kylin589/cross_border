@@ -11,6 +11,7 @@
         <result property="fieldName" column="field_name"/>
         <result property="fieldDisplayName" column="field_display_name"/>
         <result property="value" column="value"/>
+        <result property="isCustom" column="is_custom"/>
     </resultMap>
 
 

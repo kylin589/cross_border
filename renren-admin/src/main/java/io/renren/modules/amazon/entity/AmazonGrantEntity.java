@@ -1,8 +1,12 @@
 package io.renren.modules.amazon.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import io.renren.common.validator.group.AddGroup;
+import io.renren.common.validator.group.UpdateGroup;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -33,22 +37,32 @@ public class AmazonGrantEntity implements Serializable {
 	/**
 	 * 店铺名称
 	 */
+	@NotBlank(message="店铺名称不能为空", groups = {AddGroup.class})
 	private String shopName;
 	/**
 	 * Amazon账号
 	 */
+	@NotBlank(message="Amazon账号不能为空", groups = {AddGroup.class})
 	private String amazonAccount;
 	/**
 	 * 开户区域(0：北美、1：欧洲、2：日本、3：澳大利亚)
 	 */
+	@NotBlank(message="开户区域不能为空", groups = {AddGroup.class})
 	private Integer region;
+	/**
+	 * 授权国家
+	 */
+	@TableField(exist = false)
+	private String grantCountry;
 	/**
 	 * 卖家编号
 	 */
+	@NotBlank(message="卖家编号不能为空", groups = {AddGroup.class})
 	private String merchantId;
 	/**
 	 * 授权令牌
 	 */
+	@NotBlank(message="授权令牌不能为空", groups = {AddGroup.class, UpdateGroup.class})
 	private String grantToken;
 
 	private Date createTime;
@@ -148,5 +162,13 @@ public class AmazonGrantEntity implements Serializable {
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	public String getGrantCountry() {
+		return grantCountry;
+	}
+
+	public void setGrantCountry(String grantCountry) {
+		this.grantCountry = grantCountry;
 	}
 }

@@ -43,6 +43,16 @@ public class FieldMiddleEntity implements Serializable {
 	 */
 	private String value;
 
+	private Integer isCustom;
+
+	public Integer getIsCustom() {
+		return isCustom;
+	}
+
+	public void setIsCustom(Integer isCustom) {
+		this.isCustom = isCustom;
+	}
+
 	/**
 	 * 设置：主键id
 	 */

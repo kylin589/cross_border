@@ -14,7 +14,7 @@ public class OmsShippingAddr {
     /**
     * 收货公司
     */
-    public String custcompany = "chuangtao";
+    public String custcompany;
     /**
     * 销售国家
     */

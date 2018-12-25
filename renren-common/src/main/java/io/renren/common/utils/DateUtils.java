@@ -270,4 +270,16 @@ public class DateUtils {
         Date currentTime = new Date();
         return xmlToDate(currentTime);
     }
+    /**
+     * 获取现在时间减10天
+     *
+     * @return 返回时间格式 yyyy-mm-dd  HH:mm:ss
+     * @author zjr
+     * @date 2018-11-19 14:54:47
+     */
+    public static XMLGregorianCalendar getTheDateNow10DaysShort() {
+        Date currentTime = new Date();
+        currentTime = addDateDays(currentTime,-10);
+        return xmlToDate(currentTime);
+    }
 }

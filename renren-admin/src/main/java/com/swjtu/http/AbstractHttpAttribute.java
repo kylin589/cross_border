@@ -8,12 +8,6 @@ import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -51,6 +45,8 @@ public abstract class AbstractHttpAttribute {
     static {
         Map<String, String> map = Util.getProxies();
         // 初始化线程池
+        System.out.println("ip:" + map.get("ip"));
+        System.out.println("port:" + map.get("port"));
          params = RequestConfig.custom().setConnectTimeout(3000).setConnectionRequestTimeout(1000).setSocketTimeout(4000)
             .setProxy(new HttpHost(map.get("ip"), Integer.parseInt(map.get("port")))).setExpectContinueEnabled(true).build();
 
