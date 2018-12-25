@@ -437,6 +437,8 @@ var vm = new Vue({
                 'display':'flex',
             })
             vm.getProTypeOne();
+            vm.categoryTwoList=[];
+            vm.categoryThreeList=[];
 
             // 点击分类框元素外部隐藏元素
             $(document).click(function(){
@@ -651,6 +653,8 @@ var vm = new Vue({
                 'display':'flex',
             })
             vm.getProTypeOne();
+            vm.categoryTwoList=[];
+            vm.categoryThreeList=[];
 
             // 点击分类框元素外部隐藏元素
             $(document).click(function(){
@@ -794,6 +798,9 @@ var vm = new Vue({
             })
             vm.getProTypeOne();
 
+            vm.categoryTwoList=[];
+            vm.categoryThreeList=[];
+
             // 点击分类框元素外部隐藏元素
             $(document).click(function(){
                 $(".sousuoArea").hide();
@@ -813,25 +820,38 @@ var vm = new Vue({
             // $(event.target)
             var pId = $(event.target).attr('data-pid');
             var id = $(event.target).attr('data-id');
-            if($(event.target).attr('data-if') == 'true'){
-                if($(event.target).attr('data-pid') == '0'){
-                    vm.categoryThreeList = [];
-                    $.ajax({
-                        type: 'get',
-                        url: '../../product/category/querycategorybyparentid',
-                        contentType: "application/json",
-                        data: {categoryId:id},
-                        success: function (r) {
-                            if (r.code == 0) {
+
+            if($(event.target).attr('data-pid') == '0'){
+                vm.categoryThreeList = [];
+                $.ajax({
+                    type: 'get',
+                    url: '../../product/category/querycategorybyparentid',
+                    contentType: "application/json",
+                    data: {categoryId:id},
+                    success: function (r) {
+                        if (r.code == 0) {
+
+                            if(r.categoryList.length != 0){
                                 vm.categoryTwoList = r.categoryList;
                                 vm.caijiTypeList[0] = $(event.target).attr('data-val');
-                                console.log(vm.categoryTwoList)
-                            } else {
-                                alert(r.msg);
+                            }else {
+                                console.log('&&&&');
+                                vm.caijiTypeList[0] = $(event.target).attr('data-val');
+                                vm.caijiThreeId = id;
+                                vm.caijiNowType = vm.caijiTypeList[0];
+                                $('.sousuoArea').css('display','none');
                             }
+                            // vm.nowproTypearr[0] = $(event.target).attr('data-val');
+
+                            console.log(r.categoryList)
+                        } else {
+                            alert(r.msg);
                         }
-                    });
-                }else if($(event.target).attr('data-pid') != '0'){
+                    }
+                });
+                // }else if($(event.target).attr('data-pid') == '0' && vm.categoryThreeList){
+            }else if($(event.target).attr('data-pid') != 0){
+                if($(event.target).attr('data-index') == 2){
                     vm.categoryThreeList = [];
                     $.ajax({
                         type: 'get',
@@ -840,22 +860,90 @@ var vm = new Vue({
                         data: {categoryId:id},
                         success: function (r) {
                             if (r.code == 0) {
-                                vm.categoryThreeList = r.categoryList;
-                                vm.caijiTypeList[1] = $(event.target).attr('data-val');
+                                // vm.categoryThreeList = r.categoryList;
+                                if(r.categoryList.length != 0){
+                                    vm.categoryThreeList = r.categoryList;
+                                    vm.caijiTypeList[1] = $(event.target).attr('data-val');
+                                }else {
+                                    vm.caijiTypeList[1] = $(event.target).attr('data-val');
+                                    vm.caijiThreeId = id;
+                                    vm.caijiNowType = vm.caijiTypeList[0] + '/' + vm.caijiTypeList[1];
+                                    $('.sousuoArea').css('display','none');
+                                    // vm.nowproTypearr.forEach(function (t) {
+                                    //     vm.nowProType+=t+'/'
+                                    // })
+                                    // vm.nowProType.slice(0,vm.nowProType.length-1);
+                                }
+
                                 console.log(vm.categoryThreeList)
                             } else {
                                 alert(r.msg);
                             }
                         }
                     });
-                }
-            }else {
+                }else {
+                    // vm.pilTypePro[2] = $(event.target).attr('data-val');
+                    // vm.xiugaiData.productCategory = vm.pilTypePro[0] + '/' + vm.pilTypePro[1] + '/' + vm.pilTypePro[2];
+                    // vm.xiugaiData.categoryThreeId = parseInt(id);
+                    // $('.sousuoArea').css('display','none');
 
-                vm.caijiTypeList[2] = $(event.target).attr('data-val');
-                vm.caijiNowType = vm.caijiTypeList[0] + '/' + vm.caijiTypeList[1] + '/' + vm.caijiTypeList[2];
-                vm.caijiThreeId = parseInt(id);
-                $('.sousuoArea').css('display','none');
+                    vm.caijiTypeList[2] = $(event.target).attr('data-val');
+                    vm.caijiNowType = vm.caijiTypeList[0] + '/' + vm.caijiTypeList[1] + '/' + vm.caijiTypeList[2];
+                    vm.caijiThreeId = parseInt(id);
+                    $('.sousuoArea').css('display','none');
+
+                    // vm.nowproTypearr[2] = $(event.target).attr('data-val');
+                    // vm.nowProTypeId = id;
+                    //
+                    // vm.nowProType = vm.nowproTypearr[0] + '/' + vm.nowproTypearr[1] + '/' + vm.nowproTypearr[2];
+                    // $('.sousuoArea').css('display','none');
+                }
+
             }
+
+            // if($(event.target).attr('data-if') == 'true'){
+            //     if($(event.target).attr('data-pid') == '0'){
+            //         vm.categoryThreeList = [];
+            //         $.ajax({
+            //             type: 'get',
+            //             url: '../../product/category/querycategorybyparentid',
+            //             contentType: "application/json",
+            //             data: {categoryId:id},
+            //             success: function (r) {
+            //                 if (r.code == 0) {
+            //                     vm.categoryTwoList = r.categoryList;
+            //                     vm.caijiTypeList[0] = $(event.target).attr('data-val');
+            //                     console.log(vm.categoryTwoList)
+            //                 } else {
+            //                     alert(r.msg);
+            //                 }
+            //             }
+            //         });
+            //     }else if($(event.target).attr('data-pid') != '0'){
+            //         vm.categoryThreeList = [];
+            //         $.ajax({
+            //             type: 'get',
+            //             url: '../../product/category/querycategorybyparentid',
+            //             contentType: "application/json",
+            //             data: {categoryId:id},
+            //             success: function (r) {
+            //                 if (r.code == 0) {
+            //                     vm.categoryThreeList = r.categoryList;
+            //                     vm.caijiTypeList[1] = $(event.target).attr('data-val');
+            //                     console.log(vm.categoryThreeList)
+            //                 } else {
+            //                     alert(r.msg);
+            //                 }
+            //             }
+            //         });
+            //     }
+            // }else {
+            //
+            //     vm.caijiTypeList[2] = $(event.target).attr('data-val');
+            //     vm.caijiNowType = vm.caijiTypeList[0] + '/' + vm.caijiTypeList[1] + '/' + vm.caijiTypeList[2];
+            //     vm.caijiThreeId = parseInt(id);
+            //     $('.sousuoArea').css('display','none');
+            // }
 
 
         },

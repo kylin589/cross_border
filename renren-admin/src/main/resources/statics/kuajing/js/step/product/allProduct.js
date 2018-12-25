@@ -727,6 +727,8 @@ var vm = new Vue({
                 'display':'flex',
             })
             vm.getProTypeOne();
+            vm.categoryTwoList=[];
+            vm.categoryThreeList=[];
 
             // 点击分类框元素外部隐藏元素
             $(document).click(function(){
