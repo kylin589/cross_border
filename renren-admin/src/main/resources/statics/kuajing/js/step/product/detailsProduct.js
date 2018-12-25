@@ -83,6 +83,28 @@ $(function () {
         }
     });
 
+    $("#upImg").change(function () {
+        var csrf = $("#upImg").val();
+        var formData = new FormData();
+        formData.append("csrfmiddlewaretoken", csrf);
+        formData.append('avatar', $("#upImg")[0].files[0]);
+        /*获取上传的图片对象*/
+        $.ajax({
+            url: '/upload_avatar/',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (args) {
+                console.log(args);
+                /*服务器端的图片地址*/
+                $("#avatarPreview").attr('src', '/' + args);
+                /*预览图片*/
+                $("#avatar").val('/' + args);
+                /*将服务端的图片url赋值给form表单的隐藏input标签*/
+            }
+        })
+    })
 
 })
 

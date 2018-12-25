@@ -2158,7 +2158,45 @@ var vm = new Vue({
                     }
                 })
             })
-        }
+        },
+        // 翻译
+        fanyiFunc:function () {
+            console.log(vm.proDetails.chinesePRE.productTitle)
+            console.log(vm.proDetails.chinesePRE.keyWord)
+            console.log(vm.proDetails.chinesePRE.keyPoints)
+            console.log(vm.proDetails.chinesePRE.productDescription)
+            $.ajax({
+                url: '../../product/imageaddress/imageinfo',
+                type: 'post',
+                data: JSON.stringify({
+                    'productTitle': vm.proDetails.chinesePRE.productTitle,
+                    'keyWord':vm.proDetails.chinesePRE.keyWord,
+                    'keyPoints':vm.proDetails.chinesePRE.keyPoints,
+                    'productDescription':vm.proDetails.chinesePRE.productDescription,
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    // console.log(r);
+                    if (r.code === 0) {
+                        vm.proDetails.francePRE = r.introductionFra;
+                        vm.proDetails.spainPRE = r.introductionSpa;
+                        vm.proDetails.germanyPRE = r.introductionDe;
+                        vm.proDetails.italyPRE = r.introductionIt;
+                        vm.proDetails.britainPRE = r.introductionEn;
+                        vm.proDetails.japanPRE = r.introductionJp;
+
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            })
+        },
     },
 
     created:function () {
