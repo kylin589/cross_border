@@ -9,6 +9,10 @@
         .layui-col-md3{
             width: 20%;
         }
+        form .pro_inf span span{
+            width: auto;
+            min-width: 30px;
+        }
     </style>
 
 </head>
@@ -68,16 +72,20 @@
                 </div>
                 <div class="pro_inf okEdit jijian">
                     <div>
-                        <span><label for="">收件人：</label><input type="text" placeholder="建议填写"></span>
-                        <span><label for="">收件人国家：</label><input type="text" placeholder="建议填写"></span><br>
-                        <span><label for="" style="width: 64px">TEL：</label><input type="text" placeholder="建议填写"></span>
-                        <span><label for="">ZIP：</label><input type="text" placeholder="建议填写"></span>
+                        <span><label for="">收件人：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipName"></span>
+                        <span><label for="">收件人国家：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipCountry"></span><br>
+                        <span><label for="" style="width: 64px">TEL：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipTel"></span>
+                        <span><label for="">ZIP：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipZip"></span>
 
-                        <span><label for="">州：</label><input type="text" placeholder="建议填写"></span>
-                        <span><label for="">街道：</label><input type="text" placeholder="建议填写"></span><br>
-                        <span><label for="">详细地址：</label><textarea>建议填写</textarea></span>
+                        <span><label for="">州：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipRegion"></span>
+                        <span><label for="">街道：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipAddressLine1"></span><br>
+                        <span><label for="">详细地址：</label><textarea v-model="orderDetails.shipAddress.shipCity">
+                            {{orderDetails.shipAddress.shipCity}}
+                            {{orderDetails.shipAddress.shipCounty}}
+                            {{orderDetails.shipAddress.shipDistrict}}
+                        </textarea></span>
                         <div class="fr" style="">
-                            <input class="edit" type="button" value="编辑" @click="editJijian">
+                            <input class="edit" type="button" value="编辑" @click="editJijian(orderDetails.shipAddress.shipAddressId)">
                             <input class="noedit" type="button" value="取消" @click="noedit">
                         </div>
                     </div>
@@ -103,9 +111,6 @@
                             <input class="noedit" type="button" value="取消" @click="noedit">
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
             <div class="item">
@@ -113,21 +118,39 @@
                     <h4>国际物流</h4>
                 </div>
                 <div class="pro_inf chengben">
-                    <p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addorder"></p>
+                    <!--<p style="margin-bottom: 10px">-->
+                        <!--<input v-if="orderDetails.orderState == '已付款'" class="addguojiyundan" type="button" value="生成国际运单号" @click="getorderID">-->
+                        <!--<input v-if="orderDetails.abroadLogistics.isSynchronization == 0" class="addguojiyundan" type="button" value="同步" @click="tongbu">-->
+                        <!--&lt;!&ndash;<input class="addguojiyundan" type="button" value="刷新" @click="getOrderInfo">&ndash;&gt;-->
+                    <!--</p>-->
+                    <!--<div>-->
                     <div>
-                        <span><label for="">运单号：</label><span>{{ intLog.num }}</span></span>
-                        <span><label for="">跟踪号：</label><span>{{ intLog.num1 }}</span></span>
-                        <span><label for="">线路：</label><span style="width: 170px">{{ intLog.circuit }}</span></span>
-                        <span><label for="">发货日期：</label><span>{{ intLog.date }}</span></span>
+                        <span><label for="">物流单号：</label><span>{{ orderDetails.abroadLogistics.abroadWaybill }}</span></span>
+                        <span><label for="">跟踪号：</label><span>{{ orderDetails.abroadLogistics.trackWaybill }}</span></span>
+                        <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
+                        <span><label for="">国际运费：</label><span>{{ orderDetails.abroadLogistics.interFreight }}</span></span>
+                        <span><label for="">物流公司：</label><span>{{ orderDetails.abroadLogistics.destTransportCompany }}</span></span>
+                        <span><label for="">物流渠道：</label><span>{{ orderDetails.abroadLogistics.destChannel }}</span></span>
+                        <!--<span><label for="">更新时间：</label><span>{{ orderDetails.abroadLogistics.updateTime }}</span></span>-->
+
                         <div class="fr">
-                            <span>2018/10/24</span>
+                            <span v-if="orderDetails.abroadLogistics.state">物流状态：{{orderDetails.abroadLogistics.state}}</span>
+                            <span v-if="!orderDetails.abroadLogistics.state" style="margin-right: 10px">物流状态：暂无状态</span>
+                            <!--<span>{{ orderDetails.abroadLogistics.state }}</span>-->
+                            <span>{{ orderDetails.abroadLogistics.updateTime }}</span>
                             <p>
-                                <a href="javascript:;">作废</a>
-                                <a href="javascript:;">打印</a>
-                                <a href="javascript:;" class="detailsOrderA" @click="detailsorder">明细</a>
+                                <a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>
+                                <a v-if="orderDetails.abroadLogistics.isSynchronization == 0" href="javascript:;" @click="tongbu">同步</a>
+
+                                <!--<a href="javascript:;" class="detailsOrderA">明细</a>-->
                             </p>
                         </div>
                     </div>
+                    <!--<div v-if="!orderDetails.abroadLogistics.abroadWaybill" style="color: #666">-->
+                        <!--暂无物流状态-->
+                    <!--</div>-->
+
+
 
                 </div>
             </div>

@@ -37,8 +37,8 @@
     border-bottom: 3px solid #00a3e8;
 }
 .nav_title select{
-    float: right;
-    height: 28px;
+    /*float: right;*/
+    height: 35px;
     width: 180px;
     background: none;
     border: 1px solid #d8dce5;
@@ -142,4 +142,19 @@
 }
 .chart2>div p {
     padding-top: 4px;
+}
+
+.selArea button{
+    border: 0;
+    background: #64b2f1;
+    padding: 6px 8px;
+    border-radius: 3px;
+    color: #fff;
+    margin-left: 10px;
+}
+.selArea{
+    float: right;
+}
+.el-input__inner{
+    background: none;
 }

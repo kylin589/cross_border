@@ -900,7 +900,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(3)) {
                         List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
                         tempList.add(productFeedSubmissionInfoDto);
-                        updateFeedUpload(tempList, 3);
+                        updateFeedUpload(uploadId,tempList, 3);
                         break;
                     }
                     // 设置睡眠的时间 60 秒
@@ -935,7 +935,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
 
         // FeedSubmissionInfoDto 数据存放，等待上传
-        updateFeedUpload(feedSubmissionInfoDtoList, 0);
+        updateFeedUpload(uploadId,feedSubmissionInfoDtoList, 0);
 
         List<String> feedSubmissionIdList = new ArrayList<>();
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
@@ -967,7 +967,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         }
 
         // 总状态改为正在上传
-        updateFeedUpload(feedSubmissionInfoDtoList, 1);
+        updateFeedUpload(uploadId,feedSubmissionInfoDtoList, 1);
 
         // 获取报告
         List<FeedSubmissionResultDto> feedSubmissionResultDtos;
@@ -1159,7 +1159,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(3)) {
                         List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
                         tempList.add(productFeedSubmissionInfoDto);
-                        updateFeedUpload(tempList, 3);
+                        updateFeedUpload(uploadId,tempList, 3);
                         break;
                     }
                     // 设置睡眠的时间 60 秒
@@ -1194,7 +1194,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
 
         // FeedSubmissionInfoDto 数据存放，等待上传
-        updateFeedUpload(feedSubmissionInfoDtoList, 0);
+        updateFeedUpload(uploadId,feedSubmissionInfoDtoList, 0);
 
         List<String> feedSubmissionIdList = new ArrayList<>();
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
@@ -1226,7 +1226,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         }
 
         // 总状态改为正在上传
-        updateFeedUpload(feedSubmissionInfoDtoList, 1);
+        updateFeedUpload(uploadId,feedSubmissionInfoDtoList, 1);
 
         // 获取报告
         List<FeedSubmissionResultDto> feedSubmissionResultDtos;
@@ -1583,12 +1583,13 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     }
 
     @Override
-    public void updateFeedUpload(List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList, int uploadState) {
+    public void updateFeedUpload(Long uploadId,List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList, int uploadState) {
         UploadEntity uploadEntity = new UploadEntity();
-        uploadEntity.setUploadId(feedSubmissionInfoDtoList.get(0).getUploadId());
+        uploadEntity.setUploadId(uploadId);
         // 总状态改变
         uploadEntity.setUploadState(uploadState);
         uploadEntity.setUpdateTime(new Date());
+        uploadService.updateById(uploadEntity);
         // 分状态改变
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
             String feedSubmissionId = feedSubmissionInfoDtoList.get(i).getFeedSubmissionId();
@@ -1628,10 +1629,12 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             temp = 3;
         } else {
             if (analysisFeedSubmissionResultDto.getMessagesProcessed().equals(analysisFeedSubmissionResultDto.getMessagesSuccessful())) {
-                temp = 2;
                 if (!analysisFeedSubmissionResultDto.getMessagesWithWarning().equals(0)) {
                     temp = 4;
+                }else if (!analysisFeedSubmissionResultDto.getMessagesWithWarning().equals(1)) {
+                    temp = 1;
                 }
+                temp = 2;
             }
         }
         return temp;
@@ -1700,8 +1703,10 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             Element operationType = message.addElement("OperationType");
             operationType.addText("Update");
             Element product = message.addElement("Product");
-            Element sku = product.addElement("SKU");
-            sku.addText(productsEntity.getProductSku());
+            if (productsEntity.getProductSku()!=null){
+                Element sku = product.addElement("SKU");
+                sku.addText(productsEntity.getProductSku());
+            }
 
             List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productsEntity.getProductId()).orderBy(true, "variant_sort", true));
 
@@ -1837,8 +1842,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 closureType1.addText("null");
                 Element careInstructions1 = vieClassificationData1.addElement("CareInstructions");
                 careInstructions1.addText("null");
-                Element warnings1 = vieClassificationData1.addElement("Warnings");
-                warnings1.addText("Do not Expose to sun");
+               // Element warnings1 = vieClassificationData1.addElement("Warnings");
+               // warnings1.addText("123123132132");
                 Element customizableTemplateName1 = vieClassificationData1.addElement("CustomizableTemplateName");
                 customizableTemplateName1.addText("null");
                 Element styleName1 = vieClassificationData1.addElement("StyleName");
@@ -1909,8 +1914,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 regionOfOrigin1.addText("null");
                 Element riseStyle1 = vieClassificationData1.addElement("RiseStyle");
                 riseStyle1.addText("null");
-                Element safetyWarning1 = vieClassificationData1.addElement("SafetyWarning");
-                safetyWarning1.addText("Do not Expose to sun");
+               // Element safetyWarning1 = vieClassificationData1.addElement("SafetyWarning");
+               // safetyWarning1.addText("1231231");
                 Element sellerWarrantyDescription1 = vieClassificationData1.addElement("SellerWarrantyDescription");
                 sellerWarrantyDescription1.addText("null");
                 Element specialFeature1 = vieClassificationData1.addElement("SpecialFeature");
@@ -2090,8 +2095,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     closureType.addText("null");
                     Element careInstructions = vieClassificationData.addElement("CareInstructions");
                     careInstructions.addText("null");
-                    Element warnings = vieClassificationData.addElement("Warnings");
-                    warnings.addText("not");
+                    // Element warnings = vieClassificationData.addElement("Warnings");
+                    //warnings.addText("123123132132");
                     Element customizableTemplateName = vieClassificationData.addElement("CustomizableTemplateName");
                     customizableTemplateName.addText("null");
                     Element styleName = vieClassificationData.addElement("StyleName");
@@ -2162,8 +2167,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     regionOfOrigin.addText("null");
                     Element riseStyle = vieClassificationData.addElement("RiseStyle");
                     riseStyle.addText("null");
-                    Element safetyWarning = vieClassificationData.addElement("SafetyWarning");
-                    safetyWarning.addText("Do not Expose to sun");
+                   // Element safetyWarning = vieClassificationData.addElement("SafetyWarning");
+                   // safetyWarning.addText("123123");
                     Element sellerWarrantyDescription = vieClassificationData.addElement("SellerWarrantyDescription");
                     sellerWarrantyDescription.addText("null");
                     Element specialFeature = vieClassificationData.addElement("SpecialFeature");
@@ -2237,8 +2242,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 closureType.addText("null");
                 Element careInstructions = classificationData.addElement("CareInstructions");
                 careInstructions.addText("null");
-                Element warnings = classificationData.addElement("Warnings");
-                warnings.addText("not");
+               // Element warnings = classificationData.addElement("Warnings");
+              //  warnings.addText("123123132132");
                 Element customizableTemplateName = classificationData.addElement("CustomizableTemplateName");
                 customizableTemplateName.addText("null");
                 Element styleName = classificationData.addElement("StyleName");
@@ -2309,8 +2314,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 regionOfOrigin.addText("null");
                 Element riseStyle = classificationData.addElement("RiseStyle");
                 riseStyle.addText("null");
-                Element safetyWarning = classificationData.addElement("SafetyWarning");
-                safetyWarning.addText("Do not Expose to sun");
+               // Element safetyWarning = classificationData.addElement("SafetyWarning");
+               // safetyWarning.addText("123123");
                 Element sellerWarrantyDescription = classificationData.addElement("SellerWarrantyDescription");
                 sellerWarrantyDescription.addText("null");
                 Element specialFeature = classificationData.addElement("SpecialFeature");

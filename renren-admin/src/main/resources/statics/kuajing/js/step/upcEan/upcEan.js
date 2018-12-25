@@ -18,13 +18,15 @@ var vm = new Vue({
         gjList:[],
         shopName:'',
         amazonAccount:'',
-        area:'',
+        sel:0,
+        ean:'',
         merchantId:'',
         grantToken:'',
         amazonGrant:{},
         totalCount:'',
     },
     methods:{
+        //添加upc
         addShouq:function () {
             layer.open({
                 type: 1,
@@ -35,31 +37,33 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['添加','取消'],
                 btn1: function (index) {
-                    console.log(vm.shopName);
-                    console.log(vm.amazonAccount);
-                    console.log(vm.area);
-                    console.log(vm.merchantId);
-                    console.log(vm.grantToken);
+                    var eanarry = vm.ean.split('\n');
+                    function getTextByJs(arr) {
+                        var str = "";
+                        for (var i = 0; i < arr.length; i++) {
+                        str += arr[i]+ ",";
+                        }
+                        //去掉最后一个逗号(如果不需要去掉，就不用写)
+                        if (str.length > 0) {
+                            str = str.substr(0, str.length - 1);
+                        }
+                        return str;
+                    }
+                    var ean = getTextByJs(eanarry);
+                    console.log(ean);
+                    console.log(vm.sel)
                     $.ajax({
-                        url: '../../amazon/amazongrant/addAmazonGrant',
+                        url: '../../product/eanupc/batchadd',
                         type: 'post',
                         data: JSON.stringify({
-                            shopName:vm.shopName,
-                            amazonAccount:vm.amazonAccount,
-                            area:vm.area,
-                            merchantId:vm.merchantId,
-                            grantToken:vm.grantToken
+                            type:vm.sel,
+                            codes:ean,
                         }),
                         contentType: "application/json",
                         success: function (r) {
                             console.log(r);
                             if (r.code === 0) {
                                 vm.getauthorizeList();
-                                vm.shopName='';
-                                vm.amazonAccount='';
-                                vm.area='' ;
-                                vm.merchantId='';
-                                vm.grantToken='';
                                 layer.close(index)
                             } else {
                                 layer.alert(r.msg);
@@ -73,39 +77,6 @@ var vm = new Vue({
                 btn2: function (index) {
 
 
-                }
-            });
-        },
-        //国家列表
-        getGjList:function (grantId) {
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#coList'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['600px', '410px'],
-                shadeClose: true,
-                btn: [],
-
-            });
-            vm.grantId = grantId;
-            $.ajax({
-                url: '../../amazon/amazongrant/countryList',
-                type: 'post',
-                data: {
-                    grantId:this.grantId
-                },
-                dataType: 'json',
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        vm.gjList= r.countryList
-                    } else {
-                        layer.alert(r.message);
-                    }
-                },
-                error: function () {
-                    layer.msg("网络故障");
                 }
             });
         },
@@ -135,16 +106,16 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getauthorizeList();
+                            vm.getauthorizeList1();
                         }
                     }
                 });
             });
         },
-        // 获取授权列表
+        // 获取UPC列表
         getauthorizeList:function () {
             $.ajax({
-                url: '../../amazon/amazongrant/list',
+                url: '../../product/eanupc/list',
                 type: 'get',
                 data: {
                     limit:this.pageLimit,
@@ -156,6 +127,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         vm.authorizeList=r.page.list;
                         vm.totalCount = r.page.totalCount;
+                        vm.laypage();
                     } else {
                         layer.alert(r.message);
                     }
@@ -165,80 +137,37 @@ var vm = new Vue({
                 }
             });
         },
-        //删除
-        getdelete:function (grantId) {
-
-            vm.grantIds.push(grantId);
-            console.log(vm.grantIds)
-            layer.confirm('确定删除吗？', function(index){
-                $.ajax({
-                    url: '../../amazon/amazongrant/delete',
-                    type: 'post',
-                    data: JSON.stringify(vm.grantIds),
-                    contentType: "application/json",
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-                            vm.grantIds = [];
-                            layer.close(index);
-                            vm.getauthorizeList();
-                        } else {
-                            layer.alert(r.msg);
-                        }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                });
-            });
-
-        },
-        //添加授权令牌
-        addShouqlingpan:function(item){
-            vm.amazonGrant = item;
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#addShouqlingpan'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['400px', '400px'],
-                shadeClose: true,
-                btn: ['确定','取消'],
-                btn1: function (index) {
-                    $.ajax({
-                        url: '../../amazon/amazongrant/update',
-                        type: 'post',
-                        data: JSON.stringify({
-                            amazonGrant:vm.amazonGrant
-                        }),
-                        // dataType: 'json',
-                        contentType: "application/json",
-                        success: function (r) {
-                            console.log(r);
-                            if (r.code === 0) {
-                                layer.msg("操作成功");
-                                layer.close(index)
-                            } else {
-                                layer.alert(r.msg);
-                            }
-                        },
-                        error: function () {
-                            layer.msg("网络故障");
-                        }
-                    });
+        // 获取UPC列表
+        getauthorizeList1:function () {
+            $.ajax({
+                url: '../../product/eanupc/list',
+                type: 'get',
+                data: {
+                    limit:this.pageLimit,
+                    page:this.proCurr
                 },
-                btn2: function (index) {
-
-
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.authorizeList=r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                        // vm.laypage();
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
                 }
             });
-        }
+        },
 
 
     },
     created:function () {
         this.getauthorizeList();
-        this.laypage();
+        // this.laypage();
     }
 
 })

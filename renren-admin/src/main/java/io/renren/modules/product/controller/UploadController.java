@@ -217,6 +217,8 @@ public class UploadController extends AbstractController {
         String allCategories = StringUtils.join(list, "/");
 
         // 模板所有字段的分类
+        System.out.println(uploadEntity.getAmazonTemplateId());
+        System.out.println(uploadEntity.getCountryCode());
         List<TemplateCategoryFieldsEntity> templateCategoryFieldsEntities = templateService.getOptionalValues(String.valueOf(uploadEntity.getAmazonTemplateId()), uploadEntity.getCountryCode());
 
         detailsDto.setTemplateCategoryFieldsEntities(templateCategoryFieldsEntities);
@@ -335,6 +337,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setUpdateTime(new Date());
         uploadEntity.setUserId(getUserId());
         uploadEntity.setDeptId(getDeptId());
+        uploadEntity.setUploadState(0);
         //添加到上传表
         uploadService.insert(uploadEntity);
         //设置是否有分类属性
@@ -384,7 +387,8 @@ public class UploadController extends AbstractController {
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(addUploadVM.getUploadId());
         uploadEntity = uploadService.selectById(uploadEntity);
-
+        uploadEntity.setUploadState(0);
+        uploadService.updateById(uploadEntity);
         // 删除xml报告
         Map<String, Object> map = new HashMap<>();
         map.put("upload_id", addUploadVM.getUploadId());
@@ -492,6 +496,8 @@ public class UploadController extends AbstractController {
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(uploadId);
         uploadEntity = uploadService.selectById(uploadEntity);
+        uploadEntity.setUploadState(0);
+        uploadService.updateById(uploadEntity);
         // 删除xml基本信息
         Map<String, Object> map = new HashMap<>();
         map.put("upload_id", uploadId);
@@ -691,6 +697,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setUpdateTime(new Date());
         uploadEntity.setUserId(getUserId());
         uploadEntity.setDeptId(getDeptId());
+        uploadEntity.setUploadState(0);
         //添加到上传表
         uploadService.insert(uploadEntity);
         //设置是否有分类属性

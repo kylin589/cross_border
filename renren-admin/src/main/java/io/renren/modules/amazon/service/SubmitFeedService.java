@@ -114,7 +114,7 @@ public interface SubmitFeedService {
      * @param feedSubmissionInfoDtoList
      * @param uploadState               总状态，默认0：等待上传；1：正在上传；2：上传成功；3：上传失败； 4：有警告
      */
-    void updateFeedUpload(List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList, int uploadState);
+    void updateFeedUpload(Long uploadId,List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList, int uploadState);
 
     /**
      * 上传产品
