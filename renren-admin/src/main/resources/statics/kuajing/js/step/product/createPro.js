@@ -577,7 +577,8 @@ var vm = new Vue({
                             // 上传完成的回调方法
                             onComplete: function(response){
                                 // alert("1111："+file.name);
-                                layer.msg('上传成功')
+                                layer.msg('上传成功');
+                                this.getProAlbum();
                             }
                         });
 
@@ -2319,6 +2320,8 @@ var vm = new Vue({
         // console.log(url);
         // this.getProAlbum();
         // this.getProStation();
+
+
 
 
 
