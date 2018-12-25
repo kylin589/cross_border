@@ -23,6 +23,8 @@
             <div class="selArea">
                 <label for="" v-if="pingtTime">开始时间：</label>
                 <el-date-picker
+                        value-format="yyyy-MM-dd hh:mm:ss"
+                        format="yyyy-MM-dd"
                         v-if="pingtTime"
                         v-model="value5"
                         type="date"
@@ -30,13 +32,15 @@
                 </el-date-picker>
                 <label for="" v-if="pingtTime">结束时间：</label>
                 <el-date-picker
+                        value-format="yyyy-MM-dd hh:mm:ss"
+                        format="yyyy-MM-dd"
                         v-if="pingtTime"
                         v-model="value6"
                         type="date"
                         placeholder="选择日期">
                 </el-date-picker>
 
-                <button v-if="pingtTime">查询</button>
+                <button v-if="pingtTime" @click="oneLevelQueryPlatform1">查询</button>
 
             </div>
 
@@ -71,13 +75,15 @@
                 <li class="action" @click="oneLevelQueryUser('day')">日统计</li>
                 <li @click="oneLevelQueryUser('month')">月统计</li>
                 <li @click="oneLevelQueryUser('year')">年统计</li>
-                <li @click="oneLevelQueryUser('time')">年统计</li>
+                <li @click="oneLevelQueryUser('time')">时间统计</li>
             </ul>
 
 
             <div class="selArea">
                 <label for="" v-if="zongbuTime">开始时间：</label>
                 <el-date-picker
+                        value-format="yyyy-MM-dd hh:mm:ss"
+                        format="yyyy-MM-dd"
                         v-if="zongbuTime"
                         v-model="value1"
                         type="date"
@@ -85,6 +91,8 @@
                 </el-date-picker>
                 <label for="" v-if="zongbuTime">结束时间：</label>
                 <el-date-picker
+                        value-format="yyyy-MM-dd hh:mm:ss"
+                        format="yyyy-MM-dd"
                         v-if="zongbuTime"
                         v-model="value2"
                         type="date"
@@ -95,7 +103,7 @@
                     <option value="0">全部</option>
                     <option v-for="item in staff" :value="item.userId">{{ item.username }}</option>
                 </select>
-                <button>查询</button>
+                <button @click="oneLevelQueryUser1">查询</button>
             </div>
 
 
@@ -134,11 +142,13 @@
                 <li class="action" @click="oneLevelQueryFranchisee('day')">日统计</li>
                 <li @click="oneLevelQueryFranchisee('month')">月统计</li>
                 <li @click="oneLevelQueryFranchisee('year')">年统计</li>
-                <li @click="oneLevelQueryFranchisee('time')">年统计</li>
+                <li @click="oneLevelQueryFranchisee('time')">时间统计</li>
             </ul>
             <div class="selArea">
                 <label for="" v-if="jiamTime">开始时间：</label>
                 <el-date-picker
+                        value-format="yyyy-MM-dd hh:mm:ss"
+                        format="yyyy-MM-dd"
                         v-if="jiamTime"
                         v-model="value3"
                         type="date"
@@ -146,6 +156,8 @@
                 </el-date-picker>
                 <label for="" v-if="jiamTime">结束时间：</label>
                 <el-date-picker
+                        value-format="yyyy-MM-dd hh:mm:ss"
+                        format="yyyy-MM-dd"
                         v-if="jiamTime"
                         v-model="value4"
                         type="date"
@@ -156,7 +168,7 @@
                     <option value="0">全部</option>
                     <option v-for="item in staff" :value="item.userId">{{ item.username }}</option>
                 </select>
-                <button>查询</button>
+                <button @click="oneLevelQueryFranchisee1">查询</button>
             </div>
 
         </div>
