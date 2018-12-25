@@ -2119,21 +2119,21 @@ var vm = new Vue({
             },
             // 删除一个文件的回调方法
             onDelete: function(file){
-                alert("当前删除了此文件："+file.name);
+                // alert("当前删除了此文件："+file.name);
             },
             // 每文件上传成功的回调方法
             onSuccess: function(file, response){
-                alert("此文件上传成功："+file.name);
+                // alert("此文件上传成功："+file.name);
                 layer.msg('上传成功')
             },
             // 文件上传失败的回调方法
             onFailure: function(file, response){
-                alert("此文件上传失败:"+file.name);
+                // alert("此文件上传失败:"+file.name);
                 layer.msg('上传失败')
             },
             // 上传完成的回调方法
             onComplete: function(response){
-                alert("1111："+file.name);
+                // alert("1111："+file.name);
                 layer.msg('上传成功')
             }
         });

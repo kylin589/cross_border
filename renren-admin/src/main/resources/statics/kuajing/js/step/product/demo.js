@@ -23,7 +23,7 @@ $(function(){
         },
         // 每文件上传成功的回调方法
         onSuccess: function(file, response){
-            // alert("此文件上传成功："+file.name);
+            alert("此文件上传成功："+file.name);
         },
         // 文件上传失败的回调方法
         onFailure: function(file, response){
@@ -31,6 +31,7 @@ $(function(){
         },
         // 上传完成的回调方法
         onComplete: function(response){
+            alert("所有上传成功");
         }
     });
 });
