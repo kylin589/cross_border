@@ -602,9 +602,12 @@ public class ProductsController extends AbstractController {
         productsEntity.setCategoryTwoId(Long.parseLong(ids[1]));
         //根据主图片的id查出主图片的url
         Long mainImageId = productsEntity.getMainImageId();
-        ImageAddressEntity imageAddressEntity = imageAddressService.selectById(mainImageId);
-        String imageUrl = imageAddressEntity.getImageUrl();
-        productsEntity.setMainImageUrl(imageUrl);
+        if (mainImageId!=null){
+            ImageAddressEntity imageAddressEntity = imageAddressService.selectById(mainImageId);
+            String imageUrl = imageAddressEntity.getImageUrl();
+            productsEntity.setMainImageUrl(imageUrl);
+        }
+
 
         FreightCostEntity americanFC = new FreightCostEntity();
         productsEntity.setAmericanFC(americanFC);
