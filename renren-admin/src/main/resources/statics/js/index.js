@@ -183,9 +183,9 @@ var vm = new Vue({
 		this.getMenuList();
 		this.getUser();
         this.getinformNum();
-        // setInterval(function () {
-			// vm.getinformNum();
-        // },1000)
+        setInterval(function () {
+			vm.getinformNum();
+        },1000)
 	},
 	updated: function(){
 		var el = $('#LAY-system-side-menu>li');

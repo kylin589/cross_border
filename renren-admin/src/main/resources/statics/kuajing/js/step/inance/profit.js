@@ -32,6 +32,16 @@ var vm = new Vue({
         jiamenguserid:'',
         value1:'',
         value2:'',
+        value3:'',
+        value4:'',
+        value5:'',
+        value6:'',
+        timetype1:'',
+        timetype2:'',
+        timetype3:'',
+        zongbuTime:false,
+        jiamTime:false,
+        pingtTime:false,
     },
     methods:{
         //默认盈利明细
@@ -98,13 +108,44 @@ var vm = new Vue({
         },
         //平台利润查询
         oneLevelQueryPlatform:function (type) {
+            vm.timetype1=type;
+            if(type == 'time'){
+                vm.pingtTime = true;
+            }else {vm.pingtTime = false;
+                $.ajax({
+                    url: '../../sys/finance/oneLevelQueryPlatform',
+                    type: 'post',
+                    data:  JSON.stringify({
+                        type:type,
+                        startDate:'',
+                        endDate:''
+                    }),
+                    contentType: "application/json",
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.statisticsProfit = r.platformStatisticsDto;
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            }
+        },
+        //点击查询1
+        oneLevelQueryPlatform1:function(){
+            console.log(vm.value5);
+            console.log(vm.timetype1);
             $.ajax({
                 url: '../../sys/finance/oneLevelQueryPlatform',
                 type: 'post',
                 data:  JSON.stringify({
-                    type:type,
-                    startDate:'',
-                    endDate:''
+                    type:vm.timetype1,
+                    startDate:vm.value5,
+                    endDate:vm.value6
                 }),
                 contentType: "application/json",
                 success: function (r) {
@@ -122,13 +163,55 @@ var vm = new Vue({
         },
         //总部员工查询
         oneLevelQueryUser:function (type) {
+            vm.timetype2=type;
+            if(type == 'time'){
+                vm.zongbuTime = true;
+            }else {
+                vm.zongbuTime = false;
+                $.ajax({
+                    url: '../../sys/finance/oneLevelQueryUser',
+                    type: 'post',
+                    data:  JSON.stringify({
+                        type:type,
+                        startDate:vm.value1,
+                        endDate:vm.value2,
+                        userId:vm.yuangonguserid
+                    }),
+                    contentType: "application/json",
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            // vm.statisticsProfit = r.platformStatisticsDto;
+                            vm.statistics = r.userStatisticsDto;
+                            vm.allChart1Data[0] = vm.statistics.addProductsCounts;
+                            vm.allChart1Data[1] = vm.statistics.addOrderCounts;
+                            vm.allChart1Data[2] = vm.statistics.returnCounts;
+                            vm.allChart2Data[0] = vm.statistics.salesVolume;
+                            vm.allChart2Data[1] = vm.statistics.cost + vm.statistics.orderFreight;
+                            vm.allChart2Data[2] = vm.statistics.profit;
+                            vm.allChart3Data = vm.statistics.profitRate;
+                            allChart1(vm.allChart1Data,vm.statistics.name);
+                            allChart2(vm.allChart2Data,vm.statistics.name);
+                            allChart3(vm.allChart3Data);
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            }
+        },
+        //点击查询2
+        oneLevelQueryUser1:function(){
             $.ajax({
                 url: '../../sys/finance/oneLevelQueryUser',
                 type: 'post',
                 data:  JSON.stringify({
-                    type:type,
-                    startDate:'',
-                    endDate:'',
+                    type:vm.timetype2,
+                    startDate:vm.value1,
+                    endDate:vm.value2,
                     userId:vm.yuangonguserid
                 }),
                 contentType: "application/json",
@@ -158,20 +241,60 @@ var vm = new Vue({
         },
         //加盟商查询
         oneLevelQueryFranchisee:function (type) {
+            vm.timetype3=type;
+            if(type == 'time'){
+                vm.jiamTime = true;
+            }else {
+                vm.jiamTime = false;
+                $.ajax({
+                    url: '../../sys/finance/oneLevelQueryFranchisee',
+                    type: 'post',
+                    data:  JSON.stringify({
+                        type:type,
+                        startDate:vm.value3,
+                        endDate:vm.value3,
+                        userId:vm.jiamenguserid
+                    }),
+                    contentType: "application/json",
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            // vm.statisticsProfit = r.platformStatisticsDto;
+                            vm.statisticsShop = r.franchiseeStatisticsDto;
+                            vm.shopChart3Data[0] = vm.statisticsShop.salesVolume;
+                            vm.shopChart3Data[1] = vm.statisticsShop.allCost;
+                            vm.shopChart3Data[2] = vm.statisticsShop.profit;
+                            vm.shopChart2Data = vm.statisticsShop.profitRate;
+                            shopChart3(vm.shopChart3Data,vm.statistics.name);
+                            shopChart2(vm.shopChart2Data);
+                            shopChart1(vm.shopChart1Data);
+                        } else {
+                            layer.alert(r.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                    }
+                });
+            }
+
+        },
+        //点击查询3
+        oneLevelQueryFranchisee1:function () {
             $.ajax({
                 url: '../../sys/finance/oneLevelQueryFranchisee',
                 type: 'post',
                 data:  JSON.stringify({
-                    type:type,
-                    startDate:'',
-                    endDate:'',
+                    type:vm.timetype3,
+                    startDate:vm.value3,
+                    endDate:vm.value4,
                     userId:vm.jiamenguserid
                 }),
                 contentType: "application/json",
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
-                       // vm.statisticsProfit = r.platformStatisticsDto;
+                        // vm.statisticsProfit = r.platformStatisticsDto;
                         vm.statisticsShop = r.franchiseeStatisticsDto;
                         vm.shopChart3Data[0] = vm.statisticsShop.salesVolume;
                         vm.shopChart3Data[1] = vm.statisticsShop.allCost;
@@ -188,7 +311,7 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             });
-        },
+        }
 
     },
     created:function(){

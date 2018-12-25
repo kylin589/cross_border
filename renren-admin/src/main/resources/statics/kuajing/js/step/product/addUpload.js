@@ -313,6 +313,7 @@ var vm = new Vue({
                             vm.leven = [];
                             vm.leven.push(r.amazonCategoryEntityList);
                             console.log(vm.leven);
+                            vm.amazonAllArr=[];
 
                             vm.fenleiTankuang();
                             setTimeout(function () {
@@ -374,6 +375,7 @@ var vm = new Vue({
                                 vm.amazonCategory = list.displayName;
                                 // vm.amazonAllArr.push(list.displayName);
                                 console.log(vm.amazonAllArr);
+                                vm.amazonAllCategory='',
                                 vm.amazonAllArr.forEach(function (t) {
                                     vm.amazonAllCategory+=t+'/'
                                 })

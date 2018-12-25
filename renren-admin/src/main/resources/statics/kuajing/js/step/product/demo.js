@@ -1,7 +1,7 @@
 $(function(){
     // 初始化插件
     $("#demo").zyUpload({
-        width            :   "1200px",                 // 宽度
+        width            :   "780px",                 // 宽度
         height           :   "400px",                 // 宽度
         itemWidth        :   "100px",                 // 文件项的宽度
         itemHeight       :   "100px",                 // 文件项的高度
