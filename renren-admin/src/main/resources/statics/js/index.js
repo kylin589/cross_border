@@ -168,13 +168,13 @@ var vm = new Vue({
                         vm.informNum = r.count;
                         // layer.close();
                     } else {
-                        // alert(r.msg);
+                        alert(r.msg);
                     }
 
 
                 },
                 error: function () {
-                    alert("网络故障");
+                    // alert("网络故障");
                 }
             });
         }

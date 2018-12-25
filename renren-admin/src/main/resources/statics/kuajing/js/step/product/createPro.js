@@ -543,44 +543,7 @@ var vm = new Vue({
                         vm.getProAlbum();
 
 
-                        $("#demo").zyUpload({
-                            width            :   "780px",                 // 宽度
-                            height           :   "400px",                 // 宽度
-                            itemWidth        :   "100px",                 // 文件项的宽度
-                            itemHeight       :   "100px",                 // 文件项的高度
-                            url               :   "../../product/imageaddress/upload?productId="+vm.id,  // 上传文件的路径
-                            fileType         :   ["jpg","JPG"],// 上传文件的类型
-                            fileSize         :   51200000,                // 上传文件的大小
-                            multiple         :   true,                    // 是否可以多个文件上传
-                            dragDrop         :   true,                    // 是否可以拖动上传文件
-                            tailor           :   false,                    // 是否可以裁剪图片
-                            del              :   true,                    // 是否可以删除文件
-                            finishDel       :   true,                    // 是否在上传文件完成后删除预览
-                            /* 外部获得的回调接口 */
-                            // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
-                            onSelect: function(selectFiles, allFiles){
-                            },
-                            // 删除一个文件的回调方法
-                            onDelete: function(file){
-                                // alert("当前删除了此文件："+file.name);
-                            },
-                            // 每文件上传成功的回调方法
-                            onSuccess: function(file, response){
-                                // alert("此文件上传成功："+file.name);
-                                layer.msg('上传成功')
-                            },
-                            // 文件上传失败的回调方法
-                            onFailure: function(file, response){
-                                // alert("此文件上传失败:"+file.name);
-                                layer.msg('上传失败')
-                            },
-                            // 上传完成的回调方法
-                            onComplete: function(response){
-                                // alert("1111："+file.name);
-                                layer.msg('上传成功');
-                                this.getProAlbum();
-                            }
-                        });
+
 
 
                     } else {
@@ -2121,6 +2084,44 @@ var vm = new Vue({
         },
         // 上传
         shangchuan:function () {
+            $("#demo").zyUpload({
+                width            :   "780px",                 // 宽度
+                height           :   "400px",                 // 宽度
+                itemWidth        :   "100px",                 // 文件项的宽度
+                itemHeight       :   "100px",                 // 文件项的高度
+                url               :   "../../product/imageaddress/upload?productId="+vm.id,  // 上传文件的路径
+                fileType         :   ["jpg","JPG"],// 上传文件的类型
+                fileSize         :   51200000,                // 上传文件的大小
+                multiple         :   true,                    // 是否可以多个文件上传
+                dragDrop         :   true,                    // 是否可以拖动上传文件
+                tailor           :   false,                    // 是否可以裁剪图片
+                del              :   true,                    // 是否可以删除文件
+                finishDel       :   true,                    // 是否在上传文件完成后删除预览
+                /* 外部获得的回调接口 */
+                // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
+                onSelect: function(selectFiles, allFiles){
+                },
+                // 删除一个文件的回调方法
+                onDelete: function(file){
+                    // alert("当前删除了此文件："+file.name);
+                },
+                // 每文件上传成功的回调方法
+                onSuccess: function(file, response){
+                    // alert("此文件上传成功："+file.name);
+                    layer.msg('上传成功')
+                },
+                // 文件上传失败的回调方法
+                onFailure: function(file, response){
+                    // alert("此文件上传失败:"+file.name);
+                    layer.msg('上传失败')
+                },
+                // 上传完成的回调方法
+                onComplete: function(response){
+                    // alert("1111："+file.name);
+                    layer.msg('上传成功');
+                    vm.getProAlbum();
+                }
+            });
             layer.open({
                 type: 1,
                 title: false,
@@ -2268,7 +2269,7 @@ var vm = new Vue({
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 10*1000});
             $.ajax({
-                url: '../../product/imageaddress/imageinfo',
+                url: '../../product/introduction/zhtoEn',
                 type: 'post',
                 data: JSON.stringify({
                     'productTitle': vm.proDetails.chinesePRE.productTitle,
@@ -2288,6 +2289,7 @@ var vm = new Vue({
                         vm.proDetails.britainPRE = r.introductionEn;
                         vm.proDetails.japanPRE = r.introductionJp;
                         layer.close(index);
+                        layer.msg("翻译成功");
 
                         // vm.proAlbum = r.imageInfo;
 

@@ -177,6 +177,7 @@ var vm = new Vue({
                 },
                 dataType: 'json',
                 success: function (r) {
+                    console.log('订单列表');
                     console.log(r);
                     if (r.code === 0) {
                         vm.prolist = r.page.list;
