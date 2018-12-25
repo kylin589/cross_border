@@ -250,7 +250,8 @@ var vm = new Vue({
                         if (r.code === 0) {
 
                             layer.msg("上传成功");
-                            layer.close(index)
+                            layer.close(index);
+                            window.location.href="upProduct.html";
 
                         } else {
                             layer.alert(r.msg);

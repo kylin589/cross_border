@@ -973,9 +973,8 @@ var vm = new Vue({
                         }
 
                     },1000);
-
                     $.ajax({
-                        url: 'http://192.168.0.104:5000/getCollectionInfo',
+                        url: 'http://127.0.0.1:5000/getCollectionInfo',
                         type: 'post',
                         // data:vm.xiugaiData,
                         data:{
@@ -990,21 +989,24 @@ var vm = new Vue({
                                 vm.caijiProgress = 100;
                                 vm.caijiProgressIf = false;
                                 vm.caijiProgress = 0;
-
+                                console.log("productId:" + r.product_id);
                                 $.ajax({
                                     url: '../../product/products/collectproduct',
                                     type: 'get',
                                     // data:vm.xiugaiData,
-                                    data:JSON.stringify({
+                                    data:{
                                         productId:r.product_id
-                                    }),
-                                    contentType: "application/json",
+                                    }
+                                    ,
+                                    dataType: 'json',
+                                    // contentType: "application/json",
                                     success: function (r) {
                                         // console.log(r);
                                         if (r.code === 0) {
                                             console.log(r);
                                             layer.alert('操作成功');
                                             vm.getPage();
+                                            layer.close(index);
                                         } else {
 
 
