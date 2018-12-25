@@ -305,7 +305,7 @@
     flex-direction: column;
 }
 .sousuoArea>div.areaTwo ul li{
-    flex: 1;
+    /*flex: 1;*/
     list-style: none;
     padding: 5px;
     color: #888;
@@ -323,7 +323,7 @@
     flex-direction: column;
 }
 .sousuoArea>div.areaThree ul li{
-    flex: 1;
+    /*flex: 1;*/
     list-style: none;
     padding: 5px;
     color: #888;
