@@ -32,6 +32,13 @@ var vm = new Vue({
         jiamenguserid:'',
         value1:'',
         value2:'',
+        value3:'',
+        value4:'',
+        value5:'',
+        value6:'',
+        zongbuTime:false,
+        jiamTime:false,
+        pingtTime:false,
     },
     methods:{
         //默认盈利明细
@@ -98,6 +105,11 @@ var vm = new Vue({
         },
         //平台利润查询
         oneLevelQueryPlatform:function (type) {
+            if(type == 'time'){
+                vm.pingtTime = true;
+            }else {
+                vm.pingtTime = false;
+            }
             $.ajax({
                 url: '../../sys/finance/oneLevelQueryPlatform',
                 type: 'post',
@@ -122,13 +134,18 @@ var vm = new Vue({
         },
         //总部员工查询
         oneLevelQueryUser:function (type) {
+            if(type == 'time'){
+                vm.zongbuTime = true;
+            }else {
+                vm.zongbuTime = false;
+            }
             $.ajax({
                 url: '../../sys/finance/oneLevelQueryUser',
                 type: 'post',
                 data:  JSON.stringify({
                     type:type,
-                    startDate:'',
-                    endDate:'',
+                    startDate:vm.value1,
+                    endDate:vm.value2,
                     userId:vm.yuangonguserid
                 }),
                 contentType: "application/json",
@@ -158,13 +175,18 @@ var vm = new Vue({
         },
         //加盟商查询
         oneLevelQueryFranchisee:function (type) {
+            if(type == 'time'){
+                vm.jiamTime = true;
+            }else {
+                vm.jiamTime = false;
+            }
             $.ajax({
                 url: '../../sys/finance/oneLevelQueryFranchisee',
                 type: 'post',
                 data:  JSON.stringify({
                     type:type,
-                    startDate:'',
-                    endDate:'',
+                    startDate:vm.value3,
+                    endDate:vm.value3,
                     userId:vm.jiamenguserid
                 }),
                 contentType: "application/json",

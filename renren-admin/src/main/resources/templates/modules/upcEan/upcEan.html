@@ -15,6 +15,19 @@
                 background: #fe8060;
                 /*box-shadow: 0 0 10px #fecb9c;*/
             }
+            textarea , select{
+                border: 1px solid #ddd;
+                background: none;
+                border-radius: 5px;
+            }
+            select{
+                width: 180px;
+            }
+            textarea{
+                padding: 4px;
+                width: 316px;
+                height: 130px;
+            }
 
         </style>
         </head>
@@ -30,28 +43,30 @@
         <!--<button class="save" >添加授权</button>-->
         <!--<a href="ruheAuthorize.html" target="_blank" style="float: right;margin-right: 20px;line-height: 30px;color: #34a4ee;">如何授权？</a>-->
         <input class="save" type="button" value="添加UPC/EAN码" @click="addShouq">
-        <input class="del" type="button" value="批量删除" @click="addShouq">
+        <!--<input class="del" type="button" value="批量删除" @click="addShouq">-->
 
     </p>
 
     <table>
         <tr>
-            <th>店铺名称</th>
-            <th>账户</th>
-            <th>授权国家</th>
-            <th>授权时间</th>
-            <th>操作</th>
+            <th>类型</th>
+            <th>UPC/EAN</th>
+            <th>产品</th>
+            <th>状态</th>
+            <th>添加时间</th>
         </tr>
         <tr v-for="item in authorizeList">
-            <td>{{ item.shopName }}</td>
-            <td>{{ item.amazonAccount }}</td>
-            <td>{{ item.country }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.code }}</td>
+            <td>{{ item.productId }}</td>
+            <td v-if="item.state==0">未使用</td>
+            <td v-if="item.state==1">已使用</td>
             <td>{{ item.createTime }}</td>
-            <td>
-                <a href="javascript:;" @click="addShouqlingpan(item)">添加授权令牌</a>
-                <a href="javascript:;" @click="getdelete(item.grantId)">删除</a>
-                <a href="javascript:;" @click="getGjList(item.grantId)">国家列表</a>
-            </td>
+            <!--<td>-->
+                <!--<a href="javascript:;" @click="addShouqlingpan(item)">添加授权令牌</a>-->
+                <!--<a href="javascript:;" @click="getdelete(item.grantId)">删除</a>-->
+                <!--<a href="javascript:;" @click="getGjList(item.grantId)">国家列表</a>-->
+            <!--</td>-->
         </tr>
     </table>
 
@@ -61,88 +76,25 @@
     <!--添加授权弹框-->
     <div id="addShouq" style="display: none">
         <h3>添加授权</h3>
+
         <span>
-            <label for="">店铺别名</label>
-            <input type="text" placeholder="店铺别名" v-model="shopName">
-        </span>
-        <br>
-        <span>
-            <label for="">Amazon账号</label>
-            <input type="text" placeholder="Amazon账号" v-model="amazonAccount">
-        </span>
-        <br>
-        <span>
-            <label for="">开户区域</label>
-            <select class="form-control" id="account_area" v-model="area">
-                <option value="">-- 请选择 --</option>
-                <option value="0">北美(North America)</option>
-                <option value="1">欧洲(Europe)</option>
-                <option value="2">日本(Japan)</option>
-                <option value="3">澳大利亚(Australia)</option>
+            <label for="">upc/ean</label>
+            <select class="form-control" id="account_area" v-model="sel">
+                <option value="1">upc</option>
+                <option value="0">ean</option>
               </select>
         </span>
         <br>
         <span>
-            <label for="">Merchant ID</label>
-            <input type="text" placeholder="买家编号" v-model="merchantId">
-        </span>
-        <br>
-        <span>
-            <label for="">授权令牌</label>
-            <input type="text" placeholder="授权令牌" v-model="grantToken">
+            <label for="">upc/ean码</label>
+            <p>每行一条，单词最多500条</p>
+            <textarea v-model="ean" ></textarea>
         </span>
 
-        <p>所有的都为必填项</p>
-    </div>
-    <!--添加授权弹框令牌-->
-    <div id="addShouqlingpan" style="display: none">
-        <h3>添加授权令牌</h3>
-        <span>
-            <label for="">店铺别名</label>
-            <span style="margin: 0;">{{amazonGrant.shopName}}</span>
-        </span>
-        <br>
-        <span>
-            <label for="">Amazon账号</label>
-            <span style="margin: 0;">{{amazonGrant.amazonAccount}}</span>
-        </span>
-        <br>
-        <span>
-            <label for="">开户区域</label>
-            <span style="margin: 0;" v-if="amazonGrant.area==0">北美</span>
-            <span style="margin: 0;" v-if="amazonGrant.area==1">欧洲</span>
-            <span style="margin: 0;" v-if="amazonGrant.area==2">日本</span>
-            <span style="margin: 0;" v-if="amazonGrant.area==3">澳大利亚</span>
-        </span>
-        <br>
-        <span>
-            <label for="">Merchant ID</label>
-            <span style="margin: 0;">{{amazonGrant.merchantId}}</span>
-        </span>
-        <br>
-        <span>
-            <label for="">授权令牌</label>
-            <input type="text" placeholder="授权令牌" v-model="amazonGrant.grantToken">
-        </span>
 
-        <p>所有的都为必填项</p>
+        <!--<p>所有的都为必填项</p>-->
     </div>
-    <!--国家列表-->
-    <div id="coList" style="display: none">
-        <h3>国家列表</h3>
-        <table>
-            <tr>
-                <th>店铺别名</th>
-                <th>国家</th>
-                <th>站点</th>
-            </tr>
-            <tr v-for="item in gjList">
-                <td>{{item.shopName}}</td>
-                <td>{{item.country}}</td>
-                <td>{{item.amazonSite}}</td>
-            </tr>
-        </table>
-    </div>
+
 
 </div>
 
