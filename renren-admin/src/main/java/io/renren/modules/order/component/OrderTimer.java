@@ -194,20 +194,6 @@ public class OrderTimer {
                                 Timestamp timeStamep = new Timestamp(d.getTime());
                                 orderModel.setBuyDate(timeStamep);
                                 orderModel.setOrderStatus(listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus());
-                                String ordermoney=listOrdersResponseDtos.get(i).getOrders().get(j).getAmount();
-                                String currencyCode=listOrdersResponseDtos.get(i).getOrders().get(j).getCurrencyCode();
-                                if(currencyCode!=null){
-                                    orderModel.setCurrencyCode(currencyCode);
-                                }else{
-                                    orderModel.setCurrencyCode("");
-
-                                }
-                                if(ordermoney!=null){
-                                    BigDecimal orderMoney=new BigDecimal(ordermoney);
-                                    orderModel.setOrderMoney(orderMoney);//订单总费用
-                                }else{
-                                    orderModel.setOrderMoney(null);//订单总费用
-                                }
                                 if(product_asin!=null){
                                     orderModel.setProductAsin(product_asin);
                                 }else{
@@ -217,6 +203,25 @@ public class OrderTimer {
                                     orderModel.setProductSku(product_sku);
                                 }else{
                                     orderModel.setProductSku("");
+                                }
+
+                                if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
+                                    String orderMoney = orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
+                                    System.out.println("订单金额："+orderMoney+"============");
+                                    String CurrencyCode=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getCurrencyCode();
+                                    System.out.println("货币代码："+CurrencyCode+"============");
+                                    if (orderMoney != null) {
+                                        BigDecimal OrderMoney = new BigDecimal(orderMoney);
+                                        orderModel.setOrderMoney(OrderMoney);//订单总费用
+                                    } else {
+                                        orderModel.setOrderMoney(new BigDecimal(0));//订单总费用
+                                    }
+                                    if(CurrencyCode!=null){
+                                        orderModel.setCurrencyCode(CurrencyCode);
+                                    }else{
+                                        orderModel.setCurrencyCode("");
+                                    }
+
                                 }
 
                                 orderModel.setOrderNumber(ordernumber);//订单总量
