@@ -147,8 +147,7 @@ public class ProductsController extends AbstractController {
         System.out.println("number:" + number);
         System.out.println("type:" + type);
         for (int i = 0; i < productIds.length; i++) {
-            ProductsEntity entity = new ProductsEntity();
-            entity.setProductId(productIds[i]);
+            ProductsEntity entity = productsService.selectById(productIds[i]);
             if ("AUDIT_STATE".equals(type)) {
                 entity.setAuditStatus(number);
             }
