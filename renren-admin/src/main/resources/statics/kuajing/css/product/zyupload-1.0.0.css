@@ -1,4 +1,4 @@
-@CHARSET "UTF-8"; 
+@CHARSET "UTF-8";
 form{ font-size:84%; margin:0; line-height:1.5; color:#333; font-family:Arial, sans-serif;}
 a{color:#34538b; text-decoration:none;}a:hover{text-decoration:underline;}
 input,select,textarea{font-size:100%;}
@@ -23,11 +23,11 @@ pre{font-family:'simsun';}
 #back{margin-top:-25px; position:absolute; right:10px;}
 
 .upload_box{ margin:1em auto;}
-.upload_main{border-width:1px 1px 2px; border-style:solid; border-color:#ccc #ccc #ddd; background-color:#fbfbfb;}
+.upload_main{border-width:1px 1px 2px;border-style:solid;border-color:#ccc #ccc #ddd;background-color:#fbfbfb;border: none;}
 .upload_choose{padding:1em;}
-.upload_drag_area{display:inline-block; width:63%; padding:4em 0; margin-left:.5em; border:1px dashed #ddd; background:#fff no-repeat 20px center; color:#999; text-align:center; vertical-align:middle;}
+.upload_drag_area{display:inline-block;width:63%;padding: 4.6em 0;margin-left:.5em;border:1px dashed #ddd;background:#fff no-repeat 20px center;color:#999;text-align:center;vertical-align:middle;}
 .upload_drag_hover{border-color:#069; box-shadow:inset 2px 2px 4px rgba(0, 0, 0, .5); color:#333;}
-.upload_preview{border-top:1px solid #D2D2D2; border-bottom:1px solid #bbb; background-color:#fff; overflow:hidden; _zoom:1;}
+.upload_preview{border-top:1px solid #D2D2D2;border-bottom:1px solid #bbb;background-color:#fff;overflow:hidden;_zoom:1;border: 0;}
 .upload_append_list{height:100%; margin:1em; float:left; position:relative;}
 .upload_append_list:hover{cursor:pointer;}
 .upload_delete{margin-left:2em;}
@@ -39,29 +39,29 @@ pre{font-family:'simsun';}
 
 .andArea{
 	background: url("../../img/add_img.png") no-repeat scroll center 5px rgba(0, 0, 0, 0);
-    border: 1px dashed #E0E0E0;
-    color: #CCCCCC;
-    font-size: 18px;
-    padding-top: 77px;
-    position: relative;
-    text-align: center;
-    top: 0;
+	border: 1px dashed #E0E0E0;
+	color: #CCCCCC;
+	font-size: 18px;
+	padding-top: 77px;
+	position: relative;
+	text-align: center;
+	top: 0;
 }
 .filePicker{
-	background: none repeat scroll 0 0 #00B7EE;
-    border-radius: 3px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-    color: #FFFFFF;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 18px;
-    height: 44px;
-    line-height: 44px;
-    width: 90%;
-    min-width:120px;
-    margin: 0 auto 0px;
-    overflow: hidden;
-    transition: background 0.2s;
+	background: none repeat scroll 0 0 #18afdc;
+	border-radius: 3px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #FFFFFF;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 16px;
+	height: 40px;
+	line-height: 40px;
+	width: 80%;
+	min-width:120px;
+	margin: 0 auto 0px;
+	overflow: hidden;
+	transition: background 0.2s;
 	-moz-transition: background 0.2s;
 	-webkit-transition: background 0.2s;
 	-o-transition: background 0.2s;
@@ -75,8 +75,8 @@ pre{font-family:'simsun';}
 }
 .convent_choice{
 	float: left;
-    height: 130px;
-    width: 35%;
+	height: 130px;
+	width: 35%;
 }
 
 #fileImage{
@@ -85,12 +85,13 @@ pre{font-family:'simsun';}
 
 .status_bar{
 	border-top: 1px solid #DADADA;
-    height: 45px;
-    line-height: 45px;
-    padding: 0 10px;
-    position: relative;
-    vertical-align: middle;
-    background-color: #FFFFFF;
+	height: 45px;
+	border-bottom: 1px solid #dadada;
+	line-height: 45px;
+	padding: 0 10px;
+	position: relative;
+	vertical-align: middle;
+	background-color: #FFFFFF;
 }
 .info{
 	float:left;
@@ -101,24 +102,24 @@ pre{font-family:'simsun';}
 	position: absolute;
 	right: 16px;
 	line-height: 30px;
-    top: 6px;
+	top: 6px;
 }
 .webuploader_pick{
 	-moz-user-select: none;
-    background: none repeat scroll 0 0 #FFFFFF;
-    border: 1px solid #CFCFCF;
-    border-radius: 3px;
-    color: #565656;
-    cursor: pointer;
-    display: inline-block;
-    float: left;
-    font-size: 14px;
-    margin-left: 10px;
-    padding: 0 18px;
-    position: relative;
-    text-align: center;
-    line-height: 32px;
-    transition: border 0.2s;
+	background: none repeat scroll 0 0 #FFFFFF;
+	border: 1px solid #CFCFCF;
+	border-radius: 3px;
+	color: #565656;
+	cursor: pointer;
+	display: inline-block;
+	float: left;
+	font-size: 14px;
+	margin-left: 10px;
+	padding: 0 18px;
+	position: relative;
+	text-align: center;
+	line-height: 32px;
+	transition: border 0.2s;
 	-moz-transition: border 0.2s;
 	-webkit-transition: border 0.2s;
 	-o-transition: border 0.2s;
@@ -127,19 +128,19 @@ pre{font-family:'simsun';}
 	border: 1px solid #BBB;
 }
 .upload_btn{
-    background: none repeat scroll 0 0 #00B7EE;
-    border-radius: 3px;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    float: left;
-    font-size: 14px;
-    margin-left: 10px;
-    padding: 0 18px;
-    position: relative;
-    text-align: center;
-    line-height: 34px;
-    transition: background 0.2s;
+	background: none repeat scroll 0 0 #00B7EE;
+	border-radius: 3px;
+	color: #fff;
+	cursor: pointer;
+	display: inline-block;
+	float: left;
+	font-size: 14px;
+	margin-left: 10px;
+	padding: 0 18px;
+	position: relative;
+	text-align: center;
+	line-height: 34px;
+	transition: background 0.2s;
 	-moz-transition: background 0.2s;
 	-webkit-transition: background 0.2s;
 	-o-transition: background 0.2s;
@@ -150,17 +151,17 @@ pre{font-family:'simsun';}
 /* 每个图片上的操作bar */
 .file_bar{
 	margin: 0;
-    left: 0px;
-    right: 0px;
-    position: absolute;
-    top: 0px;
-    height:0px;
-    padding:0px;
-    margin: 0;
-    opacity: 0.8;
-    color:#fff;
-    background: none repeat scroll 0 0 #000000;
-    transition: all 0.5s;
+	left: 0px;
+	right: 0px;
+	position: absolute;
+	top: 0px;
+	height:0px;
+	padding:0px;
+	margin: 0;
+	opacity: 0.8;
+	color:#fff;
+	background: none repeat scroll 0 0 #000000;
+	transition: all 0.5s;
 	-moz-transition: all 0.5s;
 	-webkit-transition: all 0.5s;
 	-o-transition: all 0.5s;
@@ -168,8 +169,8 @@ pre{font-family:'simsun';}
 }
 .file_bar a{
 	color: #FFFFFF;
-    position: absolute;
-    right: 10px;
+	position: absolute;
+	right: 10px;
 }
 .file_hover{
 	height:30px;
@@ -228,11 +229,11 @@ pre{font-family:'simsun';}
 .file_name{
 	margin:0px;
 	white-space: nowrap;
-    width: 66%;                  /* IE6 需要定义宽度 */
-    overflow: hidden;            
-    -o-text-overflow: ellipsis;    /* Opera */
-    text-overflow:    ellipsis;    /* IE, Safari (WebKit) */
-    float: left;
+	width: 66%;                  /* IE6 需要定义宽度 */
+	overflow: hidden;
+	-o-text-overflow: ellipsis;    /* Opera */
+	text-overflow:    ellipsis;    /* IE, Safari (WebKit) */
+	float: left;
 }
 .file_edit{
 	background: url("../../img/edit_white.png") no-repeat scroll 0 0 transparent;
@@ -264,12 +265,12 @@ pre{font-family:'simsun';}
 /* 设置图片等比例缩放 并且垂直居中*/
 .upload_append_list a {
 	display: table-cell;
-   /*  width: 140px;	
-    height: 120px; */
-    text-align: center;
-    vertical-align: middle;
-    border: 1px solid #DFDFDF;
-    background: url("../../img/bg.png") no-repeat scroll center 0px transparent;
+	/*  width: 140px;
+     height: 120px; */
+	text-align: center;
+	vertical-align: middle;
+	border: 1px solid #DFDFDF;
+	background: url("../../img/bg.png") no-repeat scroll center 0px transparent;
 }
 .upload_append_list img {
 	border: solid 1px #66f;
@@ -280,7 +281,7 @@ pre{font-family:'simsun';}
 	overflow: hidden;
 }
 .uploadImg .upload_image{
-	border:none;	
+	border:none;
 	display: block;
 	width: 100%;
 	height: auto!important;
@@ -289,35 +290,35 @@ pre{font-family:'simsun';}
 	margin-right: 0px;
 	margin-bottom: 0px;
 	max-height: none !important;
-    max-width: none !important;
-    min-height: 0 !important;
-    min-width: 0 !important;
-    transform: none;
-    image-orientation: 0deg !important;
+	max-width: none !important;
+	min-height: 0 !important;
+	min-width: 0 !important;
+	transform: none;
+	image-orientation: 0deg !important;
 }
 
 .uploadImg .upload_file{
-	border:none;	
+	border:none;
 	max-width: 100%!important;
 	height: auto!important;
 }
-				
+
 /* 不带有拖拽的样式 */
 .add_upload{
-	height:100%; 
-	margin:1em; 
-	float:left; 
+	height:100%;
+	margin:1em;
+	float:left;
 	position:relative;
 }
 .add_upload:hover{
 	cursor:pointer;
 }
 .add_imgBox{
-    border: 1px solid #DFDFDF;
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
-    transition: border 0.2s;
+	border: 1px solid #DFDFDF;
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	transition: border 0.2s;
 	-moz-transition: border 0.2s;
 	-webkit-transition: border 0.2s;
 	-o-transition: border 0.2s;

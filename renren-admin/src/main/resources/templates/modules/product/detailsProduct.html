@@ -5,7 +5,9 @@
     <title>详情</title>
     <#include "/header_kuajing.html">
         <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
-        <script src="${request.contextPath}/statics/libs/ajaxupload.js"></script>
+        <!--<script src="${request.contextPath}/statics/libs/ajaxupload.js"></script>-->
+        <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/zyupload-1.0.0.css" media="all">
+
         <style>
             .ul1 {
                 width: 100%;
@@ -50,6 +52,9 @@
             form .item div:nth-child(2) .imgDiv>div.active{
                 border: 2px solid #00a3e8;
                 box-shadow: 0 0 10px #888;
+            }
+            #demo>form:nth-child(2){
+                display: none;
             }
         </style>
         </head>
@@ -106,9 +111,9 @@
                     <!--<el-dialog :visible.sync="dialogVisible">-->
                         <!--<img width="100%" :src="dialogImageUrl" alt="">-->
                     <!--</el-dialog>-->
-                    <input type="file" id="upImg" value="选择文件" class="selImg">
+                    <!--<input type="file" id="upImg" value="选择文件" class="selImg">-->
 
-                    <input type="button" value="开始上传" id="upload" @click="shangchuan">
+                    <input type="button" value="上传图片" id="upload" @click="shangchuan">
                     <input type="button" value="批量删除" id="" @click="proDel">
                     <input type="button" class="proStation" value="图片回收站" @click="prostation">
                 </div>
@@ -565,7 +570,13 @@
 
     </form>
 
+    <!--上传-->
+    <div id="shangchaunImg" class="tankuang">
+        <h3>上传图片</h3>
 
+        <div id="demo" class="zyupload"></div>
+
+    </div>
 
     <script src="${request.contextPath}/statics/kuajing/js/step/product/zyupload-1.0.0.js"></script>
     <script src="${request.contextPath}/statics/kuajing/js/step/product/demo.js"></script>
