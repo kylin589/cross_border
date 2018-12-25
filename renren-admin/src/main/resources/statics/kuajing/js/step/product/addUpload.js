@@ -159,9 +159,11 @@ var vm = new Vue({
                             success: function (r) {
                                 console.log(r);
                                 if (r.code === 0) {
+
                                     layer.close(index)
                                 } else {
-                                    layer.alert(r.message);
+                                    // layer.alert(r.message);
+                                    window.location.href="upProduct.html";
                                 }
 
 
