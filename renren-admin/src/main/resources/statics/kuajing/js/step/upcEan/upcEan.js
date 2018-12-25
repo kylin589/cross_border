@@ -37,39 +37,42 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['添加','取消'],
                 btn1: function (index) {
-                    console.log(JSON.stringify(vm.ean));
-                    console.log(JSON.stringify(vm.ean).split("n"));
-                    // str.replace(/[\r\n]/g,"");
-
-                    // $.ajax({
-                    //     url: '../../amazon/amazongrant/addAmazonGrant',
-                    //     type: 'post',
-                    //     data: JSON.stringify({
-                    //         shopName:vm.shopName,
-                    //         amazonAccount:vm.amazonAccount,
-                    //         area:vm.area,
-                    //         merchantId:vm.merchantId,
-                    //         grantToken:vm.grantToken
-                    //     }),
-                    //     contentType: "application/json",
-                    //     success: function (r) {
-                    //         console.log(r);
-                    //         if (r.code === 0) {
-                    //             vm.getauthorizeList();
-                    //             vm.shopName='';
-                    //             vm.amazonAccount='';
-                    //             vm.area='' ;
-                    //             vm.merchantId='';
-                    //             vm.grantToken='';
-                    //             layer.close(index)
-                    //         } else {
-                    //             layer.alert(r.msg);
-                    //         }
-                    //     },
-                    //     error: function () {
-                    //         layer.msg("网络故障");
-                    //     }
-                    // });
+                    var eanarry = vm.ean.split('\n');
+                    function getTextByJs(arr) {
+                        var str = "";
+                        for (var i = 0; i < arr.length; i++) {
+                        str += arr[i]+ ",";
+                        }
+                        //去掉最后一个逗号(如果不需要去掉，就不用写)
+                        if (str.length > 0) {
+                            str = str.substr(0, str.length - 1);
+                        }
+                        return str;
+                    }
+                    var ean = getTextByJs(eanarry);
+                    console.log(ean);
+                    console.log(vm.sel)
+                    $.ajax({
+                        url: '../../product/eanupc/batchadd',
+                        type: 'post',
+                        data: JSON.stringify({
+                            type:vm.sel,
+                            codes:ean,
+                        }),
+                        contentType: "application/json",
+                        success: function (r) {
+                            console.log(r);
+                            if (r.code === 0) {
+                                vm.getauthorizeList();
+                                layer.close(index)
+                            } else {
+                                layer.alert(r.msg);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
+                        }
+                    });
                 },
                 btn2: function (index) {
 
@@ -159,48 +162,6 @@ var vm = new Vue({
                 }
             });
         },
-
-        addShouqlingpan:function(item){
-            vm.amazonGrant = item;
-            // console
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#addShouqlingpan'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['400px', '400px'],
-                shadeClose: true,
-                btn: ['确定','取消'],
-                btn1: function (index) {
-                    console.log(vm.ean);
-                    // $.ajax({
-                    //     url: '../../amazon/amazongrant/update',
-                    //     type: 'post',
-                    //     data: JSON.stringify({
-                    //         amazonGrant:vm.amazonGrant
-                    //     }),
-                    //     // dataType: 'json',
-                    //     contentType: "application/json",
-                    //     success: function (r) {
-                    //         console.log(r);
-                    //         if (r.code === 0) {
-                    //             layer.msg("操作成功");
-                    //             layer.close(index)
-                    //         } else {
-                    //             layer.alert(r.msg);
-                    //         }
-                    //     },
-                    //     error: function () {
-                    //         layer.msg("网络故障");
-                    //     }
-                    // });
-                },
-                btn2: function (index) {
-
-
-                }
-            });
-        }
 
 
     },
