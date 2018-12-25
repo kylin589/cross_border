@@ -7,7 +7,6 @@ import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.entity.AmazonCategoryHistoryEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
-import io.renren.modules.amazon.entity.ResultXmlEntity;
 import io.renren.modules.amazon.service.AmazonCategoryHistoryService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.service.ResultXmlService;
@@ -528,7 +527,7 @@ public class UploadController extends AbstractController {
                 return R.error(dto1.getMsg());
             }
         }
-        ;
+
         List<Long> seList = new ArrayList<>();
         if (addUploadVM.getStartId() != null && addUploadVM.getEndId() != null) {
             Long index = addUploadVM.getStartId();
@@ -687,9 +686,6 @@ public class UploadController extends AbstractController {
         String operateItem = StringUtils.join(addUploadVM.getOperateItem(), ",");
         //设置操作项
         uploadEntity.setOperateItem(operateItem);
-        //设置是否有分类属性
-        uploadEntity.setIsAttribute(addUploadVM.getIsAttribute());
-        // TODO: 2018/11/27 分类属性
         //设置常用属性
         uploadEntity.setUploadTime(new Date());
         uploadEntity.setUpdateTime(new Date());
@@ -697,6 +693,20 @@ public class UploadController extends AbstractController {
         uploadEntity.setDeptId(getDeptId());
         //添加到上传表
         uploadService.insert(uploadEntity);
+        //设置是否有分类属性
+        // uploadEntity.setIsAttribute(addUploadVM.getIsAttribute());
+
+        List<TemplateCategoryFieldsEntity> fieldsEntityList = addUploadVM.getFieldsEntityList();
+        for (int i = 0; i < fieldsEntityList.size(); i++) {
+            FieldMiddleEntity middleEntity = new FieldMiddleEntity();
+            middleEntity.setUploadId(uploadEntity.getUploadId());
+            middleEntity.setFieldId(fieldsEntityList.get(i).getFieldId());
+            middleEntity.setFieldName(fieldsEntityList.get(i).getFieldName());
+            middleEntity.setFieldDisplayName(fieldsEntityList.get(i).getFieldDisplayName());
+            middleEntity.setValue(fieldsEntityList.get(i).getValue());
+            middleEntity.setIsCustom(fieldsEntityList.get(i).getIsCustom());
+            fieldMiddleService.insert(middleEntity);
+        }
 
         //添加到分类历史记录表
         AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId());
@@ -716,6 +726,7 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setDeptId(addUploadVM.getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
+        submitFeedService.submitFeed(uploadEntity);
         return R.ok();
     }
 
