@@ -409,7 +409,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         orderEntity.setDeptId(orderModel.getDeptId());
                         orderEntity.setUpdateTime(new Date());
                         //设置汇率
-                        BigDecimal rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
+                        BigDecimal rate = new BigDecimal(0.00);
+                        if(StringUtils.isNotBlank(rateCode)){
+                            rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
+                        }
+                        rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
                         orderEntity.setMomentRate(rate);
                         //获取订单金额（外币）
                         BigDecimal orderMoney = orderModel.getOrderMoney();
@@ -419,7 +423,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             //获取Amazon佣金（外币）
                             BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15).setScale(2,BigDecimal.ROUND_HALF_UP));
                             orderEntity.setAmazonCommission(amazonCommission);
-                            orderEntity.setOrderMoneyCny(amazonCommission.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                            orderEntity.setAmazonCommissionCny(amazonCommission.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
                             //到账金额
                             BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
                             orderEntity.setAccountMoney(accountMoney);
