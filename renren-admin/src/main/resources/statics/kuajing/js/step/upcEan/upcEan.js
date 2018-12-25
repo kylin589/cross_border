@@ -76,39 +76,6 @@ var vm = new Vue({
                 }
             });
         },
-        //国家列表
-        getGjList:function (grantId) {
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#coList'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['600px', '410px'],
-                shadeClose: true,
-                btn: [],
-
-            });
-            vm.grantId = grantId;
-            $.ajax({
-                url: '../../amazon/amazongrant/countryList',
-                type: 'post',
-                data: {
-                    grantId:this.grantId
-                },
-                dataType: 'json',
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        vm.gjList= r.countryList
-                    } else {
-                        layer.alert(r.message);
-                    }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
-            });
-        },
         // 分页器
         laypage: function () {
             // var tempTotalCount;
@@ -141,10 +108,10 @@ var vm = new Vue({
                 });
             });
         },
-        // 获取授权列表
+        // 获取UPC列表
         getauthorizeList:function () {
             $.ajax({
-                url: '../../amazon/amazongrant/list',
+                url: '../../product/eanupc/list',
                 type: 'get',
                 data: {
                     limit:this.pageLimit,
@@ -165,35 +132,7 @@ var vm = new Vue({
                 }
             });
         },
-        //删除
-        getdelete:function (grantId) {
-
-            vm.grantIds.push(grantId);
-            console.log(vm.grantIds)
-            layer.confirm('确定删除吗？', function(index){
-                $.ajax({
-                    url: '../../amazon/amazongrant/delete',
-                    type: 'post',
-                    data: JSON.stringify(vm.grantIds),
-                    contentType: "application/json",
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-                            vm.grantIds = [];
-                            layer.close(index);
-                            vm.getauthorizeList();
-                        } else {
-                            layer.alert(r.msg);
-                        }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                });
-            });
-
-        },
-        //添加授权令牌
+        //添加upc
         addShouqlingpan:function(item){
             vm.amazonGrant = item;
             layer.open({

@@ -7,6 +7,7 @@ import com.amazonaws.mws.model.SubmitFeedRequest;
 import io.renren.modules.amazon.dto.AnalysisFeedSubmissionResultDto;
 import io.renren.modules.amazon.dto.FeedSubmissionInfoDto;
 import io.renren.modules.amazon.dto.FeedSubmissionResultDto;
+import io.renren.modules.amazon.entity.ResultXmlEntity;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.UploadEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -111,15 +112,30 @@ public interface SubmitFeedService {
      * 保存上传id和处理状态
      *
      * @param feedSubmissionInfoDtoList
-     * @param uploadState               总状态，默认0：等待上传；1：正在上传；2：上传成功；3：上传失败； 4？
+     * @param uploadState               总状态，默认0：等待上传；1：正在上传；2：上传成功；3：上传失败； 4：有警告
      */
     void updateFeedUpload(List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList, int uploadState);
 
-    // 上传产品
+    /**
+     * 上传产品
+     *
+     * @param uploadEntity
+     */
     @Async
     void submitFeed(UploadEntity uploadEntity);
 
-    // 同步上传数据
+    /**
+     * 上传商品基本信息xml
+     *
+     * @param uploadId           上传id
+     * @param serviceURL         服务器接口网址
+     * @param merchantId         店铺id
+     * @param sellerDevAuthToken 授权令牌
+     * @param feedType           文件上传类型
+     * @param filePath           文件路径
+     * @param marketplaceIdList  国家端点
+     * @return
+     */
     List<FeedSubmissionInfoDto> submitProductFeed(Long uploadId, String serviceURL, String merchantId, String sellerDevAuthToken, String feedType, String filePath, List<String> marketplaceIdList);
 
     /**
@@ -129,6 +145,17 @@ public interface SubmitFeedService {
 
     List<FeedSubmissionInfoDto> invokeGetFeedSubmissionList(Long uploadId, MarketplaceWebService service, List<GetFeedSubmissionListRequest> requests);
 
+    /**
+     * 请求商品上传报告
+     *
+     * @param uploadId                  上传id
+     * @param path                      文件存放路径
+     * @param serviceURL                服务器接口网址
+     * @param merchantId                店铺id
+     * @param sellerDevAuthToken        授权令牌
+     * @param feedSubmissionInfoDtoList xml信息列表
+     * @return List<FeedSubmissionResultDto>
+     */
     List<FeedSubmissionResultDto> getFeedSubmissionResultAsync(Long uploadId, String path, String serviceURL, String merchantId, String sellerDevAuthToken, List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList);
 
     List<FeedSubmissionResultDto> invokeGetFeedSubmissionResult(Long uploadId, MarketplaceWebService service, List<GetFeedSubmissionResultRequest> requests);
@@ -153,8 +180,25 @@ public interface SubmitFeedService {
 
     /**
      * 重新提交
+     *
      * @param uploadEntity
      */
     @Async
     void reUploadFeed(UploadEntity uploadEntity);
+
+    ResultXmlEntity isExist(Long uploadId, String tpye);
+
+    /**
+     * 生成衣服模板
+     *
+     * @param uploadId
+     * @param merchantIdentifierText
+     * @param productsList
+     * @param countryCode
+     * @return
+     */
+    String generateProductXMLByClothing(Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode);
+
+    Map<String, Object> switchCountry(ProductsEntity productsEntity, String countryCode);
+
 }
