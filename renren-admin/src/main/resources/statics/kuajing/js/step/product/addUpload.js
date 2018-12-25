@@ -160,6 +160,7 @@ var vm = new Vue({
                                 'operateItem': vm.operateItem,
                                 'time':vm.changeTime,
                                 'countryCode':vm.countryCode,
+                                'fieldsEntityList':vm.modelAttr,
                             }),
                             // dataType: 'json',
                             contentType: "application/json",
@@ -167,10 +168,11 @@ var vm = new Vue({
                                 console.log(r);
                                 if (r.code === 0) {
 
-                                    layer.close(index)
-                                } else {
-                                    // layer.alert(r.message);
+                                    layer.close(index);
                                     window.location.href="upProduct.html";
+                                } else {
+                                    layer.alert(r.message);
+                                    // window.location.href="upProduct.html";
                                 }
 
 
