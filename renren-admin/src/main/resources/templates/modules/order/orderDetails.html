@@ -103,7 +103,7 @@
                     <div v-for="(item,index) in orderDetails.domesticLogisticsList">
 
                         <span><label for="">采购价(￥)：</label><input type="text" :placeholder="orderDetails.purchasePrice" v-model="price[index]"></span>
-                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(item.waybill)"><input class="" type="text"  :placeholder="item.waybill" v-model="waybill[index]"></a></span>
+                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(item.waybill)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  :placeholder="item.waybill" v-model="waybill[index]"></a></span>
                         <span><label for="">物流公司：</label><input class="" type="text" :placeholder="item.logisticsCompany"></span>
                         <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="item.issuanceDate"></span>
                         <div class="fr" style="">
@@ -240,13 +240,13 @@
             <span class="jiantou"></span>
             <div>
                 <p>
-                    <span>{{ logistics.express }}</span>:
+                    <span>{{ logistics.express }}</span>
                     <span>{{ logistics.expressNum }}</span>
                 </p>
                 <ul>
-                    <li v-for="item in logistics.logisticsInf">
-                        <p>{{ item.con }}</p>
-                        <span>{{ item.date }}</span>
+                    <li v-for="item in logistics">
+                        <p>{{ item.context }}</p>
+                        <span>{{ item.time }}</span>
                     </li>
                 </ul>
             </div>

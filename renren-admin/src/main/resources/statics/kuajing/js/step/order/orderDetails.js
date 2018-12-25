@@ -136,8 +136,20 @@ var vm = new Vue({
         }],
         addyundanhao:'123424',
         addzhuizonghao:'34564',
-        logistics:{
-        },
+        logistics:[{
+                context:'客户已签收',
+                time:'2018-11-10 10:00:00'
+            },
+            {
+                context:'客户已签收',
+                time:'2018-11-10 10:00:00'
+            },
+            {
+                context:'客户已签收',
+                time:'2018-11-10 10:00:00'
+            }
+
+        ],
         remark:'',
         remarkType:'',
         caigou:'',
@@ -290,7 +302,7 @@ var vm = new Vue({
                     url: 'http://127.0.0.1:5000/domestic/updateLogistics',
                     type: 'get',
                     data: {
-                        orderId:this.orderId,
+                        orderId:vm.orderid,
                         waybill:this.waybill[index],
                         domesticLogisticsId:domesticLogisticsId,
                         price:this.price[index],
@@ -303,7 +315,7 @@ var vm = new Vue({
                                 url: '../../order/remark/updateLog',
                                 type: 'get',
                                 data: {
-                                    orderId:this.orderId,
+                                    orderId:vm.orderid,
                                 },
                                 dataType: 'json',
                                 success: function (r) {
@@ -378,6 +390,14 @@ var vm = new Vue({
                 })
             }
         },
+        // 鼠标一处物流消失
+        xiaoshiFcun:function () {
+            if($(event.target).attr('data-ok') == 'true'){
+                $('.logisticsDiv').css({
+                    'display':'none',
+                })
+            }
+        },
         // 添加国内物流
         addWuliuFunc:function () {
             layer.open({
@@ -394,7 +414,7 @@ var vm = new Vue({
                         url: 'http://127.0.0.1:5000/domestic/getLogisticsCompany',
                         type: 'get',
                         data: {
-                            orderId:this.orderId,
+                            orderId:vm.orderid,
                             price:vm.caigou,
                             waybill:vm.wulDanh
                         },
@@ -406,7 +426,7 @@ var vm = new Vue({
                                     url: '../../order/remark/addLog',
                                     type: 'get',
                                     data: {
-                                        orderId:this.orderId,
+                                        "orderId":vm.orderid,
                                     },
                                     dataType: 'json',
                                     success: function (r) {
