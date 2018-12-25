@@ -27,14 +27,16 @@ public class AmazonGrantServiceImpl extends ServiceImpl<AmazonGrantDao, AmazonGr
         List<AmazonGrantEntity> list = page.getRecords();
         for(AmazonGrantEntity amazonGrantEntity : list){
             //开户区域(0：北美、1：欧洲、2：日本、3：澳大利亚)
-            if(amazonGrantEntity.getRegion() == 0){
-                amazonGrantEntity.setGrantCountry("美国/加拿大/墨西哥");
-            }else if(amazonGrantEntity.getRegion() == 1){
-                amazonGrantEntity.setGrantCountry("英国/法国/德国/西班牙/意大利");
-            }else if(amazonGrantEntity.getRegion() == 2){
-                amazonGrantEntity.setGrantCountry("日本");
-            }else{
-                amazonGrantEntity.setGrantCountry("澳大利亚");
+            if ( amazonGrantEntity.getRegion() != null){
+                if(amazonGrantEntity.getRegion() == 0){
+                    amazonGrantEntity.setGrantCountry("美国/加拿大/墨西哥");
+                }else if(amazonGrantEntity.getRegion() == 1){
+                    amazonGrantEntity.setGrantCountry("英国/法国/德国/西班牙/意大利");
+                }else if(amazonGrantEntity.getRegion() == 2){
+                    amazonGrantEntity.setGrantCountry("日本");
+                }else{
+                    amazonGrantEntity.setGrantCountry("澳大利亚");
+                }
             }
         }
         return new PageUtils(page);

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -180,14 +181,18 @@ public class OrderTimer {
                                 orderModel.setAmazonOrderId(AmazonOrderId);
                                 orderModel.setUserId(shop.getUserId());
                                 orderModel.setDeptId(shop.getDeptId());
-                                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                Date date = null;//拿到Date对象
-                                try {
-                                    date = sdf1.parse(listOrdersResponseDtos.get(i).getOrders().get(j).getPurchaseDate());
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
+                                String buytime=listOrdersResponseDtos.get(i).getOrders().get(j).getPurchaseDate();
+                                buytime = buytime.replace("Z", " UTC");// UTC是本地时间
+                                SimpleDateFormat format = new SimpleDateFormat(
+                                        "yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+                                Date d=null;
+                                try{
+                                    d=format.parse(buytime);
+                                }catch (ParseException e){
+                                    e.getStackTrace();
                                 }
-                                orderModel.setBuyDate(date);
+                                Timestamp timeStamep = new Timestamp(d.getTime());
+                                orderModel.setBuyDate(timeStamep);
                                 orderModel.setOrderStatus(listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus());
                                 String ordermoney=listOrdersResponseDtos.get(i).getOrders().get(j).getAmount();
                                 String currencyCode=listOrdersResponseDtos.get(i).getOrders().get(j).getCurrencyCode();

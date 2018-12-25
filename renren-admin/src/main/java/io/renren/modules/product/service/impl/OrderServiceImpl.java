@@ -122,6 +122,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         Map<String, Object> condition = new HashMap<>(1);
         condition.put("userId",userId);
         OrderStatisticsEntity orderCounts = baseMapper.statisticsOrderCounts(condition);
+        if(orderCounts == null){
+            orderCounts = new OrderStatisticsEntity();
+        }
         //核算订单数
         int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
         orderCounts.setOrderCounts(completeCounts);
@@ -373,6 +376,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     //新增订单
                     if(!"Canceled".equals(modelStatus)){
                         //设置基本属性
+                        orderEntity = new OrderEntity();
                         orderEntity.setAmazonOrderId(orderModel.getAmazonOrderId());
                         orderEntity.setBuyDate(orderModel.getBuyDate());
                         if("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)){
@@ -383,6 +387,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             //已付款
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED);
                             orderEntity.setOrderState("已付款");
+                        }else if("Shipped".equals(modelStatus)){
+                            //已付款
+                            orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_SHIPPED);
+                            orderEntity.setOrderState("虚发货");
                         }
                         if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
                             orderEntity.setCountryCode(orderModel.getProductShipAddressEntity().getShipCountry());

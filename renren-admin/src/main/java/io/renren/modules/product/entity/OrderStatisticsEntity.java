@@ -9,19 +9,19 @@ import java.math.BigDecimal;
  */
 public class OrderStatisticsEntity {
     //核算订单数量
-    private int orderCounts;
+    private int orderCounts = 0;
     //总金额
-    private BigDecimal orderMoney;
+    private BigDecimal orderMoney = new BigDecimal(0.00);
     //利润
-    private BigDecimal orderProfit;
+    private BigDecimal orderProfit = new BigDecimal(0.00);
     //退款数
-    private int returnCounts;
+    private int returnCounts = 0;
     //退货费用
-    private BigDecimal returnCost;
+    private BigDecimal returnCost = new BigDecimal(0.00);;
     //采购成本
-    private BigDecimal purchasePrice;
+    private BigDecimal purchasePrice = new BigDecimal(0.00);;
     //运费
-    private BigDecimal orderFreight;
+    private BigDecimal orderFreight = new BigDecimal(0.00);;
 
     public int getOrderCounts() {
         return orderCounts;

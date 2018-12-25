@@ -1,7 +1,7 @@
 $(function(){
     // 初始化插件
     $("#demo").zyUpload({
-        width            :   "1200px",                 // 宽度
+        width            :   "780px",                 // 宽度
         height           :   "400px",                 // 宽度
         itemWidth        :   "100px",                 // 文件项的宽度
         itemHeight       :   "100px",                 // 文件项的高度
@@ -23,7 +23,7 @@ $(function(){
         },
         // 每文件上传成功的回调方法
         onSuccess: function(file, response){
-            // alert("此文件上传成功："+file.name);
+            alert("此文件上传成功："+file.name);
         },
         // 文件上传失败的回调方法
         onFailure: function(file, response){
@@ -31,6 +31,7 @@ $(function(){
         },
         // 上传完成的回调方法
         onComplete: function(response){
+            alert("所有上传成功");
         }
     });
 });
