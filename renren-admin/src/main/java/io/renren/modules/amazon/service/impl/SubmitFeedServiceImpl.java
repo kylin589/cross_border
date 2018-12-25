@@ -851,7 +851,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             switch (operateItemStr[i]) {
                 // 0 基本信息
                 case "0":
-                    String productPath = generateProductXMLByClothing(uploadId,merchantId, productsEntityList, countryCode);
+                    String productPath = generateProductXMLByClothing(uploadId, merchantId, productsEntityList, countryCode);
                     filePathMap.put("0", productPath);
                     break;
                 // 1 关系
@@ -900,7 +900,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(3)) {
                         List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
                         tempList.add(productFeedSubmissionInfoDto);
-                        updateFeedUpload(uploadId,tempList, 3);
+                        updateFeedUpload(uploadId, tempList, 3);
                         break;
                     }
                     // 设置睡眠的时间 60 秒
@@ -935,7 +935,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
 
         // FeedSubmissionInfoDto 数据存放，等待上传
-        updateFeedUpload(uploadId,feedSubmissionInfoDtoList, 0);
+        updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 0);
 
         List<String> feedSubmissionIdList = new ArrayList<>();
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
@@ -967,7 +967,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         }
 
         // 总状态改为正在上传
-        updateFeedUpload(uploadId,feedSubmissionInfoDtoList, 1);
+        updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
 
         // 获取报告
         List<FeedSubmissionResultDto> feedSubmissionResultDtos;
@@ -1159,7 +1159,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(3)) {
                         List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
                         tempList.add(productFeedSubmissionInfoDto);
-                        updateFeedUpload(uploadId,tempList, 3);
+                        updateFeedUpload(uploadId, tempList, 3);
                         break;
                     }
                     // 设置睡眠的时间 60 秒
@@ -1194,7 +1194,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
 
         // FeedSubmissionInfoDto 数据存放，等待上传
-        updateFeedUpload(uploadId,feedSubmissionInfoDtoList, 0);
+        updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 0);
 
         List<String> feedSubmissionIdList = new ArrayList<>();
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
@@ -1226,7 +1226,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         }
 
         // 总状态改为正在上传
-        updateFeedUpload(uploadId,feedSubmissionInfoDtoList, 1);
+        updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
 
         // 获取报告
         List<FeedSubmissionResultDto> feedSubmissionResultDtos;
@@ -1583,7 +1583,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     }
 
     @Override
-    public void updateFeedUpload(Long uploadId,List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList, int uploadState) {
+    public void updateFeedUpload(Long uploadId, List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList, int uploadState) {
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(uploadId);
         // 总状态改变
@@ -1631,7 +1631,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             if (analysisFeedSubmissionResultDto.getMessagesProcessed().equals(analysisFeedSubmissionResultDto.getMessagesSuccessful())) {
                 if (!analysisFeedSubmissionResultDto.getMessagesWithWarning().equals(0)) {
                     temp = 4;
-                }else if (!analysisFeedSubmissionResultDto.getMessagesWithWarning().equals(1)) {
+                } else if (!analysisFeedSubmissionResultDto.getMessagesWithWarning().equals(1)) {
                     temp = 1;
                 }
                 temp = 2;
@@ -1703,7 +1703,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             Element operationType = message.addElement("OperationType");
             operationType.addText("Update");
             Element product = message.addElement("Product");
-            if (productsEntity.getProductSku()!=null){
+            if (productsEntity.getProductSku() != null) {
                 Element sku = product.addElement("SKU");
                 sku.addText(productsEntity.getProductSku());
             }
@@ -1742,42 +1742,68 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             Element descriptionData = product.addElement("DescriptionData");
 
             // Title-商品标题
+            String titleStr = "\\t";
             Element title = descriptionData.addElement("Title");
-            title.addText(introductionEntity.getProductTitle());
+            if (introductionEntity.getProductTitle() != null) {
+                titleStr = introductionEntity.getProductTitle();
+            }
+            title.addText(titleStr);
 
             // Brand-品牌
+            String brandStr = "\\t";
             Element brand = descriptionData.addElement("Brand");
-            brand.addText(productsEntity.getBrandName());
+            if (productsEntity.getBrandName() != null) {
+                brandStr = productsEntity.getBrandName();
+            }
+            brand.addText(brandStr);
 
             // Description-描述
+            String descriptionStr = "\\t";
             Element description = descriptionData.addElement("Description");
-            description.addText(introductionEntity.getProductDescription());
+            if (introductionEntity.getProductDescription() != null) {
+                descriptionStr = introductionEntity.getProductDescription();
+            }
+            description.addText(descriptionStr);
 
             // BulletPoint-重点，有可能需要多个，但最多5个
-            String[] kepPoints = introductionEntity.getKeyPoints().split("\r\n");
-            if (kepPoints.length <= 5) {
-                for (int j = 0; j < kepPoints.length; j++) {
-                    Element bulletPoint = descriptionData.addElement("BulletPoint");
-                    bulletPoint.addText(kepPoints[j]);
+            if (introductionEntity.getKeyPoints() != null) {
+                String[] kepPoints = introductionEntity.getKeyPoints().split("\r\n");
+                if (kepPoints.length <= 5) {
+                    for (int j = 0; j < kepPoints.length; j++) {
+                        Element bulletPoint = descriptionData.addElement("BulletPoint");
+                        bulletPoint.addText(kepPoints[j]);
+                    }
+                } else {
+                    for (int j = 0; j < 4; j++) {
+                        Element bulletPoint = descriptionData.addElement("BulletPoint");
+                        bulletPoint.addText(kepPoints[j]);
+                    }
+
                 }
             } else {
                 for (int j = 0; j < 4; j++) {
                     Element bulletPoint = descriptionData.addElement("BulletPoint");
-                    bulletPoint.addText(kepPoints[j]);
+                    bulletPoint.addText("\\t");
                 }
-
             }
 
             // Manufacturer - 生产厂家
+            String manufacturerStr = "\\t";
             Element manufacturer = descriptionData.addElement("Manufacturer");
-            manufacturer.addText(productsEntity.getProducerName());
+            if (productsEntity.getProducerName() != null) {
+                manufacturerStr = productsEntity.getProducerName();
+            }
+            manufacturer.addText(manufacturerStr);
+
 
             // ItemType - 推荐节点
             AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectById(uploadEntity.getAmazonCategoryId());
-
+            String itemTypeStr = "\\t";
             Element itemType = descriptionData.addElement("ItemType");
-            itemType.addText(amazonCategoryEntity.getCategoryName());
-
+            if (amazonCategoryEntity.getCategoryName() != null) {
+                itemTypeStr = amazonCategoryEntity.getCategoryName();
+            }
+            itemType.addText(itemTypeStr);
 
             switch (countryCode) {
                 // 加拿大
@@ -1842,8 +1868,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 closureType1.addText("null");
                 Element careInstructions1 = vieClassificationData1.addElement("CareInstructions");
                 careInstructions1.addText("null");
-               // Element warnings1 = vieClassificationData1.addElement("Warnings");
-               // warnings1.addText("123123132132");
+                // Element warnings1 = vieClassificationData1.addElement("Warnings");
+                // warnings1.addText("123123132132");
                 Element customizableTemplateName1 = vieClassificationData1.addElement("CustomizableTemplateName");
                 customizableTemplateName1.addText("null");
                 Element styleName1 = vieClassificationData1.addElement("StyleName");
@@ -1914,8 +1940,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 regionOfOrigin1.addText("null");
                 Element riseStyle1 = vieClassificationData1.addElement("RiseStyle");
                 riseStyle1.addText("null");
-               // Element safetyWarning1 = vieClassificationData1.addElement("SafetyWarning");
-               // safetyWarning1.addText("1231231");
+                // Element safetyWarning1 = vieClassificationData1.addElement("SafetyWarning");
+                // safetyWarning1.addText("1231231");
                 Element sellerWarrantyDescription1 = vieClassificationData1.addElement("SellerWarrantyDescription");
                 sellerWarrantyDescription1.addText("null");
                 Element specialFeature1 = vieClassificationData1.addElement("SpecialFeature");
@@ -1995,36 +2021,45 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
                     // Title-商品标题
                     Element vieTitle = vieDescriptionData.addElement("Title");
-                    vieTitle.addText(introductionEntity.getProductTitle());
+                    vieTitle.addText(titleStr);
 
                     // Brand-品牌
                     Element vieBrand = vieDescriptionData.addElement("Brand");
-                    vieBrand.addText(productsEntity.getBrandName());
+                    vieBrand.addText(brandStr);
 
                     // Description-描述
                     Element vieDescription = vieDescriptionData.addElement("Description");
-                    vieDescription.addText(introductionEntity.getProductDescription());
+                    vieDescription.addText(descriptionStr);
 
                     // BulletPoint-重点，有可能需要多个，但最多5个
-                    if (kepPoints.length <= 5) {
-                        for (int k = 0; k < kepPoints.length; k++) {
-                            Element bulletPoint = vieDescriptionData.addElement("BulletPoint");
-                            bulletPoint.addText(kepPoints[k]);
+                    if (introductionEntity.getKeyPoints() != null) {
+                        String[] kepPoints = introductionEntity.getKeyPoints().split("\r\n");
+                        if (kepPoints.length <= 5) {
+                            for (int z = 0; z < kepPoints.length; z++) {
+                                Element bulletPoint = descriptionData.addElement("BulletPoint");
+                                bulletPoint.addText(kepPoints[z]);
+                            }
+                        } else {
+                            for (int x = 0; x < 4; x++) {
+                                Element bulletPoint = descriptionData.addElement("BulletPoint");
+                                bulletPoint.addText(kepPoints[x]);
+                            }
+
                         }
                     } else {
-                        for (int f = 0; f < 4; f++) {
-                            Element bulletPoint = vieDescriptionData.addElement("BulletPoint");
-                            bulletPoint.addText(kepPoints[f]);
+                        for (int x = 0; x < 4; x++) {
+                            Element bulletPoint = descriptionData.addElement("BulletPoint");
+                            bulletPoint.addText("\\t");
                         }
                     }
 
                     // Manufacturer - 生产厂家
                     Element vieManufacturer = vieDescriptionData.addElement("Manufacturer");
-                    vieManufacturer.addText(productsEntity.getProducerName());
+                    vieManufacturer.addText(manufacturerStr);
 
                     // ItemType - 推荐节点
                     Element vieItemType = vieDescriptionData.addElement("ItemType");
-                    vieItemType.addText(amazonCategoryEntity.getCategoryName());
+                    vieItemType.addText(itemTypeStr);
 
                     switch (countryCode) {
                         // 加拿大
@@ -2167,8 +2202,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     regionOfOrigin.addText("null");
                     Element riseStyle = vieClassificationData.addElement("RiseStyle");
                     riseStyle.addText("null");
-                   // Element safetyWarning = vieClassificationData.addElement("SafetyWarning");
-                   // safetyWarning.addText("123123");
+                    // Element safetyWarning = vieClassificationData.addElement("SafetyWarning");
+                    // safetyWarning.addText("123123");
                     Element sellerWarrantyDescription = vieClassificationData.addElement("SellerWarrantyDescription");
                     sellerWarrantyDescription.addText("null");
                     Element specialFeature = vieClassificationData.addElement("SpecialFeature");
@@ -2242,8 +2277,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 closureType.addText("null");
                 Element careInstructions = classificationData.addElement("CareInstructions");
                 careInstructions.addText("null");
-               // Element warnings = classificationData.addElement("Warnings");
-              //  warnings.addText("123123132132");
+                // Element warnings = classificationData.addElement("Warnings");
+                //  warnings.addText("123123132132");
                 Element customizableTemplateName = classificationData.addElement("CustomizableTemplateName");
                 customizableTemplateName.addText("null");
                 Element styleName = classificationData.addElement("StyleName");
@@ -2314,8 +2349,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 regionOfOrigin.addText("null");
                 Element riseStyle = classificationData.addElement("RiseStyle");
                 riseStyle.addText("null");
-               // Element safetyWarning = classificationData.addElement("SafetyWarning");
-               // safetyWarning.addText("123123");
+                // Element safetyWarning = classificationData.addElement("SafetyWarning");
+                // safetyWarning.addText("123123");
                 Element sellerWarrantyDescription = classificationData.addElement("SellerWarrantyDescription");
                 sellerWarrantyDescription.addText("null");
                 Element specialFeature = classificationData.addElement("SpecialFeature");
