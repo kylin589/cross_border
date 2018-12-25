@@ -171,7 +171,7 @@ var vm = new Vue({
                                     layer.close(index);
                                     window.location.href="upProduct.html";
                                 } else {
-                                    layer.alert(r.message);
+                                    // layer.alert(r.message);
                                     // window.location.href="upProduct.html";
                                 }
 
