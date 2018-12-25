@@ -20,6 +20,26 @@
                 <li @click="oneLevelQueryPlatform('time')">时间统计</li>
             </ul>
 
+            <div class="selArea">
+                <label for="" v-if="pingtTime">开始时间：</label>
+                <el-date-picker
+                        v-if="pingtTime"
+                        v-model="value5"
+                        type="date"
+                        placeholder="选择日期">
+                </el-date-picker>
+                <label for="" v-if="pingtTime">结束时间：</label>
+                <el-date-picker
+                        v-if="pingtTime"
+                        v-model="value6"
+                        type="date"
+                        placeholder="选择日期">
+                </el-date-picker>
+
+                <button v-if="pingtTime">查询</button>
+
+            </div>
+
         </div>
         <!--统计-->
         <div class="statistics">
@@ -54,27 +74,33 @@
                 <li @click="oneLevelQueryUser('time')">年统计</li>
             </ul>
 
-            <div>
-                <label for="">开始时间：</label>
+
+            <div class="selArea">
+                <label for="" v-if="zongbuTime">开始时间：</label>
                 <el-date-picker
+                        v-if="zongbuTime"
                         v-model="value1"
                         type="date"
                         placeholder="选择日期">
                 </el-date-picker>
-                <label for="">结束时间：</label>
+                <label for="" v-if="zongbuTime">结束时间：</label>
                 <el-date-picker
+                        v-if="zongbuTime"
                         v-model="value2"
                         type="date"
                         placeholder="选择日期">
                 </el-date-picker>
+                <label for="" style="line-height: 35px">选择员工：</label>
+                <select name="" v-model="yuangonguserid" >
+                    <option value="0">全部</option>
+                    <option v-for="item in staff" :value="item.userId">{{ item.username }}</option>
+                </select>
+                <button>查询</button>
             </div>
 
 
 
-            <select name="" v-model="yuangonguserid" >
-                <option value="0">全部</option>
-                <option v-for="item in staff" :value="item.userId">{{ item.username }}</option>
-            </select>
+
         </div>
         <!--统计-->
         <div class="statistics">
@@ -110,10 +136,29 @@
                 <li @click="oneLevelQueryFranchisee('year')">年统计</li>
                 <li @click="oneLevelQueryFranchisee('time')">年统计</li>
             </ul>
-            <select name="" id="" v-model="jiamenguserid">
-                <option value="0">全部</option>
-                <option v-for="item in staff" :value="item.userId">{{ item.username }}</option>
-            </select>
+            <div class="selArea">
+                <label for="" v-if="jiamTime">开始时间：</label>
+                <el-date-picker
+                        v-if="jiamTime"
+                        v-model="value3"
+                        type="date"
+                        placeholder="选择日期">
+                </el-date-picker>
+                <label for="" v-if="jiamTime">结束时间：</label>
+                <el-date-picker
+                        v-if="jiamTime"
+                        v-model="value4"
+                        type="date"
+                        placeholder="选择日期">
+                </el-date-picker>
+                <label for="" style="line-height: 35px">选择员工：</label>
+                <select name="" id="" v-model="jiamenguserid">
+                    <option value="0">全部</option>
+                    <option v-for="item in staff" :value="item.userId">{{ item.username }}</option>
+                </select>
+                <button>查询</button>
+            </div>
+
         </div>
         <!--统计-->
         <div class="statistics">
