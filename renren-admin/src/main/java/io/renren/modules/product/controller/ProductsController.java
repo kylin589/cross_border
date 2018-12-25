@@ -583,14 +583,16 @@ public class ProductsController extends AbstractController {
         productsEntity.setProductSku(SKU);
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
-        String code = eanUpcEntity.getCode();
-        //设置Ean码
-        productsEntity.setEanCode(code);
-        //修改状态
-        eanUpcEntity.setState(1);
-        //关联产品id
-        eanUpcEntity.setProductId(productId);
-        eanUpcService.updateById(eanUpcEntity);
+        if (eanUpcEntity != null) {
+            String code = eanUpcEntity.getCode();
+            //设置Ean码
+            productsEntity.setEanCode(code);
+            //修改状态
+            eanUpcEntity.setState(1);
+            //关联产品id
+            eanUpcEntity.setProductId(productId);
+            eanUpcService.updateById(eanUpcEntity);
+        }
 
         Long categoryThreeId = productsEntity.getCategoryThreeId();
         String s = categoryService.queryParentByChildIdAndCategory(categoryThreeId, productsEntity);
