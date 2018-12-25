@@ -1019,7 +1019,7 @@ var vm = new Vue({
                                     }
                                 })
 
-                                layer.alert('操作成功');
+                                // layer.alert('操作成功');
 
                             } else {
                                 setTimeout(timer);
