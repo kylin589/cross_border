@@ -5,7 +5,9 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.product.entity.ImageAddressEntity;
+import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.service.ImageAddressService;
+import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.util.FtpUtil;
 import io.renren.modules.util.UUIDUtils;
@@ -37,6 +39,8 @@ import java.util.List;
 public class ImageAddressController extends AbstractController {
     @Autowired
     private ImageAddressService imageAddressService;
+    @Autowired
+    private ProductsService productsService;
 
     /**
      * 列表
@@ -186,6 +190,16 @@ public class ImageAddressController extends AbstractController {
     @RequestMapping("/imageinfo")
     public R imageinfo(@RequestParam Long productId) throws Exception {
         List<ImageAddressEntity> imageInfo = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "0"));
+        if (imageInfo != null && imageInfo.size() != 0) {
+            ImageAddressEntity imageAddressEntity = imageInfo.get(0);
+            String imageUrl = imageAddressEntity.getImageUrl();
+            Long imageId = imageAddressEntity.getImageId();
+            ProductsEntity productsEntity = productsService.selectById(productId);
+
+            productsEntity.setMainImageUrl(imageUrl);
+            productsEntity.setMainImageId(imageId);
+            productsService.updateById(productsEntity);
+        }
         return R.ok().put("imageInfo", imageInfo);
     }
 
