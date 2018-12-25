@@ -124,6 +124,7 @@
             <th>国际运单</th>
             <th>国内运单</th>
             <th>下单时间</th>
+            <th>操作</th>
         </tr>
         <tr v-for = '(item,index) in prolist'>
             <td class="orderchenc">
@@ -186,6 +187,9 @@
             <td>{{ item.abroadWaybill }}</td>
             <td>{{ item.domesticWaybill }}</td>
             <td>{{ item.buyDate }}</td>
+            <td>
+                <span style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="shuaxin(item.orderId)">手动刷新</span>
+            </td>
         </tr>
     </table>
 

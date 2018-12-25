@@ -402,6 +402,29 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             });
+        },
+        // 刷新
+        shuaxin:function (id) {
+            $.ajax({
+                url: '../../product/order/manualUpdateOrder',
+                type: 'post',
+                data: JSON.stringify({
+                    'orderId':id
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        layer.msg('刷新成功');
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
         }
     },
     created:function () {

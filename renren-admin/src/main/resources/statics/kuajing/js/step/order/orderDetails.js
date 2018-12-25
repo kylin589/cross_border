@@ -94,6 +94,8 @@ var vm = new Vue({
     data:{
         orderid:null,
         orderDetails:{
+            shipAddress:{},
+            abroadLogistics:{}
         },
         waybill:[],
         domesticLogisticsId:null,
@@ -212,8 +214,8 @@ var vm = new Vue({
             });
         },
         //编辑修改寄件信息
-        editJijian:function (domesticLogisticsId,index) {
-            console.log(index);
+        editJijian:function () {
+            // console.log(index);
             if($(event.target).val() == '编辑'){
                 $(event.target).val('保存');
                 $(event.target).parent().parent().find('input').removeAttr("disabled");
@@ -224,46 +226,29 @@ var vm = new Vue({
                     $(event.target).parent().parent().find('.logistics').attr('data-ok','false');
                 }
             }else {
-                $(event.target).val('编辑');
-                $(event.target).parent().parent().find('input[type=text]').attr('disabled','true');
-                $(event.target).parent().parent().find('textarea').attr('disabled','true');
-                $(event.target).parent().parent().find('input[type=text]').css('border','1px solid transparent');
-                $(event.target).parent().parent().find('input.noedit').css('display','none');
-                if($(event.target).parent().parent().find('.logistics').length!=0){
-                    $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
-                }
+                console.log(vm.orderDetails.shipAddress);
+
                 $.ajax({
-                    url: '../../domestic/updateLogistics',
+                    url: '../../order/productshipaddress/update',
                     type: 'post',
-                    data: {
-                        orderId:this.orderId,
-                        waybill:this.waybill[index],
-                        domesticLogisticsId:domesticLogisticsId,
-                        price:this.price[index],
-                    },
-                    dataType: 'json',
+                    data: JSON.stringify({
+                        'shipAddress':vm.orderDetails.shipAddress
+                    }),
+                    contentType: "application/json",
+                    // dataType: 'json',
                     success: function (r) {
                         console.log(r);
                         if (r.code === 0) {
-                            $.ajax({
-                                url: '../../order/remark/updateLog',
-                                type: 'get',
-                                data: {
-                                    orderId:this.orderId,
-                                },
-                                dataType: 'json',
-                                success: function (r) {
-                                    console.log(r);
-                                    if (r.code === 0) {
+                            $(event.target).val('编辑');
+                            $(event.target).parent().parent().find('input[type=text]').attr('disabled','true');
+                            $(event.target).parent().parent().find('textarea').attr('disabled','true');
+                            $(event.target).parent().parent().find('input[type=text]').css('border','1px solid transparent');
+                            $(event.target).parent().parent().find('input.noedit').css('display','none');
+                            if($(event.target).parent().parent().find('.logistics').length!=0){
+                                $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
+                            }
 
-                                    } else {
-                                        layer.alert(r.msg);
-                                    }
-                                },
-                                error: function () {
-                                    layer.msg("网络故障");
-                                }
-                            });
+                            layer.msg('修改成功');
 
 
 
@@ -275,6 +260,9 @@ var vm = new Vue({
                         layer.msg("网络故障");
                     }
                 });
+
+
+
             }
         },
         //编辑修改国内物流
@@ -523,6 +511,58 @@ var vm = new Vue({
                     }
                 });
             }
+        },
+        // 生成国际运单号
+        getorderID:function () {
+            $.ajax({
+                url: '../../product/order/createAbroadWaybill',
+                type: 'post',
+                data: {
+                    orderId:this.orderid
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('订单详情');
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.orderDetails = r.orderDTO;
+                        vm.orderDetails.shipAddress.abroadWaybill = r.abroadLogistics;
+                        layer.msg('生成成功');
+
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        // 同步国际运单
+        tongbu:function () {
+            $.ajax({
+                url: '../../product/order/createAbroadWaybill',
+                type: 'post',
+                data: {
+                    orderId:this.orderid
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('订单详情');
+                    console.log(r);
+                    if (r.code === 0) {
+                        // vm.orderDetails = r.orderDTO;
+                        // vm.orderDetails.shipAddress.abroadWaybill = r.abroadLogistics;
+                        layer.msg('同步成功');
+
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
         }
     },
     created:function () {
