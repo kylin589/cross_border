@@ -15,6 +15,19 @@
                 background: #fe8060;
                 /*box-shadow: 0 0 10px #fecb9c;*/
             }
+            textarea , select{
+                border: 1px solid #ddd;
+                background: none;
+                border-radius: 5px;
+            }
+            select{
+                width: 180px;
+            }
+            textarea{
+                padding: 4px;
+                width: 316px;
+                height: 130px;
+            }
 
         </style>
         </head>
@@ -30,7 +43,7 @@
         <!--<button class="save" >添加授权</button>-->
         <!--<a href="ruheAuthorize.html" target="_blank" style="float: right;margin-right: 20px;line-height: 30px;color: #34a4ee;">如何授权？</a>-->
         <input class="save" type="button" value="添加UPC/EAN码" @click="addShouq">
-        <input class="del" type="button" value="批量删除" @click="addShouq">
+        <!--<input class="del" type="button" value="批量删除" @click="addShouq">-->
 
     </p>
 
@@ -66,23 +79,20 @@
 
         <span>
             <label for="">upc/ean</label>
-            <select class="form-control" id="account_area" v-model="area">
-                <option value="0">upc</option>
-                <option value="1">ean</option>
+            <select class="form-control" id="account_area" v-model="sel">
+                <option value="1">upc</option>
+                <option value="0">ean</option>
               </select>
         </span>
         <br>
         <span>
-            <label for="">Merchant ID</label>
-            <input type="text" placeholder="买家编号" v-model="merchantId">
-        </span>
-        <br>
-        <span>
-            <label for="">授权令牌</label>
-            <input type="text" placeholder="授权令牌" v-model="grantToken">
+            <label for="">upc/ean码</label>
+            <p>每行一条，单词最多500条</p>
+            <textarea v-model="ean" ></textarea>
         </span>
 
-        <p>所有的都为必填项</p>
+
+        <!--<p>所有的都为必填项</p>-->
     </div>
 
 

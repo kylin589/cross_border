@@ -18,13 +18,15 @@ var vm = new Vue({
         gjList:[],
         shopName:'',
         amazonAccount:'',
-        area:'',
+        sel:0,
+        ean:'',
         merchantId:'',
         grantToken:'',
         amazonGrant:{},
         totalCount:'',
     },
     methods:{
+        //添加upc
         addShouq:function () {
             layer.open({
                 type: 1,
@@ -35,40 +37,39 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['添加','取消'],
                 btn1: function (index) {
-                    console.log(vm.shopName);
-                    console.log(vm.amazonAccount);
-                    console.log(vm.area);
-                    console.log(vm.merchantId);
-                    console.log(vm.grantToken);
-                    $.ajax({
-                        url: '../../amazon/amazongrant/addAmazonGrant',
-                        type: 'post',
-                        data: JSON.stringify({
-                            shopName:vm.shopName,
-                            amazonAccount:vm.amazonAccount,
-                            area:vm.area,
-                            merchantId:vm.merchantId,
-                            grantToken:vm.grantToken
-                        }),
-                        contentType: "application/json",
-                        success: function (r) {
-                            console.log(r);
-                            if (r.code === 0) {
-                                vm.getauthorizeList();
-                                vm.shopName='';
-                                vm.amazonAccount='';
-                                vm.area='' ;
-                                vm.merchantId='';
-                                vm.grantToken='';
-                                layer.close(index)
-                            } else {
-                                layer.alert(r.msg);
-                            }
-                        },
-                        error: function () {
-                            layer.msg("网络故障");
-                        }
-                    });
+                    console.log(JSON.stringify(vm.ean));
+                    console.log(JSON.stringify(vm.ean).split("n"));
+                    // str.replace(/[\r\n]/g,"");
+
+                    // $.ajax({
+                    //     url: '../../amazon/amazongrant/addAmazonGrant',
+                    //     type: 'post',
+                    //     data: JSON.stringify({
+                    //         shopName:vm.shopName,
+                    //         amazonAccount:vm.amazonAccount,
+                    //         area:vm.area,
+                    //         merchantId:vm.merchantId,
+                    //         grantToken:vm.grantToken
+                    //     }),
+                    //     contentType: "application/json",
+                    //     success: function (r) {
+                    //         console.log(r);
+                    //         if (r.code === 0) {
+                    //             vm.getauthorizeList();
+                    //             vm.shopName='';
+                    //             vm.amazonAccount='';
+                    //             vm.area='' ;
+                    //             vm.merchantId='';
+                    //             vm.grantToken='';
+                    //             layer.close(index)
+                    //         } else {
+                    //             layer.alert(r.msg);
+                    //         }
+                    //     },
+                    //     error: function () {
+                    //         layer.msg("网络故障");
+                    //     }
+                    // });
                 },
                 btn2: function (index) {
 
@@ -102,7 +103,7 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getauthorizeList();
+                            vm.getauthorizeList1();
                         }
                     }
                 });
@@ -123,6 +124,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         vm.authorizeList=r.page.list;
                         vm.totalCount = r.page.totalCount;
+                        vm.laypage();
                     } else {
                         layer.alert(r.message);
                     }
@@ -132,9 +134,35 @@ var vm = new Vue({
                 }
             });
         },
-        //添加upc
+        // 获取UPC列表
+        getauthorizeList1:function () {
+            $.ajax({
+                url: '../../product/eanupc/list',
+                type: 'get',
+                data: {
+                    limit:this.pageLimit,
+                    page:this.proCurr
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.authorizeList=r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                        // vm.laypage();
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+
         addShouqlingpan:function(item){
             vm.amazonGrant = item;
+            // console
             layer.open({
                 type: 1,
                 title: false,
@@ -144,27 +172,28 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['确定','取消'],
                 btn1: function (index) {
-                    $.ajax({
-                        url: '../../amazon/amazongrant/update',
-                        type: 'post',
-                        data: JSON.stringify({
-                            amazonGrant:vm.amazonGrant
-                        }),
-                        // dataType: 'json',
-                        contentType: "application/json",
-                        success: function (r) {
-                            console.log(r);
-                            if (r.code === 0) {
-                                layer.msg("操作成功");
-                                layer.close(index)
-                            } else {
-                                layer.alert(r.msg);
-                            }
-                        },
-                        error: function () {
-                            layer.msg("网络故障");
-                        }
-                    });
+                    console.log(vm.ean);
+                    // $.ajax({
+                    //     url: '../../amazon/amazongrant/update',
+                    //     type: 'post',
+                    //     data: JSON.stringify({
+                    //         amazonGrant:vm.amazonGrant
+                    //     }),
+                    //     // dataType: 'json',
+                    //     contentType: "application/json",
+                    //     success: function (r) {
+                    //         console.log(r);
+                    //         if (r.code === 0) {
+                    //             layer.msg("操作成功");
+                    //             layer.close(index)
+                    //         } else {
+                    //             layer.alert(r.msg);
+                    //         }
+                    //     },
+                    //     error: function () {
+                    //         layer.msg("网络故障");
+                    //     }
+                    // });
                 },
                 btn2: function (index) {
 
@@ -177,7 +206,7 @@ var vm = new Vue({
     },
     created:function () {
         this.getauthorizeList();
-        this.laypage();
+        // this.laypage();
     }
 
 })
