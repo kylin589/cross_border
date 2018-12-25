@@ -17,6 +17,7 @@
             <if test="params.endDate != null">
                 and buy_date <![CDATA[<= ]]> #{params.endDate}
             </if>
+                and 1 = 1
         </where>
     </sql>
 	<!-- 可根据自己的需求，是否要使用 -->

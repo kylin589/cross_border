@@ -16,6 +16,7 @@ import io.renren.modules.order.service.ProductShipAddressService;
 import io.renren.modules.order.service.RemarkService;
 import io.renren.modules.product.dto.OrderDTO;
 import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.vm.OrderModel;
@@ -26,6 +27,7 @@ import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.service.NoticeService;
 import io.renren.modules.sys.service.SysDeptService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -107,7 +109,11 @@ public class OrderController extends AbstractController{
         orderDTO.setShopName(orderEntity.getShopName());
         orderDTO.setProductId(orderEntity.getProductId());
         orderDTO.setProductSku(orderEntity.getProductSku());
-        orderDTO.setProductTitle(productsService.selectById(orderEntity.getProductId()).getProductTitle());
+        ProductsEntity productsEntity = productsService.selectById(orderEntity.getProductId());
+        if(productsEntity != null){
+            orderDTO.setProductTitle(productsEntity.getProductTitle());
+        }
+
         orderDTO.setProductAsin(orderEntity.getProductAsin());
         orderDTO.setOrderNumber(orderEntity.getOrderNumber());
         orderDTO.setPurchasePrice(orderEntity.getPurchasePrice());
