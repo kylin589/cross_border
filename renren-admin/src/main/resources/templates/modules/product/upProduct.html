@@ -50,11 +50,11 @@
                         <p>删除</p>
                     </div>
                     <div @click="upFunc(item.uploadId)">
-                        <i class="layui-icon layui-icon-survey"></i>
+                        <i class="layui-icon layui-icon-edit"></i>
                         <p>编辑</p>
                     </div>
                     <div @click="xmlFunc(item.uploadId)" v-if="item.uploadState == 3 || item.uploadState == 4">
-                        <i class="layui-icon layui-icon-form"></i>
+                        <i class="layui-icon layui-icon-align-center"></i>
                         <p>报告列表</p>
                     </div>
                     <div @click="reUpFunc(item.uploadId)" v-if="item.uploadState == 3 || item.uploadState == 4">

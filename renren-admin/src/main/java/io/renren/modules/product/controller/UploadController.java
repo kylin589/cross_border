@@ -15,6 +15,7 @@ import io.renren.modules.amazon.util.COUNTY;
 import io.renren.modules.job.entity.ScheduleJobEntity;
 import io.renren.modules.job.service.ScheduleJobService;
 import io.renren.modules.product.dto.DetailsDto;
+import io.renren.modules.product.dto.TemplateFieldValueDto;
 import io.renren.modules.product.dto.UploadProductDTO;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
@@ -203,6 +204,14 @@ public class UploadController extends AbstractController {
         fieldMap.put("upload_id", uploadId);
         List<FieldMiddleEntity> middleEntitys = fieldMiddleService.selectByMap(fieldMap);
 
+        for (int i = 0; i < middleEntitys.size(); i++) {
+            Long fieldId = middleEntitys.get(i).getFieldId();
+            System.out.println(fieldId);
+            String countryCode = uploadEntity.getCountryCode();
+            System.out.println(countryCode);
+            List<TemplateFieldValueDto> templateFieldValueDtos = templateService.getTemplateFieldValueDtos(fieldId,countryCode);
+            middleEntitys.get(i).setTemplateFieldValueDtos(templateFieldValueDtos);
+        }
 
         // 获取所有分类
         Long id = uploadEntity.getAmazonCategoryId();
@@ -216,12 +225,6 @@ public class UploadController extends AbstractController {
         }
         String allCategories = StringUtils.join(list, "/");
 
-        // 模板所有字段的分类
-        System.out.println(uploadEntity.getAmazonTemplateId());
-        System.out.println(uploadEntity.getCountryCode());
-        List<TemplateCategoryFieldsEntity> templateCategoryFieldsEntities = templateService.getOptionalValues(String.valueOf(uploadEntity.getAmazonTemplateId()), uploadEntity.getCountryCode());
-
-        detailsDto.setTemplateCategoryFieldsEntities(templateCategoryFieldsEntities);
         detailsDto.setUploadEntity(uploadEntity);
         detailsDto.setMiddleEntitys(middleEntitys);
         detailsDto.setAllCategories(allCategories);

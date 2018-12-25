@@ -168,7 +168,7 @@ var vm = new Vue({
                         vm.informNum = r.count;
                         // layer.close();
                     } else {
-                        alert(r.msg);
+                        // alert(r.msg);
                     }
 
 

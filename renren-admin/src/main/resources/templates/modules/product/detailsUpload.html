@@ -188,8 +188,8 @@
                     <div v-for="item in modelAttr" style="width: 100%;">
                         <label for="">{{item.fieldDisplayName}}：</label>
                         <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 0" v-model="item.value">
-                        <input type="text" :placeholder="item.fieldDisplayName" v-model="item.value">
-                        <!--<input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 1" disabled v-model="item.value">-->
+                        <!--<input type="text" :placeholder="item.fieldDisplayName" v-model="item.value">-->
+                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 1" disabled v-model="item.value">
                         <br>
                         <div class="valDiv">
                             <div>
