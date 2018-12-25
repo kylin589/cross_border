@@ -287,7 +287,8 @@ var vm = new Vue({
                 dataType: 'json',
                 success: function (r) {
                     if (r.code === 0) {
-                        // console.log(r)
+                        console.log('订单列表');
+                        console.log(r)
                         vm.statistics.proNum = r.proNum;
                         vm.statistics.via = r.via;
                         vm.statistics.variant = r.variant;
@@ -766,8 +767,8 @@ var vm = new Vue({
                     type: 'post',
                     data:JSON.stringify({
                         'productIds':vm.activeProlist,
-                        'number':'001',
-                        'type':'SHELVE_STATE'
+                        'number':n,
+                        'type':t
                     }),
                     // dataType: 'json',
                     contentType: "application/json",
@@ -972,6 +973,7 @@ var vm = new Vue({
                         }
 
                     },1000);
+
                     $.ajax({
                         url: 'http://192.168.0.104:5000/getCollectionInfo',
                         type: 'post',
