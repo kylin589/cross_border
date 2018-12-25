@@ -7,7 +7,6 @@ import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.entity.AmazonCategoryHistoryEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
-import io.renren.modules.amazon.entity.ResultXmlEntity;
 import io.renren.modules.amazon.service.AmazonCategoryHistoryService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.service.ResultXmlService;
@@ -18,10 +17,7 @@ import io.renren.modules.job.service.ScheduleJobService;
 import io.renren.modules.product.dto.DetailsDto;
 import io.renren.modules.product.dto.UploadProductDTO;
 import io.renren.modules.product.entity.*;
-import io.renren.modules.product.service.AmazonCategoryService;
-import io.renren.modules.product.service.FieldMiddleService;
-import io.renren.modules.product.service.ProductsService;
-import io.renren.modules.product.service.UploadService;
+import io.renren.modules.product.service.*;
 import io.renren.modules.product.vm.AddUploadVM;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.commons.lang.StringUtils;
@@ -70,6 +66,9 @@ public class UploadController extends AbstractController {
 
     @Autowired
     private ResultXmlService resultXmlService;
+
+    @Autowired
+    private TemplateService templateService;
 
     //英国
     private static final int GBUTC = 0;
@@ -204,10 +203,10 @@ public class UploadController extends AbstractController {
         fieldMap.put("upload_id", uploadId);
         List<FieldMiddleEntity> middleEntitys = fieldMiddleService.selectByMap(fieldMap);
 
+
         // 获取所有分类
-        String allCategories = "";
         Long id = uploadEntity.getAmazonCategoryId();
-        String[] allId =  amazonCategoryService.queryByChindIdParentId(id).split(",");
+        String[] allId = amazonCategoryService.queryByChindIdParentId(id).split(",");
         List<String> list = new ArrayList<>();
         for (int i = 0; i < allId.length; i++) {
             AmazonCategoryEntity amazonCategoryEntity = new AmazonCategoryEntity();
@@ -215,8 +214,12 @@ public class UploadController extends AbstractController {
             amazonCategoryEntity = amazonCategoryService.selectById(amazonCategoryEntity);
             list.add(amazonCategoryEntity.getDisplayName());
         }
-        allCategories = StringUtils.join(list,"/");
+        String allCategories = StringUtils.join(list, "/");
 
+        // 模板所有字段的分类
+        List<TemplateCategoryFieldsEntity> templateCategoryFieldsEntities = templateService.getOptionalValues(String.valueOf(uploadEntity.getAmazonTemplateId()), uploadEntity.getCountryCode());
+
+        detailsDto.setTemplateCategoryFieldsEntities(templateCategoryFieldsEntities);
         detailsDto.setUploadEntity(uploadEntity);
         detailsDto.setMiddleEntitys(middleEntitys);
         detailsDto.setAllCategories(allCategories);
@@ -345,6 +348,7 @@ public class UploadController extends AbstractController {
             middleEntity.setFieldName(fieldsEntityList.get(i).getFieldName());
             middleEntity.setFieldDisplayName(fieldsEntityList.get(i).getFieldDisplayName());
             middleEntity.setValue(fieldsEntityList.get(i).getValue());
+            middleEntity.setIsCustom(fieldsEntityList.get(i).getIsCustom());
             fieldMiddleService.insert(middleEntity);
         }
 
@@ -452,6 +456,7 @@ public class UploadController extends AbstractController {
             middleEntity.setFieldName(fieldsEntityList.get(i).getFieldName());
             middleEntity.setFieldDisplayName(fieldsEntityList.get(i).getFieldDisplayName());
             middleEntity.setValue(fieldsEntityList.get(i).getValue());
+            middleEntity.setIsCustom(fieldsEntityList.get(i).getIsCustom());
             fieldMiddleService.insert(middleEntity);
         }
 
@@ -522,7 +527,7 @@ public class UploadController extends AbstractController {
                 return R.error(dto1.getMsg());
             }
         }
-        ;
+
         List<Long> seList = new ArrayList<>();
         if (addUploadVM.getStartId() != null && addUploadVM.getEndId() != null) {
             Long index = addUploadVM.getStartId();
@@ -681,9 +686,6 @@ public class UploadController extends AbstractController {
         String operateItem = StringUtils.join(addUploadVM.getOperateItem(), ",");
         //设置操作项
         uploadEntity.setOperateItem(operateItem);
-        //设置是否有分类属性
-        uploadEntity.setIsAttribute(addUploadVM.getIsAttribute());
-        // TODO: 2018/11/27 分类属性
         //设置常用属性
         uploadEntity.setUploadTime(new Date());
         uploadEntity.setUpdateTime(new Date());
@@ -691,6 +693,20 @@ public class UploadController extends AbstractController {
         uploadEntity.setDeptId(getDeptId());
         //添加到上传表
         uploadService.insert(uploadEntity);
+        //设置是否有分类属性
+        // uploadEntity.setIsAttribute(addUploadVM.getIsAttribute());
+
+        List<TemplateCategoryFieldsEntity> fieldsEntityList = addUploadVM.getFieldsEntityList();
+        for (int i = 0; i < fieldsEntityList.size(); i++) {
+            FieldMiddleEntity middleEntity = new FieldMiddleEntity();
+            middleEntity.setUploadId(uploadEntity.getUploadId());
+            middleEntity.setFieldId(fieldsEntityList.get(i).getFieldId());
+            middleEntity.setFieldName(fieldsEntityList.get(i).getFieldName());
+            middleEntity.setFieldDisplayName(fieldsEntityList.get(i).getFieldDisplayName());
+            middleEntity.setValue(fieldsEntityList.get(i).getValue());
+            middleEntity.setIsCustom(fieldsEntityList.get(i).getIsCustom());
+            fieldMiddleService.insert(middleEntity);
+        }
 
         //添加到分类历史记录表
         AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId());
@@ -710,6 +726,7 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setDeptId(addUploadVM.getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
+        submitFeedService.submitFeed(uploadEntity);
         return R.ok();
     }
 

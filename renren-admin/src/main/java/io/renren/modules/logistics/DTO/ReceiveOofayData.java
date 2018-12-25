@@ -10,16 +10,18 @@ import java.io.Serializable;
 public class ReceiveOofayData implements Serializable {
 
     //订单状态 1备货；2缺货；4问题；3发货；5退款；6妥投；7代发；10物流问题
-    public String statusStr;
+    public String statusStr = "1";
     //OmsOrderDetailext.warehousing_record_list 如果有，并且storage_time不为null表示入库了
     //是否入库
-    public boolean isWarehousing;
+    public boolean isWarehousing = false;
     //运费
-    public String interFreight;
-    //运单号
-    public String abroadWaybill;
+    public String interFreight = null;
     //跟踪号
-    public String trackWaybill;
+    public String trackWaybill = null;
+    //国外物流公司
+    public String destTransportCompany = null;
+    //国外物流渠道
+    public String destChannel = null;
 
     public String getStatusStr() {
         return statusStr;
@@ -45,19 +47,27 @@ public class ReceiveOofayData implements Serializable {
         this.interFreight = interFreight;
     }
 
-    public String getAbroadWaybill() {
-        return abroadWaybill;
-    }
-
-    public void setAbroadWaybill(String abroadWaybill) {
-        this.abroadWaybill = abroadWaybill;
-    }
-
     public String getTrackWaybill() {
         return trackWaybill;
     }
 
     public void setTrackWaybill(String trackWaybill) {
         this.trackWaybill = trackWaybill;
+    }
+
+    public String getDestTransportCompany() {
+        return destTransportCompany;
+    }
+
+    public void setDestTransportCompany(String destTransportCompany) {
+        this.destTransportCompany = destTransportCompany;
+    }
+
+    public String getDestChannel() {
+        return destChannel;
+    }
+
+    public void setDestChannel(String destChannel) {
+        this.destChannel = destChannel;
     }
 }

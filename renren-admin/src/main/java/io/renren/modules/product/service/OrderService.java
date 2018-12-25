@@ -44,7 +44,7 @@ public interface OrderService extends IService<OrderEntity> {
      */
     boolean updateState(Long orderId, String orderState);
     /**
-     *
+     * 推送订单
      */
     Map<String,String> pushOrder(Long orderId);
     /**
@@ -52,13 +52,9 @@ public interface OrderService extends IService<OrderEntity> {
      */
     boolean updateAbnormalState(Long[] orderIds, String abnormalStatus, String abnormalState);
     /**
-     * 取消订单
-     */
-    void cancleOrder(String amazonOrderId);
-    /**
      * 更新订单列表
      */
-    void updateOrder(SysUserEntity user, List<OrderModel> orderModelList);
+    void updateOrder(List<OrderModel> orderModelList);
     /**
      * 国际已发货
      * 扣款

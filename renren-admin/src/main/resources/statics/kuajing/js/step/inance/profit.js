@@ -29,7 +29,9 @@ var vm = new Vue({
         shopChart2Data:null,
         shopChart3Data:[],
         yuangonguserid:'',
-        jiamenguserid:''
+        jiamenguserid:'',
+        value1:'',
+        value2:'',
     },
     methods:{
         //默认盈利明细

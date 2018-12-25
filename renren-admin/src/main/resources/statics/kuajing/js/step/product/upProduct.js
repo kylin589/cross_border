@@ -146,6 +146,10 @@ var vm = new Vue({
                     }
                 });
             })
+        },
+        // xml列表
+        xmlFunc:function (id) {
+            window.location.href="xmlListUP.html?id="+id;
         }
     },
     created:function () {

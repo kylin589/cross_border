@@ -50,7 +50,7 @@ public class OrderDTO {
     /**
      * 关联产品id
      */
-    private String productId;
+    private Long productId;
     /**
      * 产品sku
      */
@@ -203,11 +203,7 @@ public class OrderDTO {
         this.shopName = shopName;
     }
 
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 

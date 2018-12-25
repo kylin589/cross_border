@@ -536,11 +536,14 @@ var vm = new Vue({
 
 
                         vm.proDetails.variantsInfos.forEach(function (t,i) {
+                            var img = [];
+                            if(JSON.stringify(t.imageUrl) != 'null'){
+                                img = t.imageUrl.split(',');
+                            }
                             vm.recommendAll.push({
                                 id:i,
                                 name:t.variantCombination,
-                                img:['../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg','../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg',
-                                    '../../statics/kuajing/img/img1.jpg','../../statics/kuajing/img/img2.jpg'],
+                                img:img,
                                 sku:t.variantSku,
                                 addPrice:t.variantAddPrice,
                                 stock:t.variantStock,
@@ -616,6 +619,23 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('产品相册');
                         console.log(r);
+                        vm.proAlbum = [];
+                        r.imageInfo.forEach(function (item,index) {
+                            vm.proAlbum.push({
+                                index:index,
+                                imgId:item.imageId,
+                                url:item.imageUrl,
+                                isDeleted:item.isDeleted,
+                                createUserId:item.createUserId,
+                                createTime:item.createTime,
+                                lastOperationTime:item.lastOperationTime,
+                                lastOperationUserId:item.lastOperationUserId,
+                                productId:item.productId,
+                                status:item.status,
+                                uid:item.uid
+
+                            })
+                        })
 
                     } else {
                         layer.alert(r.msg);

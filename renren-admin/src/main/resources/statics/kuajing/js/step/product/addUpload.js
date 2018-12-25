@@ -45,6 +45,8 @@ var vm = new Vue({
         flModleValue:'',
         // 模版属性
         modelAttr:[],
+        grantCounty:'',
+        countryCode:''
     },
     methods:{
         fenleiTankuang:function () {
@@ -96,7 +98,17 @@ var vm = new Vue({
         },
         // 定时上传
         timeUpFunc:function () {
-            if (this.shopinfo.region!=undefined) {
+            if (this.shopinfo!='') {
+                // var countryCode;
+                var grantShop = '';
+                vm.marketplace.forEach(function (t) {
+                    if(t.grantShopId == vm.shopinfo){
+                        vm.grantCounty = t.grantCounty;
+                        vm.countryCode = t.countryCode;
+                        grantShop = t.shopName;
+                    }
+                })
+
                 layer.open({
                     type: 1,
                     title: false,
@@ -131,7 +143,7 @@ var vm = new Vue({
                                 'startId': vm.startId,
                                 'endId': vm.endId,
                                 'uploadIds': vm.uploadIds,
-                                'grantShopId': vm.grantShopId,
+                                'grantShopId': parseInt(vm.shopinfo),
                                 'isAttribute': vm.isAttribute,
                                 'grantShop':vm.grantShop,
                                 'amazonCategoryId': vm.amazonCategoryId,
@@ -140,7 +152,7 @@ var vm = new Vue({
                                 'amazonTemplate': vm.amazonTemplate,
                                 'operateItem': vm.operateItem,
                                 'time':vm.changeTime,
-                                'countryCode':vm.shopinfo.countryCode,
+                                'countryCode':vm.countryCode,
                             },
                             dataType: 'json',
                             success: function (r) {
@@ -301,6 +313,7 @@ var vm = new Vue({
                             vm.leven = [];
                             vm.leven.push(r.amazonCategoryEntityList);
                             console.log(vm.leven);
+                            vm.amazonAllArr=[];
 
                             vm.fenleiTankuang();
                             setTimeout(function () {
@@ -362,6 +375,7 @@ var vm = new Vue({
                                 vm.amazonCategory = list.displayName;
                                 // vm.amazonAllArr.push(list.displayName);
                                 console.log(vm.amazonAllArr);
+                                vm.amazonAllCategory='',
                                 vm.amazonAllArr.forEach(function (t) {
                                     vm.amazonAllCategory+=t+'/'
                                 })
@@ -391,7 +405,7 @@ var vm = new Vue({
                 url: '../../product/upload/timeZoneConversion',
                 type: 'get',
                 data: {
-                    countryCode:vm.shopinfo.countryCode,
+                    countryCode:vm.countryCode,
                     // countryCode:vm.value9,
                     countryTime:vm.value9
                 },

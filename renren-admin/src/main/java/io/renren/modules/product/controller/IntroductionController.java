@@ -245,51 +245,55 @@ public class IntroductionController {
         }
 
         querierTrans.attach(new GoogleTranslator());
-        querierTrans.attach(new BaiduTranslator());
-        querierTrans.attach(new YoudaoTranslator());
+//        querierTrans.attach(new BaiduTranslator());
+//        querierTrans.attach(new YoudaoTranslator());
 
         //翻译标题
         List<String> titleList = querierTrans.execute();
         if (titleList.get(0) != "" && titleList.get(0) != null){
             introduction.setProductTitle(toUpperCase(titleList.get(0)));
-        }else if(titleList.get(1) != "" && titleList.get(1) != null){
-            introduction.setProductTitle(toUpperCase(titleList.get(1)));
-        }else{
-            introduction.setProductTitle(toUpperCase(titleList.get(2)));
         }
+//        else if(titleList.get(1) != "" && titleList.get(1) != null){
+//            introduction.setProductTitle(toUpperCase(titleList.get(1)));
+//        }else{
+//            introduction.setProductTitle(toUpperCase(titleList.get(2)));
+//        }
 
         //翻译关键字
         querierTrans.setText(introductionEn.getKeyWord());
         List<String> keyWordList = querierTrans.execute();
         if (keyWordList.get(0) != "" && keyWordList.get(0) != null){
             introduction.setKeyWord(toUpperCase(keyWordList.get(0)));
-        }else if(keyWordList.get(1) != "" && keyWordList.get(1) != null){
-            introduction.setKeyWord(toUpperCase(keyWordList.get(1)));
-        }else{
-            introduction.setKeyWord(toUpperCase(keyWordList.get(2)));
         }
+//        else if(keyWordList.get(1) != "" && keyWordList.get(1) != null){
+//            introduction.setKeyWord(toUpperCase(keyWordList.get(1)));
+//        }else{
+//            introduction.setKeyWord(toUpperCase(keyWordList.get(2)));
+//        }
 
         //翻译要点说明
         querierTrans.setText(introductionEn.getKeyPoints());
         List<String> keyPointsList = querierTrans.execute();
         if (keyPointsList.get(0) != "" && keyPointsList.get(0) != null){
             introduction.setKeyPoints(keyPointsList.get(0));
-        }else if(keyPointsList.get(1) != "" && keyPointsList.get(1) != null){
-            introduction.setKeyPoints(keyPointsList.get(1));
-        }else{
-            introduction.setKeyPoints(keyPointsList.get(2));
         }
+//        else if(keyPointsList.get(1) != "" && keyPointsList.get(1) != null){
+//            introduction.setKeyPoints(keyPointsList.get(1));
+//        }else{
+//            introduction.setKeyPoints(keyPointsList.get(2));
+//        }
 
         //翻译产品描述
         querierTrans.setText(introductionEn.getProductDescription());
         List<String> productDescriptionList = querierTrans.execute();
         if (productDescriptionList.get(0) != "" && productDescriptionList.get(0) != null){
             introduction.setProductDescription(productDescriptionList.get(0));
-        }else if(productDescriptionList.get(1) != "" && productDescriptionList.get(1) != null){
-            introduction.setKeyPoints(productDescriptionList.get(1));
-        }else{
-            introduction.setKeyPoints(productDescriptionList.get(2));
         }
+//        else if(productDescriptionList.get(1) != "" && productDescriptionList.get(1) != null){
+//            introduction.setKeyPoints(productDescriptionList.get(1));
+//        }else{
+//            introduction.setKeyPoints(productDescriptionList.get(2));
+//        }
         introduction.setCountry(country);
         System.out.println("country:" + introduction.getCountry());
         System.out.println("title:" + introduction.getProductTitle());
@@ -299,7 +303,7 @@ public class IntroductionController {
         return introduction;
     }
     /**
-     * ZhtoEn 中译英
+     * entoOthers 英译其他
      * @param: [productTitle, keyWord, keyPoints, productDescription]
      * @return: java.lang.String
      * @auther: wdh

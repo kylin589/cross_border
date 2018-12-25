@@ -17,6 +17,7 @@
                 <li class="action" @click="oneLevelQueryPlatform('day')">日统计</li>
                 <li @click="oneLevelQueryPlatform('month')">月统计</li>
                 <li @click="oneLevelQueryPlatform('year')">年统计</li>
+                <li @click="oneLevelQueryPlatform('time')">时间统计</li>
             </ul>
 
         </div>
@@ -50,7 +51,26 @@
                 <li class="action" @click="oneLevelQueryUser('day')">日统计</li>
                 <li @click="oneLevelQueryUser('month')">月统计</li>
                 <li @click="oneLevelQueryUser('year')">年统计</li>
+                <li @click="oneLevelQueryUser('time')">年统计</li>
             </ul>
+
+            <div>
+                <label for="">开始时间：</label>
+                <el-date-picker
+                        v-model="value1"
+                        type="date"
+                        placeholder="选择日期">
+                </el-date-picker>
+                <label for="">结束时间：</label>
+                <el-date-picker
+                        v-model="value2"
+                        type="date"
+                        placeholder="选择日期">
+                </el-date-picker>
+            </div>
+
+
+
             <select name="" v-model="yuangonguserid" >
                 <option value="0">全部</option>
                 <option v-for="item in staff" :value="item.userId">{{ item.username }}</option>
@@ -88,6 +108,7 @@
                 <li class="action" @click="oneLevelQueryFranchisee('day')">日统计</li>
                 <li @click="oneLevelQueryFranchisee('month')">月统计</li>
                 <li @click="oneLevelQueryFranchisee('year')">年统计</li>
+                <li @click="oneLevelQueryFranchisee('time')">年统计</li>
             </ul>
             <select name="" id="" v-model="jiamenguserid">
                 <option value="0">全部</option>

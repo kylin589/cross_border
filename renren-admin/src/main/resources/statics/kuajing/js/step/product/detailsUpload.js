@@ -108,6 +108,7 @@ var vm = new Vue({
                         vm.amazonCategoryId = r.data.uploadEntity.amazonCategoryId;
                         vm.amazonCategory = r.data.uploadEntity.amazonCategory;
                         vm.flModleValue = r.data.uploadEntity.amazonTemplate;
+                        vm.modelAttr = r.data.middleEntitys;
                         console.log('111');
                         console.log(r.data.uploadEntity.operateItem.split(','));
                         if(r.data.uploadEntity.operateItem.split(',').length == 5){
@@ -275,7 +276,8 @@ var vm = new Vue({
                         if (r.code === 0) {
 
                             layer.msg("上传成功");
-                            layer.close(index)
+                            layer.close(index);
+                            window.location.href="upProduct.html";
 
                         } else {
                             layer.alert(r.msg);
@@ -570,7 +572,7 @@ var vm = new Vue({
         clickValActive:function (v) {
             // $(event.target).siblings().removeClass('active');
             // $(event.target).addClass('active');
-            v.value = $(event.target).attr('data-index');
+            v.value = $(event.target).attr('data-val');
 
         }
     },

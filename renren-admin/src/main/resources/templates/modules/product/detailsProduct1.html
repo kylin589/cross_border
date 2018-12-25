@@ -75,7 +75,7 @@
                 <div>
                     <!--图片区域-->
                     <div class="imgDiv">
-                        <div v-for="(item,index) in proAlbum" :data-index="index" @mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)">
+                        <div v-for="(item,index) in proAlbum" :data-index="index">
                             <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
                             <img :src="item.url" alt="" class="imgItem">
                             <i class="layui-icon layui-icon-close-fill imgDel"></i>
