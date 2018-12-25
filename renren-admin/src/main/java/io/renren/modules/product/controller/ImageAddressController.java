@@ -105,7 +105,8 @@ public class ImageAddressController extends AbstractController {
     //保存到数据库的Url前缀
     private static final String fileUrl = "http://www.threeee.cn/";
     @RequestMapping("/upload")
-    public R upload(@RequestParam("file") MultipartFile file, Long productId) throws Exception {
+    @ResponseBody
+    public R upload(@RequestParam(value = "file") MultipartFile file,@RequestParam(value = "productId") Long productId) throws Exception {
         //判断文件是否为空
         try {
             if (file.isEmpty()) {

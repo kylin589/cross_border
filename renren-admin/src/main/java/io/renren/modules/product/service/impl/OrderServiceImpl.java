@@ -3,6 +3,7 @@ package io.renren.modules.product.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.vm.OrderModel;
@@ -256,7 +257,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderId));
         //推送--订单基本信息
         OmsOrder omsOrder = new OmsOrder();
-        omsOrder.setOrder_sn(orderId.toString());
+        omsOrder.setOrder_sn(orderEntity.getAmazonOrderId());
+        String deanname = domesticLogisticsService.selectOne(new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderId)).getLogisticsCompany();
+        if(StringUtils.isNotBlank(deanname)){
+            omsOrder.setDelivery_deanname(deanname);
+        }
         omsOrder.setOrder_currency(orderEntity.getRateCode());
         //设置时间
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS+08:00");
@@ -276,6 +281,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         omsShippingAddr.setCustcity(shipAddressEntity.getShipCity());
         omsShippingAddr.setCustcountry(shipAddressEntity.getShipCountry());
         omsShippingAddr.setCustomer(shipAddressEntity.getShipName());
+        omsShippingAddr.setCustcompany(shipAddressEntity.getShipName());
         omsShippingAddr.setCustphone(shipAddressEntity.getShipTel());
         omsShippingAddr.setCuststate(shipAddressEntity.getShipRegion());
         omsShippingAddr.setCustzipcode(shipAddressEntity.getShipZip());
@@ -348,106 +354,111 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         return false;
     }
 
-    @Override
-    public void cancleOrder(String amazonOrderId) {
-        OrderEntity orderEntity = this.selectOne(new EntityWrapper<OrderEntity>().eq("amazon_order_id",amazonOrderId));
-        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
-        orderEntity.setOrderState("取消");
-    }
 
     /**
      * 获取（更新）订单
-     * 是否区分不同国家还是区分不同区域
-     * 有没有国家的字段、币种字段
      * @param orderModelList
      */
     @Override
-    public void updateOrder(SysUserEntity user, List<OrderModel> orderModelList) {
+    public void updateOrder(List<OrderModel> orderModelList) {
         for(OrderModel orderModel : orderModelList ){
             //获取亚马逊订单id
             String amazonOrderId = orderModel.getAmazonOrderId();
-            //判断该订单是否存在
-            OrderEntity orderEntity = this.selectOne(new EntityWrapper<OrderEntity>().eq("amazon_order_id",amazonOrderId));
-            if(orderEntity == null){
-                //新增订单
+            if(StringUtils.isNotBlank(amazonOrderId)){
+                //判断该订单是否存在
+                OrderEntity orderEntity = this.selectOne(new EntityWrapper<OrderEntity>().eq("amazon_order_id",amazonOrderId));
+                //订单状态
                 String modelStatus = orderModel.getOrderStatus();
-                if(!"Canceled".equals(modelStatus)){
-                    // TODO: 2018/12/21 设置基本属性*
-                    orderEntity.setAmazonOrderId(orderModel.getAmazonOrderId());
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
-                    try {
-                        orderEntity.setBuyDate(sdf.parse(orderModel.getBuyDate()));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                if(orderEntity == null){
+                    //新增订单
+                    if(!"Canceled".equals(modelStatus)){
+                        //设置基本属性
+                        orderEntity.setAmazonOrderId(orderModel.getAmazonOrderId());
+                        orderEntity.setBuyDate(orderModel.getBuyDate());
+                        if("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)){
+                            //未付款
+                            orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING);
+                            orderEntity.setOrderState("待付款");
+                        }else if("Unshipped".equals(modelStatus) || "PartiallyShipped".equals(modelStatus)){
+                            //已付款
+                            orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED);
+                            orderEntity.setOrderState("已付款");
+                        }
+                        if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
+                            orderEntity.setCountryCode(orderModel.getProductShipAddressEntity().getShipCountry());
+                        }
+                        orderEntity.setShopName(orderModel.getShopName());
+                        orderEntity.setProductSku(orderModel.getProductSku());
+                        orderEntity.setProductAsin(orderModel.getProductAsin());
+                        ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));
+                        if(productsEntity != null){
+                            orderEntity.setProductId(productsEntity.getProductId());
+                        }
+                        orderEntity.setOrderNumber(orderModel.getOrderNumber());
+                        String rateCode = orderModel.getCurrencyCode();
+                        orderEntity.setRateCode(rateCode);
+                        orderEntity.setUserId(orderModel.getUserId());
+                        orderEntity.setDeptId(orderModel.getDeptId());
+                        orderEntity.setUpdateTime(new Date());
+                        //设置汇率
+                        BigDecimal rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
+                        orderEntity.setMomentRate(rate);
+                        //获取订单金额（外币）
+                        BigDecimal orderMoney = orderModel.getOrderMoney();
+                        if(orderMoney.compareTo(new BigDecimal("0.00")) != 0){
+                            orderEntity.setOrderMoney(orderMoney);
+                            orderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                            //获取Amazon佣金（外币）
+                            BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15).setScale(2,BigDecimal.ROUND_HALF_UP));
+                            orderEntity.setAmazonCommission(amazonCommission);
+                            orderEntity.setOrderMoneyCny(amazonCommission.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                            //到账金额
+                            BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
+                            orderEntity.setAccountMoney(accountMoney);
+                            orderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                        }
                     }
-                    if("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)){
-                        //未付款
-                        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING);
-                        orderEntity.setOrderState("待付款");
-                    }else if("Unshipped".equals(modelStatus) || "PartiallyShipped".equals(modelStatus)){
-                        //已付款
-                        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED);
-                        orderEntity.setOrderState("已付款");
-                    }
-                    if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
-                        orderEntity.setCountryCode(orderModel.getProductShipAddressEntity().getShipCountry());
-                    }
-//                    orderEntity.setShopName();
-                    orderEntity.setProductSku(orderModel.getProductSku());
-                    orderEntity.setProductAsin(orderModel.getProductAsin());
-                    productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));
-                    orderEntity.setUserId(user.getUserId());
-                    orderEntity.setDeptId(user.getDeptId());
-                    orderEntity.setUpdateTime(new Date());
-                    //设置汇率*
-                    BigDecimal rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("","countryCode")).getRate();
-                    orderEntity.setMomentRate(rate);
-                    //获取订单金额（外币）*
-                    BigDecimal orderMoney = orderEntity.getOrderMoney();
-                    //获取Amazon佣金（外币）
-                    BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15));
-                    //到账金额
-                    BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
-                    //TODO: 2018/12/21设置金额*(同时设置人民币)
-                    //设置订单金额（人民币：外币*当时汇率）
-//                orderDTO.setOrderMoney(orderMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
-                    //设置Amazon佣金（人民币：外币*当时汇率）
-//                orderDTO.setAmazonCommission(amazonCommissionForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP));
-                    //设置到账金额（人民币）
-//                BigDecimal accountMoney = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
-//                orderDTO.setAccountMoney(accountMoney);
-                    // TODO: 2018/12/21 新增收货人信息*
-                }
-            }else{
-                //更新订单
-                if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals("")){//获取状态判断是否为取消*
-                    //获取亚马逊订单id*
-//                    this.cancleOrder();
+                    this.insert(orderEntity);
                 }else{
-                    //获取当前订单状态判断是否为待付款、已付款、虚发货
-                    if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(orderEntity.getOrderState())){
-                        if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains("")){//获取返回状态判断是否为待付款、已付款、虚发货
-                            if(!"".equals(orderEntity.getOrderState())){//判断两个状态不想等时更改状态
-                                orderEntity.setOrderStatus("");
-                                String orderState = dataDictionaryService.selectOne(
-                                        new EntityWrapper<DataDictionaryEntity>()
-                                                .eq("data_type","AMAZON_ORDER_STATE")
-                                                .eq("data_number","")
-                                ).getDataContent();
-                                orderEntity.setOrderState(orderState);
+                    //更新订单
+                    //获取状态判断是否为取消
+                    if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)){
+                        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
+                        orderEntity.setOrderState("取消");
+                    }else{
+                        //获取当前订单状态判断是否为待付款、已付款、虚发货
+                        if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(orderEntity.getOrderState())){
+                            //获取返回状态判断是否为待付款、已付款、虚发货
+                            if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(modelStatus)){
+                                //判断两个状态不想等时更改状态
+                                if(!modelStatus.equals(orderEntity.getOrderState())){
+                                    orderEntity.setOrderStatus(modelStatus);
+                                    String orderState = dataDictionaryService.selectOne(
+                                            new EntityWrapper<DataDictionaryEntity>()
+                                                    .eq("data_type","AMAZON_ORDER_STATE")
+                                                    .eq("data_number",modelStatus)
+                                    ).getDataContent();
+                                    orderEntity.setOrderState(orderState);
+                                    this.updateById(orderEntity);
+                                }
                             }
                         }
                     }
-                    if(1==1){//判断返回值是否有收件人信息
-                        ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
-                                new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
-                        );
-                        if(shipAddress == null){
-                            // TODO: 2018/12/21 设置物流信息
-                        }
+                }
+                //新增/修改收货人信息
+                ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
+                if(productShipAddressEntity != null){//判断返回值是否有收件人信息
+                    ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
+                            new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
+                    );
+                    if(shipAddress == null){
+                        productShipAddressEntity.setOrderId(orderEntity.getOrderId());
+                        productShipAddressService.insert(productShipAddressEntity);
+                    }else{
+                        productShipAddressEntity.setOrderId(shipAddress.getOrderId());
+                        productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
+                        productShipAddressService.updateById(productShipAddressEntity);
                     }
-
-
                 }
             }
         }

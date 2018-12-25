@@ -33,8 +33,6 @@ import io.renren.common.utils.R;
 public class NoticeController extends AbstractController{
     @Autowired
     private NoticeService noticeService;
-    @Autowired
-    private SysUserService userService;
     /**
      * 查询未读消息数量
      */

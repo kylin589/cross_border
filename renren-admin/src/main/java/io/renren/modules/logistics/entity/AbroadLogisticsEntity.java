@@ -48,6 +48,14 @@ public class AbroadLogisticsEntity implements Serializable {
 	 */
 	private BigDecimal interFreight;
 	/**
+	 * 国外物流公司
+	 */
+	public String destTransportCompany;
+	/**
+	 * 国外物流渠道
+	 */
+	public String destChannel;
+	/**
 	 * 是否同步（默认0：没有  1：有）
 	 */
 	private int isSynchronization = 0;
@@ -166,5 +174,21 @@ public class AbroadLogisticsEntity implements Serializable {
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getDestTransportCompany() {
+		return destTransportCompany;
+	}
+
+	public void setDestTransportCompany(String destTransportCompany) {
+		this.destTransportCompany = destTransportCompany;
+	}
+
+	public String getDestChannel() {
+		return destChannel;
+	}
+
+	public void setDestChannel(String destChannel) {
+		this.destChannel = destChannel;
 	}
 }

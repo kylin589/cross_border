@@ -88,6 +88,7 @@
         select sum(order_profit) AS order_profit,sum(return_cost) AS return_cost, sum(purchase_price) AS purchase_price, sum(inter_freight) AS order_freight
          from product_order
         <include refid="sql_Where_Clause" />
+        and abnormal_status is null and order_status != 'Canceled'
     </select>
 
     <!-- 总部统计员工 -->
@@ -101,7 +102,7 @@
         select sum(order_money_cny)
         from product_order
         <include refid="sql_Where_Clause" />
-        and abnormal_state is null
+        and abnormal_state is null and order_status != 'Canceled'
     </select>
     <!-- 加盟商统计 -->
     <select id="franchiseeStatistics"  resultMap="franchiseeStatisticsDtoMap">
