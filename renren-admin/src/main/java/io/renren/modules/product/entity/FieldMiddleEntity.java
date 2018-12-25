@@ -1,5 +1,6 @@
 package io.renren.modules.product.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import io.renren.modules.product.dto.TemplateFieldValueDto;
@@ -47,6 +48,7 @@ public class FieldMiddleEntity implements Serializable {
 
 	private Integer isCustom;
 
+	@TableField(exist = false)
 	private List<TemplateFieldValueDto> templateFieldValueDtos;
 
 	public List<TemplateFieldValueDto> getTemplateFieldValueDtos() {
