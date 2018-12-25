@@ -2,9 +2,11 @@ package io.renren.modules.product.entity;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import io.renren.modules.product.dto.TemplateFieldValueDto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -44,6 +46,16 @@ public class FieldMiddleEntity implements Serializable {
 	private String value;
 
 	private Integer isCustom;
+
+	private List<TemplateFieldValueDto> templateFieldValueDtos;
+
+	public List<TemplateFieldValueDto> getTemplateFieldValueDtos() {
+		return templateFieldValueDtos;
+	}
+
+	public void setTemplateFieldValueDtos(List<TemplateFieldValueDto> templateFieldValueDtos) {
+		this.templateFieldValueDtos = templateFieldValueDtos;
+	}
 
 	public Integer getIsCustom() {
 		return isCustom;
