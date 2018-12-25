@@ -139,7 +139,7 @@ var vm = new Vue({
                         $.ajax({
                             url: '../../product/upload/addUpload',
                             type: 'post',
-                            data: {
+                            data: JSON.stringify({
                                 'startId': vm.startId,
                                 'endId': vm.endId,
                                 'uploadIds': vm.uploadIds,
@@ -153,8 +153,9 @@ var vm = new Vue({
                                 'operateItem': vm.operateItem,
                                 'time':vm.changeTime,
                                 'countryCode':vm.countryCode,
-                            },
-                            dataType: 'json',
+                            }),
+                            // dataType: 'json',
+                            contentType: "application/json",
                             success: function (r) {
                                 console.log(r);
                                 if (r.code === 0) {
