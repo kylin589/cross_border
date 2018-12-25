@@ -287,8 +287,8 @@ var vm = new Vue({
                     $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
                 }
                 $.ajax({
-                    url: '../../domestic/updateLogistics',
-                    type: 'post',
+                    url: 'http://127.0.0.1:5000/domestic/updateLogistics',
+                    type: 'get',
                     data: {
                         orderId:this.orderId,
                         waybill:this.waybill[index],
@@ -309,25 +309,7 @@ var vm = new Vue({
                                 success: function (r) {
                                     console.log(r);
                                     if (r.code === 0) {
-                                        $.ajax({
-                                            url: '../../order/remark/updateLog',
-                                            type: 'get',
-                                            data: {
-                                                orderId:this.orderId,
-                                            },
-                                            dataType: 'json',
-                                            success: function (r) {
-                                                console.log(r);
-                                                if (r.code === 0) {
-
-                                                } else {
-                                                    layer.alert(r.msg);
-                                                }
-                                            },
-                                            error: function () {
-                                                layer.msg("网络故障");
-                                            }
-                                        });
+                                        layer.msg('修改成功')
                                     } else {
                                         layer.alert(r.msg);
                                     }
@@ -364,7 +346,7 @@ var vm = new Vue({
         queryLogistic:function (waybill) {
             console.log(waybill);
             $.ajax({
-                url: '../../domestic/queryLogistic',
+                url: 'http://127.0.0.1:5000/domestic/queryLogistic',
                 type: 'get',
                 data: {
                     waybill:waybill,
@@ -409,7 +391,7 @@ var vm = new Vue({
                 btn1: function (index) {
 
                     $.ajax({
-                        url: '../../domestic/getLogisticsCompany',
+                        url: 'http://127.0.0.1:5000/domestic/getLogisticsCompany',
                         type: 'get',
                         data: {
                             orderId:this.orderId,
@@ -430,7 +412,7 @@ var vm = new Vue({
                                     success: function (r) {
                                         console.log(r);
                                         if (r.code === 0) {
-
+                                            layer.msg("添加成功");
                                         } else {
                                             layer.alert(r.msg);
                                         }

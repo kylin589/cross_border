@@ -2262,7 +2262,10 @@ var vm = new Vue({
             console.log(vm.proDetails.chinesePRE.productTitle)
             console.log(vm.proDetails.chinesePRE.keyWord)
             console.log(vm.proDetails.chinesePRE.keyPoints)
-            console.log(vm.proDetails.chinesePRE.productDescription)
+            console.log(vm.proDetails.chinesePRE.productDescription);
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000});
             $.ajax({
                 url: '../../product/imageaddress/imageinfo',
                 type: 'post',
@@ -2283,6 +2286,7 @@ var vm = new Vue({
                         vm.proDetails.italyPRE = r.introductionIt;
                         vm.proDetails.britainPRE = r.introductionEn;
                         vm.proDetails.japanPRE = r.introductionJp;
+                        layer.close(index);
 
                         // vm.proAlbum = r.imageInfo;
 
