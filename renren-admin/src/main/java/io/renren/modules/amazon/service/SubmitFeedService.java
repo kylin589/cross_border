@@ -23,59 +23,6 @@ import java.util.Map;
 public interface SubmitFeedService {
 
     /**
-     * 生成产品基础信息xml
-     *
-     * @param merchantIdentifierText 卖家记号
-     * @param productsList           产品列表
-     * @param countryCode            国家代码
-     * @param categoryNodeId         分类Id
-     * @return XML路径
-     * @author zjr
-     */
-    String generateProductXML(String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode, String categoryNodeId);
-
-    /**
-     * 生成产品图片信息xml
-     *
-     * @param productsList           产品列表
-     * @param merchantIdentifierText 卖家记号
-     * @return XML路径
-     * @author zjr
-     */
-    String generateImagesXML(List<ProductsEntity> productsList, String merchantIdentifierText);
-
-    /**
-     * 生成库存信息xml
-     *
-     * @param productsList           产品列表
-     * @param merchantIdentifierText 卖家记号
-     * @return xml路径
-     * @author zjr
-     */
-    String generateInventoryXML(List<ProductsEntity> productsList, String merchantIdentifierText);
-
-    /**
-     * 生成价格信息xml
-     *
-     * @param countryCode            国家代码
-     * @param productsList           产品列表
-     * @param merchantIdentifierText 卖家记号
-     * @return xml路径
-     * @author zjr
-     */
-    String generatePricesXML(String countryCode, List<ProductsEntity> productsList, String merchantIdentifierText);
-
-    /**
-     * 生成关系信息xml
-     *
-     * @param productsList           产品列表
-     * @param merchantIdentifierText 卖家记号
-     * @return xml路径
-     * @author zjr
-     */
-    String generateRelationshipsXML(List<ProductsEntity> productsList, String merchantIdentifierText);
-
-    /**
      * 产品异步上传
      *
      * @param uploadId           上传id
@@ -178,27 +125,12 @@ public interface SubmitFeedService {
 
     List<FeedSubmissionInfoDto> invokeSubmitFeedAsync(Long uploadId, MarketplaceWebService service, List<SubmitFeedRequest> requests);
 
-    /**
-     * 重新提交
-     *
-     * @param uploadEntity
-     */
+    /*
     @Async
     void reUploadFeed(UploadEntity uploadEntity);
+    */
 
     ResultXmlEntity isExist(Long uploadId, String tpye);
 
-    /**
-     * 生成衣服模板
-     *
-     * @param uploadId
-     * @param merchantIdentifierText
-     * @param productsList
-     * @param countryCode
-     * @return
-     */
-    String generateProductXMLByClothing(Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode);
-
-    Map<String, Object> switchCountry(ProductsEntity productsEntity, String countryCode);
-
+    String switchCountry(String templateName, Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode);
 }
