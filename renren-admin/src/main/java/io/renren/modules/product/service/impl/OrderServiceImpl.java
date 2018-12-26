@@ -377,7 +377,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     if(!"Canceled".equals(modelStatus)){
                         //设置基本属性
                         orderEntity = new OrderEntity();
-                        orderEntity.setAmazonOrderId(orderModel.getAmazonOrderId());
+                        orderEntity.setAmazonOrderId(amazonOrderId);
+                        orderEntity.setOrderItemId(orderModel.getOrderItemId());
                         orderEntity.setBuyDate(orderModel.getBuyDate());
                         if("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)){
                             //未付款

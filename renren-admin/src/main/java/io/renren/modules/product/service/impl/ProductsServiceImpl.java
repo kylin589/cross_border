@@ -26,9 +26,6 @@ import java.util.*;
  */
 @Service("productsService")
 public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity> implements ProductsService {
-
-    static String AUDIT_KEY = "001";
-
     @Autowired
     private VariantsInfoService variantsInfoService;
     @Autowired
@@ -39,14 +36,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String                               ,                                                               O                               bject>
-     * page 产品page
-     * proCount 产品数量
-     * approvedCount 审核通过
-     * numberOfVariants 包含变体的商品
-     * variantsCount 变体总数
-     * @author zjr
-     * @date 2018-11-07 14:54:47
+     * @return Map<String                                                               ,                                                                                                                               O                                                                b j e c t> * page  产 品 p a g e * proCo u n t   产 品 数 量 * appro v e d C o u n t   审 核 通 过 * numbe r O f V a r i a n t s   包 含 变 体 的 商 品 * varia n t s C o u n t   变 体 总 数 * @auth o r zj r * @date 20 1 8 - 1 1 - 0 7 14:54:47
      */
     @Override
     public Map<String, Object> queryMyPage(Map<String, Object> params, Long userId) {
@@ -71,8 +61,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                 .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
                 .eq("create_user_id", userId)//当前用户
                 .eq("is_deleted", 0)
-                .orderBy(true, "create_time", false)//时间排序
-                .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+                .orderBy(true, "create_time", false);//时间排序
         Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
         PageUtils pageUtils = new PageUtils(page);
         List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
@@ -87,10 +76,14 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         int proCount = this.selectCount(wrapper);
         // 审核通过
         int approvedCount;
-        if (AUDIT_KEY.equals(auditNumber)) {
+        if ("001".equals(auditNumber)) {
             approvedCount = this.selectCount(wrapper);
-        } else {
+        } else if ("002".equals(auditNumber)) {
+            approvedCount = 0;
             //我的产品审核通过
+        } else if ("003".equals(auditNumber)) {
+            approvedCount = 0;
+        } else {
             approvedCount = getMyApprovedCount(category, title, sku, startDate, endDate, shelveNumber, productNumber, userId, 0);
         }
         // 包含变体的商品
@@ -111,14 +104,14 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param deptId 公司id
-     * @return Map<String,Object>
+     * @return Map<String , Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
      * numberOfVariants 包含变体的商品
      * variantsCount 变体总数
      * @author zjr
-     * @date 2018-11-07 14:54:47
+     * @date 2018- 1 1 - 07 14:54:47
      */
     @Override
     public Map<String, Object> queryAllPage(Map<String, Object> params, Long deptId) {
@@ -132,7 +125,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
         String qDeptId = (String) params.get("deptId");
-        String userId = (String)params.get("userId");
+        String userId = (String) params.get("userId");
         //条件构造器拼接条件
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
         //管理员
@@ -145,11 +138,10 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
                     .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                     .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
-                    .eq(StringUtils.isNotBlank(userId),"create_user_id",userId)
-                    .eq(StringUtils.isNotBlank(qDeptId),"dept_id",qDeptId)
+                    .eq(StringUtils.isNotBlank(userId), "create_user_id", userId)
+                    .eq(StringUtils.isNotBlank(qDeptId), "dept_id", qDeptId)
                     .eq("is_deleted", 0)
-                    .orderBy(true, "create_time", false)//时间排序
-                    .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+                    .orderBy(true, "create_time", false);//时间排序
         } else {
             //加盟商
             wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
@@ -160,11 +152,10 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
                     .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                     .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
-                    .eq(StringUtils.isNotBlank(userId),"create_user_id",userId)
+                    .eq(StringUtils.isNotBlank(userId), "create_user_id", userId)
                     .eq("dept_id", deptId)
                     .eq("is_deleted", 0)
-                    .orderBy(true, "create_time", false)//时间排序
-                    .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+                    .orderBy(true, "create_time", false);//时间排序
         }
         Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
         PageUtils pageUtils = new PageUtils(page);
@@ -180,30 +171,37 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         int proCount = this.selectCount(wrapper);
         // 审核通过
         int approvedCount;
-        if (AUDIT_KEY.equals(auditNumber)) {
+        if ("001".equals(auditNumber)) {
             approvedCount = this.selectCount(wrapper);
+        } else if ("002".equals(auditNumber)) {
+            approvedCount = 0;
+        } else if ("003".equals(auditNumber)) {
+            approvedCount = 0;
         } else {
             //所有产品审核通过
             approvedCount = getAllApprovedCount(category, title, sku, startDate, endDate, shelveNumber, productNumber, deptId, 0);
         }
-        // 包含变体的商品
-        int numberOfVariants = getNumberOfVariants(wrapper);
-        // 变体总数
-        int variantsCount = getWariantsCount(wrapper);
-        Map<String, Object> map = new HashMap<>(5);
-        map.put("page", pageUtils);
-        map.put("proCount", proCount);
-        map.put("approvedCount", approvedCount);
-        map.put("numberOfVariants", numberOfVariants);
-        map.put("variantsCount", variantsCount);
+
+    // 包含变体的商品
+    int numberOfVariants = getNumberOfVariants(wrapper);
+    // 变体总数
+    int variantsCount = getWariantsCount(wrapper);
+    Map<String, Object> map = new
+            HashMap<>(5);
+        map.put("page",pageUtils);
+        map.put("proCount",proCount);
+        map.put("approvedCount",approvedCount);
+        map.put("numberOfVariants",numberOfVariants);
+        map.put("variantsCount",variantsCount);
         return map;
-    }
+}
+
     /**
      * 认领产品列表
      *
      * @param params url参数
      * @param deptId 公司id
-     * @return Map<String,Object>
+     * @return Map<String , Object>
      * page 产品page
      * @author zjr
      * @date 2018-11-07 14:54:47
@@ -219,7 +217,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String auditNumber = (String) params.get("auditNumber");
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
-        String userId = (String)params.get("userId");
+        String userId = (String) params.get("userId");
         //条件构造器拼接条件
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
         //管理员
@@ -232,8 +230,8 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
                     .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                     .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
-                    .eq(StringUtils.isNotBlank(userId),"create_user_id",userId)
-                    .ne("product_type","007")
+                    .eq(StringUtils.isNotBlank(userId), "create_user_id", userId)
+                    .ne("product_type", "007")
                     .eq("is_deleted", 0)
                     .orderBy(true, "create_time", false)//时间排序
                     .addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
@@ -247,8 +245,8 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq(StringUtils.isNotBlank(auditNumber), "audit_status", auditNumber)
                     .eq(StringUtils.isNotBlank(shelveNumber), "shelve_status", shelveNumber)
                     .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
-                    .eq(StringUtils.isNotBlank(userId),"create_user_id",userId)
-                    .ne("product_type","007")
+                    .eq(StringUtils.isNotBlank(userId), "create_user_id", userId)
+                    .ne("product_type", "007")
                     .eq("dept_id", deptId)
                     .eq("is_deleted", 0)
                     .orderBy(true, "create_time", false)//时间排序
@@ -257,12 +255,13 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
         return new PageUtils(page);
     }
+
     /**
      * 产品回收站
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String                               ,                               Object>
+     * @return Map<String                                                               ,                                                               Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -278,8 +277,6 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String category = (String) params.get("category");
         String title = (String) params.get("title");
         String sku = (String) params.get("sku");
-        // 时间是：value9
-        //String value9 = (String) params.get("value9");
         String startDate = (String) params.get("startDate");
         String endDate = (String) params.get("endDate");
         String auditNumber = (String) params.get("auditNumber");
@@ -312,8 +309,12 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         int proCount = this.selectCount(wrapper);
         // 审核通过
         int approvedCount;
-        if (AUDIT_KEY.equals(auditNumber)) {
+        if ("001".equals(auditNumber)) {
             approvedCount = this.selectCount(wrapper);
+        } else if("002".equals(auditNumber)){
+            approvedCount=0;
+        }else if("003".equals(auditNumber)){
+            approvedCount=0;
         } else {
             approvedCount = getMyApprovedCount(category, title, sku, startDate, endDate, shelveNumber, productNumber, userId, 1);
         }
@@ -525,7 +526,6 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
 
-
     /**
      * 所有产品
      *
@@ -609,8 +609,8 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
 
-        startDate = "";
-        endDate = "";
+        /*startDate = "";
+        endDate = "";*/
 
         String timeType = "create_time";
         if ("1".equals(isDel)) {
@@ -657,8 +657,8 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String shelveNumber = (String) params.get("shelveNumber");
         String productNumber = (String) params.get("productNumber");
 
-        startDate = "";
-        endDate = "";
+        /*startDate = "";
+        endDate = "";*/
 
         String timeType = "create_time";
         if ("1".equals(isDel)) {
@@ -738,20 +738,20 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         List<ProductsEntity> list = this.selectBatchIds(idList);
         List<ProductsEntity> productsList = new ArrayList<>();
         List<Long> ret = new ArrayList<Long>();
-        for(int i=0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             ProductsEntity product = list.get(i);
-            if(product.getCreateUserId().longValue() == userId.longValue()){
-                if("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())){
+            if (product.getCreateUserId().longValue() == userId.longValue()) {
+                if ("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())) {
                     productsList.add(product);
                     ret.add(product.getProductId());
-                }else{
+                } else {
                     dto.setCode("error");
-                    if((!"001".equals(product.getAuditStatus()))){
+                    if ((!"001".equals(product.getAuditStatus()))) {
                         System.out.println("id==" + product.getProductId());
                         dto.setMsg("有产品没有通过审核");
-                    } else if((!"001".equals(product.getShelveStatus()))){
+                    } else if ((!"001".equals(product.getShelveStatus()))) {
                         dto.setMsg("有产品没有上架");
-                    }else{
+                    } else {
                         dto.setMsg("有产品没有通过审核/上架");
                     }
                     return dto;
@@ -762,24 +762,25 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         dto.setRet(ret);
         return dto;
     }
+
     @Override
     public UploadProductDTO isNotCanUpload(List<Long> idList, Long userId) {
         UploadProductDTO dto = new UploadProductDTO();
         List<ProductsEntity> list = this.selectBatchIds(idList);
         List<ProductsEntity> productsList = new ArrayList<>();
-        for(int i=0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             ProductsEntity product = list.get(i);
-            if(product.getCreateUserId().longValue() == userId.longValue()){
-                if("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())){
+            if (product.getCreateUserId().longValue() == userId.longValue()) {
+                if ("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())) {
                     productsList.add(product);
-                }else{
+                } else {
                     dto.setCode("error");
-                    if((!"001".equals(product.getAuditStatus()))){
+                    if ((!"001".equals(product.getAuditStatus()))) {
                         System.out.println("id==" + product.getProductId());
                         dto.setMsg("有产品没有通过审核");
-                    } else if((!"001".equals(product.getShelveStatus()))){
+                    } else if ((!"001".equals(product.getShelveStatus()))) {
                         dto.setMsg("有产品没有上架");
-                    }else{
+                    } else {
                         dto.setMsg("有产品没有通过审核/上架");
                     }
                     return dto;
