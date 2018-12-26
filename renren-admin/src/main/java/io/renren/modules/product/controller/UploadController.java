@@ -389,6 +389,7 @@ public class UploadController extends AbstractController {
         // 查找基本信息
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(addUploadVM.getUploadId());
+        System.out.println("addUploadVM.getUploadId()："+addUploadVM.getUploadId());
         uploadEntity = uploadService.selectById(uploadEntity);
         uploadEntity.setUploadState(0);
         uploadService.updateById(uploadEntity);

@@ -183,6 +183,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     @Override
     @Async
     public void submitFeed(UploadEntity uploadEntity) {
+        System.out.println("submitFeed被调用！");
 
         //上传id
         Long uploadId = uploadEntity.getUploadId();
@@ -215,7 +216,15 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         // 操作项
         String[] operateItemStr = uploadEntity.getOperateItem().split(",");
         // 模板名称
-        String templateName = templateService.selectById(uploadId).getTemplateName();
+        String templateName = "";
+        if (uploadEntity.getAmazonTemplateId()==0){
+            Map<String,Object> map = new HashMap<>();
+            map.put("template_display_name",uploadEntity.getAmazonTemplate());
+            templateName = templateService.selectByMap(map).get(0).getTemplateName();
+        }else {
+            templateName = templateService.selectById(uploadEntity.getAmazonTemplateId()).getTemplateName();
+        }
+
 
         // 生成xml文件路径
         Map<String, String> filePathMap = new HashMap<>();

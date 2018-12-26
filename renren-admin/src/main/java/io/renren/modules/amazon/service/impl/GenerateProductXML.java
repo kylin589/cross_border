@@ -15,9 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -62,7 +60,7 @@ public class GenerateProductXML {
      * @return XML路径
      * @author zjr
      */
-    public String generateDefaultProductXML(Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode){
+    public String generateDefaultProductXML(Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode) {
         // 获取模板数据
         EntityWrapper<FieldMiddleEntity> wrapper = new EntityWrapper<>();
         wrapper.eq("upload_id", uploadId);
@@ -247,9 +245,9 @@ public class GenerateProductXML {
                     variationTheme.addText(variationThemeStr);
                 }
                 Element unitCount = meautyMisc.addElement("UnitCount");
-                unitCount.addAttribute("unitOfMeasure","oz");
+                unitCount.addAttribute("unitOfMeasure", "oz");
                 unitCount.addText("0.1");
-                Element directions = meautyMisc.addElement("\\t");
+                Element directions = meautyMisc.addElement("Directions");
                 directions.addText("\\t");
 
                 for (int j = 0; j < variantsInfoEntityList.size(); j++) {
@@ -355,12 +353,12 @@ public class GenerateProductXML {
                             Element vieSize = vieVariationData.addElement("Size");
                             String[] str = variantsInfoEntity.getVariantCombination().split("\\*");
                             vieSize.addText(str[1]);
-                            Element vieCode = vieVariationData.addElement("Code");
-                            vieCode.addText(str[0]);
+                            Element vieColor = vieVariationData.addElement("Color");
+                            vieColor.addText(str[0]);
                             break;
                         case "Color":
-                            Element vieCode1 = vieVariationData.addElement("Code");
-                            vieCode1.addText(variantsInfoEntity.getVariantCombination());
+                            Element vieColor1 = vieVariationData.addElement("Color");
+                            vieColor1.addText(variantsInfoEntity.getVariantCombination());
                             break;
                         case "Size":
                             Element vieSize2 = vieVariationData.addElement("Size");
@@ -370,14 +368,14 @@ public class GenerateProductXML {
                             break;
                     }
                     Element vieUnitCount = vieMeautyMisc.addElement("UnitCount");
-                    vieUnitCount.addAttribute("unitOfMeasure","oz");
+                    vieUnitCount.addAttribute("unitOfMeasure", "oz");
                     vieUnitCount.addText("0.1");
-                    Element vieDirections = vieMeautyMisc.addElement("\\t");
+                    Element vieDirections = vieMeautyMisc.addElement("Directions");
                     vieDirections.addText("\\t");
                 }
             } else {
                 Element unitCount = meautyMisc.addElement("UnitCount");
-                unitCount.addAttribute("unitOfMeasure","oz");
+                unitCount.addAttribute("unitOfMeasure", "oz");
                 unitCount.addText("0.1");
                 Element directions = meautyMisc.addElement("Directions");
                 directions.addText("\\t");
@@ -398,6 +396,7 @@ public class GenerateProductXML {
         }
         return filePath;
     }
+
     /**
      * 生成产品图片信息xml
      *
@@ -477,9 +476,17 @@ public class GenerateProductXML {
             if (variantsInfoEntityList != null || variantsInfoEntityList.size() != 0) {
                 for (int j = 0; j < variantsInfoEntityList.size(); j++) {
                     VariantsInfoEntity variantsInfoEntity = variantsInfoEntityList.get(j);
-                    String[] viImageUrls = variantsInfoEntity.getImageUrl().split(",");
-                    if (viImageUrls.length != 0) {
-                        int temp = viImageUrls.length;
+                    List<String> viImageUrls = new ArrayList<>();
+                    if (variantsInfoEntity.getImageUrl() != null) {
+                        viImageUrls = Arrays.asList(variantsInfoEntity.getImageUrl().split(","));
+                    } else {
+                        for (int k = 0; k < imageAddressEntityList.size(); k++) {
+                            viImageUrls.add(imageAddressEntityList.get(i).getImageUrl());
+                        }
+                    }
+
+                    if (viImageUrls.size() != 0) {
+                        int temp = viImageUrls.size();
                         if (temp > 9) {
                             temp = 9;
                         }
@@ -499,7 +506,7 @@ public class GenerateProductXML {
                                 imageType.addText("PT" + k);
                             }
                             Element imageLocation = productImage.addElement("ImageLocation");
-                            imageLocation.addText(viImageUrls[k]);
+                            imageLocation.addText(viImageUrls.get(k));
                             messageId++;
                         }
                     }
@@ -1221,12 +1228,12 @@ public class GenerateProductXML {
                             Element vieSize = vieVariationData.addElement("Size");
                             String[] str = variantsInfoEntity.getVariantCombination().split("\\*");
                             vieSize.addText(str[1]);
-                            Element vieCode = vieVariationData.addElement("Code");
-                            vieCode.addText(str[0]);
+                            Element vieColor = vieVariationData.addElement("Color");
+                            vieColor.addText(str[0]);
                             break;
                         case "Color":
-                            Element vieCode1 = vieVariationData.addElement("Code");
-                            vieCode1.addText(variantsInfoEntity.getVariantCombination());
+                            Element vieColor1 = vieVariationData.addElement("Color");
+                            vieColor1.addText(variantsInfoEntity.getVariantCombination());
                             break;
                         case "Size":
                             Element vieSize2 = vieVariationData.addElement("Size");
