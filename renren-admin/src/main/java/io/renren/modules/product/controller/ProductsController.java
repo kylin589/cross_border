@@ -174,8 +174,7 @@ public class ProductsController extends AbstractController {
     @RequestMapping("/falsedeletion")
     public R falseDeletion(@RequestBody Long[] productIds) {
         for (int i = 0; i < productIds.length; i++) {
-            ProductsEntity entity = new ProductsEntity();
-            entity.setProductId(productIds[i]);
+            ProductsEntity entity = productsService.selectById(productIds[i]);
             entity.setIsDeleted(1);
             entity.setLastOperationTime(new Date());
             entity.setLastOperationUserId(getUserId());
@@ -449,7 +448,7 @@ public class ProductsController extends AbstractController {
             //通过前台传入的三级分类id获取一个一二三级的字符串id，以逗号拼接的
             Long categoryThreeId = batchModifyDto.getCategoryThreeId();
             if (categoryThreeId != null) {
-                String ids = categoryService.queryParentByChildId(categoryThreeId);
+                String ids = categoryService.queryParentByChildIdAndCategory(categoryThreeId,productsEntity);
                 String[] id = ids.split(",");
                 productsEntity.setCategoryOneId(Long.parseLong(id[0]));
                 productsEntity.setCategoryTwoId(Long.parseLong(id[1]));
@@ -461,6 +460,7 @@ public class ProductsController extends AbstractController {
             productsEntity.setProductWeight(batchModifyDto.getProductWeight());
             productsEntity.setProductLength(batchModifyDto.getProductLength());
             productsEntity.setProductWide(batchModifyDto.getProductWide());
+            productsEntity.setProductHeight(batchModifyDto.getProductHeight());
             Long chineseId = productsEntity.getChineseIntroduction();
             IntroductionEntity chinesePRE = introductionService.selectById(chineseId);
             String productTitle = productsEntity.getProductTitle();
