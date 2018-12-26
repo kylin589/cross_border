@@ -20,7 +20,7 @@ public class EanUpcServiceImpl extends ServiceImpl<EanUpcDao, EanUpcEntity> impl
     public PageUtils queryPage(Map<String, Object> params) {
         Page<EanUpcEntity> page = this.selectPage(
                 new Query<EanUpcEntity>(params).getPage(),
-                new EntityWrapper<EanUpcEntity>()
+                new EntityWrapper<EanUpcEntity>().orderBy(true,"state",true).orderBy(true,"create_time",false)
         );
 
         return new PageUtils(page);
