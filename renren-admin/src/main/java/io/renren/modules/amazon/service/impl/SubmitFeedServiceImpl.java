@@ -2430,52 +2430,52 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         switch (countryCode) {
             // 加拿大
             case "CA":
-                freightId = productsEntity.getCanadaFreight();
+                // TODO: 2018/12/26 zjr 加拿大 
                 money = "CAD";
                 break;
             // 墨西哥
             case "MX":
-                freightId = productsEntity.getMexicoFreight();
+                // TODO: 2018/12/26 zjr 墨西哥 
                 money = "MXN";
                 break;
             // 美国
             case "US":
-                freightId = productsEntity.getAmericanFreight();
+                freightId = productsEntity.getBritainIntroduction();
                 money = "USD";
                 break;
             // 德国
             case "DE":
-                freightId = productsEntity.getGermanyFreight();
+                freightId = productsEntity.getGermanyIntroduction();
                 money = "EUR";
                 break;
             // 西班牙
             case "ES":
-                freightId = productsEntity.getSpainFreight();
+                freightId = productsEntity.getSpainIntroduction();
                 money = "EUR";
                 break;
             // 法国
             case "FR":
-                freightId = productsEntity.getFranceFreight();
+                freightId = productsEntity.getFranceIntroduction();
                 money = "EUR";
                 break;
             // 英国
             case "GB":
-                freightId = productsEntity.getBritainFreight();
+                freightId = productsEntity.getBritainIntroduction();
                 money = "GBP";
                 break;
             // 意大利
             case "IT":
-                freightId = productsEntity.getItalyFreight();
+                freightId = productsEntity.getItalyIntroduction();
                 money = "EUR";
                 break;
             // 澳大利亚
             case "AU":
-                freightId = productsEntity.getAustraliaFreight();
+                // TODO: 2018/12/26 zjr 澳大利亚没有 
                 money = "AUD";
                 break;
             // 日本
             case "JP":
-                freightId = productsEntity.getJapanFreight();
+                freightId = productsEntity.getJapanIntroduction();
                 money = "JPY";
                 break;
             default:
