@@ -165,6 +165,7 @@ public class OrderTimer {
                                 String product_asin=orderItemResponseDtos.get(k).getOrderItems().get(m).getASIN();
                                 String product_sku=orderItemResponseDtos.get(k).getOrderItems().get(m).getSellerSKU();
                                 int ordernumber=orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
+                                String orderItemId=orderItemResponseDtos.get(k).getOrderItems().get(m).getOrderItemId();//获得订单商品编号
                                 ProductShipAddressEntity addressEntity=new ProductShipAddressEntity();
                                 String shipname=listOrdersResponseDtos.get(i).getOrders().get(j).getName();
                                 String shipaddress=listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
@@ -204,7 +205,11 @@ public class OrderTimer {
                                 }else{
                                     orderModel.setProductSku("");
                                 }
-
+                                if(orderItemId!=null){
+                                    orderModel.setOrderItemId(orderItemId);
+                                }else{
+                                    orderModel.setOrderItemId("");
+                                }
                                 if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
                                     String orderMoney = orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
                                     System.out.println("订单金额："+orderMoney+"============");

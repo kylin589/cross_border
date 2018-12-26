@@ -12,6 +12,8 @@ public class OrderModel {
 
     private  String amazonOrderId;//亚马孙订单id
 
+    private String orderItemId;//订单商品编号
+
     private Date buyDate;//购买日期
 
     private  String orderStatus;//订单状态
@@ -129,5 +131,13 @@ public class OrderModel {
 
     public void setDeptId(Long deptId) {
         this.deptId = deptId;
+    }
+
+    public String getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(String orderItemId) {
+        this.orderItemId = orderItemId;
     }
 }

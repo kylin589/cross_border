@@ -28,6 +28,10 @@ public class OrderEntity implements Serializable {
 	 */
 	private String amazonOrderId;
 	/**
+	 * 订单商品编号
+	 */
+	private String orderItemId;
+	/**
 	 * 购买日期
 	 */
 	private Date buyDate;
@@ -170,12 +174,22 @@ public class OrderEntity implements Serializable {
 	public String getAmazonOrderId() {
 		return amazonOrderId;
 	}
+
 	/**
 	 * 设置：购买日期
 	 */
 	public void setBuyDate(Date buyDate) {
 		this.buyDate = buyDate;
 	}
+
+	public String getOrderItemId() {
+		return orderItemId;
+	}
+
+	public void setOrderItemId(String orderItemId) {
+		this.orderItemId = orderItemId;
+	}
+
 	/**
 	 * 获取：购买日期
 	 */
