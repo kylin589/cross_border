@@ -108,6 +108,12 @@ var vm = new Vue({
                         grantShop = t.shopName;
                     }
                 })
+                var templateDisplayName = '';
+                vm.flModleList.forEach(function (t) {
+                    if(t.templateId = vm.flModleValue){
+                        templateDisplayName = t.templateDisplayName;
+                    }
+                })
 
                 layer.open({
                     type: 1,
@@ -132,9 +138,10 @@ var vm = new Vue({
                                 }
                             }
                         }
+
                         console.log(vm.operateItem);
-                        vm.grantShopId = vm.shopinfo.grantShopId;
-                        vm.grantShop = vm.shopinfo.shopName;
+                        // vm.grantShopId = vm.shopinfo.grantShopId;
+                        // vm.grantShop = vm.shopinfo.shopName;
                         console.log(vm);
                         $.ajax({
                             url: '../../product/upload/addUpload',
@@ -145,14 +152,15 @@ var vm = new Vue({
                                 'uploadIds': vm.uploadIds,
                                 'grantShopId': parseInt(vm.shopinfo),
                                 'isAttribute': vm.isAttribute,
-                                'grantShop':vm.grantShop,
+                                'grantShop':grantShop,
                                 'amazonCategoryId': vm.amazonCategoryId,
                                 'amazonCategory': vm.amazonCategory,
-                                'amazonTemplateId': vm.amazonTemplateId,
-                                'amazonTemplate': vm.amazonTemplate,
+                                'amazonTemplateId': vm.flModleValue,
+                                'amazonTemplate': templateDisplayName,
                                 'operateItem': vm.operateItem,
                                 'time':vm.changeTime,
                                 'countryCode':vm.countryCode,
+                                'fieldsEntityList':vm.modelAttr,
                             }),
                             // dataType: 'json',
                             contentType: "application/json",
@@ -160,10 +168,11 @@ var vm = new Vue({
                                 console.log(r);
                                 if (r.code === 0) {
 
-                                    layer.close(index)
+                                    layer.close(index);
+                                    window.location.href="upProduct.html";
                                 } else {
                                     // layer.alert(r.message);
-                                    window.location.href="upProduct.html";
+                                    // window.location.href="upProduct.html";
                                 }
 
 
