@@ -923,11 +923,16 @@ public class ProductsController extends AbstractController {
             eanUpcEntity.setSize(size);
             //查出未使用的EAN码，修改为使用
             List<EanUpcEntity> eanUpcEntities =eanUpcService.selectByLimit(eanUpcEntity);
-            for (int i = 0; i <eanUpcEntities.size() ; i++) {
-                eanUpcEntities.get(i).setState(1);
-                eanUpcEntities.get(i).setProductId(products.getProductId());
-                eanUpcService.updateById(eanUpcEntities.get(i));
+            if (eanUpcEntities!=null&&eanUpcEntities.size()!=0&&eanUpcEntities.size()==variantsInfosList.size()){
+                for (int i = 0; i <eanUpcEntities.size() ; i++) {
+                    eanUpcEntities.get(i).setState(1);
+                    eanUpcEntities.get(i).setProductId(products.getProductId());
+                    eanUpcService.updateById(eanUpcEntities.get(i));
+                }
+            }else {
+                return R.error("EAN码数量不足，尽快添加");
             }
+
             for (int i = 0; i <variantsInfosList.size() ; i++) {
                 String code = eanUpcEntities.get(i).getCode();
                 VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
@@ -1184,10 +1189,14 @@ public class ProductsController extends AbstractController {
             eanUpcEntity.setSize(size);
             //查出未使用的EAN码，修改为使用
             List<EanUpcEntity> eanUpcEntities =eanUpcService.selectByLimit(eanUpcEntity);
-            for (int i = 0; i <eanUpcEntities.size() ; i++) {
-                eanUpcEntities.get(i).setState(1);
-                eanUpcEntities.get(i).setProductId(products.getProductId());
-                eanUpcService.updateById(eanUpcEntities.get(i));
+            if (eanUpcEntities!=null&&eanUpcEntities.size()!=0&&eanUpcEntities.size()==variantsInfosList.size()) {
+                for (int i = 0; i < eanUpcEntities.size(); i++) {
+                    eanUpcEntities.get(i).setState(1);
+                    eanUpcEntities.get(i).setProductId(products.getProductId());
+                    eanUpcService.updateById(eanUpcEntities.get(i));
+                }
+            }else {
+                return R.error("EAN码数量不足，尽快添加");
             }
             for (int i = 0; i <variantsInfosList.size() ; i++) {
                 String code = eanUpcEntities.get(i).getCode();
@@ -1907,7 +1916,9 @@ public class ProductsController extends AbstractController {
     public Double calculatedWeight(Double productLength, Double productWide, Double productHeight) {
         //体积重量按每6000立方厘米折合1公斤计算,体积重量的计算公式为:体积重量=(长X宽X高)/6000
         Double weight = (productHeight * productLength * productWide) / 6000;
-        return weight;
+        BigDecimal b=   new BigDecimal(weight);
+        double weightLater=b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+        return weightLater;
     }
 
     //计算国际运费
@@ -1917,7 +1928,7 @@ public class ProductsController extends AbstractController {
             FreightPriceEntity freightPriceEntity = freightPriceService.selectOne(new EntityWrapper<FreightPriceEntity>().eq("type", "小包").eq("country_code", countryCode));
             BigDecimal bigDecimal = new BigDecimal(weight);
             //计算出运费价格
-            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice());
+            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP);
             freightCostEntity.setFreight(freightPrice);
             freightCostEntity.setType("小包");
             return freightCostEntity;
@@ -1926,7 +1937,7 @@ public class ProductsController extends AbstractController {
             FreightPriceEntity freightPriceEntity = freightPriceService.selectOne(new EntityWrapper<FreightPriceEntity>().eq("type", "大包").eq("country_code", countryCode));
             BigDecimal bigDecimal = new BigDecimal(weight);
             //计算出运费价格
-            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice());
+            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP);
             freightCostEntity.setFreight(freightPrice);
             freightCostEntity.setType("大包");
             return freightCostEntity;
