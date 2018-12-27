@@ -1,5 +1,6 @@
 package io.renren.modules.product.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
@@ -49,6 +50,16 @@ public class EanUpcEntity implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	@TableField(exist=false)
+	private int size;
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
 	}
 
 	/**

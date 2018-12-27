@@ -1,6 +1,8 @@
 package io.renren.modules.product.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -24,6 +26,12 @@ public class EanUpcServiceImpl extends ServiceImpl<EanUpcDao, EanUpcEntity> impl
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<EanUpcEntity> selectByLimit(EanUpcEntity eanUpcEntity) {
+        List<EanUpcEntity>eanUpcEntityList= baseMapper.selectByLimit(eanUpcEntity);
+        return eanUpcEntityList;
     }
 
 }
