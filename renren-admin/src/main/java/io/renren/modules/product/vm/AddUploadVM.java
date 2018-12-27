@@ -33,6 +33,8 @@ public class AddUploadVM {
     private Long amazonCategoryId;
     //亚马逊分类
     private String amazonCategory;
+    //亚马逊节点id
+    private String amazonNodeId;
     //亚马逊模板id
     private Long amazonTemplateId;
     //亚马逊模板
@@ -51,6 +53,14 @@ public class AddUploadVM {
     private Long userId;
     //公司id
     private Long deptId;
+
+    public String getAmazonNodeId() {
+        return amazonNodeId;
+    }
+
+    public void setAmazonNodeId(String amazonNodeId) {
+        this.amazonNodeId = amazonNodeId;
+    }
 
     public Long getUploadId() {
         return uploadId;

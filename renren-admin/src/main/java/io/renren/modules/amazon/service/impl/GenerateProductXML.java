@@ -190,7 +190,7 @@ public class GenerateProductXML {
 
 
             // ItemType - 推荐节点
-            AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectById(uploadEntity.getAmazonCategoryId());
+            AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("amazon_category_id", uploadEntity.getAmazonCategoryId()));
             String itemTypeStr = "\\t";
             Element itemType = descriptionData.addElement("ItemType");
             if (amazonCategoryEntity.getCategoryName() != null) {
@@ -929,7 +929,7 @@ public class GenerateProductXML {
 
 
             // ItemType - 推荐节点
-            AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectById(uploadEntity.getAmazonCategoryId());
+            AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("amazon_category_id", uploadEntity.getAmazonCategoryId()));
             String itemTypeStr = "\\t";
             Element itemType = descriptionData.addElement("ItemType");
             if (amazonCategoryEntity.getCategoryName() != null) {
