@@ -219,7 +219,7 @@ public class UploadController extends AbstractController {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < allId.length; i++) {
             AmazonCategoryEntity amazonCategoryEntity = new AmazonCategoryEntity();
-            amazonCategoryEntity.setAmazonCategoryId(Long.valueOf(allId[i]));
+            amazonCategoryEntity.setId(Long.valueOf(allId[i]));
             amazonCategoryEntity = amazonCategoryService.selectById(amazonCategoryEntity);
             list.add(amazonCategoryEntity.getDisplayName());
         }
