@@ -209,7 +209,7 @@ public class UploadController extends AbstractController {
             System.out.println(fieldId);
             String countryCode = uploadEntity.getCountryCode();
             System.out.println(countryCode);
-            List<TemplateFieldValueDto> templateFieldValueDtos = templateService.getTemplateFieldValueDtos(fieldId,countryCode);
+            List<TemplateFieldValueDto> templateFieldValueDtos = templateService.getTemplateFieldValueDtos(fieldId, countryCode);
             middleEntitys.get(i).setTemplateFieldValueDtos(templateFieldValueDtos);
         }
 
@@ -219,7 +219,7 @@ public class UploadController extends AbstractController {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < allId.length; i++) {
             AmazonCategoryEntity amazonCategoryEntity = new AmazonCategoryEntity();
-            amazonCategoryEntity.setAmazonCategoryId(Long.valueOf(allId[i]));
+            amazonCategoryEntity.setId(Long.valueOf(allId[i]));
             amazonCategoryEntity = amazonCategoryService.selectById(amazonCategoryEntity);
             list.add(amazonCategoryEntity.getDisplayName());
         }
@@ -289,9 +289,11 @@ public class UploadController extends AbstractController {
         uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
         uploadEntity.setAmazonCategory(amazonCategory.getDisplayName());
         //设置分类节点id
-        String county = amazonGrantShop.getCountryCode();
-        uploadEntity.setCountryCode(county);
-        COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
+        String countryCode = amazonGrantShop.getCountryCode();
+        uploadEntity.setCountryCode(countryCode);
+        uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+       /*
+        COUNTY countyEnum = COUNTY.valueOf(countryCode.toUpperCase());
         switch (countyEnum) {
             case GB:
                 uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdUk());
@@ -325,7 +327,8 @@ public class UploadController extends AbstractController {
                 break;
             default:
                 break;
-        }
+        }*/
+
         //设置模板
         uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
         uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
@@ -359,7 +362,7 @@ public class UploadController extends AbstractController {
         }
 
         //添加到分类历史记录表
-        AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId(), countryCode);
         //如果有历史数据，则累加数量1
         if (categoryHistory != null) {
             int count = categoryHistory.getCount() + 1;
@@ -372,6 +375,8 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setAmazonCategory(amazonCategory.getDisplayName());
             categoryHistoryNew.setAmazonAllCategory(addUploadVM.getAmazonCategory());
             categoryHistoryNew.setCount(1);
+            categoryHistoryNew.setCountryCode(countryCode);
+            categoryHistoryNew.setNodeId(addUploadVM.getAmazonNodeId());
             categoryHistoryNew.setUserId(getUserId());
             categoryHistoryNew.setDeptId(getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
@@ -389,6 +394,7 @@ public class UploadController extends AbstractController {
         // 查找基本信息
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(addUploadVM.getUploadId());
+        System.out.println("addUploadVM.getUploadId()：" + addUploadVM.getUploadId());
         uploadEntity = uploadService.selectById(uploadEntity);
         uploadEntity.setUploadState(0);
         uploadService.updateById(uploadEntity);
@@ -401,55 +407,27 @@ public class UploadController extends AbstractController {
         //获取分类对象
         AmazonCategoryEntity amazonCategory = amazonCategoryService.selectById(addUploadVM.getAmazonCategoryId());
 
-        String county = uploadEntity.getCountryCode();
-        COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
-        switch (countyEnum) {
-            case GB:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdUk());
-                break;
-            case DE:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdDe());
-                break;
-            case FR:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdFr());
-                break;
-            case IT:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdIt());
-                break;
-            case ES:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdEs());
-                break;
-            case US:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdUs());
-                break;
-            case MX:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdMx());
-                break;
-            case CA:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdCa());
-                break;
-            case AU:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdAu());
-                break;
-            case JP:
-                uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdJp());
-                break;
-            default:
-                break;
-        }
+        String countryCode = uploadEntity.getCountryCode();
+        uploadEntity.setCountryCode(countryCode);
+        uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+
         //设置模板
         uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
         uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
         //设置操作类型（0：上传;1：修改）
-        uploadEntity.setOperateType(1);
+        uploadEntity.setOperateType(0);
         //数组转','号隔开的字符串
         String operateItem = StringUtils.join(addUploadVM.getOperateItem(), ",");
         //设置操作项
         uploadEntity.setOperateItem(operateItem);
         //设置常用属性
+        uploadEntity.setUploadTime(new Date());
         uploadEntity.setUpdateTime(new Date());
-        //更新到上传表
-        uploadService.updateById(uploadEntity);
+        uploadEntity.setUserId(getUserId());
+        uploadEntity.setDeptId(getDeptId());
+        uploadEntity.setUploadState(0);
+        //添加到上传表
+        uploadService.insert(uploadEntity);
 
         //获取需要上传的商品id
         List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
@@ -468,7 +446,7 @@ public class UploadController extends AbstractController {
         }
 
         //添加到分类历史记录表
-        AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId(), countryCode);
         //如果有历史数据，则累加数量1
         if (categoryHistory != null) {
             int count = categoryHistory.getCount() + 1;
@@ -481,6 +459,8 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setAmazonCategory(amazonCategory.getDisplayName());
             categoryHistoryNew.setAmazonAllCategory(addUploadVM.getAmazonCategory());
             categoryHistoryNew.setCount(1);
+            categoryHistoryNew.setCountryCode(countryCode);
+            categoryHistoryNew.setNodeId(addUploadVM.getAmazonNodeId());
             categoryHistoryNew.setUserId(getUserId());
             categoryHistoryNew.setDeptId(getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
@@ -649,9 +629,11 @@ public class UploadController extends AbstractController {
         uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
         uploadEntity.setAmazonCategory(amazonCategory.getDisplayName());
         //设置分类节点id
-        String county = amazonGrantShop.getCountryCode();
-        uploadEntity.setCountryCode(county);
-        COUNTY countyEnum = COUNTY.valueOf(county.toUpperCase());
+        String countryCode = amazonGrantShop.getCountryCode();
+        uploadEntity.setCountryCode(countryCode);
+        uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+       /*
+        COUNTY countyEnum = COUNTY.valueOf(countryCode.toUpperCase());
         switch (countyEnum) {
             case GB:
                 uploadEntity.setAmazonCategoryNodeId(amazonCategory.getNodeIdUk());
@@ -685,7 +667,8 @@ public class UploadController extends AbstractController {
                 break;
             default:
                 break;
-        }
+        }*/
+
         //设置模板
         uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
         uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
@@ -719,7 +702,7 @@ public class UploadController extends AbstractController {
         }
 
         //添加到分类历史记录表
-        AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        AmazonCategoryHistoryEntity categoryHistory = amazonCategoryHistoryService.selectByAmazonCategoryId(addUploadVM.getAmazonCategoryId(), countryCode);
         //如果有历史数据，则累加数量1
         if (categoryHistory != null) {
             int count = categoryHistory.getCount() + 1;
@@ -732,6 +715,8 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setAmazonCategory(amazonCategory.getDisplayName());
             categoryHistoryNew.setAmazonAllCategory(addUploadVM.getAmazonCategory());
             categoryHistoryNew.setCount(1);
+            categoryHistoryNew.setCountryCode(countryCode);
+            categoryHistoryNew.setNodeId(addUploadVM.getAmazonNodeId());
             categoryHistoryNew.setUserId(addUploadVM.getUserId());
             categoryHistoryNew.setDeptId(addUploadVM.getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);

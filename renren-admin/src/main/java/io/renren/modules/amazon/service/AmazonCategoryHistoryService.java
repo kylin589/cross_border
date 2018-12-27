@@ -17,6 +17,6 @@ public interface AmazonCategoryHistoryService extends IService<AmazonCategoryHis
 
     PageUtils queryPage(Map<String, Object> params);
 
-    AmazonCategoryHistoryEntity selectByAmazonCategoryId(Long amazonCategoryId);
+    AmazonCategoryHistoryEntity selectByAmazonCategoryId(Long amazonCategoryId,String countryCode);
 }
 

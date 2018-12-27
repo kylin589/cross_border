@@ -227,11 +227,12 @@ var vm = new Vue({
 
                 var templateDisplayName = '';
                 vm.flModleList.forEach(function (t) {
-                    if(t.templateId = vm.flModleValue){
+                    if(t.templateId == vm.flModleValue){
+                        console.log(t.templateId);
                         templateDisplayName = t.templateDisplayName;
                     }
                 })
-                console.log(grantShop)
+                console.log(vm.flModleValue)
                 console.log(templateDisplayName)
 
                 // vm.grantShopId = vm.shopinfo.grantShopId;
