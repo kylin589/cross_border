@@ -37,6 +37,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -399,20 +402,23 @@ public class OrderController extends AbstractController{
             if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
                 //如果订单状态在待签收和入库时，更新订单的国际物流信息
                 if(ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus) || ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING.equals(orderStatus)){
-                    Map<String,Object> map = AbroadLogisticsUtil.getOrderDetail(orderEntity.getAmazonOrderId());
+                    Map<String,Object> map = AbroadLogisticsUtil.getOrderDetail(amazonOrderId);
                     int status = 0;
                     if("true".equals(map.get("code"))){
                         orderEntity.setUpdateTime(new Date());
                         ReceiveOofayData receiveOofayData = (ReceiveOofayData)map.get("receiveOofayData");
                         //国际物流对象
                         AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
-                        if(StringUtils.isBlank(abroadLogisticsEntity.getDestChannel())){
+                        //设置国际物流渠道
+                        if(StringUtils.isNotBlank(receiveOofayData.getDestChannel())){
                             abroadLogisticsEntity.setDestChannel(receiveOofayData.getDestChannel());
                         }
-                        if(StringUtils.isBlank(abroadLogisticsEntity.getDestTransportCompany())){
+                        //设置国际物流公司
+                        if(StringUtils.isNotBlank(receiveOofayData.getDestTransportCompany())){
                             abroadLogisticsEntity.setDestTransportCompany(receiveOofayData.getDestTransportCompany());
                         }
-                        if(StringUtils.isBlank(abroadLogisticsEntity.getTrackWaybill())){
+                        //设置国际物流跟踪号
+                        if(StringUtils.isBlank(receiveOofayData.getTrackWaybill())){
                             abroadLogisticsEntity.setTrackWaybill(receiveOofayData.getTrackWaybill());
                             NoticeEntity noticeEntity = new NoticeEntity();
                             noticeEntity.setCreateTime(new Date());
@@ -420,7 +426,7 @@ public class OrderController extends AbstractController{
                             noticeEntity.setUserId(orderEntity.getUserId());
                             noticeEntity.setDeptId(orderEntity.getDeptId());
                             noticeService.insert(noticeEntity);
-                        }else if(StringUtils.isBlank(abroadLogisticsEntity.getTrackWaybill()) && !abroadLogisticsEntity.getTrackWaybill().equals(receiveOofayData.getTrackWaybill())){
+                        }else if(!abroadLogisticsEntity.getTrackWaybill().equals(receiveOofayData.getTrackWaybill())){
                             abroadLogisticsEntity.setTrackWaybill(receiveOofayData.getTrackWaybill());
                             abroadLogisticsEntity.setIsSynchronization(0);
                             NoticeEntity noticeEntity = new NoticeEntity();
@@ -430,7 +436,37 @@ public class OrderController extends AbstractController{
                             noticeEntity.setDeptId(orderEntity.getDeptId());
                             noticeService.insert(noticeEntity);
                         }
-
+                        //设置国内跟踪号
+                        if(StringUtils.isNotBlank(receiveOofayData.getDomesticTrackWaybill())){
+                            abroadLogisticsEntity.setDomesticTrackWaybill(receiveOofayData.getDomesticTrackWaybill());
+                        }
+                        //设置发货时间
+                        if(StringUtils.isNotBlank(receiveOofayData.getShipTime())){
+                            DateFormat df= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                            Date shipTime = null;
+                            try {
+                                shipTime = df.parse(receiveOofayData.getShipTime());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            abroadLogisticsEntity.setShipTime(shipTime);
+                        }
+                        //设置实际重量
+                        if(StringUtils.isNotBlank(receiveOofayData.getActualWeight())){
+                            abroadLogisticsEntity.setActualWeight(receiveOofayData.getActualWeight());
+                        }
+                        //设置目的地查询网址
+                        if(StringUtils.isNotBlank(receiveOofayData.getDestQueryUrl())){
+                            abroadLogisticsEntity.setDestQueryUrl(receiveOofayData.getDestQueryUrl());
+                        }
+                        //设置服务查询网址
+                        if(StringUtils.isNotBlank(receiveOofayData.getServiceQueryUrl())){
+                            abroadLogisticsEntity.setServiceQueryUrl(receiveOofayData.getServiceQueryUrl());
+                        }
+                        //设置联系电话
+                        if(StringUtils.isNotBlank(receiveOofayData.getMobile())){
+                            abroadLogisticsEntity.setMobile(receiveOofayData.getMobile());
+                        }
                         //有运费
                         if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
                             //计算国际运费、平台佣金、利润
@@ -471,5 +507,4 @@ public class OrderController extends AbstractController{
             }
         }
     }
-
 }

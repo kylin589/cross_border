@@ -44,17 +44,25 @@ public class AbroadLogisticsEntity implements Serializable {
 	 */
 	private String state;
 	/**
+	 * 实际重量
+	 */
+	private String actualWeight;
+	/**
 	 * 国际运费
 	 */
 	private BigDecimal interFreight;
 	/**
 	 * 国外物流公司
 	 */
-	public String destTransportCompany;
+	private String destTransportCompany;
+	/**
+	 * 国内跟踪号
+	 */
+	private String domesticTrackWaybill;
 	/**
 	 * 国外物流渠道
 	 */
-	public String destChannel;
+	private String destChannel;
 	/**
 	 * 是否同步（默认0：没有  1：有）
 	 */
@@ -63,6 +71,23 @@ public class AbroadLogisticsEntity implements Serializable {
 	private Date createTime = new Date();
 
 	private Date updateTime = new Date();
+	/**
+	 * 发货时间
+	 */
+	private Date shipTime;
+	/**
+	 * 目的地查询网址
+	 */
+	private String destQueryUrl;
+	/**
+	 * 服务查询网址
+	 */
+	private String serviceQueryUrl;
+	/**
+	 * 联系电话
+	 */
+	private String mobile;
+
 	/**
 	 * 设置：国外物流
 	 */
@@ -190,5 +215,53 @@ public class AbroadLogisticsEntity implements Serializable {
 
 	public void setDestChannel(String destChannel) {
 		this.destChannel = destChannel;
+	}
+
+	public String getActualWeight() {
+		return actualWeight;
+	}
+
+	public void setActualWeight(String actualWeight) {
+		this.actualWeight = actualWeight;
+	}
+
+	public String getDomesticTrackWaybill() {
+		return domesticTrackWaybill;
+	}
+
+	public void setDomesticTrackWaybill(String domesticTrackWaybill) {
+		this.domesticTrackWaybill = domesticTrackWaybill;
+	}
+
+	public Date getShipTime() {
+		return shipTime;
+	}
+
+	public void setShipTime(Date shipTime) {
+		this.shipTime = shipTime;
+	}
+
+	public String getDestQueryUrl() {
+		return destQueryUrl;
+	}
+
+	public void setDestQueryUrl(String destQueryUrl) {
+		this.destQueryUrl = destQueryUrl;
+	}
+
+	public String getServiceQueryUrl() {
+		return serviceQueryUrl;
+	}
+
+	public void setServiceQueryUrl(String serviceQueryUrl) {
+		this.serviceQueryUrl = serviceQueryUrl;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 }
