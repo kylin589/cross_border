@@ -78,5 +78,12 @@ public interface OrderService extends IService<OrderEntity> {
      * 查询平台利润统计
      */
     PlatformStatisticsDto platformStatistics(StatisticsVM vm);
+
+    /**
+     * 根据订单id进行更新订单Amazon状态
+     * @param AmazonOrderId
+     * @return
+     */
+    OrderModel updateOrderAmazonStatus(String AmazonOrderId);
 }
 

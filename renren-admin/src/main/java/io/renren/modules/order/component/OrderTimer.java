@@ -53,7 +53,7 @@ public class OrderTimer {
         Map<String, Object> map = new HashMap<>();
         map.put("region", 0);
         List<AmazonGrantEntity> grantList=amazonGrantService.selectByMap(map);
-        aaa:  for(AmazonGrantEntity grant:grantList){
+          for(AmazonGrantEntity grant:grantList){
 
 
             String sellerId=grant.getMerchantId();//获得商家id
@@ -62,7 +62,7 @@ public class OrderTimer {
             // 店铺ID
             List<String> marketplaceId = new ArrayList<>();
             //循环获取店铺授权
-            for(AmazonGrantShopEntity shop: shopList){
+              aaa: for(AmazonGrantShopEntity shop: shopList){
                 String serviceURL = shop.getMwsPoint();
                 marketplaceId.add(shop.getMarketplaceId());//获取MarketplaceId值
                 String shopName=shop.getShopName();//获得店铺名称
@@ -97,19 +97,18 @@ public class OrderTimer {
                 for (Object tempResponse : responseList) {
                     // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
                     String className = tempResponse.getClass().getName();
-                    if ((MarketplaceWebServiceOrdersException.class.getName()).equals(className) == true) {
-                        System.out.println("responseList 类型是 MarketplaceWebServiceOrdersException。");
-                        isSuccess = false;
-                        continue aaa;
-                    } else if ((ListOrdersResponse.class.getName()).equals(className) == true) {
+                    if ((ListOrdersResponse.class.getName()).equals(className) == true) {
                         System.out.println("responseList 类型是 ListOrdersResponse。");
                         ListOrdersResponse response = (ListOrdersResponse) tempResponse;
                         listOrdersResponseDto = XMLUtil.analysisListOrdersResponse(response.toXML());
                         isSuccess = true;
+                    } else {
+                        isSuccess = false;
+                        continue aaa;
                     }
                 }
                 listOrdersResponseDtos.add(listOrdersResponseDto);//封装解析出来的
-                while (listOrdersResponseDto.getNextToken() != null && isSuccess == true) {
+                if (listOrdersResponseDto.getNextToken() != null && isSuccess == true) {
                     //只有有NextToken标识，就一直获取
                     //判断下一页的订单数据
                     ListOrdersResponseDto listOrdersByNextTokenResponseDto=null;
@@ -123,6 +122,7 @@ public class OrderTimer {
                      * 获得订单下一页的响应列表
                      */
                     List<Object> responseList2 =invokeListOrdersByNextToken(client, listOrdersByNextTokenRequests);
+                    Boolean isSuccess2 = false;
                     for (Object tempResponse : responseList2) {
                         // Object 转换 listOrdersByNextTokenResponseDto 还是 MarketplaceWebServiceOrdersException
                         String className = tempResponse.getClass().getName();
@@ -131,6 +131,10 @@ public class OrderTimer {
                             ListOrdersByNextTokenResponse response = (ListOrdersByNextTokenResponse) tempResponse;
                             //解析订单下一页的响应列表
                             listOrdersByNextTokenResponseDto = XMLUtil.analysisListOrdersByNextTokenResponse(response.toXML());
+                            isSuccess2=true;
+                        }else{
+                            isSuccess2=false;
+                            continue;
                         }
                     }
                     listOrdersResponseDtos.add(listOrdersByNextTokenResponseDto);
@@ -156,12 +160,13 @@ public class OrderTimer {
                                 System.out.println("responseList3 类型是 ListOrderItemsByNextTokenResponse。");
                                 ListOrderItemsResponse  response= (ListOrderItemsResponse) tempResponse;
                                 orderItemResponseDto= XMLUtil.analysisListOrderItemsByNextTokenResponseFanWei(response.toXML());
-
+                            }else {
+                                continue;
                             }
                         }
                         orderItemResponseDtos.add(orderItemResponseDto);
+                        List<OrderModel> orderModelList = new ArrayList<OrderModel>();
                         for(int k=0;k<orderItemResponseDtos.size();k++){
-                            List<OrderModel> orderModelList = new ArrayList<OrderModel>();
                             for(int m=0;m<orderItemResponseDtos.get(k).getOrderItems().size();m++){
                                 String product_asin=orderItemResponseDtos.get(k).getOrderItems().get(m).getASIN();
                                 String product_sku=orderItemResponseDtos.get(k).getOrderItems().get(m).getSellerSKU();
@@ -286,12 +291,13 @@ public class OrderTimer {
                                 orderModel.setProductShipAddressEntity(addressEntity);
                                 orderModelList.add(orderModel);
                             }
-                            //开启一个线程去对接业务逻辑并保存到数据库
-                            if(orderModelList.size() > 0){
-                                new SaveOrUpdateOrderThread(orderModelList).start();
-                            }
-                        }
 
+                        }
+                        //开启一个线程去对接业务逻辑并保存到数据库
+                        if(orderModelList.size() > 0){
+                            System.out.println("执行更新");
+                            new SaveOrUpdateOrderThread(orderModelList).start();
+                        }
 
 
                     }
@@ -342,13 +348,7 @@ public class OrderTimer {
                     // Exception properties are important for diagnostics.
                     MarketplaceWebServiceOrdersException ex = (MarketplaceWebServiceOrdersException) cause;
                     ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
-                    System.out.println("Service Exception:");
-                    System.out.println("RequestId: " + rhmd.getRequestId());
-                    System.out.println("Timestamp: " + rhmd.getTimestamp());
-                    System.out.println("Message: " + ex.getMessage());
-                    System.out.println("StatusCode: " + ex.getStatusCode());
-                    System.out.println("ErrorCode: " + ex.getErrorCode());
-                    System.out.println("ErrorType: " + ex.getErrorType());
+
                     xresponse = ex;
                 } else {
                     xresponse = cause;
@@ -389,13 +389,7 @@ public class OrderTimer {
                     MarketplaceWebServiceOrdersException ex =
                             (MarketplaceWebServiceOrdersException) cause;
                     ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
-                    System.out.println("Service Exception:");
-                    System.out.println("RequestId: " + rhmd.getRequestId());
-                    System.out.println("Timestamp: " + rhmd.getTimestamp());
-                    System.out.println("Message: " + ex.getMessage());
-                    System.out.println("StatusCode: " + ex.getStatusCode());
-                    System.out.println("ErrorCode: " + ex.getErrorCode());
-                    System.out.println("ErrorType: " + ex.getErrorType());
+
                     xresponse = ex;
                 } else {
                     xresponse = cause;
@@ -408,7 +402,7 @@ public class OrderTimer {
         return responseList;
     }
 
-    public List<Object> invokeGetOrder(MarketplaceWebServiceOrdersAsync client, List<GetOrderRequest> requestList) {
+    public static List<Object> invokeGetOrder(MarketplaceWebServiceOrdersAsync client, List<GetOrderRequest> requestList) {
         // Call the service async.
         List<Future<GetOrderResponse>> futureList =
                 new ArrayList<Future<GetOrderResponse>>();
@@ -439,13 +433,7 @@ public class OrderTimer {
                     MarketplaceWebServiceOrdersException ex =
                             (MarketplaceWebServiceOrdersException) cause;
                     ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
-                    System.out.println("Service Exception:");
-                    System.out.println("RequestId: " + rhmd.getRequestId());
-                    System.out.println("Timestamp: " + rhmd.getTimestamp());
-                    System.out.println("Message: " + ex.getMessage());
-                    System.out.println("StatusCode: " + ex.getStatusCode());
-                    System.out.println("ErrorCode: " + ex.getErrorCode());
-                    System.out.println("ErrorType: " + ex.getErrorType());
+
                     xresponse = ex;
                 } else {
                     xresponse = cause;
@@ -488,13 +476,6 @@ public class OrderTimer {
                     MarketplaceWebServiceOrdersException ex =
                             (MarketplaceWebServiceOrdersException) cause;
                     ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
-                    System.out.println("Service Exception:");
-                    System.out.println("RequestId: " + rhmd.getRequestId());
-                    System.out.println("Timestamp: " + rhmd.getTimestamp());
-                    System.out.println("Message: " + ex.getMessage());
-                    System.out.println("StatusCode: " + ex.getStatusCode());
-                    System.out.println("ErrorCode: " + ex.getErrorCode());
-                    System.out.println("ErrorType: " + ex.getErrorType());
                     xresponse = ex;
                 } else {
                     xresponse = cause;
@@ -537,13 +518,6 @@ public class OrderTimer {
                     MarketplaceWebServiceOrdersException ex =
                             (MarketplaceWebServiceOrdersException) cause;
                     ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
-                    System.out.println("Service Exception:");
-                    System.out.println("RequestId: " + rhmd.getRequestId());
-                    System.out.println("Timestamp: " + rhmd.getTimestamp());
-                    System.out.println("Message: " + ex.getMessage());
-                    System.out.println("StatusCode: " + ex.getStatusCode());
-                    System.out.println("ErrorCode: " + ex.getErrorCode());
-                    System.out.println("ErrorType: " + ex.getErrorType());
                     xresponse = ex;
                 } else {
                     xresponse = cause;
@@ -586,13 +560,7 @@ public class OrderTimer {
                     MarketplaceWebServiceOrdersException ex =
                             (MarketplaceWebServiceOrdersException) cause;
                     ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
-                    System.out.println("Service Exception:");
-                    System.out.println("RequestId: " + rhmd.getRequestId());
-                    System.out.println("Timestamp: " + rhmd.getTimestamp());
-                    System.out.println("Message: " + ex.getMessage());
-                    System.out.println("StatusCode: " + ex.getStatusCode());
-                    System.out.println("ErrorCode: " + ex.getErrorCode());
-                    System.out.println("ErrorType: " + ex.getErrorType());
+
                     xresponse = ex;
                 } else {
                     xresponse = cause;
@@ -604,7 +572,10 @@ public class OrderTimer {
         }
         return responseList;
     }
-
+    /**
+     * 更新订单线程
+     * 定时获取到订单后执行
+     */
     class SaveOrUpdateOrderThread extends Thread   {
         private List<OrderModel> list;
         public SaveOrUpdateOrderThread(List<OrderModel> list) {
