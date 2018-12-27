@@ -124,24 +124,40 @@ public class AbroadLogisticsUtil {
                 System.out.println("data1:" + data1);
                 JSONObject a = JSONObject.parseObject(data1);
                 ReceiveOofayData receiveOofayData = new ReceiveOofayData();
-                JSONObject detail = a.getJSONArray("OmsOrderDetailext").getJSONObject(0);
+                JSONObject omsOrder = a.getJSONObject("oms_order");
+                JSONObject omsOrderDetailext = a.getJSONArray("OmsOrderDetailext").getJSONObject(0);
+                JSONArray omsExpressList = a.getJSONArray("oms_Express");
                 //获取状态码
-                receiveOofayData.setStatusStr(detail.getString("status"));
-                //获取跟踪号
-                receiveOofayData.setTrackWaybill(detail.getString("supply_express_no"));
-                //获取运费(feedamount)
-                receiveOofayData.setInterFreight(detail.getString("feedamount"));
+                receiveOofayData.setStatusStr(omsOrderDetailext.getString("status"));
+                //获取运费
+                receiveOofayData.setInterFreight(omsOrder.getString("feedamount"));
                 //获取是否有入库信息
-                JSONArray recordList = detail.getJSONArray("warehousing_record_list");
+                JSONArray recordList = omsOrderDetailext.getJSONArray("warehousing_record_list");
                 if(recordList.size() > 0 && recordList.getJSONObject(0).getString("storage_time") != null){
                     receiveOofayData.setWarehousing(true);
                 }else{
                     receiveOofayData.setWarehousing(false);
                 }
-                JSONObject destInfo = detail.getJSONObject("ChannelQueryInfo");
+                JSONObject destInfo = omsOrderDetailext.getJSONObject("ChannelQueryInfo");
                 if(destInfo != null){
+                    //国际物流公司
                     receiveOofayData.setDestTransportCompany(destInfo.getString("dest_transport_company"));
+                    //物流方式
                     receiveOofayData.setDestChannel(destInfo.getString("dest_channel"));
+                    //目的地查询网址
+                    receiveOofayData.setDestQueryUrl(destInfo.getString("dest_query_url"));
+                    //服务查询网址
+                    receiveOofayData.setServiceQueryUrl(destInfo.getString("service_query_url"));
+                    //联系电话
+                    receiveOofayData.setMobile(destInfo.getString("mobile"));
+                }
+                if(omsExpressList.size() >0 ){
+                    //获取国内跟踪号
+                    receiveOofayData.setDomesticTrackWaybill(omsOrderDetailext.getString("supply_express_no"));
+                    //国际跟踪单号
+                    receiveOofayData.setTrackWaybill(omsExpressList.getJSONObject(0).getString("transfer_number"));
+                    //发货时间
+                    receiveOofayData.setShipTime(omsExpressList.getJSONObject(0).getString("expressdate"));
                 }
                 map.put("code","true");
                 map.put("receiveOofayData",receiveOofayData);

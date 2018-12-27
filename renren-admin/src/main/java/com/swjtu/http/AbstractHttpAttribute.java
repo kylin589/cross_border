@@ -59,7 +59,6 @@ public abstract class AbstractHttpAttribute {
             public boolean retryRequest(IOException exception , int executionCount , HttpContext context) {
                 // 重试1次,从1开始
                 if (executionCount > 0) {
-
                     return false;
                 }
                 if (exception instanceof NoHttpResponseException) {
