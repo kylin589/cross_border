@@ -68,7 +68,7 @@
     <form>
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
-              <a href="javascript:window.location.href = document.referrer;">上传产品 / </a>
+              <a href="upProduct.html">上传产品 / </a>
               <a><cite>添加上传</cite></a>
             </span>
 
@@ -155,6 +155,7 @@
                 </div>
                 <div class="pro_inf">
                     <span><input type="text" class="changeType" style="width: 350px" placeholder="--选择--" @click="amazonOneCategory" v-model="amazonCategory"></span>
+                    <input type="text" v-model="nodeId" placeholder="分类节点id">
                     <input type="button" value="历史选择" @click="lishiFunc" />
                     <p>{{amazonAllCategory}}</p>
                 </div>
@@ -209,7 +210,7 @@
                         <div class="inner-content-div2" style="">
                             <!--要加滚动条的具体内容-->
                             <ul>
-                                <li v-for='list in item' :data-index="index" :id="list.amazonCategoryId" :data-if="list.ifNext" @click="amazonItemCategory(list)">{{ list.displayName }}</li>
+                                <li v-for='list in item' :data-index="index" :id="list.amazonCategoryId" :data-nodeid="list.nodeId" :data-if="list.ifNext" @click="amazonItemCategory(list)">{{ list.displayName }}</li>
                             </ul>
                         </div>
                     </div>
@@ -254,7 +255,7 @@
         <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
             <div class="inner-content-div2" style="">
                 <ul>
-                    <li v-for="item in lishiList" :id="item.amazonCategoryId" :data-val="item.amazonCategory" :data-allV="item.amazonAllCategory" @click="lishiSelFunc"> {{item.amazonAllCategory}} </li>
+                    <li v-for="item in lishiList" :id="item.amazonCategoryId" :data-val="item.amazonCategory" :data-nodeid="item.nodeId" :data-allV="item.amazonAllCategory" @click="lishiSelFunc"> {{item.amazonAllCategory}} </li>
                 </ul>
             </div>
         </div>

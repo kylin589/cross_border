@@ -21,7 +21,10 @@ var vm = new Vue({
             uploadEntity:{}
         },
         value9:null,
-
+        startId: null,
+        endId: null,
+        uploadIdsstr:'',
+        uploadIds:[],
         uploadIds:[],
         grantShopId: 0,
         isAttribute: 0,
@@ -194,6 +197,7 @@ var vm = new Vue({
                                 'operateItem': vm.operateItem,
                                 'time':vm.changeTime,
                                 'countryCode':vm.shopinfo.countryCode,
+                                'amazonNodeId':vm.nodeId,
                             },
                             dataType: 'json',
                             success: function (r) {
@@ -267,7 +271,8 @@ var vm = new Vue({
                         'amazonTemplateId': vm.amazonTemplateId,
                         'amazonTemplate': vm.amazonTemplate,
                         'operateItem': vm.operateItem,
-                        'fieldsEntityList':vm.modelAttr
+                        'fieldsEntityList':vm.modelAttr,
+                        'amazonNodeId':vm.nodeId,
                     }),
                     contentType: "application/json",
                     // dataType: 'json',

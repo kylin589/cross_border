@@ -46,7 +46,8 @@ var vm = new Vue({
         // 模版属性
         modelAttr:[],
         grantCounty:'',
-        countryCode:''
+        countryCode:'',
+        nodeId:''
     },
     methods:{
         fenleiTankuang:function () {
@@ -72,6 +73,11 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['确定','取消'],
                 btn1: function (index) {
+                    vm.amazonAllCategory = '';
+                    vm.amazonAllArr.forEach(function (t) {
+                        vm.amazonAllCategory+=t+'/'
+                    })
+                    vm.amazonAllCategory.substr(0, vm.amazonAllCategory.length - 1);
                     $('#fenleiTankuang div.con li').removeClass('active');
                     layer.close(index);
 
@@ -161,6 +167,7 @@ var vm = new Vue({
                                 'time':vm.changeTime,
                                 'countryCode':vm.countryCode,
                                 'fieldsEntityList':vm.modelAttr,
+                                'amazonNodeId':vm.nodeId,
                             }),
                             // dataType: 'json',
                             contentType: "application/json",
@@ -255,6 +262,7 @@ var vm = new Vue({
                         'amazonTemplate': templateDisplayName,
                         'operateItem': vm.operateItem,
                         'fieldsEntityList':vm.modelAttr,
+                        'amazonNodeId':vm.nodeId,
                     }),
                     contentType: "application/json",
                     // dataType: 'json',
@@ -370,31 +378,40 @@ var vm = new Vue({
                     url: '../../product/amazoncategory/childCategoryList',
                     type: 'get',
                     data: {
-                        amazonCategoryId:list.amazonCategoryId
+                        amazonCategoryId:list.id
                     },
                     dataType: 'json',
                     success: function (r) {
+                        console.log(list.id);
                         console.log('子集分类')
                         console.log(r);
                         if (r.code === 0) {
                             if(r.amazonCategoryEntityChildList.length != 0){
                                 vm.leven.push(r.amazonCategoryEntityChildList);
                                 console.log(vm.leven);
-                                vm.amazonCategoryId = list.amazonCategoryId;
+                                vm.amazonCategoryId = list.id;
                                 vm.amazonCategory = list.displayName;
                                 vm.amazonAllArr.push(list.displayName);
+                                // vm.amazonAllArr.forEach(function (t) {
+                                //     vm.amazonAllCategory+=t+'/'
+                                // })
+                                // vm.amazonAllCategory.substr(0, vm.amazonAllCategory.length - 1);
                                 console.log(vm.amazonAllArr);
+                                vm.nodeId = list.nodeId;
                             }else {
-                                vm.amazonCategoryId = list.amazonCategoryId;
+                                vm.amazonCategoryId = list.id;
                                 vm.amazonCategory = list.displayName;
                                 // vm.amazonAllArr.push(list.displayName);
                                 console.log(vm.amazonAllArr);
                                 vm.amazonAllCategory='',
-                                vm.amazonAllArr.forEach(function (t) {
-                                    vm.amazonAllCategory+=t+'/'
-                                })
-                                vm.amazonAllCategory+=list.displayName;
+                                // vm.amazonAllArr.forEach(function (t) {
+                                //     vm.amazonAllCategory+=t+'/'
+                                // })
+                                // vm.amazonAllCategory+=list.displayName;
+                                vm.amazonAllArr.push(list.displayName)
+
                                 console.log(vm.amazonAllCategory);
+                                vm.nodeId = list.nodeId;
                                 // amazonAllCategory =
                             }
 
@@ -493,6 +510,8 @@ var vm = new Vue({
             vm.amazonCategory = $(event.target).attr('data-val');
             vm.amazonCategoryId = $(event.target).attr('id');
             vm.amazonAllCategory = $(event.target).attr('data-allV');
+            vm.nodeId = $(event.target).attr('data-nodeid');
+            // vm.nodeId =
         },
         // 选择模版
         selFlFunc:function () {
