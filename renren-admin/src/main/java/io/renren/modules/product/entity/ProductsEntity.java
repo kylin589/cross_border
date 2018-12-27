@@ -245,6 +245,18 @@ public class ProductsEntity implements Serializable {
     public void setDeptId(Long deptId) {
         this.deptId = deptId;
     }
+    /**
+     *修正
+     */
+    private String correction;
+
+    public String getCorrection() {
+        return correction;
+    }
+
+    public void setCorrection(String correction) {
+        this.correction = correction;
+    }
 
     /**
      * 美国运费

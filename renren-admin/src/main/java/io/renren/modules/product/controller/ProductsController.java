@@ -226,10 +226,13 @@ public class ProductsController extends AbstractController {
     public R getProductId() {
         ProductsEntity productsEntity = productsService.getNewProductId(getUserId());
         //生成SKU
+        Long deptId = getDeptId();
+        SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
+        String companySku = sysDeptEntity.getCompanySku();
         SysUserEntity user = getUser();
         String enName = user.getEnName();
         String enBrand = user.getEnBrand();
-        String SKU = enName + "-" + enBrand + "-" + productsEntity.getProductId();
+        String SKU = companySku+"-"+enName + "-" + enBrand + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
@@ -576,10 +579,13 @@ public class ProductsController extends AbstractController {
         //折扣系数
         productsEntity.setDiscount(new BigDecimal("1.00"));
         //生成SKU
+        Long deptId = getDeptId();
+        SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
+        String companySku = sysDeptEntity.getCompanySku();
         SysUserEntity user = getUser();
         String enName = user.getEnName();
         String enBrand = user.getEnBrand();
-        String SKU = enName + "-" + enBrand + "-" + productId;
+        String SKU = companySku+"-"+enName + "-" + enBrand + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
@@ -894,10 +900,39 @@ public class ProductsController extends AbstractController {
         products.setLastOperationUserId(this.getUserId());
         //公司id
         products.setDeptId(this.getDeptId());
+        //获得修正
+        String correction = products.getCorrection();
+        StringBuffer correctionLater= new StringBuffer();
+        String productSku = products.getProductSku();
+
+        correctionLater.append(productSku);
+        //判断修正是否为空
+        if(correction!=""&&StringUtils.isNotBlank(correction)){
+            products.setCorrection(correction);
+            correctionLater.append("-");
+            correctionLater.append(correction);
+        }
+        String correctionLaterString=correctionLater.toString();
         //插入变体信息
         List<VariantsInfoEntity> variantsInfosList = products.getVariantsInfos();
         if (variantsInfosList != null && variantsInfosList.size() != 0) {
-            for (VariantsInfoEntity variantsInfoEntity : variantsInfosList) {
+            int size = variantsInfosList.size();
+            EanUpcEntity eanUpcEntity =new EanUpcEntity();
+            eanUpcEntity.setState(0);
+            eanUpcEntity.setType("EAN");
+            eanUpcEntity.setSize(size);
+            //查出未使用的EAN码，修改为使用
+            List<EanUpcEntity> eanUpcEntities =eanUpcService.selectByLimit(eanUpcEntity);
+            for (int i = 0; i <eanUpcEntities.size() ; i++) {
+                eanUpcEntities.get(i).setState(1);
+                eanUpcEntities.get(i).setProductId(products.getProductId());
+                eanUpcService.updateById(eanUpcEntities.get(i));
+            }
+            for (int i = 0; i <variantsInfosList.size() ; i++) {
+                String code = eanUpcEntities.get(i).getCode();
+                VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
+                variantsInfoEntity.setEanCode(code);
+                variantsInfoEntity.setVariantSku(correctionLaterString+"-"+code);
                 variantsInfoEntity.setProductId(products.getProductId());
             }
             variantsInfoService.insertBatch(variantsInfosList);
@@ -1126,10 +1161,39 @@ public class ProductsController extends AbstractController {
         }
         //批量删除变体信息
         variantsInfoService.delete(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId));
+        //获得修正
+        String correction = products.getCorrection();
+        StringBuffer correctionLater= new StringBuffer();
+        String productSku = products.getProductSku();
+
+        correctionLater.append(productSku);
+        //判断修正是否为空
+        if(correction!=""&&StringUtils.isNotBlank(correction)){
+            products.setCorrection(correction);
+            correctionLater.append("-");
+            correctionLater.append(correction);
+        }
+        String correctionLaterString=correctionLater.toString();
         //插入变体信息
         List<VariantsInfoEntity> variantsInfosList = products.getVariantsInfos();
         if (variantsInfosList != null && variantsInfosList.size() != 0) {
-            for (VariantsInfoEntity variantsInfoEntity : variantsInfosList) {
+            int size = variantsInfosList.size();
+            EanUpcEntity eanUpcEntity =new EanUpcEntity();
+            eanUpcEntity.setState(0);
+            eanUpcEntity.setType("EAN");
+            eanUpcEntity.setSize(size);
+            //查出未使用的EAN码，修改为使用
+            List<EanUpcEntity> eanUpcEntities =eanUpcService.selectByLimit(eanUpcEntity);
+            for (int i = 0; i <eanUpcEntities.size() ; i++) {
+                eanUpcEntities.get(i).setState(1);
+                eanUpcEntities.get(i).setProductId(products.getProductId());
+                eanUpcService.updateById(eanUpcEntities.get(i));
+            }
+            for (int i = 0; i <variantsInfosList.size() ; i++) {
+                String code = eanUpcEntities.get(i).getCode();
+                VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
+                variantsInfoEntity.setEanCode(code);
+                variantsInfoEntity.setVariantSku(correctionLaterString+"-"+code);
                 variantsInfoEntity.setProductId(products.getProductId());
             }
             variantsInfoService.insertBatch(variantsInfosList);

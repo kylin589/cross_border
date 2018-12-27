@@ -11,6 +11,7 @@
         <result property="productId" column="product_id"/>
         <result property="createTime" column="create_time"/>
     </resultMap>
-
-
+    <select id="selectByLimit" parameterType="EanUpcEntity" resultType="EanUpcEntity">
+    select * from product_ean_upc  where type=#{type} and state=#{state} order by state limit #{size};
+    </select>
 </mapper>
