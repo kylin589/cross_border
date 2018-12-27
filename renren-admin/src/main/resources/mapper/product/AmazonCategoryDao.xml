@@ -5,16 +5,13 @@
 
 	<!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.renren.modules.product.entity.AmazonCategoryEntity" id="amazonCategoryMap">
-        <result property="amazonCategoryId" column="amazon_category_id"/>
+        <result property="id" column="id"/>
         <result property="parentId" column="parent_id"/>
         <result property="categoryName" column="category_name"/>
         <result property="displayName" column="display_name"/>
-        <result property="nodeIdUk" column="node_id_uk"/>
-        <result property="nodeIdDe" column="node_id_de"/>
-        <result property="nodeIdFr" column="node_id_fr"/>
-        <result property="nodeIdIt" column="node_id_it"/>
-        <result property="nodeIdEs" column="node_id_es"/>
-        <result property="region" column="region"/>
+        <result property="nodeId" column="node_id"/>
+        <result property="countryCode" column="country_code"/>
+        <result property="categoryQ" column="category_q"/>
     </resultMap>
 
 

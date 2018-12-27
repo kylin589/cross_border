@@ -52,9 +52,9 @@ public class AmazonCategoryHistoryController extends AbstractController{
      */
     @RequestMapping("/getMyList")
 //    @RequiresPermissions("amazon:amazoncategoryhistory:list")
-    public R list(){
+    public R list(String countryCode){
         List<AmazonCategoryHistoryEntity> list = new ArrayList<AmazonCategoryHistoryEntity>();
-        list = amazonCategoryHistoryService.selectList(new EntityWrapper<AmazonCategoryHistoryEntity>().eq("user_id",getUserId()));
+        list = amazonCategoryHistoryService.selectList(new EntityWrapper<AmazonCategoryHistoryEntity>().eq("user_id",getUserId()).eq("country_code",countryCode));
         return R.ok().put("list", list);
     }
 
