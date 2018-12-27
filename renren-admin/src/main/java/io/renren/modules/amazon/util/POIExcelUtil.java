@@ -28,7 +28,7 @@ public class POIExcelUtil {
      * @auther: jhy
      * @date: 2018/12/1 14:41
      */
-    public static void insetCategory(String pathname, String countryCode) throws Exception {
+   /* public static void insetCategory(String pathname, String countryCode) throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(new File(pathname)));
         //获取第一个标签页  根据标签页名称获取
         HSSFSheet sheet = workbook.getSheet("MAPPINGS");
@@ -121,5 +121,5 @@ public class POIExcelUtil {
         } else {
             return nameList.get(1);
         }
-    }
+    }*/
 }

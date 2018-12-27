@@ -164,6 +164,7 @@
                     <table>
                         <tr>
                             <th></th>
+                            <th>采购价</th>
                             <th>订单金额 <span>（汇率 {{ orderDetails.momentRate }}）</span></th>
                             <th>Amazon佣金</th>
                             <th>到账金额</th>
@@ -172,18 +173,9 @@
                             <th>利润</th>
                             <th>退货费用</th>
                         </tr>
-                        <tr>
-                            <th>人民币</th>
-                            <td>{{ orderDetails.orderMoney }}</td>
-                            <td>{{ orderDetails.amazonCommission }}</td>
-                            <td>{{ orderDetails.accountMoney }}</td>
-                            <td>{{ orderDetails.interFreight }}</td>
-                            <td>{{ orderDetails.platformCommissions }}</td>
-                            <td>{{ orderDetails.orderProfit }}</td>
-                            <td>{{ orderDetails.returnCost }}</td>
-                        </tr>
                         <tr class="two">
                             <th>国际币种</th>
+                            <td>{{ orderDetails.orderMoneyForeign }}</td>
                             <td>{{ orderDetails.orderMoneyForeign }}</td>
                             <td>{{ orderDetails.amazonCommissionForeign }}</td>
                             <td>{{ orderDetails.accountMoneyForeign }}</td>
@@ -192,6 +184,18 @@
                             <td></td>
                             <td></td>
                         </tr>
+                        <tr>
+                            <th>人民币</th>
+                            <td>{{ orderDetails.purchasePrice }}</td>
+                            <td>{{ orderDetails.orderMoney }}</td>
+                            <td>{{ orderDetails.amazonCommission }}</td>
+                            <td>{{ orderDetails.accountMoney }}</td>
+                            <td>{{ orderDetails.interFreight }}</td>
+                            <td>{{ orderDetails.platformCommissions }}</td>
+                            <td>{{ orderDetails.orderProfit }}</td>
+                            <td>{{ orderDetails.returnCost }}</td>
+                        </tr>
+
                     </table>
                 </div>
             </div>

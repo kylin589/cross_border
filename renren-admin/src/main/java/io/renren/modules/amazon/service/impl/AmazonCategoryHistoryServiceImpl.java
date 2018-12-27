@@ -31,9 +31,9 @@ public class AmazonCategoryHistoryServiceImpl extends ServiceImpl<AmazonCategory
     }
 
     @Override
-    public AmazonCategoryHistoryEntity selectByAmazonCategoryId(Long amazonCategoryId) {
+    public AmazonCategoryHistoryEntity selectByAmazonCategoryId(Long amazonCategoryId,String countryCode) {
         List<AmazonCategoryHistoryEntity> list = new ArrayList<AmazonCategoryHistoryEntity>();
-        list = this.selectList(new EntityWrapper<AmazonCategoryHistoryEntity>().eq("amazon_category_id",amazonCategoryId));
+        list = this.selectList(new EntityWrapper<AmazonCategoryHistoryEntity>().eq("amazon_category_id",amazonCategoryId).eq("country_code",countryCode));
         if(list.size() != 0){
             return list.get(0);
         }
