@@ -1,9 +1,21 @@
 package io.renren.modules.product.service.impl;
 
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsyncClient;
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConfig;
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersException;
+import com.amazonservices.mws.orders._2013_09_01.model.GetOrderRequest;
+import com.amazonservices.mws.orders._2013_09_01.model.ListOrderItemsRequest;
+import com.amazonservices.mws.orders._2013_09_01.model.ListOrderItemsResponse;
+import com.amazonservices.mws.orders._2013_09_01.model.ListOrdersResponse;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import io.renren.modules.amazon.dto.ListOrderItemsByNextTokenResponseDto;
+import io.renren.modules.amazon.dto.ListOrdersResponseDto;
+import io.renren.modules.amazon.entity.AmazonGrantEntity;
+import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
+import io.renren.modules.order.component.OrderTimer;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.vm.OrderModel;
@@ -44,6 +56,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.amazonservices.mws.orders._2013_09_01.samples.GetOrderAsyncSample.invokeGetOrder;
+import static com.amazonservices.mws.orders._2013_09_01.samples.ListOrderItemsAsyncSample.invokeListOrderItems;
+import static io.renren.modules.amazon.util.XMLUtil.analysisListOrderItemsByNextTokenResponse;
+import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersResponse;
+
 
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
@@ -64,6 +81,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private ConsumeService consumeService;
     @Autowired
     private ProductsService productsService;
+    @Autowired
+    private AmazonGrantService amazonGrantService;
     @Override
     public Map<String, Object> queryMyPage(Map<String, Object> params, Long userId) {
         //店铺名称
@@ -374,7 +393,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 String modelStatus = orderModel.getOrderStatus();
                 if(orderEntity == null){
                     //新增订单
-                    if(!"Canceled".equals(modelStatus)){
+                    if(!"Canceled".equals(modelStatus) && !"Shipped".equals(modelStatus)){
                         //设置基本属性
                         orderEntity = new OrderEntity();
                         orderEntity.setAmazonOrderId(amazonOrderId);
@@ -388,10 +407,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             //已付款
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED);
                             orderEntity.setOrderState("已付款");
-                        }else if("Shipped".equals(modelStatus)){
-                            //已付款
-                            orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_SHIPPED);
-                            orderEntity.setOrderState("虚发货");
                         }
                         if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
                             orderEntity.setCountryCode(orderModel.getProductShipAddressEntity().getShipCountry());
@@ -402,6 +417,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));
                         if(productsEntity != null){
                             orderEntity.setProductId(productsEntity.getProductId());
+                            orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
                         }
                         orderEntity.setOrderNumber(orderModel.getOrderNumber());
                         String rateCode = orderModel.getCurrencyCode();
@@ -414,7 +430,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         if(StringUtils.isNotBlank(rateCode)){
                             rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
                         }
-                        rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
                         orderEntity.setMomentRate(rate);
                         //获取订单金额（外币）
                         BigDecimal orderMoney = orderModel.getOrderMoney();
@@ -687,13 +702,153 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         return platformStatisticsDto;
     }
 
-/*    public static void main(String[] args) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String d = "2018-12-14T15:13:03.290Z";
-        String[] b = d.split(".");
-        System.out.println(b.length);
-//        Date a = sdf.parse(b);
-//        System.out.println(a);
-    }*/
+    //根据订单id进行更新订单Amazon状态
+    @Override
+    public OrderModel updateOrderAmazonStatus(String AmazonOrderId) {
+        List<AmazonGrantEntity> grantList = amazonGrantService.selectList(null);
+        for(AmazonGrantEntity grant:grantList) {
+            String sellerId = grant.getMerchantId();//获得商家id
+            String mwsAuthToken = grant.getGrantToken();//获得授权Token
+            MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
+            MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+                    "mws_test", "1.0", config, null);
+            List<GetOrderRequest> requestList = new ArrayList<GetOrderRequest>();
+            GetOrderRequest request = new GetOrderRequest();
+            request.setSellerId(sellerId);
+            request.setMWSAuthToken(mwsAuthToken);
+            List<String> amazonOrderIds = new ArrayList<String>();
+            amazonOrderIds.add(AmazonOrderId);
+            request.setAmazonOrderId(amazonOrderIds);
+            List<Object> responselist = OrderTimer.invokeGetOrder(client, requestList);
+            Boolean isSuccess = false;
+            List<ListOrdersResponseDto> listOrdersResponseDtos = new ArrayList<>();
+            ListOrdersResponseDto listOrdersResponseDto = null;
+            for (Object tempResponse : responselist) {
+                // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
+                String className = tempResponse.getClass().getName();
+                if ((MarketplaceWebServiceOrdersException.class.getName()).equals(className) == true) {
+                    System.out.println("responseList 类型是 MarketplaceWebServiceOrdersException。");
+                    isSuccess = false;
+                    break;
+                } else if ((ListOrdersResponse.class.getName()).equals(className) == true) {
+                    System.out.println("responseList 类型是 ListOrdersResponse。");
+                    ListOrdersResponse response = (ListOrdersResponse) tempResponse;
+                    listOrdersResponseDto = analysisListOrdersResponse(response.toXML());
+                    isSuccess = true;
+                }
+            }
+            listOrdersResponseDtos.add(listOrdersResponseDto);//封装解析出来的
+            {
+                //循环输出
+                for (int i = 0; i < listOrdersResponseDtos.size(); i++) {
+                    //循环输出订单
+                    for (int j = 0; j < listOrdersResponseDtos.get(i).getOrders().size(); j++) {
+                        List<ListOrderItemsRequest> ListOrderItemsRequestRequests = new ArrayList<ListOrderItemsRequest>();
+                        ListOrderItemsRequest ListOrderItemsRequest = new ListOrderItemsRequest();
+                        ListOrderItemsRequest.setAmazonOrderId(AmazonOrderId);
+                        ListOrderItemsRequest.setSellerId(sellerId);
+                        ListOrderItemsRequest.setMWSAuthToken(mwsAuthToken);
+                        ListOrderItemsRequestRequests.add(ListOrderItemsRequest);
+                        List<Object> responseList3 = invokeListOrderItems(client, ListOrderItemsRequestRequests);
+                        List<ListOrderItemsByNextTokenResponseDto> orderItemResponseDtos = new ArrayList<>();
+                        ListOrderItemsByNextTokenResponseDto orderItemResponseDto = null;
+                        for (Object tempResponse : responseList3) {
+                            // Object 转换 listOrdersByNextTokenResponseDto 还是 MarketplaceWebServiceOrdersException
+                            String className = tempResponse.getClass().getName();
+                            if ((ListOrderItemsResponse.class.getName()).equals(className) == true) {
+                                System.out.println("responseList3 类型是 ListOrderItemsByNextTokenResponse。");
+                                ListOrderItemsResponse response = (ListOrderItemsResponse) tempResponse;
+                                orderItemResponseDto = analysisListOrderItemsByNextTokenResponse(response.toXML());
+                            }
+                        }
+                        orderItemResponseDtos.add(orderItemResponseDto);
+                        for (int k = 0; k < orderItemResponseDtos.size(); k++) {
+                            for (int m = 0; m < orderItemResponseDtos.get(k).getOrderItems().size(); m++) {
+                                String orderStatus = listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus();
+                                ProductShipAddressEntity addressEntity = new ProductShipAddressEntity();
+                                String shipname = listOrdersResponseDtos.get(i).getOrders().get(j).getName();
+                                String shipaddress = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
+                                String shipaddress2 = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine2();
+                                String shipcity = listOrdersResponseDtos.get(i).getOrders().get(j).getCity();
+                                String shipCountry = listOrdersResponseDtos.get(i).getOrders().get(j).getCounty();
+                                String shipdistrict = listOrdersResponseDtos.get(i).getOrders().get(j).getDistrict();
+                                String shipregion = listOrdersResponseDtos.get(i).getOrders().get(j).getStateOrRegion();
+                                String shiptel = listOrdersResponseDtos.get(i).getOrders().get(j).getPhone();
+                                String shipzip = listOrdersResponseDtos.get(i).getOrders().get(j).getPostalCode();
+                                //获得订单商品sku
+                                //进行数据库表查询根据AmazonOrderId,进行更新
+                                Map map = new HashMap();
+                                map.put("AmazonOrderId", AmazonOrderId);
+                                List<OrderModel> orderModels = this.selectByMap(map);
+                                if (orderModels != null && orderModels.size() > 0) {
+                                    OrderModel orderModel = orderModels.get(0);
+                                    if (orderStatus != null) {
+                                        orderModel.setOrderStatus(orderStatus);
+                                    } else {
+                                        orderModel.setOrderStatus("");
+                                    }
+                                    if (shipname != null) {
+                                        addressEntity.setShipName(shipname);
+                                    } else {
+                                        addressEntity.setShipName("");
+                                    }
+                                    if (shipaddress != null) {
+                                        addressEntity.setShipAddressLine1(shipaddress);
+                                    } else if (shipaddress2 != null) {
+                                        addressEntity.setShipAddressLine1(shipaddress2);
+                                    } else {
+                                        addressEntity.setShipAddressLine1("");
+                                    }
+                                    if (shipcity != null) {
+                                        addressEntity.setShipCity(shipcity);
+
+                                    } else {
+                                        addressEntity.setShipCity("");
+
+                                    }
+                                    if (shipCountry != null) {
+                                        addressEntity.setShipCounty(shipCountry);
+                                    } else {
+                                        addressEntity.setShipCounty("");
+                                    }
+                                    if (shipdistrict != null) {
+                                        addressEntity.setShipDistrict(shipdistrict);
+
+                                    } else {
+                                        addressEntity.setShipDistrict("");
+
+                                    }
+                                    if (shipregion != null) {
+                                        addressEntity.setShipRegion(shipregion);
+                                    } else {
+                                        addressEntity.setShipRegion("");
+                                    }
+                                    if (shiptel != null) {
+                                        addressEntity.setShipTel(shiptel);
+                                    } else {
+                                        addressEntity.setShipTel("");
+                                    }
+                                    if (shipzip != null) {
+                                        addressEntity.setShipZip(shipzip);
+                                    } else {
+                                        addressEntity.setShipZip("");
+                                    }
+                                    orderModel.setProductShipAddressEntity(addressEntity);
+                                    return orderModel;
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        }
+        return null;
+    }
+
 }
 
