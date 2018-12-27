@@ -56,6 +56,14 @@
             #demo>form:nth-child(2){
                 display: none;
             }
+            #moveSelected1{
+                position:absolute;
+                background-color: #89d2ff;
+                opacity:0.3;
+                border:1px dashed #d9d9d9;
+                top:0;
+                left:0;
+            }
         </style>
         </head>
 <body>
@@ -215,8 +223,11 @@
                     <span><label for="">品牌名称：</label><input type="text" placeholder="品牌名称" v-model="proDetails.brandName"></span>
                     <span><label for="">厂商编号：</label><input type="text" placeholder="厂商编号" v-model="proDetails.manufacturerNumber"></span>
                     <span><label for="">产品来源：</label><input type="text" placeholder="产品来源" v-model="proDetails.productSource"></span><br>
-                    <span><label for="">内部SKU：</label><input type="text" placeholder="内部SKU" v-model="proDetails.productSku"></span>
-                    <input type="button" value="一键修正" @click="skuChFunc">
+                    <span><label for="">内部SKU：</label>
+                        <input type="text" placeholder="内部SKU" v-model="proDetails.productSku">
+                        <input type="text" placeholder="输入SKU修正内容" v-model="proDetails.correction">
+                    </span>
+                    <!--<input type="button" value="一键修正" @click="skuChFunc">-->
                     <br>
                     <span><label for="">来源地址：</label><textarea v-model="proDetails.sellerLink"></textarea></span><br>
                     <span><label for="">附加备注：</label><textarea v-model="proDetails.productRemark"></textarea></span><br>
@@ -504,7 +515,7 @@
         </div>
 
         <!--变体列表选择图片-->
-        <div id="selImg" class="tankuang" style="display: none">
+        <div id="selImg" class="tankuang" style="display: none;position: relative;">
             <h3>产品回收站</h3>
             <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
                 <div class="inner-content-div2">
@@ -517,6 +528,10 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- 鼠标拖拽出的遮罩 （定位为 position:absolute）-->
+            <!-- 遮罩最好是在绑定了mouseover事件的元素内部，并且不要阻止遮罩的冒泡事件。这样鼠标移到了遮罩上面，依然可以利用冒泡执行父元素的mouseover事件，就不会出现遮罩只能扩大，不能缩小的情况了（亲自试过） -->
+            <div id="moveSelected1">11111</div>
         </div>
 
         <!--变体添加-->

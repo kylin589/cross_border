@@ -955,7 +955,7 @@ var vm = new Vue({
                 title: false,
                 content: $('#caijiCreate'), //这里content是一个普通的String
                 skin: 'openClass',
-                area: ['700px', '340px'],
+                area: ['400px', '160px'],
                 shadeClose: true,
                 btn: ['采集','取消'],
                 btn1: function (index) {
@@ -979,7 +979,7 @@ var vm = new Vue({
                         // data:vm.xiugaiData,
                         data:{
                             url:vm.caijiUrl,
-                            category_three_id:vm.caijiThreeId
+                            // category_three_id:vm.caijiThreeId
                         },
                         // contentType: "application/json",
                         success: function (r) {
