@@ -199,7 +199,7 @@ var vm = new Vue({
                         var index = layer.load(1); //换了种风格
                         var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
 
-
+                        vm.operateItem = [];
                         console.log(vm.inputche)
                         vm.uploadIds = vm.uploadIdsstr.split(',');
                         console.log(typeof(vm.uploadIds));
@@ -215,6 +215,7 @@ var vm = new Vue({
                             }
                         }
 
+                        console.log(vm.inputche);
                         console.log(vm.operateItem);
                         // vm.grantShopId = vm.shopinfo.grantShopId;
                         // vm.grantShop = vm.shopinfo.shopName;
