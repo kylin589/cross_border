@@ -258,7 +258,7 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getOrderlist();
+                            vm.getOrderlist1();
                         }
                     }
                 });
@@ -303,6 +303,53 @@ var vm = new Vue({
                         vm.allOrderCount = r.page.totalCount;
                         console.log(vm.allOrderCount)
                         vm.laypage();
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        getOrderlist1:function (orderStatus) {
+
+            console.log(orderStatus);
+            this.startDate = this.value9[0];
+            this.endDate = this.value9[1];
+            console.log(this.shopName);
+            console.log(this.endDate);
+            this.orderStatus = orderStatus;
+            $.ajax({
+                url: '../../product/order/getAllList',
+                type: 'post',
+                data: {
+                    'page': this.proCurr,
+                    'limit': this.pageLimit,
+                    'shopName': this.shopName,
+                    'orderStatus':this.orderStatus,
+                    'orderId':this.orderId,
+                    'amazonOrderId':this.amazonOrderId,
+                    //产品id
+                    'productId':this.productId,
+                    'productSku':this.productSku,
+                    'productAsin':this.productAsin,
+                    'domesticWaybill':this.domesticWaybill,
+                    'abroadWaybill':this.abroadWaybill,
+                    'startDate':this.startDate,
+                    'endDate':this.endDate,
+                    'deptId':this.allGongsiValue,
+                    'userId':this.allYUanGValue
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('订单列表')
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.prolist = r.page.list;
+                        vm.allOrderCount = r.page.totalCount;
+                        console.log(vm.allOrderCount)
+                        // vm.laypage();
                     } else {
                         layer.alert(r.msg);
                     }

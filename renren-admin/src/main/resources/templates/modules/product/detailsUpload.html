@@ -87,11 +87,11 @@
                 </div>
                 <div class="pro_inf daochu">
                     <span>
-                        <label for="">开始编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.startId" disabled>
+                        <label for="">开始编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.startId">
                         <p>产品编号都是递增的，本次要导出产品起始编号</p>
                     </span> &nbsp;&nbsp;&nbsp;&nbsp;
                     <span>
-                        <label for="">结束编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.endId" disabled>
+                        <label for="">结束编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.endId">
                         <p>要导出产品的结束编号，结束编号起始编号</p>
                     </span>
                 </div>
@@ -103,7 +103,7 @@
                     <h4>产品ID</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><textarea placeholder="产品ID" v-model="upProDetails.uploadEntity.uploadIds" disabled></textarea></span><br>
+                    <span><textarea placeholder="产品ID" v-model="upProDetails.uploadEntity.uploadIds"></textarea></span><br>
                     <p>填写产品ID后（逗号隔开），将只上传填写的ID列表，不填写则上传其他条件的筛选出的产品</p>
                 </div>
             </div>
@@ -122,16 +122,16 @@
                         <!--</option>-->
                     <!--</select>-->
 
-                    <!--<el-select v-model="shopinfo" placeholder="请选择店铺">-->
-                        <!--<el-option-->
-                                <!--v-for="item in marketplace"-->
-                                <!--:key="item.grantShopId"-->
-                                <!--:label="item.shopName"-->
-                                <!--:value="item.grantShopId">-->
-                        <!--</el-option>-->
-                    <!--</el-select>-->
+                    <el-select v-model="shopinfo" placeholder="请选择店铺">
+                        <el-option
+                                v-for="item in marketplace"
+                                :key="item.grantShopId"
+                                :label="item.shopName"
+                                :value="item.grantShopId">
+                        </el-option>
+                    </el-select>
 
-                    <span style="color: #666">{{upProDetails.uploadEntity.grantShop}}</span>
+                    <!--<span style="color: #666">{{upProDetails.uploadEntity.grantShop}}</span>-->
 
                 </div>
             </div>
@@ -158,6 +158,7 @@
                 </div>
                 <div class="pro_inf">
                     <span><input type="text" class="changeType" style="width: 350px" placeholder="--选择--" @click="amazonOneCategory" v-model="amazonCategory"></span>
+                    <input type="text" v-model="nodeId" placeholder="分类节点id">
                     <input type="button" value="历史选择" @click="lishiFunc" />
                     <p>{{amazonAllCategory}}</p>
                 </div>

@@ -52,7 +52,7 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getauthorizeList();
+                            vm.getrecordList1();
                         }
                     }
                 });
@@ -60,6 +60,30 @@ var vm = new Vue({
         },
         // 获取授权列表
         getrecordList:function () {
+            $.ajax({
+                url: '../../product/claim/list',
+                type: 'get',
+                data: {
+                    limit:this.pageLimit,
+                    page:this.proCurr
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.recordList=r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                        vm.laypage();
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        getrecordList1:function () {
             $.ajax({
                 url: '../../product/claim/list',
                 type: 'get',

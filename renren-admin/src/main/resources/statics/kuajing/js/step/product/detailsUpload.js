@@ -25,7 +25,7 @@ var vm = new Vue({
         endId: null,
         uploadIdsstr:'',
         uploadIds:[],
-        uploadIds:[],
+        // uploadIds:[],
         grantShopId: 0,
         isAttribute: 0,
         grantShop:null,
@@ -51,48 +51,9 @@ var vm = new Vue({
         flModleValue:'',
         // 模版属性
         modelAttr:[],
+        nodeId:''
     },
     methods:{
-        fenleiTankuang:function () {
-            // var con = $('.fenleiCon');
-            // $('#fenleiTankuang div.con').append(con);
-            // $('.fenleiCon ul li').click(function () {
-            //     var id = $(this).attr('data-id');
-            //     var bol = $(this).attr('data-ifTwo');
-            //     vm.fenlei(bol,id);
-            //     vm.fenlei();
-            // })
-            // vm.amazonOneCategory();
-
-
-
-            // 分类弹框
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#fenleiTankuang'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['800px', '400px'],
-                shadeClose: true,
-                btn: ['确定','取消'],
-                btn1: function (index) {
-                    $('#fenleiTankuang div.con li').removeClass('active');
-                    layer.close(index);
-
-                },
-                btn2: function (index) {
-
-                    // $('#fenleiTankuang div.con>div.qita').remove();
-                    $('#fenleiTankuang div.con li').removeClass('active');
-                }
-            });
-            console.log('打印');
-            console.log($('.inner-content-div2'))
-            $('.inner-content-div2').slimScroll({
-                height: '270px' //设置显示的高度
-            });
-        },
-
         // 获取详情
         getDetails:function () {
             $.ajax({
@@ -107,10 +68,15 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         vm.upProDetails = r.data;
+                        vm.startId = r.data.uploadEntity.startId;
+                        vm.endId = r.data.uploadEntity.endId;
+                        vm.uploadIdsstr = r.data.uploadEntity.uploadIds;
                         vm.shopinfo = r.data.uploadEntity.grantShopId;
+                        vm.amazonAllCategory = r.data.allCategories;
                         vm.amazonCategoryId = r.data.uploadEntity.amazonCategoryId;
                         vm.amazonCategory = r.data.uploadEntity.amazonCategory;
                         vm.flModleValue = r.data.uploadEntity.amazonTemplate;
+                        vm.nodeId = r.data.uploadEntity.amazonCategoryNodeId;
                         vm.modelAttr = r.data.middleEntitys;
                         console.log('111');
                         console.log(r.data.uploadEntity.operateItem.split(','));
@@ -148,6 +114,47 @@ var vm = new Vue({
                 error: function () {
                     layer.msg("网络故障");
                 }
+            });
+        },
+
+
+        fenleiTankuang:function () {
+            // var con = $('.fenleiCon');
+            // $('#fenleiTankuang div.con').append(con);
+            // $('.fenleiCon ul li').click(function () {
+            //     var id = $(this).attr('data-id');
+            //     var bol = $(this).attr('data-ifTwo');
+            //     vm.fenlei(bol,id);
+            //     vm.fenlei();
+            // })
+            // vm.amazonOneCategory();
+
+
+
+            // 分类弹框
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#fenleiTankuang'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['800px', '400px'],
+                shadeClose: true,
+                btn: ['确定','取消'],
+                btn1: function (index) {
+                    $('#fenleiTankuang div.con li').removeClass('active');
+                    layer.close(index);
+
+                },
+                btn2: function (index) {
+
+                    // $('#fenleiTankuang div.con>div.qita').remove();
+                    $('#fenleiTankuang div.con li').removeClass('active');
+                }
+            });
+            console.log('打印');
+            console.log($('.inner-content-div2'))
+            $('.inner-content-div2').slimScroll({
+                height: '270px' //设置显示的高度
             });
         },
         // 定时上传
@@ -251,6 +258,22 @@ var vm = new Vue({
                     }
                 }
                 console.log(vm.shopinfo);
+
+                var grantShop = '';
+                vm.marketplace.forEach(function (t) {
+                    if(t.grantShopId == vm.shopinfo){
+                        grantShop = t.shopName
+                    }
+                })
+
+                var templateDisplayName = '';
+                vm.flModleList.forEach(function (t) {
+                    if(t.templateId == vm.flModleValue){
+                        console.log(t.templateId);
+                        templateDisplayName = t.templateDisplayName;
+                    }
+                })
+
                 // vm.grantShopId = vm.shopinfo.grantShopId;
                 // vm.grantShop = vm.shopinfo.shopName;
                 // console.log(vm.grantShopId);
@@ -259,17 +282,17 @@ var vm = new Vue({
                     type: 'post',
                     data: JSON.stringify({
                         'uploadId':vm.id,
-                        // 'startId': parseInt(vm.startId),
-                        // 'endId': parseInt(vm.endId),
-                        // 'uploadIds': vm.uploadIds,
-                        // 'grantShopId': parseInt(vm.shopinfo),
+                        'startId': parseInt(vm.startId),
+                        'endId': parseInt(vm.endId),
+                        'uploadIds': vm.uploadIds,
+                        'grantShopId': parseInt(vm.shopinfo),
                         // 'grantShopId': parseInt(vm.grantShopId),
                         'isAttribute': '',
-                        // 'grantShop':'66',
+                        'grantShop':grantShop,
                         'amazonCategoryId': vm.amazonCategoryId,
                         'amazonCategory': vm.amazonCategory,
-                        'amazonTemplateId': vm.amazonTemplateId,
-                        'amazonTemplate': vm.amazonTemplate,
+                        'amazonTemplateId': vm.flModleValue,
+                        'amazonTemplate': templateDisplayName,
                         'operateItem': vm.operateItem,
                         'fieldsEntityList':vm.modelAttr,
                         'amazonNodeId':vm.nodeId,

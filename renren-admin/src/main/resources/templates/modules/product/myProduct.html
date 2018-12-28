@@ -130,7 +130,7 @@
     </div>
     <!--分页-->
     <div id="page" style="text-align: center"></div>
-    <!--批量删除弹框-->
+    <!--批量修改弹框-->
     <div id="pilUp" style="display: none">
         <h3>批量修改</h3>
         <div class="form_item">
@@ -221,14 +221,14 @@
                     <div class="pro_inf">
                         <span><label for="">厂家：</label><input type="text" placeholder="厂家名称" v-model="xiugaiData.producerName"></span>
                         <span><label for="">厂家编号：</label><input type="text" placeholder="厂家编号" v-model="xiugaiData.manufacturerNumber"></span>
-                        <span><label for="">品牌：</label><input type="text" placeholder="品牌名称" v-model="xiugaiData.brandName"></span>
-                        <span><label for="">商品简介：</label><input type="text" placeholder="商品简介" v-model="xiugaiData.producerName"></span><br>
+                        <span><label for="">品牌名称：</label><input type="text" placeholder="品牌名称" v-model="xiugaiData.brandName"></span>
+                        <!--<span><label for="">商品简介：</label><input type="text" placeholder="商品简介" v-model="xiugaiData.producerName"></span><br>-->
                         <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="xiugaiData.productWeight"></span>
                         <span><label for="">尺寸（cm）：</label><input class="size_input" type="text" placeholder="长" v-model="xiugaiData.productLength"> * <input class="size_input" type="text" placeholder="宽" v-model="xiugaiData.productWide"> * <input type="text" class="size_input" placeholder="高" v-model="xiugaiData.productHeight"></span><br>
                         <span><label for="">标题前加：</label><input type="text" placeholder="建议填写" v-model="xiugaiData.productTitleQ"></span>
                         <span><label for="">标题后加：</label><input type="text" placeholder="建议填写" v-model="xiugaiData.productTitleH"></span><br>
-                        <span><label for="">买点：</label><textarea v-model="xiugaiData.producerName">建议填写</textarea></span><br>
-                        <span><label for="">关键词：</label><textarea v-model="xiugaiData.keyWord">建议填写</textarea></span><br>
+                        <span><label for="">买点：<br><input type="checkbox" v-model="xiugaiData.keyPointsadd">是否追加</label><textarea style="margin-top: -28px;" v-model="xiugaiData.keyPoints">建议填写</textarea></span><br>
+                        <span><label for="">关键词：<br><input type="checkbox" v-model="xiugaiData.keywordsadd">是否追加</label><textarea style="margin-top: -28px;" v-model="xiugaiData.keyWord">建议填写</textarea></span><br>
                         <span><label for="">描述前加：</label><textarea v-model="xiugaiData.productDescriptionQ">建议填写</textarea></span><br>
                         <span><label for="">描述后加：</label><textarea v-model="xiugaiData.productDescriptionH">建议填写</textarea></span><br>
                         <p>
