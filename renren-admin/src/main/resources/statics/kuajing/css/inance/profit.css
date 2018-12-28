@@ -158,3 +158,6 @@
 .el-input__inner{
     background: none;
 }
+.statistics>span span{
+    color: transparent;
+}

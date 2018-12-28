@@ -1,6 +1,8 @@
 function allChart1(d,t) {
     var dom = document.getElementById("allChart1");
+    console.log(dom);
     var myChart = echarts.init(dom);
+
     var app = {};
     option = null;
 

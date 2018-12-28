@@ -42,8 +42,44 @@ var vm = new Vue({
         zongbuTime:false,
         jiamTime:false,
         pingtTime:false,
+        // 所有公司
+        allGongsi:[],
+        // 所选公司的value
+        allGongsiValue:''
     },
     methods:{
+        // 获取公司列表
+        getCouList:function(){
+            $.ajax({
+                url: '../../sys/dept/select',
+                type: 'get',
+                data:''
+                // 'productIds': JSON.stringify(vm.activeProlist)
+                ,
+                contentType: "application/json",
+                // dataType: 'json',
+                success: function (r) {
+                    console.log('获取公司');
+                    console.log(r);
+                    if (r.code === 0) {
+                        // layer.msg('操作成功');
+                        vm.allGongsi = r.deptList;
+                        vm.allGongsi.unshift({
+                            deptId:'',
+                            name:'全部'
+                        })
+                        console.log(vm.allGongsi)
+                        // vm.getPage();
+
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            })
+        },
         //默认盈利明细
         oneLevelStatisticsDefault:function () {
             $.ajax({
@@ -69,10 +105,10 @@ var vm = new Vue({
                         vm.allChart2Data[2] = vm.statistics.profit;
                         vm.allChart3Data = vm.statistics.profitRate;
                         console.log(r);
-                        allChart1(vm.allChart1Data,vm.statistics.name);
-                        allChart2(vm.allChart2Data,vm.statistics.name);
+                        allChart1(vm.allChart1Data);
+                        allChart2(vm.allChart2Data);
                         allChart3(vm.allChart3Data);
-                        shopChart3(vm.shopChart3Data,vm.statistics.name);
+                        shopChart3(vm.shopChart3Data);
                         shopChart2(vm.shopChart2Data);
                         shopChart1(vm.shopChart1Data);
                     } else {
@@ -97,6 +133,10 @@ var vm = new Vue({
                     console.log(r)
                     if (r.code === 0) {
                         vm.staff = r.userList;
+                        vm.staff.unshift({
+                            userId:'',
+                            username:'全部'
+                        })
                     } else {
                         layer.alert(r.msg);
                     }
@@ -253,7 +293,7 @@ var vm = new Vue({
                         type:type,
                         startDate:vm.value3,
                         endDate:vm.value3,
-                        userId:vm.jiamenguserid
+                        deptId:vm.allGongsiValue
                     }),
                     contentType: "application/json",
                     success: function (r) {
@@ -288,7 +328,7 @@ var vm = new Vue({
                     type:vm.timetype3,
                     startDate:vm.value3,
                     endDate:vm.value4,
-                    userId:vm.jiamenguserid
+                    deptId:vm.allGongsiValue
                 }),
                 contentType: "application/json",
                 success: function (r) {
@@ -315,14 +355,18 @@ var vm = new Vue({
 
     },
     created:function(){
+        this.getCouList();
         this.oneLevelStatisticsDefault();
         this.selectOneLevelUserList();
+
     },
     mounted:function () {
         $('.chart2>div').css('color','#fff');
+        $('.statistics>span span').css('color','#00a3e8');
     },
     updated:function () {
         $('.chart2>div').css('color','#fff');
+        $('.statistics>span span').css('color','#00a3e8');
     }
 
 })

@@ -13,10 +13,22 @@ window.onload = function () {
         }
     })
 
+
+    $('.search1 .sousuoAreaInput').focus(function () {
+        $('.el-icon-circle-close').css('display','inline-block');
+    })
+    // $('.search1 .sousuoAreaInput').onfocus(function () {
+    //     $('.el-icon-circle-close').css('display','inline-block');
+    // })
+
     // 点击分类框元素外部隐藏元素
     $(document).click(function(){
         $(".sousuoArea").hide();
+        $('.el-icon-circle-close').hide();
     });
+    $('.el-icon-circle-close').click(function (event) {
+        event.stopPropagation();
+    })
     // 点击分类框元素时阻止事件冒泡
     $(".sousuoArea").click(function(event){
         event.stopPropagation();
@@ -174,6 +186,12 @@ var vm = new Vue({
                 vm.productType.productTypeList = r.productTypeList;
                 vm.productType.productTypeCounts = r.productTypeCounts;
             });
+        },
+        // 取消分类搜索（列表）
+        quxiaoFlSel:function () {
+            vm.nowProType = '';
+            vm.nowProTypeId = '';
+            $('.sousuoArea').hide();
         },
 
         // 分页器

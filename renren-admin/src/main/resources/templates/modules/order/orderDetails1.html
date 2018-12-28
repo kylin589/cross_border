@@ -59,11 +59,11 @@
                 <div class="pro_inf okEdit jijian">
                     <div>
                         <span><label for="">收件人：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipName"></span>
-                        <span><label for="">收件人国家：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipCountry"></span><br>
-                        <span><label for="" style="width: 64px">TEL：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipTel"></span>
-                        <span><label for="">ZIP：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipZip"></span>
-
-                        <span><label for="">州：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipRegion"></span>
+                        <span><label for="">TEL：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipTel"></span>
+                        <span><label for="">收件人国家：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipCountry"></span>
+                        <span><label for="">ZIP：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipZip"></span><br>
+                        <span><label for="" style="width: 64px">州：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipRegion"></span>
+                        <span><label for="" style="width: 47.8px">市：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipCity"></span>
                         <span><label for="">街道：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipAddressLine1"></span><br>
                         <span><label for="">详细地址：</label><textarea v-model="orderDetails.shipAddress.shipCity">
                             {{orderDetails.shipAddress.shipCity}}
@@ -109,12 +109,12 @@
                 <div class="pro_inf chengben">
                     <!--<p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addorder"></p>-->
                     <div>
-                        <span><label for="">国际物流单号：</label><span>{{ orderDetails.abroadLogistics.abroadWaybill }}</span></span>
-                        <span><label for="">国际跟踪号：</label><span>{{ orderDetails.abroadLogistics.trackWaybill }}</span></span>
+                        <span><label for="" style="width: 120px">国际物流单号：</label><span>{{ orderDetails.abroadLogistics.abroadWaybill }}</span></span>
+                        <span><label for="" style="width: 120px">国际跟踪号：</label><span>{{ orderDetails.abroadLogistics.trackWaybill }}</span></span>
                         <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
-                        <span><label for="">国际运费：</label><span>{{ orderDetails.abroadLogistics.interFreight }}</span></span>
+                        <span><label for="" style="width: 106px">国际运费：</label><span>{{ orderDetails.abroadLogistics.interFreight }}</span></span>
                         <span><label for="">物流公司：</label><span>{{ orderDetails.abroadLogistics.destTransportCompany }}</span></span>
-                        <span><label for="">物流渠道：</label><span>{{ orderDetails.abroadLogistics.destChannel }}</span></span><br>
+                        <span><label for="">物流渠道：</label><span>{{ orderDetails.abroadLogistics.destChannel }}</span></span><br><br>
 
                         <span><label for="">国内查询跟踪号：</label><span>{{ orderDetails.abroadLogistics.domesticTrackWaybill }}</span></span>
                         <span><label for="">目的地查询网址：</label><span>{{ orderDetails.abroadLogistics.destQueryUrl }}</span></span>
@@ -143,31 +143,57 @@
                             <th>订单金额 <span>（汇率 {{ orderDetails.momentRate }}）</span></th>
                             <th>Amazon佣金</th>
                             <th>到账金额</th>
+                            <th>采购价</th>
                             <th>国际运费</th>
                             <th>平台佣金</th>
                             <th>利润</th>
                             <th>退货费用</th>
-                        </tr>
-                        <tr>
-                            <th>人民币</th>
-                            <td>{{ orderDetails.orderMoney }}</td>
-                            <td>{{ orderDetails.amazonCommission }}</td>
-                            <td>{{ orderDetails.accountMoney }}</td>
-                            <td>{{ orderDetails.interFreight }}</td>
-                            <td>{{ orderDetails.platformCommissions }}</td>
-                            <td>{{ orderDetails.orderProfit }}</td>
-                            <td>{{ orderDetails.returnCost }}</td>
                         </tr>
                         <tr class="two">
                             <th>国际币种</th>
                             <td>{{ orderDetails.orderMoneyForeign }}</td>
                             <td>{{ orderDetails.amazonCommissionForeign }}</td>
                             <td>{{ orderDetails.accountMoneyForeign }}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
                         </tr>
+                        <tr>
+                            <th>人民币</th>
+                            <td>{{ orderDetails.orderMoney }}</td>
+                            <td>{{ orderDetails.amazonCommission }}</td>
+                            <td>{{ orderDetails.accountMoney }}</td>
+                            <td>{{ orderDetails.purchasePrice }}</td>
+                            <td>{{ orderDetails.interFreight }}</td>
+                            <td>{{ orderDetails.platformCommissions }}</td>
+                            <td>{{ orderDetails.orderProfit }}</td>
+                            <td>{{ orderDetails.returnCost }}</td>
+                        </tr>
+                        <!--<tr class="two">-->
+                            <!--<th>国际币种</th>-->
+                            <!--<td>{{ orderDetails.orderMoneyForeign }}</td>-->
+                            <!--<td>{{ orderDetails.amazonCommissionForeign }}</td>-->
+                            <!--<td>{{ orderDetails.accountMoneyForeign }}</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<th>人民币</th>-->
+                            <!--<td>{{ orderDetails.orderMoney }}</td>-->
+                            <!--<td>{{ orderDetails.amazonCommission }}</td>-->
+                            <!--<td>{{ orderDetails.accountMoney }}</td>-->
+                            <!--<td>{{ orderDetails.purchasePrice }}</td>-->
+                            <!--<td>{{ orderDetails.interFreight }}</td>-->
+                            <!--<td>{{ orderDetails.platformCommissions }}</td>-->
+                            <!--<td>{{ orderDetails.orderProfit }}</td>-->
+                            <!--<td>{{ orderDetails.returnCost }}</td>-->
+                        <!--</tr>-->
+
                     </table>
                 </div>
             </div>

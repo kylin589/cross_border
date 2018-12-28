@@ -10,7 +10,7 @@
                 width: 20%;
             }
             .sousuoArea{
-                left:386px;
+                left:400px;
             }
             .renl{
                 position: absolute;
@@ -37,6 +37,13 @@
             }
             .el-select-dropdown{
                 z-index: 200000000!important;
+            }
+            .el-icon-circle-close{
+                position: relative;
+                margin-left: -40px;
+                color: #bbb;
+                margin-right: 21.6px;
+                display: none;
             }
         </style>
         </head>
@@ -68,6 +75,7 @@
         </el-select>
 
         <input type="text" class="sousuoAreaInput" placeholder="产品类目" v-model="nowProType" @click="typeClickINput" style="left: 400px">
+        <i class="el-icon-circle-close" @click="quxiaoFlSel"></i>
         <div class="sousuoArea">
             <div class="areaOne">
                 <ul>

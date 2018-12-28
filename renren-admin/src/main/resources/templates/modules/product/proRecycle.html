@@ -9,6 +9,13 @@
             .layui-col-md3{
                 width: 20%;
             }
+            .el-icon-circle-close{
+                position: relative;
+                margin-left: -40px;
+                color: #bbb;
+                margin-right: 21.6px;
+                display: none;
+            }
         </style>
         </head>
 <body>
@@ -16,6 +23,7 @@
     <!--搜索区域-->
     <div class="search1">
         <input type="text" class="sousuoAreaInput" placeholder="产品类目" v-model="nowProType" @click="typeClickINput">
+        <i class="el-icon-circle-close" @click="quxiaoFlSel"></i>
         <div class="sousuoArea">
             <div class="areaOne">
                 <ul>
