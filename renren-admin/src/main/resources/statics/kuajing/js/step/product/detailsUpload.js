@@ -67,6 +67,8 @@ var vm = new Vue({
                     console.log('详情');
                     console.log(r);
                     if (r.code === 0) {
+
+
                         vm.upProDetails = r.data;
                         vm.startId = r.data.uploadEntity.startId;
                         vm.endId = r.data.uploadEntity.endId;
@@ -75,7 +77,8 @@ var vm = new Vue({
                         vm.amazonAllCategory = r.data.allCategories;
                         vm.amazonCategoryId = r.data.uploadEntity.amazonCategoryId;
                         vm.amazonCategory = r.data.uploadEntity.amazonCategory;
-                        vm.flModleValue = r.data.uploadEntity.amazonTemplate;
+                        vm.flModleValue = r.data.uploadEntity.amazonTemplateId;
+                        // vm.flModleValue = r.data.uploadEntity.amazonCategoryId;
                         vm.nodeId = r.data.uploadEntity.amazonCategoryNodeId;
                         vm.modelAttr = r.data.middleEntitys;
                         console.log('111');
@@ -106,6 +109,8 @@ var vm = new Vue({
                                 }
                             })
                         }
+
+                        vm.selFlFunc();
                         console.log(vm.inputche);
                     } else {
                         layer.alert(r.message);
@@ -273,6 +278,8 @@ var vm = new Vue({
                         templateDisplayName = t.templateDisplayName;
                     }
                 })
+                console.log(vm.flModleValue);
+                console.log(templateDisplayName);
 
                 // vm.grantShopId = vm.shopinfo.grantShopId;
                 // vm.grantShop = vm.shopinfo.shopName;
@@ -291,7 +298,7 @@ var vm = new Vue({
                         'grantShop':grantShop,
                         'amazonCategoryId': vm.amazonCategoryId,
                         'amazonCategory': vm.amazonCategory,
-                        'amazonTemplateId': vm.flModleValue,
+                        'amazonTemplateId': parseInt(vm.flModleValue),
                         'amazonTemplate': templateDisplayName,
                         'operateItem': vm.operateItem,
                         'fieldsEntityList':vm.modelAttr,
