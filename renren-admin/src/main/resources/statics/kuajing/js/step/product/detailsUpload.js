@@ -183,7 +183,7 @@ var vm = new Vue({
                 })
                 var templateDisplayName = '';
                 vm.flModleList.forEach(function (t) {
-                    if(t.templateId = vm.flModleValue){
+                    if(t.templateId == vm.flModleValue){
                         templateDisplayName = t.templateDisplayName;
                     }
                 })
