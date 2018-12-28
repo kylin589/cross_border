@@ -51,7 +51,8 @@ var vm = new Vue({
         flModleValue:'',
         // 模版属性
         modelAttr:[],
-        nodeId:''
+        nodeId:'',
+        grantCounty:''
     },
     methods:{
         // 获取详情
@@ -82,33 +83,36 @@ var vm = new Vue({
                         vm.nodeId = r.data.uploadEntity.amazonCategoryNodeId;
                         vm.modelAttr = r.data.middleEntitys;
                         console.log('111');
-                        console.log(r.data.uploadEntity.operateItem.split(','));
-                        if(r.data.uploadEntity.operateItem.split(',').length == 5){
-                            vm.inputche = ['true','true','true','true','true','true'];
-                            // $('#operateItem input').prop('checked',true)
-                        }else {
-                            var arr = r.data.uploadEntity.operateItem.split(',');
-                            arr.forEach(function (t) {
-                                if(t == 0){
-                                    vm.inputche[1] = 'true';
-                                    console.log(t);
-                                    // $('#operateItem input').eq(1).prop('checked',true);
-                                    // console.log($('#operateItem input').eq(1));
-                                }else if(t == 1){
-                                    vm.inputche[2] = true;
-                                    // $('#operateItem input').eq(2).prop('checked',true);
-                                }else if(t == 2){
-                                    vm.inputche[3] = true;
-                                    // $('#operateItem input').eq(3).prop('checked',true);
-                                }else if(t == 3){
-                                    vm.inputche[4] = true;
-                                    // $('#operateItem input').eq(4).prop('checked',true);
-                                }else if(t == 4){
-                                    vm.inputche[5] = true;
-                                    // $('#operateItem input').eq(5).prop('checked',true);
-                                }
-                            })
+                        if(JSON.stringify(r.data.uploadEntity.operateItem) != 'null'){
+                            console.log(r.data.uploadEntity.operateItem.split(','));
+                            if(r.data.uploadEntity.operateItem.split(',').length == 5){
+                                vm.inputche = ['true','true','true','true','true','true'];
+                                // $('#operateItem input').prop('checked',true)
+                            }else {
+                                var arr = r.data.uploadEntity.operateItem.split(',');
+                                arr.forEach(function (t) {
+                                    if(t == 0){
+                                        vm.inputche[1] = 'true';
+                                        console.log(t);
+                                        // $('#operateItem input').eq(1).prop('checked',true);
+                                        // console.log($('#operateItem input').eq(1));
+                                    }else if(t == 1){
+                                        vm.inputche[2] = true;
+                                        // $('#operateItem input').eq(2).prop('checked',true);
+                                    }else if(t == 2){
+                                        vm.inputche[3] = true;
+                                        // $('#operateItem input').eq(3).prop('checked',true);
+                                    }else if(t == 3){
+                                        vm.inputche[4] = true;
+                                        // $('#operateItem input').eq(4).prop('checked',true);
+                                    }else if(t == 4){
+                                        vm.inputche[5] = true;
+                                        // $('#operateItem input').eq(5).prop('checked',true);
+                                    }
+                                })
+                            }
                         }
+
 
                         vm.selFlFunc();
                         console.log(vm.inputche);
@@ -164,7 +168,23 @@ var vm = new Vue({
         },
         // 定时上传
         timeUpFunc:function () {
-            if (this.shopinfo.region!=undefined) {
+            if (this.shopinfo!='') {
+                // var countryCode;
+                var grantShop = '';
+                vm.marketplace.forEach(function (t) {
+                    if(t.grantShopId == vm.shopinfo){
+                        vm.grantCounty = t.grantCounty;
+                        vm.countryCode = t.countryCode;
+                        grantShop = t.shopName;
+                    }
+                })
+                var templateDisplayName = '';
+                vm.flModleList.forEach(function (t) {
+                    if(t.templateId = vm.flModleValue){
+                        templateDisplayName = t.templateDisplayName;
+                    }
+                })
+
                 layer.open({
                     type: 1,
                     title: false,
@@ -174,6 +194,12 @@ var vm = new Vue({
                     shadeClose: true,
                     btn: ['上传', '取消'],
                     btn1: function (index) {
+
+                        var index = layer.load();
+                        var index = layer.load(1); //换了种风格
+                        var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+
+
                         console.log(vm.inputche)
                         vm.uploadIds = vm.uploadIdsstr.split(',');
                         console.log(typeof(vm.uploadIds));
@@ -188,36 +214,43 @@ var vm = new Vue({
                                 }
                             }
                         }
+
                         console.log(vm.operateItem);
-                        vm.grantShopId = vm.shopinfo.grantShopId;
-                        vm.grantShop = vm.shopinfo.shopName;
+                        // vm.grantShopId = vm.shopinfo.grantShopId;
+                        // vm.grantShop = vm.shopinfo.shopName;
                         console.log(vm);
                         $.ajax({
-                            url: '../../product/upload/addUpload',
+                            url: '../../product/upload/renewTimingUpload',
                             type: 'post',
-                            data: {
+                            data: JSON.stringify({
+                                'uploadId':vm.id,
                                 'startId': vm.startId,
                                 'endId': vm.endId,
                                 'uploadIds': vm.uploadIds,
-                                'grantShopId': vm.grantShopId,
+                                'grantShopId': parseInt(vm.shopinfo),
                                 'isAttribute': vm.isAttribute,
-                                'grantShop':vm.grantShop,
+                                'grantShop':grantShop,
                                 'amazonCategoryId': vm.amazonCategoryId,
                                 'amazonCategory': vm.amazonCategory,
-                                'amazonTemplateId': vm.amazonTemplateId,
-                                'amazonTemplate': vm.amazonTemplate,
+                                'amazonTemplateId': vm.flModleValue,
+                                'amazonTemplate': templateDisplayName,
                                 'operateItem': vm.operateItem,
                                 'time':vm.changeTime,
-                                'countryCode':vm.shopinfo.countryCode,
+                                'countryCode':vm.countryCode,
+                                'fieldsEntityList':vm.modelAttr,
                                 'amazonNodeId':vm.nodeId,
-                            },
-                            dataType: 'json',
+                            }),
+                            // dataType: 'json',
+                            contentType: "application/json",
                             success: function (r) {
                                 console.log(r);
                                 if (r.code === 0) {
-                                    layer.close(index)
+
+                                    layer.close(index);
+                                    window.location.href="upProduct.html";
                                 } else {
-                                    layer.alert(r.message);
+                                    // layer.alert(r.message);
+                                    // window.location.href="upProduct.html";
                                 }
 
 
@@ -247,10 +280,16 @@ var vm = new Vue({
         addUpload:function () {
 
             layer.confirm('确定上传吗？',function (index) {
-                // console.log(vm.shopinfo);
+
+
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+
+                console.log(vm.shopinfo);
                 // vm.uploadIds = vm.uploadIdsstr;
-                // vm.uploadIds = vm.uploadIdsstr.split(',');
-                // console.log(vm.uploadIds);
+                vm.uploadIds = vm.uploadIdsstr.split(',');
+                console.log(vm.uploadIds);
                 if (vm.inputche[0]==true){
 
                     vm.operateItem = [0,1,2,3,4];
@@ -288,7 +327,7 @@ var vm = new Vue({
                     url: '../../product/upload/againUploadByForm',
                     type: 'post',
                     data: JSON.stringify({
-                        'uploadId':vm.id,
+                        'uploadId':parseInt(vm.id),
                         'startId': parseInt(vm.startId),
                         'endId': parseInt(vm.endId),
                         'uploadIds': vm.uploadIds,
@@ -465,7 +504,7 @@ var vm = new Vue({
                 url: '../../product/upload/timeZoneConversion',
                 type: 'get',
                 data: {
-                    countryCode:vm.shopinfo.countryCode,
+                    countryCode:vm.countryCode,
                     // countryCode:vm.value9,
                     countryTime:vm.value9
                 },
