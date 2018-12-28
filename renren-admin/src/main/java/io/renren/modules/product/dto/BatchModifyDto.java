@@ -89,12 +89,12 @@ public class BatchModifyDto {
     /**
      * 买点追加
      */
-    private String keyPointsadd;
+    private boolean keyPointsadd;
 
     /**
      * 关键字追加
      */
-    private String  keywordsadd;
+    private boolean  keywordsadd;
     /**
      * 中文介绍
      */
@@ -292,19 +292,19 @@ public class BatchModifyDto {
         this.productDescriptionH = productDescriptionH;
     }
 
-    public String getKeyPointsadd() {
+    public boolean getKeyPointsadd() {
         return keyPointsadd;
     }
 
-    public void setKeyPointsadd(String keyPointsadd) {
+    public void setKeyPointsadd(boolean keyPointsadd) {
         this.keyPointsadd = keyPointsadd;
     }
 
-    public String getKeywordsadd() {
+    public boolean getKeywordsadd() {
         return keywordsadd;
     }
 
-    public void setKeywordsadd(String keywordsadd) {
+    public void setKeywordsadd(boolean keywordsadd) {
         this.keywordsadd = keywordsadd;
     }
 
