@@ -15,8 +15,10 @@ import io.renren.modules.order.entity.RemarkEntity;
 import io.renren.modules.order.service.ProductShipAddressService;
 import io.renren.modules.order.service.RemarkService;
 import io.renren.modules.product.dto.OrderDTO;
+import io.renren.modules.product.entity.DataDictionaryEntity;
 import io.renren.modules.product.entity.OrderEntity;
 import io.renren.modules.product.entity.ProductsEntity;
+import io.renren.modules.product.service.DataDictionaryService;
 import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.vm.OrderModel;
@@ -70,6 +72,8 @@ public class OrderController extends AbstractController{
     private SysDeptService deptService;
     @Autowired
     private NoticeService noticeService;
+    @Autowired
+    private DataDictionaryService dataDictionaryService;
     /**
      * 我的订单
      */
@@ -378,13 +382,91 @@ public class OrderController extends AbstractController{
     @RequestMapping("/manualUpdateOrder")
     public R manualUpdateOrder(@RequestBody OrderVM orderVM){
         Long orderId = orderVM.getOrderId();
-        // TODO: 2018/12/25 amazon状态更新
-        new RefreshOrderThread(orderId).start();
+
+        OrderEntity orderEntity = orderService.selectById(orderId);
+        String status = orderEntity.getOrderStatus();
+        String abStatus = orderEntity.getAbnormalStatus();
+        String amazonOrderId = orderEntity.getAmazonOrderId();
+        if(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING.equals(status) || ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED.equals(status)){
+            OrderModel orderModel = orderService.updateOrderAmazonStatus(amazonOrderId);
+            if(orderModel != null){
+                //amazon状态更新
+                new RefreshAmazonStateThread(orderEntity,orderModel).start();
+            }
+        }else{
+            //不为取消订单时执行
+            if(!ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(status) && !ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH.equals(status) && !ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abStatus)){
+                //国际物流更新
+                new RefreshOrderThread(orderId).start();
+            }
+        }
         return R.ok();
     }
+    /**
+     * 刷新订单亚马逊状态线程
+     * 手动刷新订单时调用
+     * 状态为亚马逊状态时
+     */
+    class RefreshAmazonStateThread extends Thread {
 
+        private OrderEntity orderEntity;
 
+        private OrderModel orderModel;
 
+        public RefreshAmazonStateThread(OrderEntity orderEntity, OrderModel orderModel) {
+            this.orderEntity = orderEntity;
+            this.orderModel = orderModel;
+        }
+
+        @Override
+        public void run() {
+            String modelStatus = orderModel.getOrderStatus();
+            //更新订单
+            //获取状态判断是否为取消
+            if (ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)) {
+                orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
+                orderEntity.setOrderState("取消");
+            } else {
+                //获取当前订单状态判断是否为待付款、已付款、虚发货
+                if (Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(orderEntity.getOrderState())) {
+                    //获取返回状态判断是否为待付款、已付款、虚发货
+                    if (Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(modelStatus)) {
+                        //判断两个状态不想等时更改状态
+                        if (!modelStatus.equals(orderEntity.getOrderState())) {
+                            orderEntity.setOrderStatus(modelStatus);
+                            String orderState = dataDictionaryService.selectOne(
+                                    new EntityWrapper<DataDictionaryEntity>()
+                                            .eq("data_type", "AMAZON_ORDER_STATE")
+                                            .eq("data_number", modelStatus)
+                            ).getDataContent();
+                            orderEntity.setOrderState(orderState);
+                            orderService.updateById(orderEntity);
+                        }
+                    }
+                }
+                //新增/修改收货人信息
+                ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
+                if(productShipAddressEntity != null){//判断返回值是否有收件人信息
+                    ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
+                            new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
+                    );
+                    if(shipAddress == null){
+                        productShipAddressEntity.setOrderId(orderEntity.getOrderId());
+                        productShipAddressService.insert(productShipAddressEntity);
+                    }else{
+                        productShipAddressEntity.setOrderId(shipAddress.getOrderId());
+                        productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
+                        productShipAddressService.updateById(productShipAddressEntity);
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * 刷新订单国际物流线程
+     * 手动刷新订单时调用
+     * 状态不为亚马逊状态时
+     */
     class RefreshOrderThread extends Thread   {
         private Long orderId;
         public RefreshOrderThread(Long orderId) {

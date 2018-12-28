@@ -124,6 +124,11 @@ public class OrderEntity implements Serializable {
 	 */
 	private BigDecimal orderProfit = new BigDecimal(0.00);
 	/**
+	 * TODO
+	 * 利润率
+	 */
+
+	/**
 	 * 退货费用
 	 */
 	private BigDecimal returnCost = new BigDecimal(0.00);
@@ -145,6 +150,10 @@ public class OrderEntity implements Serializable {
 	 */
 	private Date updateTime;
 
+	/**
+	 * 主图片url
+	 */
+	private String productImageUrl;
 	/**
 	 * 国内物流
 	 */
@@ -470,5 +479,13 @@ public class OrderEntity implements Serializable {
 
 	public void setAccountMoneyCny(BigDecimal accountMoneyCny) {
 		this.accountMoneyCny = accountMoneyCny;
+	}
+
+	public String getProductImageUrl() {
+		return productImageUrl;
+	}
+
+	public void setProductImageUrl(String productImageUrl) {
+		this.productImageUrl = productImageUrl;
 	}
 }
