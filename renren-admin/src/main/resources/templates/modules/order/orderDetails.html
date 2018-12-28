@@ -125,19 +125,23 @@
                     <!--</p>-->
                     <!--<div>-->
                     <div>
-                        <span><label for="">物流单号：</label><span>{{ orderDetails.abroadLogistics.abroadWaybill }}</span></span>
-                        <span><label for="">跟踪号：</label><span>{{ orderDetails.abroadLogistics.trackWaybill }}</span></span>
+                        <span><label for="">国际物流单号：</label><span>{{ orderDetails.abroadLogistics.abroadWaybill }}</span></span>
+                        <span><label for="">国际跟踪号：</label><span>{{ orderDetails.abroadLogistics.trackWaybill }}</span></span>
                         <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
                         <span><label for="">国际运费：</label><span>{{ orderDetails.abroadLogistics.interFreight }}</span></span>
                         <span><label for="">物流公司：</label><span>{{ orderDetails.abroadLogistics.destTransportCompany }}</span></span>
-                        <span><label for="">物流渠道：</label><span>{{ orderDetails.abroadLogistics.destChannel }}</span></span>
-                        <!--<span><label for="">更新时间：</label><span>{{ orderDetails.abroadLogistics.updateTime }}</span></span>-->
+                        <span><label for="">物流渠道：</label><span>{{ orderDetails.abroadLogistics.destChannel }}</span></span><br>
+
+                        <span><label for="">国内查询跟踪号：</label><span>{{ orderDetails.abroadLogistics.domesticTrackWaybill }}</span></span>
+                        <span><label for="">目的地查询网址：</label><span>{{ orderDetails.abroadLogistics.destQueryUrl }}</span></span>
+                        <span><label for="">服务查询网址：</label><span>{{ orderDetails.abroadLogistics.serviceQueryUrl }}</span></span>
+                        <span><label for="">联系电话：</label><span>{{ orderDetails.abroadLogistics.mobile }}</span></span>
 
                         <div class="fr">
                             <span v-if="orderDetails.abroadLogistics.state">物流状态：{{orderDetails.abroadLogistics.state}}</span>
                             <span v-if="!orderDetails.abroadLogistics.state" style="margin-right: 10px">物流状态：暂无状态</span>
                             <!--<span>{{ orderDetails.abroadLogistics.state }}</span>-->
-                            <span>{{ orderDetails.abroadLogistics.updateTime }}</span>
+                            <span>{{ orderDetails.abroadLogistics.shipTime }}</span>
                             <p>
                                 <a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>
                                 <a v-if="orderDetails.abroadLogistics.isSynchronization == 0" href="javascript:;" @click="tongbu">同步</a>
@@ -164,10 +168,10 @@
                     <table>
                         <tr>
                             <th></th>
-                            <th>采购价</th>
                             <th>订单金额 <span>（汇率 {{ orderDetails.momentRate }}）</span></th>
                             <th>Amazon佣金</th>
                             <th>到账金额</th>
+                            <th>采购价</th>
                             <th>国际运费</th>
                             <th>平台佣金</th>
                             <th>利润</th>
@@ -176,9 +180,9 @@
                         <tr class="two">
                             <th>国际币种</th>
                             <td>{{ orderDetails.orderMoneyForeign }}</td>
-                            <td>{{ orderDetails.orderMoneyForeign }}</td>
                             <td>{{ orderDetails.amazonCommissionForeign }}</td>
                             <td>{{ orderDetails.accountMoneyForeign }}</td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -186,10 +190,10 @@
                         </tr>
                         <tr>
                             <th>人民币</th>
-                            <td>{{ orderDetails.purchasePrice }}</td>
                             <td>{{ orderDetails.orderMoney }}</td>
                             <td>{{ orderDetails.amazonCommission }}</td>
                             <td>{{ orderDetails.accountMoney }}</td>
+                            <td>{{ orderDetails.purchasePrice }}</td>
                             <td>{{ orderDetails.interFreight }}</td>
                             <td>{{ orderDetails.platformCommissions }}</td>
                             <td>{{ orderDetails.orderProfit }}</td>

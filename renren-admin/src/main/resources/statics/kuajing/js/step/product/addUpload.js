@@ -130,6 +130,12 @@ var vm = new Vue({
                     shadeClose: true,
                     btn: ['上传', '取消'],
                     btn1: function (index) {
+
+                        var index = layer.load();
+                        var index = layer.load(1); //换了种风格
+                        var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+
+
                         console.log(vm.inputche)
                         vm.uploadIds = vm.uploadIdsstr.split(',');
                         console.log(typeof(vm.uploadIds));
@@ -209,6 +215,12 @@ var vm = new Vue({
         addUpload:function () {
 
             layer.confirm('确定上传吗？',function (index) {
+
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+
+
                 // console.log(vm.shopinfo);
                 // vm.uploadIds = vm.uploadIdsstr;
                 vm.uploadIds = vm.uploadIdsstr.split(',');
@@ -458,53 +470,67 @@ var vm = new Vue({
         // 历史选择
         lishiFunc:function () {
 
-            $.ajax({
-                url: '../../amazon/amazoncategoryhistory/getMyList',
-                type: 'get',
-                data: '',
-                dataType: 'json',
-                success: function (r) {
-                    console.log('历史选择')
-                    console.log(r);
-                    if (r.code === 0) {
-                        vm.lishiList = r.list;
-                        layer.open({
-                            type: 1,
-                            title: false,
-                            content: $('#lishi'), //这里content是一个普通的String
-                            skin: 'openClass',
-                            area: ['800px', '400px'],
-                            shadeClose: true,
-                            btn: ['确定','取消'],
-                            btn1: function (index) {
-                                // $('#fenleiTankuang div.con li').removeClass('active');
-                                layer.close(index);
+            if(vm.shopinfo!=''){
+                var countryCode;
+                vm.marketplace.forEach(function (t) {
+                    if(t.grantShopId == vm.shopinfo){
+                        countryCode = t.countryCode
+                    }
+                })
+                $.ajax({
+                    url: '../../amazon/amazoncategoryhistory/getMyList',
+                    type: 'get',
+                    data: {
+                        'countryCode':countryCode
+                    },
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('历史选择')
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.lishiList = r.list;
+                            layer.open({
+                                type: 1,
+                                title: false,
+                                content: $('#lishi'), //这里content是一个普通的String
+                                skin: 'openClass',
+                                area: ['800px', '400px'],
+                                shadeClose: true,
+                                btn: ['确定','取消'],
+                                btn1: function (index) {
+                                    // $('#fenleiTankuang div.con li').removeClass('active');
+                                    layer.close(index);
 
-                            },
-                            btn2: function (index) {
+                                },
+                                btn2: function (index) {
 
-                                // $('#fenleiTankuang div.con>div.qita').remove();
-                                // $('#fenleiTankuang div.con li').removeClass('active');
-                            }
-                        });
-                        $('.inner-content-div2').slimScroll({
-                            height: '300px' //设置显示的高度
-                        });
-                        setTimeout(function () {
+                                    // $('#fenleiTankuang div.con>div.qita').remove();
+                                    // $('#fenleiTankuang div.con li').removeClass('active');
+                                }
+                            });
                             $('.inner-content-div2').slimScroll({
                                 height: '300px' //设置显示的高度
                             });
-                        },1000)
+                            setTimeout(function () {
+                                $('.inner-content-div2').slimScroll({
+                                    height: '300px' //设置显示的高度
+                                });
+                            },1000)
 
 
-                    } else {
-                        layer.alert(r.message);
+                        } else {
+                            layer.alert(r.message);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
                     }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
-            });
+                });
+            }else {
+                layer.msg('请选择店铺');
+            }
+
+
         },
         lishiSelFunc:function () {
             vm.amazonCategory = $(event.target).attr('data-val');

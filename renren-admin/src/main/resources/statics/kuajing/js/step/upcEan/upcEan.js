@@ -24,6 +24,10 @@ var vm = new Vue({
         grantToken:'',
         amazonGrant:{},
         totalCount:'',
+        // 总数
+        all:'',
+        shiyong:'',
+        weishuy:''
     },
     methods:{
         //添加upc
@@ -49,7 +53,10 @@ var vm = new Vue({
                         }
                         return str;
                     }
-                    var ean = getTextByJs(eanarry);
+                    var ean1 = getTextByJs(eanarry);
+                    var ean2 = ean1.split('，');
+                    var ean = ean2.join(',');
+
                     console.log(ean);
                     console.log(vm.sel)
                     $.ajax({
@@ -125,6 +132,9 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
+                        vm.all = r.count;
+                        vm.shiyong = r.YesStateCount;
+                        vm.weishuy = r.noStateCount
                         vm.authorizeList=r.page.list;
                         vm.totalCount = r.page.totalCount;
                         vm.laypage();

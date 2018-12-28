@@ -83,7 +83,7 @@ public interface SubmitFeedService {
      * @param marketplaceIdList  国家端点
      * @return
      */
-    List<FeedSubmissionInfoDto> submitProductFeed(Long uploadId, String serviceURL, String merchantId, String sellerDevAuthToken, String feedType, String filePath, List<String> marketplaceIdList);
+    FeedSubmissionInfoDto submitProductFeed(Long uploadId, String serviceURL, String merchantId, String sellerDevAuthToken, String feedType, String filePath, List<String> marketplaceIdList);
 
     /**
      * 返回提交的上传数据提交列表
@@ -124,11 +124,6 @@ public interface SubmitFeedService {
     int judgingTheTotalState(List<Integer> substate);
 
     List<FeedSubmissionInfoDto> invokeSubmitFeedAsync(Long uploadId, MarketplaceWebService service, List<SubmitFeedRequest> requests);
-
-    /*
-    @Async
-    void reUploadFeed(UploadEntity uploadEntity);
-    */
 
     ResultXmlEntity isExist(Long uploadId, String tpye);
 
