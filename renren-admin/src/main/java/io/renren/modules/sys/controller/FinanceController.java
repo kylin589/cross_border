@@ -26,7 +26,10 @@ public class FinanceController extends AbstractController{
     @Autowired
     private OrderService orderService;
 
-
+    /**
+     * 总部统计（默认）
+     * @return R
+     */
     @RequestMapping("/oneLevelStatisticsDefault")
     public R oneLevelStatisticsDefault(){
         //总部员工统计
@@ -62,5 +65,48 @@ public class FinanceController extends AbstractController{
         //平台利润统计
         PlatformStatisticsDto platformStatisticsDto = orderService.platformStatistics(vm);
         return R.ok().put("platformStatisticsDto",platformStatisticsDto);
+    }
+    /**
+     * 加盟商统计（默认）
+     */
+    @RequestMapping("/franchiseeStatistics")
+    public R franchiseeStatistics(){
+        //加盟商员工统计数据模型
+        StatisticsVM vm = new StatisticsVM();
+        vm.setType("day");
+        vm.setDeptId(getDeptId().toString());
+        UserStatisticsDto userStatisticsDto = orderService.oneLevelUserStatistics(vm);
+        return R.ok().put("franchiseeStatisticsDto",userStatisticsDto);
+    }
+    /**
+     * 加盟商统计（搜索）
+     */
+    @RequestMapping("/franchiseeQueryStatistics")
+    public R franchiseeQueryStatistics(@RequestBody StatisticsVM vm){
+        vm.setDeptId(getDeptId().toString());
+        UserStatisticsDto userStatisticsDto = orderService.oneLevelUserStatistics(vm);
+        return R.ok().put("franchiseeStatisticsDto",userStatisticsDto);
+    }
+    /**
+     * 员工统计（默认）
+     */
+    @RequestMapping("/userStatistics")
+    public R userStatistics(){
+        StatisticsVM vm = new StatisticsVM();
+        //加盟商员工统计数据模型
+        vm.setType("day");
+        vm.setUserId(getUserId().toString());
+        UserStatisticsDto userStatisticsDto = orderService.oneLevelUserStatistics(vm);
+        return R.ok().put("userStatisticsDto",userStatisticsDto);
+    }
+    /**
+     * 员工统计（搜索）
+     */
+    @RequestMapping("/userQueryStatistics")
+    public R userQueryStatistics(@RequestBody StatisticsVM vm){
+        //加盟商员工统计数据模型
+        vm.setUserId(getUserId().toString());
+        UserStatisticsDto userStatisticsDto = orderService.oneLevelUserStatistics(vm);
+        return R.ok().put("userStatisticsDto",userStatisticsDto);
     }
 }

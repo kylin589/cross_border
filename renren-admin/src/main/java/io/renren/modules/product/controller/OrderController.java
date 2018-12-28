@@ -3,6 +3,8 @@ package io.renren.modules.product.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.amazon.entity.AmazonMarketplaceEntity;
+import io.renren.modules.amazon.service.AmazonMarketplaceService;
 import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.logistics.DTO.ReceiveOofayData;
 import io.renren.modules.logistics.entity.AbroadLogisticsEntity;
@@ -74,6 +76,8 @@ public class OrderController extends AbstractController{
     private NoticeService noticeService;
     @Autowired
     private DataDictionaryService dataDictionaryService;
+    @Autowired
+    private AmazonMarketplaceService amazonMarketplaceService;
     /**
      * 我的订单
      */
@@ -145,7 +149,12 @@ public class OrderController extends AbstractController{
             orderDTO.setAbroadLogistics(abroadLogistics);
         }
 
-
+        //设置amazon产品链接
+//        amazonProductUrl
+        AmazonMarketplaceEntity amazonMarketplaceEntity = amazonMarketplaceService.selectOne(new EntityWrapper<AmazonMarketplaceEntity>().eq("country_code",orderEntity.getCountryCode()));
+        String amazonProductUrl = amazonMarketplaceEntity.getMwsPoint() + "/gp/product/" + orderEntity.getProductAsin();
+        orderDTO.setAmazonProductUrl(amazonProductUrl);
+        orderDTO.setProductImageUrl(orderEntity.getProductImageUrl());
         orderDTO.setMomentRate(momentRate);
         //判断订单异常状态——不属于退货
         if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
@@ -177,6 +186,9 @@ public class OrderController extends AbstractController{
                 //利润
                 BigDecimal orderProfit = orderEntity.getOrderProfit();
                 orderDTO.setOrderProfit(orderProfit);
+                //利润率
+                BigDecimal profitRate = orderEntity.getProfitRate();
+                orderDTO.setProfitRate(profitRate);
             }else {
                 //属于取消订单不处理
                 if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(orderStatus)){
@@ -225,6 +237,9 @@ public class OrderController extends AbstractController{
             //利润
             BigDecimal orderProfit = orderEntity.getOrderProfit();
             orderDTO.setOrderProfit(orderProfit);
+            //利润率
+            BigDecimal profitRate = orderEntity.getProfitRate();
+            orderDTO.setProfitRate(profitRate);
         }
         List<RemarkEntity> remarkList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","remark").eq("order_id",orderId));
         System.out.println("remarkList:" + remarkList.size());
@@ -555,15 +570,18 @@ public class OrderController extends AbstractController{
                             BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
                             abroadLogisticsEntity.setInterFreight(interFreight);
                             orderEntity.setInterFreight(interFreight);
+                            //到账金额
+                            BigDecimal accountMoney = orderEntity.getAccountMoneyCny();
                             //平台佣金
-                            BigDecimal accountMoneyForeign = orderEntity.getAccountMoney();
-                            BigDecimal accountMoney = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
                             BigDecimal companyPoint = deptService.selectById(orderEntity.getDeptId()).getCompanyPoints();
                             BigDecimal platformCommissions = accountMoney.multiply(companyPoint).setScale(2,BigDecimal.ROUND_HALF_UP);
                             orderEntity.setPlatformCommissions(platformCommissions);
                             //利润 到账-国际运费-采购价-平台佣金
-                            BigDecimal orderProfit = accountMoneyForeign.multiply(momentRate).subtract(orderEntity.getPurchasePrice()).subtract(interFreight).setScale(2,BigDecimal.ROUND_HALF_UP);
+                            BigDecimal orderProfit = accountMoney.subtract(orderEntity.getPurchasePrice()).subtract(interFreight).subtract(platformCommissions).setScale(2,BigDecimal.ROUND_HALF_UP);
                             orderEntity.setOrderProfit(orderProfit);
+                            //利润率
+                            BigDecimal profitRate = orderProfit.divide(orderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
+                            orderEntity.setProfitRate(profitRate);
                             orderService.updateById(orderEntity);
                         }
                         //状态转变为入库

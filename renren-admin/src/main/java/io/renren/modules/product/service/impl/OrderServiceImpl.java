@@ -347,6 +347,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         //利润 = 到账金额(人民币)
                         BigDecimal orderProfit = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
                         orderEntity.setOrderProfit(orderProfit);
+                        //利润率
+                        BigDecimal profitRate = orderProfit.divide(orderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
+                        orderEntity.setProfitRate(profitRate);
                     }else{
                         //产生运费
                         //平台佣金点数
@@ -361,6 +364,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         BigDecimal c = accountMoneyForeign.multiply(momentRate).setScale(2,BigDecimal.ROUND_HALF_UP);
                         BigDecimal orderProfit = c.subtract(interFreight).subtract(platformCommissions).setScale(2,BigDecimal.ROUND_HALF_UP);
                         orderEntity.setOrderProfit(orderProfit);
+                        //利润率
+                        BigDecimal profitRate = orderProfit.divide(orderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
+                        orderEntity.setProfitRate(profitRate);
                         //扣款
                         deduction(orderEntity);
                     }

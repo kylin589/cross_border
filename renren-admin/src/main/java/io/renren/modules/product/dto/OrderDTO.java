@@ -52,6 +52,10 @@ public class OrderDTO {
      */
     private Long productId;
     /**
+     * 主图片
+     */
+    private String productImageUrl;
+    /**
      * 产品sku
      */
     private String productSku;
@@ -138,6 +142,15 @@ public class OrderDTO {
      * 操作日志列表
      */
     private List<RemarkEntity> logList;
+    /**
+     * 产品链接
+     */
+    private String amazonProductUrl;
+
+    /**
+     * 利润率
+     */
+    private BigDecimal profitRate;
 
     public Long getOrderId() {
         return orderId;
@@ -373,5 +386,33 @@ public class OrderDTO {
 
     public void setAbroadLogistics(AbroadLogisticsEntity abroadLogistics) {
         this.abroadLogistics = abroadLogistics;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public String getProductImageUrl() {
+        return productImageUrl;
+    }
+
+    public void setProductImageUrl(String productImageUrl) {
+        this.productImageUrl = productImageUrl;
+    }
+
+    public String getAmazonProductUrl() {
+        return amazonProductUrl;
+    }
+
+    public void setAmazonProductUrl(String amazonProductUrl) {
+        this.amazonProductUrl = amazonProductUrl;
+    }
+
+    public BigDecimal getProfitRate() {
+        return profitRate;
+    }
+
+    public void setProfitRate(BigDecimal profitRate) {
+        this.profitRate = profitRate;
     }
 }
