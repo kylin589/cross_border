@@ -464,8 +464,7 @@ public class OrderController extends AbstractController{
     }
     /**
      * 刷新订单国际物流线程
-     * 手动刷新订单时调用
-     * 状态不为亚马逊状态时
+     * 手动刷新订单时且状态不为亚马逊状态时调用
      */
     class RefreshOrderThread extends Thread   {
         private Long orderId;
