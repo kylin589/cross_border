@@ -217,28 +217,55 @@ public class IntroductionController {
      * @date: 2018/11/6 15:33
      */
     public IntroductionEntity EntoOther(IntroductionEntity introductionEn, String country){
-        IntroductionEntity introduction = new IntroductionEntity();
+        String title = introductionEn.getProductTitle();
+        String keyWord = introductionEn.getKeyWord();
+        String  keyPoint = introductionEn.getKeyPoints();
+        String productDescription = introductionEn.getProductDescription();
+        StringBuffer strBuf = new StringBuffer();
+        if(StringUtils.isNotBlank(title)){
+            strBuf.append(title);
+            strBuf.append(" ===== ");
+        }else{
+            strBuf.append(" ===== ");
+        }
+        if(StringUtils.isNotBlank(keyWord)){
+            strBuf.append(keyWord);
+            strBuf.append(" ===== ");
+        }else{
+            strBuf.append("  ===== ");
+        }
+        if(StringUtils.isNotBlank(keyPoint)){
+            strBuf.append(keyPoint);
+            strBuf.append(" ===== ");
+        }else{
+            strBuf.append("  ===== ");
+        }
+        if(StringUtils.isNotBlank(productDescription)){
+            strBuf.append(productDescription);
+        }else{
+            strBuf.append(" ");
+        }
         Querier<AbstractTranslator> querierTrans = new Querier<>();
         switch (country){
             //法国
             case "FRA":
-                querierTrans.setParams(LANG.EN, LANG.FRA, introductionEn.getProductTitle());
+                querierTrans.setParams(LANG.EN, LANG.FRA, strBuf.toString());
                 break;
             //德国
             case "DE":
-                querierTrans.setParams(LANG.EN, LANG.DE, introductionEn.getProductTitle());
+                querierTrans.setParams(LANG.EN, LANG.DE, strBuf.toString());
                 break;
             //意大利
             case "IT":
-                querierTrans.setParams(LANG.EN, LANG.IT, introductionEn.getProductTitle());
+                querierTrans.setParams(LANG.EN, LANG.IT, strBuf.toString());
                 break;
             //西班牙
             case "SPA":
-                querierTrans.setParams(LANG.EN, LANG.SPA, introductionEn.getProductTitle());
+                querierTrans.setParams(LANG.EN, LANG.SPA, strBuf.toString());
                 break;
             //日本
             case "JP":
-                querierTrans.setParams(LANG.EN, LANG.JP, introductionEn.getProductTitle());
+                querierTrans.setParams(LANG.EN, LANG.JP, strBuf.toString());
                 break;
             default:
                 break;
@@ -247,11 +274,16 @@ public class IntroductionController {
         querierTrans.attach(new GoogleTranslator());
 //        querierTrans.attach(new BaiduTranslator());
 //        querierTrans.attach(new YoudaoTranslator());
-
-        //翻译标题
-        List<String> titleList = querierTrans.execute();
-        if (titleList.get(0) != "" && titleList.get(0) != null){
-            introduction.setProductTitle(toUpperCase(titleList.get(0)));
+        IntroductionEntity introduction = new IntroductionEntity();
+        //翻译
+        List<String> resultList = querierTrans.execute();
+        if (resultList.get(0) != "" && resultList.get(0) != null){
+            String result = resultList.get(0);
+            String[] results = result.split("=====");
+            introduction.setProductTitle(toUpperCase(results[0]));
+            introduction.setKeyWord(toUpperCase(results[1]));
+            introduction.setKeyPoints(results[2]);
+            introduction.setProductDescription(results[3]);
         }
 //        else if(titleList.get(1) != "" && titleList.get(1) != null){
 //            introduction.setProductTitle(toUpperCase(titleList.get(1)));
@@ -259,12 +291,12 @@ public class IntroductionController {
 //            introduction.setProductTitle(toUpperCase(titleList.get(2)));
 //        }
 
-        //翻译关键字
+        /*//翻译关键字
         querierTrans.setText(introductionEn.getKeyWord());
         List<String> keyWordList = querierTrans.execute();
         if (keyWordList.get(0) != "" && keyWordList.get(0) != null){
             introduction.setKeyWord(toUpperCase(keyWordList.get(0)));
-        }
+        }*/
 //        else if(keyWordList.get(1) != "" && keyWordList.get(1) != null){
 //            introduction.setKeyWord(toUpperCase(keyWordList.get(1)));
 //        }else{
@@ -272,11 +304,11 @@ public class IntroductionController {
 //        }
 
         //翻译要点说明
-        querierTrans.setText(introductionEn.getKeyPoints());
+        /*querierTrans.setText(introductionEn.getKeyPoints());
         List<String> keyPointsList = querierTrans.execute();
         if (keyPointsList.get(0) != "" && keyPointsList.get(0) != null){
             introduction.setKeyPoints(keyPointsList.get(0));
-        }
+        }*/
 //        else if(keyPointsList.get(1) != "" && keyPointsList.get(1) != null){
 //            introduction.setKeyPoints(keyPointsList.get(1));
 //        }else{
@@ -284,11 +316,11 @@ public class IntroductionController {
 //        }
 
         //翻译产品描述
-        querierTrans.setText(introductionEn.getProductDescription());
+        /*querierTrans.setText(introductionEn.getProductDescription());
         List<String> productDescriptionList = querierTrans.execute();
         if (productDescriptionList.get(0) != "" && productDescriptionList.get(0) != null){
             introduction.setProductDescription(productDescriptionList.get(0));
-        }
+        }*/
 //        else if(productDescriptionList.get(1) != "" && productDescriptionList.get(1) != null){
 //            introduction.setKeyPoints(productDescriptionList.get(1));
 //        }else{
@@ -319,8 +351,7 @@ public class IntroductionController {
         IntroductionEntity introductionSpa = EntoOther(introductionEn,"SPA");
         IntroductionEntity introductionJp = EntoOther(introductionEn,"JP");
 
-        return R.ok().put("introductionEn",introductionEn)
-                .put("introductionFra",introductionFra)
+        return R.ok().put("introductionFra",introductionFra)
                 .put("introductionDe",introductionDe)
                 .put("introductionIt",introductionIt)
                 .put("introductionSpa",introductionSpa)

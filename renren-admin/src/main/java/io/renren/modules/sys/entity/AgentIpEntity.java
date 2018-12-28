@@ -29,7 +29,7 @@ public class AgentIpEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private String port;
+	private Integer port;
 	/**
 	 * 
 	 */
@@ -62,13 +62,13 @@ public class AgentIpEntity implements Serializable {
 	/**
 	 * 设置：
 	 */
-	public void setPort(String port) {
+	public void setPort(Integer port) {
 		this.port = port;
 	}
 	/**
 	 * 获取：
 	 */
-	public String getPort() {
+	public Integer getPort() {
 		return port;
 	}
 	/**

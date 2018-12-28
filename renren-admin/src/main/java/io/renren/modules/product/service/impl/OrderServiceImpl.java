@@ -392,8 +392,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 //订单状态
                 String modelStatus = orderModel.getOrderStatus();
                 if(orderEntity == null){
-                    //新增订单
-                    if(!"Canceled".equals(modelStatus) && !"Shipped".equals(modelStatus)){
+                    //新增订单 && !"Shipped".equals(modelStatus)
+                    if(!"Canceled".equals(modelStatus)){
                         //设置基本属性
                         orderEntity = new OrderEntity();
                         orderEntity.setAmazonOrderId(amazonOrderId);
@@ -445,8 +445,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             orderEntity.setAccountMoney(accountMoney);
                             orderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
                         }
+                        this.insert(orderEntity);
+                        //新增收货人信息
+                        ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
+                        if(productShipAddressEntity != null){//判断返回值是否有收件人信息
+                            ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
+                                    new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
+                            );
+                            if(shipAddress == null){
+                                productShipAddressEntity.setOrderId(orderEntity.getOrderId());
+                                productShipAddressService.insert(productShipAddressEntity);
+                            }
+                        }
                     }
-                    this.insert(orderEntity);
                 }else{
                     //更新订单
                     //获取状态判断是否为取消
@@ -468,26 +479,27 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                     ).getDataContent();
                                     orderEntity.setOrderState(orderState);
                                     this.updateById(orderEntity);
+                                    //新增/修改收货人信息
+                                    ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
+                                    if(productShipAddressEntity != null){//判断返回值是否有收件人信息
+                                        ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
+                                                new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
+                                        );
+                                        if(shipAddress == null){
+                                            productShipAddressEntity.setOrderId(orderEntity.getOrderId());
+                                            productShipAddressService.insert(productShipAddressEntity);
+                                        }else{
+                                            productShipAddressEntity.setOrderId(shipAddress.getOrderId());
+                                            productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
+                                            productShipAddressService.updateById(productShipAddressEntity);
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
-                //新增/修改收货人信息
-                ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
-                if(productShipAddressEntity != null){//判断返回值是否有收件人信息
-                    ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
-                            new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
-                    );
-                    if(shipAddress == null){
-                        productShipAddressEntity.setOrderId(orderEntity.getOrderId());
-                        productShipAddressService.insert(productShipAddressEntity);
-                    }else{
-                        productShipAddressEntity.setOrderId(shipAddress.getOrderId());
-                        productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
-                        productShipAddressService.updateById(productShipAddressEntity);
-                    }
-                }
+
             }
         }
     }

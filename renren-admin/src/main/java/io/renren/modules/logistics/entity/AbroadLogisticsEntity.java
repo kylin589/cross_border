@@ -64,14 +64,6 @@ public class AbroadLogisticsEntity implements Serializable {
 	 */
 	private String destChannel;
 	/**
-	 * 是否同步（默认0：没有  1：有）
-	 */
-	private int isSynchronization = 0;
-
-	private Date createTime = new Date();
-
-	private Date updateTime = new Date();
-	/**
 	 * 发货时间
 	 */
 	private Date shipTime;
@@ -87,6 +79,15 @@ public class AbroadLogisticsEntity implements Serializable {
 	 * 联系电话
 	 */
 	private String mobile;
+	/**
+	 * 是否同步（默认0：没有  1：有）
+	 */
+	private int isSynchronization = 0;
+
+	private Date createTime = new Date();
+
+	private Date updateTime = new Date();
+
 
 	/**
 	 * 设置：国外物流
