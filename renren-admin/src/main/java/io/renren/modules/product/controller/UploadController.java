@@ -762,7 +762,7 @@ public class UploadController extends AbstractController {
 
         //创建定时任务的实体
         ScheduleJobEntity scheduleJob = new ScheduleJobEntity();
-        // TODO: 2018/12/28 zjr 是否对的？ 
+        // TODO: 2018/12/28 zjr 是否对的？
         //设置为spring bean的名称
         scheduleJob.setBeanName("againTimingUpload");
         //设置方法名
@@ -802,13 +802,13 @@ public class UploadController extends AbstractController {
         return R.ok();
     }
 
-    /**
+   /* *//**
      * @methodname: timingUpload 重新--定时上传
      * @param: [addUploadVM]
      * @return: io.renren.common.utils.R
      * @auther: jhy
      * @date: 2018/12/4 14:54
-     */
+     *//*
     @RequestMapping
     //@RequiresPermissions("product:upload:addupload")
     public R againTimingUpload(@RequestBody AddUploadVM addUploadVM) {
@@ -926,7 +926,7 @@ public class UploadController extends AbstractController {
         }
         submitFeedService.submitFeed(uploadEntity);
         return R.ok();
-    }
+    }*/
 
     /**
      * @methodname: timeZoneConversion 国家时区转换
