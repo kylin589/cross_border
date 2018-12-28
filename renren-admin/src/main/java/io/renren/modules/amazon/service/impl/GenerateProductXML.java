@@ -190,7 +190,7 @@ public class GenerateProductXML {
 
 
             // ItemType - 推荐节点
-            AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("amazon_category_id", uploadEntity.getAmazonCategoryId()));
+            AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("id", uploadEntity.getAmazonCategoryId()));
             String itemTypeStr = "\\t";
             Element itemType = descriptionData.addElement("ItemType");
             if (amazonCategoryEntity.getCategoryName() != null) {
@@ -384,7 +384,7 @@ public class GenerateProductXML {
         }
         // 生成文件路径
         String path = fileStoragePath;
-        String filePath = FileUtil.generateFilePath(path, "ProductByClothing");
+        String filePath = FileUtil.generateFilePath(path, "Product");
 
         try {
             XMLUtil.writeXMLToFile(document, filePath);
@@ -929,7 +929,7 @@ public class GenerateProductXML {
 
 
             // ItemType - 推荐节点
-            AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("amazon_category_id", uploadEntity.getAmazonCategoryId()));
+            AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("id", uploadEntity.getAmazonCategoryId()));
             String itemTypeStr = "\\t";
             Element itemType = descriptionData.addElement("ItemType");
             if (amazonCategoryEntity.getCategoryName() != null) {

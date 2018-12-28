@@ -495,8 +495,8 @@ public class ProductsController extends AbstractController {
             //获取原来的买点说明
             String keyPointsJ = chinesePRE.getKeyPoints();
             //前台获取是否追加
-            String keyPointsadd = batchModifyDto.getKeyPointsadd();
-            if (StringUtils.isNotEmpty(keyPointsadd)) {
+            boolean keyPointsadd = batchModifyDto.getKeyPointsadd();
+            if (keyPointsadd==true) {
                 //追加不为空，进行追加
                 String keyPointsX = keyPointsJ + batchModifyDto.getKeyPoints();
                 chinesePRE.setKeyPoints(keyPointsX);
@@ -507,8 +507,8 @@ public class ProductsController extends AbstractController {
             //获取原来的关键字
             String keyWordJ = chinesePRE.getKeyWord();
             //前台获取是否追加
-            String keywordsadd = batchModifyDto.getKeywordsadd();
-            if (StringUtils.isNotEmpty(keywordsadd)) {
+            boolean keywordsadd = batchModifyDto.getKeywordsadd();
+            if (keywordsadd==true) {
                 //追加不为空，进行追加
                 String keyWordX = keyWordJ + batchModifyDto.getKeyWord();
                 chinesePRE.setKeyWord(keyWordX);

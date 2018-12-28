@@ -60,4 +60,17 @@ public class TimingUploadController {
         uploadController.timingUpload(addUploadVM);
     }
 
+
+    public void renewTimingUpload(String params) {
+        //使用ObjectMapper将传过来的字符串参数变成实体
+        ObjectMapper om = new ObjectMapper();
+        AddUploadVM addUploadVM = null;
+        try {
+            addUploadVM = om.readValue(params, AddUploadVM.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //调用已经写好的立即上传产品的方法
+        uploadController.reTimingUpload(addUploadVM);
+    }
 }

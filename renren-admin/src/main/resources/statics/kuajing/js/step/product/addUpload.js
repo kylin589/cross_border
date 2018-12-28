@@ -29,6 +29,7 @@ var vm = new Vue({
         amazonAllArr:[],
         amazonTemplateId: 0,
         amazonTemplate: null,
+        inputche1:'',
         inputche:[],
         operateItem: [],
         marketplace:[],
@@ -47,7 +48,8 @@ var vm = new Vue({
         modelAttr:[],
         grantCounty:'',
         countryCode:'',
-        nodeId:''
+        nodeId:'',
+
     },
     methods:{
         fenleiTankuang:function () {
@@ -116,10 +118,11 @@ var vm = new Vue({
                 })
                 var templateDisplayName = '';
                 vm.flModleList.forEach(function (t) {
-                    if(t.templateId = vm.flModleValue){
+                    if(t.templateId == vm.flModleValue){
                         templateDisplayName = t.templateDisplayName;
                     }
                 })
+                console.log(templateDisplayName);
 
                 layer.open({
                     type: 1,
@@ -130,20 +133,26 @@ var vm = new Vue({
                     shadeClose: true,
                     btn: ['上传', '取消'],
                     btn1: function (index) {
+
+                        var index = layer.load();
+                        var index = layer.load(1); //换了种风格
+                        var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+
+
                         console.log(vm.inputche)
                         vm.uploadIds = vm.uploadIdsstr.split(',');
                         console.log(typeof(vm.uploadIds));
-                        if (vm.inputche[0]==true){
-
-                            vm.operateItem = [0,1,2,3,4];
-                        }else {
-                            for (var i=0;i<vm.inputche.length;i++){
-                                if (vm.inputche[i]==true){
-                                    console.log('2222');
-                                    vm.operateItem.push(i-1);
-                                }
-                            }
-                        }
+                        // if (vm.inputche[0]==true){
+                        //
+                        //     vm.operateItem = [0,1,2,3,4];
+                        // }else {
+                        //     for (var i=0;i<vm.inputche.length;i++){
+                        //         if (vm.inputche[i]==true){
+                        //             console.log('2222');
+                        //             vm.operateItem.push(i-1);
+                        //         }
+                        //     }
+                        // }
 
                         console.log(vm.operateItem);
                         // vm.grantShopId = vm.shopinfo.grantShopId;
@@ -163,7 +172,7 @@ var vm = new Vue({
                                 'amazonCategory': vm.amazonCategory,
                                 'amazonTemplateId': vm.flModleValue,
                                 'amazonTemplate': templateDisplayName,
-                                'operateItem': vm.operateItem,
+                                'operateItem': vm.inputche,
                                 'time':vm.changeTime,
                                 'countryCode':vm.countryCode,
                                 'fieldsEntityList':vm.modelAttr,
@@ -202,28 +211,48 @@ var vm = new Vue({
         allSelFunc:function () {
 
             var _if = $(event.target).prop('checked');
-            console.log(vm.inputche);
-            $('#operateItem input').prop('checked',_if);
+            // vm.inputche[1] = 0;
+            // vm.inputche[2] = 1;
+            // vm.inputche[3] = 2;
+            // vm.inputche[4] = 3;
+            // vm.inputche[5] = 4;
+            vm.inputche = ['0','1','2','3','4'];
+
+            // $('#operateItem input').prop('checked',_if);
+            console.log(vm.inputche1);
+        },
+        aaa:function () {
+            if(vm.inputche.length != 5){
+                vm.inputche1 = false;
+            }else {
+                vm.inputche1 = true;
+            }
         },
         //立即上传
         addUpload:function () {
 
             layer.confirm('确定上传吗？',function (index) {
+
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+
+
                 // console.log(vm.shopinfo);
                 // vm.uploadIds = vm.uploadIdsstr;
                 vm.uploadIds = vm.uploadIdsstr.split(',');
                 // console.log(vm.uploadIds);
-                if (vm.inputche[0]==true){
-
-                    vm.operateItem = [0,1,2,3,4];
-                }else {
-                    for (var i=0;i<vm.inputche.length;i++){
-                        if (vm.inputche[i]==true){
-                            console.log('2222');
-                            vm.operateItem.push(i-1);
-                        }
-                    }
-                }
+                // if (vm.inputche[0]==true){
+                //
+                //     vm.operateItem = [0,1,2,3,4];
+                // }else {
+                //     for (var i=0;i<vm.inputche.length;i++){
+                //         if (vm.inputche[i]==true){
+                //             console.log('2222');
+                //             vm.operateItem.push(i-1);
+                //         }
+                //     }
+                // }
                 console.log(vm.shopinfo);
                 var grantShop = '';
                 vm.marketplace.forEach(function (t) {
@@ -260,7 +289,7 @@ var vm = new Vue({
                         'amazonCategory': vm.amazonCategory,
                         'amazonTemplateId': vm.flModleValue,
                         'amazonTemplate': templateDisplayName,
-                        'operateItem': vm.operateItem,
+                        'operateItem': vm.inputche,
                         'fieldsEntityList':vm.modelAttr,
                         'amazonNodeId':vm.nodeId,
                     }),
@@ -458,53 +487,67 @@ var vm = new Vue({
         // 历史选择
         lishiFunc:function () {
 
-            $.ajax({
-                url: '../../amazon/amazoncategoryhistory/getMyList',
-                type: 'get',
-                data: '',
-                dataType: 'json',
-                success: function (r) {
-                    console.log('历史选择')
-                    console.log(r);
-                    if (r.code === 0) {
-                        vm.lishiList = r.list;
-                        layer.open({
-                            type: 1,
-                            title: false,
-                            content: $('#lishi'), //这里content是一个普通的String
-                            skin: 'openClass',
-                            area: ['800px', '400px'],
-                            shadeClose: true,
-                            btn: ['确定','取消'],
-                            btn1: function (index) {
-                                // $('#fenleiTankuang div.con li').removeClass('active');
-                                layer.close(index);
+            if(vm.shopinfo!=''){
+                var countryCode;
+                vm.marketplace.forEach(function (t) {
+                    if(t.grantShopId == vm.shopinfo){
+                        countryCode = t.countryCode
+                    }
+                })
+                $.ajax({
+                    url: '../../amazon/amazoncategoryhistory/getMyList',
+                    type: 'get',
+                    data: {
+                        'countryCode':countryCode
+                    },
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log('历史选择')
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.lishiList = r.list;
+                            layer.open({
+                                type: 1,
+                                title: false,
+                                content: $('#lishi'), //这里content是一个普通的String
+                                skin: 'openClass',
+                                area: ['800px', '400px'],
+                                shadeClose: true,
+                                btn: ['确定','取消'],
+                                btn1: function (index) {
+                                    // $('#fenleiTankuang div.con li').removeClass('active');
+                                    layer.close(index);
 
-                            },
-                            btn2: function (index) {
+                                },
+                                btn2: function (index) {
 
-                                // $('#fenleiTankuang div.con>div.qita').remove();
-                                // $('#fenleiTankuang div.con li').removeClass('active');
-                            }
-                        });
-                        $('.inner-content-div2').slimScroll({
-                            height: '300px' //设置显示的高度
-                        });
-                        setTimeout(function () {
+                                    // $('#fenleiTankuang div.con>div.qita').remove();
+                                    // $('#fenleiTankuang div.con li').removeClass('active');
+                                }
+                            });
                             $('.inner-content-div2').slimScroll({
                                 height: '300px' //设置显示的高度
                             });
-                        },1000)
+                            setTimeout(function () {
+                                $('.inner-content-div2').slimScroll({
+                                    height: '300px' //设置显示的高度
+                                });
+                            },1000)
 
 
-                    } else {
-                        layer.alert(r.message);
+                        } else {
+                            layer.alert(r.message);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
                     }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
-            });
+                });
+            }else {
+                layer.msg('请选择店铺');
+            }
+
+
         },
         lishiSelFunc:function () {
             vm.amazonCategory = $(event.target).attr('data-val');

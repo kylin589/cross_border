@@ -135,7 +135,7 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getauthorizeList();
+                            vm.getauthorizeList1();
                         }
                     }
                 });
@@ -156,6 +156,31 @@ var vm = new Vue({
                     if (r.code === 0) {
                         vm.authorizeList=r.page.list;
                         vm.totalCount = r.page.totalCount;
+                        vm.laypage();
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        getauthorizeList1:function () {
+            $.ajax({
+                url: '../../amazon/amazongrant/list',
+                type: 'get',
+                data: {
+                    limit:this.pageLimit,
+                    page:this.proCurr
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.authorizeList=r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                        // vm.laypage();
                     } else {
                         layer.alert(r.message);
                     }
@@ -238,7 +263,7 @@ var vm = new Vue({
     },
     created:function () {
         this.getauthorizeList();
-        this.laypage();
+        // this.laypage();
     }
 
 })

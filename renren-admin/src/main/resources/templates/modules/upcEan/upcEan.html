@@ -36,7 +36,14 @@
 <div class="box" id="step">
 
     <p>
-
+        <span style="display: inline-block;color: #666;line-height: 28px;">
+            总数：<span>{{all}}</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            已使用：<span>{{shiyong}}</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            未使用：<span style="color: #00b0e4">{{weishuy}}</span>
+        </span>
+        
 
         <!--<button class="save" >添加授权</button>-->
         <!--<a href="ruheAuthorize.html" target="_blank" style="float: right;margin-right: 20px;line-height: 30px;color: #34a4ee;">如何授权？</a>-->
@@ -85,7 +92,7 @@
         <br>
         <span>
             <label for="">upc/ean码</label>
-            <p>每行一条，单词最多500条</p>
+            <p>每行一条，单次最多500条</p>
             <textarea v-model="ean" ></textarea>
         </span>
 

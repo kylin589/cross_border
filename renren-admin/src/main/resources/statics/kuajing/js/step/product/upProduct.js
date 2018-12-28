@@ -54,7 +54,7 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getMyUploadList();
+                            vm.getMyUploadList1();
                         }
                     }
                 });
@@ -75,6 +75,33 @@ var vm = new Vue({
                     if (r.code === 0) {
                         vm.prolist = r.page.list;
                         vm.totalCount = r.page.totalCount;
+                        vm.laypage();
+                    } else {
+                        layer.alert(r.msg);
+                    }
+
+
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        getMyUploadList1:function () {
+            $.ajax({
+                url: '../../product/upload/getMyUploadList',
+                type: 'post',
+                data: JSON.stringify({
+                    page:this.proCurr,
+                    limit:this.pageLimit
+                }),
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.prolist = r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                        // this.laypage();
                     } else {
                         layer.alert(r.msg);
                     }
@@ -155,6 +182,6 @@ var vm = new Vue({
     created:function () {
 
         this.getMyUploadList();
-        this.laypage();
+
     }
 })
