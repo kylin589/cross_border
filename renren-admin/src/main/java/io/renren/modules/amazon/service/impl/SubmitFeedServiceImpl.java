@@ -313,12 +313,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             Calendar calendar = Calendar.getInstance();
             String year = calendar.get(Calendar.YEAR) + "/";
             String month = (calendar.get(Calendar.MONTH)) + 1 + "/";
-            tempPath = fileStoragePath + year + month + "FeedSubmissionResult/";
-            File file = new File(tempPath);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            tempPath = tempPath + submissionId + "_SubmissionResult.xml";
+            tempPath = fileStoragePath + year + month + "FeedSubmissionResult/" + submissionId + "_SubmissionResult.xml";
 
             for (int j = 0; j < feedSubmissionResultDtos.size(); j++) {
                 if (submissionId.equals(feedSubmissionResultDtos.get(j).getFeedSubmissionId())) {
@@ -539,11 +534,15 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
     @Override
     public List<FeedSubmissionResultDto> getFeedSubmissionResultAsync(Long uploadId, String path, String serviceURL, String merchantId, String sellerDevAuthToken, List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList) {
-        String tempPath = path + "FeedSubmissionResult/";
+        Calendar calendar = Calendar.getInstance();
+        String year = calendar.get(Calendar.YEAR) + "/";
+        String month = (calendar.get(Calendar.MONTH)) + 1 + "/";
+        String tempPath = fileStoragePath + year + month + "FeedSubmissionResult/";
         File file = new File(tempPath);
         if (!file.exists()) {
             file.mkdirs();
         }
+
 
         MarketplaceWebService service = getAsyncService(serviceURL);
         List<GetFeedSubmissionResultRequest> requests = new ArrayList<>();
@@ -553,14 +552,13 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             request.setMWSAuthToken(sellerDevAuthToken);
             request.setFeedSubmissionId(feedSubmissionInfoDtoList.get(i).getFeedSubmissionId());
             OutputStream processingResult;
-            tempPath = tempPath + feedSubmissionInfoDtoList.get(i).getFeedSubmissionId() + "_SubmissionResult.xml";
+            String tempPath2 = tempPath + feedSubmissionInfoDtoList.get(i).getFeedSubmissionId() + "_SubmissionResult.xml";
             try {
-                processingResult = new FileOutputStream(tempPath);
+                processingResult = new FileOutputStream(tempPath2);
                 request.setFeedSubmissionResultOutputStream(processingResult);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            tempPath = path + "FeedSubmissionResult/";
             requests.add(request);
         }
         return invokeGetFeedSubmissionResult(uploadId, service, requests);
