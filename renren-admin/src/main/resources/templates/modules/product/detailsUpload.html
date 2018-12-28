@@ -141,12 +141,12 @@
                 </div>
                 <div class="pro_inf check" id="operateItem">
 
-                    <span><input type="checkbox" class="input_check" id="check3" value="all" v-model="inputche[0]" @click="allSelFunc"> 全部</span>
-                    <span><input type="checkbox" class="input_check" value="0" v-model="inputche[1]"> 基本信息</span>
-                    <span><input type="checkbox" class="input_check" value="1" v-model="inputche[2]"> 关系</span>
-                    <span><input type="checkbox" class="input_check" value="2" v-model="inputche[3]"> 图片</span>
-                    <span><input type="checkbox" class="input_check" value="3" v-model="inputche[4]"> 库存</span>
-                    <span><input type="checkbox" class="input_check" value="4" v-model="inputche[5]"> 价格</span>
+                    <span><input type="checkbox" class="input_check" id="check3" value="all" v-model="inputche1" @click="allSelFunc"> 全部</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="0" v-model="inputche"> 基本信息</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="1" v-model="inputche"> 关系</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="2" v-model="inputche"> 图片</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="3" v-model="inputche"> 库存</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="4" v-model="inputche"> 价格</span>
                     <p>如果只更新产品信息，则不需要选中上面选项</p>
                 </div>
             </div>

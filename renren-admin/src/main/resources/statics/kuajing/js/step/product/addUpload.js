@@ -29,6 +29,7 @@ var vm = new Vue({
         amazonAllArr:[],
         amazonTemplateId: 0,
         amazonTemplate: null,
+        inputche1:'',
         inputche:[],
         operateItem: [],
         marketplace:[],
@@ -47,7 +48,8 @@ var vm = new Vue({
         modelAttr:[],
         grantCounty:'',
         countryCode:'',
-        nodeId:''
+        nodeId:'',
+
     },
     methods:{
         fenleiTankuang:function () {
@@ -139,17 +141,17 @@ var vm = new Vue({
                         console.log(vm.inputche)
                         vm.uploadIds = vm.uploadIdsstr.split(',');
                         console.log(typeof(vm.uploadIds));
-                        if (vm.inputche[0]==true){
-
-                            vm.operateItem = [0,1,2,3,4];
-                        }else {
-                            for (var i=0;i<vm.inputche.length;i++){
-                                if (vm.inputche[i]==true){
-                                    console.log('2222');
-                                    vm.operateItem.push(i-1);
-                                }
-                            }
-                        }
+                        // if (vm.inputche[0]==true){
+                        //
+                        //     vm.operateItem = [0,1,2,3,4];
+                        // }else {
+                        //     for (var i=0;i<vm.inputche.length;i++){
+                        //         if (vm.inputche[i]==true){
+                        //             console.log('2222');
+                        //             vm.operateItem.push(i-1);
+                        //         }
+                        //     }
+                        // }
 
                         console.log(vm.operateItem);
                         // vm.grantShopId = vm.shopinfo.grantShopId;
@@ -169,7 +171,7 @@ var vm = new Vue({
                                 'amazonCategory': vm.amazonCategory,
                                 'amazonTemplateId': vm.flModleValue,
                                 'amazonTemplate': templateDisplayName,
-                                'operateItem': vm.operateItem,
+                                'operateItem': vm.inputche,
                                 'time':vm.changeTime,
                                 'countryCode':vm.countryCode,
                                 'fieldsEntityList':vm.modelAttr,
@@ -208,8 +210,22 @@ var vm = new Vue({
         allSelFunc:function () {
 
             var _if = $(event.target).prop('checked');
-            console.log(vm.inputche);
-            $('#operateItem input').prop('checked',_if);
+            // vm.inputche[1] = 0;
+            // vm.inputche[2] = 1;
+            // vm.inputche[3] = 2;
+            // vm.inputche[4] = 3;
+            // vm.inputche[5] = 4;
+            vm.inputche = ['0','1','2','3','4'];
+
+            // $('#operateItem input').prop('checked',_if);
+            console.log(vm.inputche1);
+        },
+        aaa:function () {
+            if(vm.inputche.length != 5){
+                vm.inputche1 = false;
+            }else {
+                vm.inputche1 = true;
+            }
         },
         //立即上传
         addUpload:function () {
@@ -225,17 +241,17 @@ var vm = new Vue({
                 // vm.uploadIds = vm.uploadIdsstr;
                 vm.uploadIds = vm.uploadIdsstr.split(',');
                 // console.log(vm.uploadIds);
-                if (vm.inputche[0]==true){
-
-                    vm.operateItem = [0,1,2,3,4];
-                }else {
-                    for (var i=0;i<vm.inputche.length;i++){
-                        if (vm.inputche[i]==true){
-                            console.log('2222');
-                            vm.operateItem.push(i-1);
-                        }
-                    }
-                }
+                // if (vm.inputche[0]==true){
+                //
+                //     vm.operateItem = [0,1,2,3,4];
+                // }else {
+                //     for (var i=0;i<vm.inputche.length;i++){
+                //         if (vm.inputche[i]==true){
+                //             console.log('2222');
+                //             vm.operateItem.push(i-1);
+                //         }
+                //     }
+                // }
                 console.log(vm.shopinfo);
                 var grantShop = '';
                 vm.marketplace.forEach(function (t) {
@@ -272,7 +288,7 @@ var vm = new Vue({
                         'amazonCategory': vm.amazonCategory,
                         'amazonTemplateId': vm.flModleValue,
                         'amazonTemplate': templateDisplayName,
-                        'operateItem': vm.operateItem,
+                        'operateItem': vm.inputche,
                         'fieldsEntityList':vm.modelAttr,
                         'amazonNodeId':vm.nodeId,
                     }),
