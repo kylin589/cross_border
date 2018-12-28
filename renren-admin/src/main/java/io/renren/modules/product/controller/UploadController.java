@@ -508,8 +508,6 @@ public class UploadController extends AbstractController {
      * @date: 2018/12/3 16:08
      */
     @RequestMapping("/saveTimingUpload")
-    //@RequiresPermissions("sys:schedule:save")
-    //@RequestBody AddUploadVM addUploadVM
     public R saveTimingUpload(@RequestBody AddUploadVM addUploadVM) {
         /**
          * 判断是否有不符合上传条件的产品
@@ -599,7 +597,6 @@ public class UploadController extends AbstractController {
      * @date: 2018/12/4 14:54
      */
     @RequestMapping
-    //@RequiresPermissions("product:upload:addupload")
     public R timingUpload(@RequestBody AddUploadVM addUploadVM) {
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setStartId(addUploadVM.getStartId());
@@ -711,16 +708,14 @@ public class UploadController extends AbstractController {
     }
 
     /**
-     * @methodname: saveTimingUpload 上传详情--定时上传
+     * @methodname: renewTimingUpload 创建定时重新上传产品任务
      * @param: [addUploadVM] 前台接受参数的实体类
      * @return: io.renren.common.utils.R
-     * @auther: jhy
+     * @auther: zjr
      * @date: 2018/12/3 16:08
      */
-    @RequestMapping("/reCreateTimingUpload")
-    //@RequiresPermissions("sys:schedule:save")
-    //@RequestBody AddUploadVM addUploadVM
-    public R reCreateTimingUpload(@RequestBody AddUploadVM addUploadVM) {
+    @RequestMapping("/renewTimingUpload")
+    public R renewTimingUpload(@RequestBody AddUploadVM addUploadVM) {
         /**
          * 判断是否有不符合上传条件的产品
          */
@@ -762,11 +757,10 @@ public class UploadController extends AbstractController {
 
         //创建定时任务的实体
         ScheduleJobEntity scheduleJob = new ScheduleJobEntity();
-        // TODO: 2018/12/28 zjr 是否对的？
         //设置为spring bean的名称
-        scheduleJob.setBeanName("againTimingUpload");
+        scheduleJob.setBeanName("timingUpload");
         //设置方法名
-        scheduleJob.setMethodName("againTimingUpload");
+        scheduleJob.setMethodName("renewTimingUpload");
 
         //获取当前的用户和用户id和公司id
         addUploadVM.setUser(getUser());
@@ -802,16 +796,15 @@ public class UploadController extends AbstractController {
         return R.ok();
     }
 
-   /* *//**
-     * @methodname: timingUpload 重新--定时上传
+    /**
+     * @methodname: reTimingUpload 定时重新上传
      * @param: [addUploadVM]
      * @return: io.renren.common.utils.R
-     * @auther: jhy
+     * @auther: zjr
      * @date: 2018/12/4 14:54
-     *//*
-    @RequestMapping
-    //@RequiresPermissions("product:upload:addupload")
-    public R againTimingUpload(@RequestBody AddUploadVM addUploadVM) {
+     */
+    @RequestMapping("/reTimingUpload")
+    public R reTimingUpload(@RequestBody AddUploadVM addUploadVM) {
         // 删除xml报告和模板可选项
         Map<String, Object> map = new HashMap<>();
         map.put("upload_id", addUploadVM.getUploadId());
@@ -926,7 +919,7 @@ public class UploadController extends AbstractController {
         }
         submitFeedService.submitFeed(uploadEntity);
         return R.ok();
-    }*/
+    }
 
     /**
      * @methodname: timeZoneConversion 国家时区转换
