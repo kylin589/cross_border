@@ -617,6 +617,7 @@ var vm = new Vue({
                 layer.alert('请选择要修改的产品');
             }else {
 
+
                 layer.open({
                     type: 1,
                     title: false,
@@ -627,6 +628,7 @@ var vm = new Vue({
                     btn: ['修改','取消'],
                     btn1: function (index) {
                         console.log(vm.xiugaiData);
+                        // console.log(vm.xiugaiData.productCategory);
                         layer.confirm('确定修改吗？',function (index1) {
                             $.ajax({
                                 url: '../../product/products/batchmodify',

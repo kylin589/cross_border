@@ -52,6 +52,14 @@
                 border: 2px solid #00a3e8;
                 box-shadow: 0 0 10px #888;
             }
+            .jindutiaoFy{
+                position: fixed;
+                top:0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,.2);
+            }
         </style>
         </head>
 <body>
@@ -377,21 +385,16 @@
                     <input type="button" value="翻译" @click="fanyiFunc">
                     <div class="layui-tab">
                         <ul class="layui-tab-title">
-                            <li class="layui-this">中文</li>
-                            <li>英语</li>
+                            <li class="layui-this">英语</li>
                             <li>法语</li>
                             <li>意大利语</li>
                             <li>西班牙语</li>
                             <li>德语</li>
                             <li>日语</li>
+                            <li>中文</li>
                         </ul>
+
                         <div class="layui-tab-content active">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.chinesePRE.productTitle">建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.chinesePRE.keyWord">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.chinesePRE.keyPoints">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.chinesePRE.productDescription">建议填写</textarea></span><br>
-                        </div>
-                        <div class="layui-tab-content">
                             <span><label for="">产品标题：</label><textarea v-model="proDetails.britainPRE.productTitle">建议填写</textarea></span><br>
                             <span><label for="">关键字：</label><textarea v-model="proDetails.britainPRE.keyWord">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.britainPRE.keyPoints">建议填写</textarea></span><br>
@@ -426,6 +429,12 @@
                             <span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints">建议填写</textarea></span><br>
                             <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription">建议填写</textarea></span><br>
+                        </div>
+                        <div class="layui-tab-content">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.chinesePRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.chinesePRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.chinesePRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.chinesePRE.productDescription">建议填写</textarea></span><br>
                         </div>
                     </div>
 
@@ -569,6 +578,7 @@
             <img src="" alt="">
         </div>
 
+
     </form>
     <!--上传-->
     <div id="shangchaunImg" class="tankuang" style="display: none;">
@@ -577,6 +587,11 @@
         <div id="demo" class="zyupload"></div>
 
     </div>
+
+    <!--翻译进度条-->
+    <!--<div v-if="jindutiaoFy" class="jindutiaoFy">-->
+        <!--<el-progress type="circle" :percentage="25"></el-progress>-->
+    <!--</div>-->
 
     <script src="${request.contextPath}/statics/kuajing/js/step/product/zyupload-1.0.0.js"></script>
 

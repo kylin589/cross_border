@@ -135,7 +135,7 @@ var vm = new Vue({
                         vm.staff = r.userList;
                         vm.staff.unshift({
                             userId:'',
-                            username:'全部'
+                            displayName:'全部'
                         })
                     } else {
                         layer.alert(r.msg);

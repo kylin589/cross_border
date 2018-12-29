@@ -8,7 +8,7 @@ $(function () {
 
     // 语言选项卡
     $('.layui-tab-title li').click(function () {
-        console.log(111111);
+        // console.log(111111);
         $('.layui-tab-title li').removeClass('layui-this');
         $(this).addClass('layui-this');
         $('.layui-tab-content').removeClass('active');
@@ -521,6 +521,7 @@ var vm = new Vue({
         },
         // 变体参数
         selVar:0,
+        jindutiaoFy:false,
 
     },
     methods:{
@@ -2268,39 +2269,40 @@ var vm = new Vue({
         },
         // 翻译
         fanyiFunc:function () {
-            console.log(vm.proDetails.chinesePRE.productTitle)
-            console.log(vm.proDetails.chinesePRE.keyWord)
-            console.log(vm.proDetails.chinesePRE.keyPoints)
-            console.log(vm.proDetails.chinesePRE.productDescription);
+            console.log(vm.proDetails.britainPRE.productTitle)
+            console.log(vm.proDetails.britainPRE.keyWord)
+            console.log(vm.proDetails.britainPRE.keyPoints)
+            console.log(vm.proDetails.britainPRE.productDescription);
             var index = layer.load();
             var index = layer.load(1); //换了种风格
-            var index = layer.load(2, {time: 10*1000});
+            var index = layer.load(2, {time: 100*1000});
             $.ajax({
-                url: '../../product/introduction/zhtoEn',
+                url: '../../product/introduction/entoOthers',
                 type: 'post',
                 data: JSON.stringify({
-                    'productTitle': vm.proDetails.chinesePRE.productTitle,
-                    'keyWord':vm.proDetails.chinesePRE.keyWord,
-                    'keyPoints':vm.proDetails.chinesePRE.keyPoints,
-                    'productDescription':vm.proDetails.chinesePRE.productDescription,
+                    'productTitle': vm.proDetails.britainPRE.productTitle,
+                    'keyWord':vm.proDetails.britainPRE.keyWord,
+                    'keyPoints':vm.proDetails.britainPRE.keyPoints,
+                    'productDescription':vm.proDetails.britainPRE.productDescription,
                 }),
                 // dataType: 'json',
                 contentType: "application/json",
                 success: function (r) {
-                    // console.log(r);
+                    console.log(r);
                     if (r.code === 0) {
-                        vm.proDetails.francePRE = r.introductionFra;
-                        vm.proDetails.spainPRE = r.introductionSpa;
-                        vm.proDetails.germanyPRE = r.introductionDe;
-                        vm.proDetails.italyPRE = r.introductionIt;
-                        vm.proDetails.britainPRE = r.introductionEn;
-                        vm.proDetails.japanPRE = r.introductionJp;
+                        // vm.proDetails.francePRE = r.introductionFra;
+                        // vm.proDetails.spainPRE = r.introductionSpa;
+                        // vm.proDetails.germanyPRE = r.introductionDe;
+                        // vm.proDetails.italyPRE = r.introductionIt;
+                        // vm.proDetails.britainPRE = r.introductionEn;
+                        // vm.proDetails.japanPRE = r.introductionJp;
                         layer.close(index);
                         layer.msg("翻译成功");
 
                         // vm.proAlbum = r.imageInfo;
 
                     } else {
+                        layer.close(index);
                         layer.alert(r.msg);
                     }
                 },

@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>跨境电商管理平台</title>
+  <title>跨境通</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/layui.css" media="all">
   <link rel="stylesheet" href="${request.contextPath}/statics/css/font-awesome.min.css">
   <link rel="stylesheet" href="${request.contextPath}/statics/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -23,40 +24,84 @@
 </head>
 <body class="hold-transition login-page">
 
-<div class="bai" id="rrapp" v-cloak>
-    <div class="left">
-        <img src="${request.contextPath}/statics/kuajing/img/login/7d7237b1f9c59f6b840313b1d94b314.png"  alt="" class="big">
-        <img src="${request.contextPath}/statics/kuajing/img/login/41472fc36968b988a22f42afeee71e1.png" alt="" class="xiaoe">
-        <h>创淘跨境电商管理平台</h>
-    </div>
-    <div class="right">
-        <div class="frist"></div>
-        <img src="${request.contextPath}/statics/kuajing/img/login/8039ee749efb5de56c660cabdb0f42e.png" alt="" class="deng">
-        <!--西藏自治区通信管理局-->
-        <!--<img src="img/rr.png" alt="" class="gang">-->
-        <!--<p>用户</p>-->
-        <!--<b>登录</b>-->
-        <!--<img src="img/t7.png" alt="" class="gang2">-->
-        <!--<strong>WELCOME</strong>-->
-        <!--<span>TO LOGIN</span>-->
-        <img src="${request.contextPath}/statics/kuajing/img/login/18a2594377534241c71c25cc73c0d47.png" alt="" class="people">
-        <div class="zhang">用户名</div>
-        <div class="rong">NAME</div>
-        <input type="text" placeholder="请输入您的用户名" v-model="username">
-        <img src="${request.contextPath}/statics/kuajing/img/login/22826ca099f9e0b9d9cb884542c2fda.png" alt="" class="people">
-        <div class="zhang">密码</div>
-        <h>PASSWORD</h>
-        <input type="password" placeholder="请输入您的密码" @keyup.enter="login"  v-model="password">
-        <!--<a href="">忘记密码?</a>-->
-        <div class="login" @click="login" style="cursor: pointer;">
-            <!--<img src="img/%7B576A0CFC-2132-D7F5-5457-5358EF0E16F4%7D.JPG" alt="">-->
-            登录
-            <!--<img src="img/%7B576A0CFC-2132-D7F5-5457-5358EF0E16F4%7D.JPG" alt="">-->
-            <!--<br>-->
-            <!--<div class="fer">SIGN IN NOW</div>-->
+    <div class="di" id="rrapp">
+        <div>
+            <img class="bg" src="${request.contextPath}/statics/kuajing/img/login/7d7237b1f9c59f6b840313b1d94b314.png" alt="">
+            <img class="logo" src="${request.contextPath}/statics/kuajing/img/login/41472fc36968b988a22f42afeee71e1.png" alt="">
+            <h3>跨境通电商管理平台</h3>
+        </div>
+        <div>
+            <h2>用户登录</h2>
+            <p>WELCOME TO LOGIN</p>
+            <span></span>
+            <!--<img src="${request.contextPath}/statics/kuajing/img/login/8039ee749efb5de56c660cabdb0f42e.png" alt="" class="deng">-->
+            <div>
+                <div>
+                    <label for="">
+                        <i class="layui-icon layui-icon-username"></i>
+                        用户名 <span>USERNAME</span>
+                    </label>
+                    <input type="text" placeholder="请输入用户名" v-model="username">
+                </div>
+                <div>
+                    <label for="">
+                        <i class="layui-icon layui-icon-password"></i>
+                        密码 <span>PASSWORD</span>
+                    </label>
+                    <input type="password" placeholder="请输入密码" @keyup.enter="login"  v-model="password">
+                </div>
+                <button @click="login">登录</button>
+
+
+            </div>
         </div>
     </div>
-</div>
+
+
+
+
+
+<!--<div class="bai" id="" v-cloak>-->
+
+
+
+
+
+
+
+    <!--<div class="left">-->
+        <!--<img src="${request.contextPath}/statics/kuajing/img/login/7d7237b1f9c59f6b840313b1d94b314.png"  alt="" class="big">-->
+        <!--<img src="${request.contextPath}/statics/kuajing/img/login/41472fc36968b988a22f42afeee71e1.png" alt="" class="xiaoe">-->
+        <!--<h>跨境电商管理平台</h>-->
+    <!--</div>-->
+    <!--<div class="right">-->
+        <!--<div class="frist"></div>-->
+        <!--<img src="${request.contextPath}/statics/kuajing/img/login/8039ee749efb5de56c660cabdb0f42e.png" alt="" class="deng">-->
+        <!--&lt;!&ndash;西藏自治区通信管理局&ndash;&gt;-->
+        <!--&lt;!&ndash;<img src="img/rr.png" alt="" class="gang">&ndash;&gt;-->
+        <!--&lt;!&ndash;<p>用户</p>&ndash;&gt;-->
+        <!--&lt;!&ndash;<b>登录</b>&ndash;&gt;-->
+        <!--&lt;!&ndash;<img src="img/t7.png" alt="" class="gang2">&ndash;&gt;-->
+        <!--&lt;!&ndash;<strong>WELCOME</strong>&ndash;&gt;-->
+        <!--&lt;!&ndash;<span>TO LOGIN</span>&ndash;&gt;-->
+        <!--<img src="${request.contextPath}/statics/kuajing/img/login/18a2594377534241c71c25cc73c0d47.png" alt="" class="people">-->
+        <!--<div class="zhang">用户名</div>-->
+        <!--<div class="rong">NAME</div>-->
+        <!--<input type="text" placeholder="请输入您的用户名" v-model="username">-->
+        <!--<img src="${request.contextPath}/statics/kuajing/img/login/22826ca099f9e0b9d9cb884542c2fda.png" alt="" class="people">-->
+        <!--<div class="zhang">密码</div>-->
+        <!--<h>PASSWORD</h>-->
+        <!--<input type="password" placeholder="请输入您的密码" @keyup.enter="login"  v-model="password">-->
+        <!--&lt;!&ndash;<a href="">忘记密码?</a>&ndash;&gt;-->
+        <!--<div class="login" @click="login" style="cursor: pointer;">-->
+            <!--&lt;!&ndash;<img src="img/%7B576A0CFC-2132-D7F5-5457-5358EF0E16F4%7D.JPG" alt="">&ndash;&gt;-->
+            <!--登录-->
+            <!--&lt;!&ndash;<img src="img/%7B576A0CFC-2132-D7F5-5457-5358EF0E16F4%7D.JPG" alt="">&ndash;&gt;-->
+            <!--&lt;!&ndash;<br>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="fer">SIGN IN NOW</div>&ndash;&gt;-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 
 
 
