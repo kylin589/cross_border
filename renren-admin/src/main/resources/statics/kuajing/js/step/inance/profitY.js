@@ -210,7 +210,7 @@ var vm = new Vue({
                         vm.allChart2Data[1] = vm.statistics.cost + vm.statistics.orderFreight;
                         vm.allChart2Data[2] = vm.statistics.profit;
                         vm.allChart3Data = vm.statistics.profitRate;
-                        allChart1(vm.allChart1Data,vm.statistics.name);
+                        // allChart1(vm.allChart1Data,vm.statistics.name);
                         allChartY2(vm.allChart2Data,vm.statistics.name);
                         allChartY3(vm.allChart3Data);
                     } else {
@@ -226,7 +226,7 @@ var vm = new Vue({
 
     },
     created:function(){
-        this.getCouList();
+        // this.getCouList();
         this.oneLevelStatisticsDefault();
 
 

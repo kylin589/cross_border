@@ -42,21 +42,21 @@
                         type="date"
                         placeholder="选择日期">
                 </el-date-picker>
-                <label for="" style="line-height: 35px">选择员工：</label>
-                <!--<select name="" v-model="yuangonguserid" >-->
-                    <!--<option value="0">全部</option>-->
-                    <!--<option v-for="item in staff" :value="item.userId">{{ item.username }}</option>-->
-                <!--</select>-->
-                <el-select v-model="yuangonguserid" filterable placeholder="请选择员工">
-                    <el-option
-                            v-for="item in staff"
-                            :key="item.userId"
-                            :label="item.username"
-                            :value="item.userId"
-                    >
-                    </el-option>
-                </el-select>
-                <button @click="oneLevelQueryUser1">查询</button>
+                <!--<label for="" style="line-height: 35px">选择员工：</label>-->
+                <!--&lt;!&ndash;<select name="" v-model="yuangonguserid" >&ndash;&gt;-->
+                    <!--&lt;!&ndash;<option value="0">全部</option>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<option v-for="item in staff" :value="item.userId">{{ item.username }}</option>&ndash;&gt;-->
+                <!--&lt;!&ndash;</select>&ndash;&gt;-->
+                <!--<el-select v-model="yuangonguserid" filterable placeholder="请选择员工">-->
+                    <!--<el-option-->
+                            <!--v-for="item in staff"-->
+                            <!--:key="item.userId"-->
+                            <!--:label="item.username"-->
+                            <!--:value="item.userId"-->
+                    <!--&gt;-->
+                    <!--</el-option>-->
+                <!--</el-select>-->
+                <button v-if="zongbuTime" @click="oneLevelQueryUser1">查询</button>
             </div>
 
 
