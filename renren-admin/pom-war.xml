@@ -11,12 +11,13 @@
 
 	<properties>
 		<quartz.version>2.3.0</quartz.version>
-		<shiro.version>1.3.2</shiro.version>
+		<shiro.version>1.4.0</shiro.version>
 		<kaptcha.version>0.0.9</kaptcha.version>
 		<qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
 		<aliyun.oss.version>2.5.0</aliyun.oss.version>
 		<qcloud.cos.version>4.4</qcloud.cos.version>
 		<swagger.version>2.7.0</swagger.version>
+		<joda.time.version>2.9.9</joda.time.version>
 	</properties>
 
 	<dependencies>
@@ -24,11 +25,8 @@
 			<groupId>io.renren</groupId>
 			<artifactId>renren-common</artifactId>
 			<version>3.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
+			<scope>system</scope>
+			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\renren-common.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -95,6 +93,112 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/amazon/mws-orders -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>mws-orders</artifactId>
+			<version>2013-09-01-2015-09-25</version>
+			<scope>system</scope>
+			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\mws-orders-2013-09-01-2015-09-25.jar</systemPath>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/amazon/mws-client -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>mws-client</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\mws-client-1.0.jar</systemPath>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/amazon/feeds -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>feeds</artifactId>
+			<version>1.1</version>
+			<scope>system</scope>
+			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\feeds-1.1.jar</systemPath>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/amazon/maws -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>maws</artifactId>
+			<version>1.1</version>
+			<scope>system</scope>
+			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\maws-1.1.jar</systemPath>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/amazon/mws-sellers -->
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>mws-sellers</artifactId>
+			<version>2011-07-01</version>
+			<scope>system</scope>
+			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\mws-sellers-2011-07-01.jar</systemPath>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
+		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>RELEASE</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>RELEASE</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>RELEASE</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.11.3</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.3</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -111,6 +215,23 @@
 				<configuration>
 					<skipTests>true</skipTests>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.4.14</version>
+				<configuration>
+					<imageName>renren/admin</imageName>
+					<dockerDirectory>${project.basedir}</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+				<!-- 运行命令 mvn clean package docker:build 打包并生成docker镜像 -->
 			</plugin>
 		</plugins>
 	</build>

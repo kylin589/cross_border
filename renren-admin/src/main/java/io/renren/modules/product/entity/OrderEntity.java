@@ -124,11 +124,6 @@ public class OrderEntity implements Serializable {
 	 */
 	private BigDecimal orderProfit = new BigDecimal(0.00);
 	/**
-	 * TODO
-	 * 利润率
-	 */
-
-	/**
 	 * 退货费用
 	 */
 	private BigDecimal returnCost = new BigDecimal(0.00);
@@ -154,6 +149,10 @@ public class OrderEntity implements Serializable {
 	 * 主图片url
 	 */
 	private String productImageUrl;
+	/**
+	 * 利润率
+	 */
+	private BigDecimal profitRate = new BigDecimal(0.00);
 	/**
 	 * 国内物流
 	 */
@@ -487,5 +486,13 @@ public class OrderEntity implements Serializable {
 
 	public void setProductImageUrl(String productImageUrl) {
 		this.productImageUrl = productImageUrl;
+	}
+
+	public BigDecimal getProfitRate() {
+		return profitRate;
+	}
+
+	public void setProfitRate(BigDecimal profitRate) {
+		this.profitRate = profitRate;
 	}
 }

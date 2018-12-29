@@ -6,6 +6,7 @@ import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsyn
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConfig;
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersException;
 import com.amazonservices.mws.orders._2013_09_01.model.*;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.DateUtils;
 import io.renren.modules.amazon.dto.ListOrderItemsByNextTokenResponseDto;
 import io.renren.modules.amazon.dto.ListOrdersResponseDto;
@@ -17,7 +18,9 @@ import io.renren.modules.amazon.util.XMLUtil;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.vm.OrderModel;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -29,6 +32,9 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import static io.renren.modules.amazon.util.XMLUtil.analysisListOrderItemsByNextTokenResponse;
+import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersByNextTokenResponse;
+import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersResponse;
 
 
 @Component("OrderTimer")
@@ -43,12 +49,304 @@ public class OrderTimer {
     private OrderService orderService;
 
     /**
+     * 获得店铺授权列表信息
+     */
+    public void getShopGrantlist(){
+        List<AmazonGrantEntity> grantList = amazonGrantService.selectList(new EntityWrapper<AmazonGrantEntity>());
+        Map map=new HashMap();
+        List<AmazonGrantShopEntity> shoplist=null;
+        for (AmazonGrantEntity grant : grantList) {
+            String sellerId = grant.getMerchantId();//获得商家id
+            String mwsAuthToken = grant.getGrantToken();//获得授权Token
+            shoplist=amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("region",grant.getRegion()));
+            for(AmazonGrantShopEntity shop:shoplist){
+                map.put("sellerId",sellerId);
+                map.put("mwsAuthToken",mwsAuthToken);
+                map.put("shopname",shop.getShopName());
+                map.put("serviceURL",shop.getMwsPoint());
+                map.put("marketplaceId",shop.getMarketplaceId());
+                getSingleShopOrderList(map);//获得单个店铺列表
+            }
+        }
+    }
+
+    /***
+     * 获得单个店铺订单和订单详情
+     */
+    @Async
+    public void getSingleShopOrderList(Map map) {
+        System.out.println("111111111111111111111111");
+        List<String> marketplaceId = new ArrayList<>();
+        String sellerId = (String) map.get("sellerId");
+        String mwsAuthToken = (String) map.get("mwsAuthToken");
+        String shopName = (String) map.get("shopname");
+        String serviceURL = (String) map.get("serviceURL");
+        marketplaceId.add((String) map.get("marketplaceId"));
+        MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
+        config.setServiceURL(serviceURL);
+        MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+                "my_test", "1.0", config, null);
+        List<ListOrdersRequest> requestList = new ArrayList<ListOrdersRequest>();
+        ListOrdersRequest request = new ListOrdersRequest();
+        request.setSellerId(sellerId);//卖家id
+        request.setMWSAuthToken(mwsAuthToken);//授权令牌
+        // 指定某一格式为 ISO 8601 的日期，用以选择最后更新日期为该日期之后（或当天）的订单。更新即为对订单状态进行更改，包括新订单的创建。包括亚马逊和卖家所进行的更新。必须不迟于两分钟，且在请求提交时间之前。
+        XMLGregorianCalendar lastUpdatedAfter = DateUtils.getTheDateNow10DaysShort();
+        request.setLastUpdatedAfter(lastUpdatedAfter);//最近更新日期
+        request.setMarketplaceId(marketplaceId);//国家市场编码
+        requestList.add(request);
+        List<Object> responseList = invokeListOrders(client, requestList);//获得订单列表的
+        Boolean isSuccess = false;
+        List<ListOrdersResponseDto> listOrdersResponseDtos = new ArrayList<>();
+        ListOrdersResponseDto listOrdersResponseDto = null;
+        for (Object tempResponse : responseList) {
+            // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
+            String className = tempResponse.getClass().getName();
+            if ((ListOrdersResponse.class.getName()).equals(className) == true) {
+                System.out.println("responseList 类型是 ListOrdersResponse。");
+                ListOrdersResponse response = (ListOrdersResponse) tempResponse;
+                listOrdersResponseDto = analysisListOrdersResponse(response.toXML());
+                isSuccess = true;
+            } else {
+                System.out.println("responseList 类型是 MarketplaceWebServiceOrdersException。");
+                isSuccess = false;
+                continue ;
+            }
+        }
+        listOrdersResponseDtos.add(listOrdersResponseDto);//封装解析出来的
+        if (listOrdersResponseDto != null && StringUtils.isNotBlank(listOrdersResponseDto.getNextToken()) && isSuccess == true) {
+            ListOrdersResponseDto listOrdersByNextTokenResponseDto = null;
+            List<ListOrdersByNextTokenRequest> listOrdersByNextTokenRequests = new ArrayList<ListOrdersByNextTokenRequest>();
+            ListOrdersByNextTokenRequest listOrdersByNextTokenRequest = new ListOrdersByNextTokenRequest();
+            listOrdersByNextTokenRequest.setSellerId(sellerId);
+            listOrdersByNextTokenRequest.setMWSAuthToken(mwsAuthToken);
+            listOrdersByNextTokenRequest.setNextToken(listOrdersResponseDto.getNextToken());
+            listOrdersByNextTokenRequests.add(listOrdersByNextTokenRequest);
+            List<Object> responseList2 = invokeListOrdersByNextToken(client, listOrdersByNextTokenRequests);
+            Boolean isSuccess2 = false;
+            for (Object tempResponse : responseList2) {
+                // Object 转换 listOrdersByNextTokenResponseDto 还是 MarketplaceWebServiceOrdersException
+                String className = tempResponse.getClass().getName();
+                if ((ListOrdersByNextTokenResponse.class.getName()).equals(className) == true) {
+                    System.out.println("responseList2 类型是 ListOrdersByNextTokenResponse。");
+                    ListOrdersByNextTokenResponse response = (ListOrdersByNextTokenResponse) tempResponse;
+                    //解析订单下一页的响应列表
+                    listOrdersByNextTokenResponseDto = analysisListOrdersByNextTokenResponse(response.toXML());
+                    isSuccess2 = true;
+                } else {
+                    System.out.println("responseList2 类型是 MarketplaceWebServiceOrdersException。");
+                    isSuccess2 = false;
+                    continue;
+                }
+            }
+            listOrdersResponseDtos.add(listOrdersByNextTokenResponseDto);
+        }
+        if(listOrdersResponseDtos.size()>0 && listOrdersResponseDtos!=null){
+            //循环输出
+            for (int i = 0; i < listOrdersResponseDtos.size(); i++) {
+                //循环输出订单
+                if (listOrdersResponseDtos.get(i)!= null && listOrdersResponseDtos.get(i).getOrders() != null){
+                    for (int j = 0; j < listOrdersResponseDtos.get(i).getOrders().size(); j++) {
+                        List<ListOrderItemsRequest> ListOrderItemsRequestRequests = new ArrayList<ListOrderItemsRequest>();
+                        ListOrderItemsRequest ListOrderItemsRequest = new ListOrderItemsRequest();
+                        String AmazonOrderId = listOrdersResponseDtos.get(i).getOrders().get(j).getAmazonOrderId();
+                        System.out.println("订单号:" + AmazonOrderId + "=================");
+                        ListOrderItemsRequest.setAmazonOrderId(AmazonOrderId);
+                        ListOrderItemsRequest.setSellerId(sellerId);
+                        ListOrderItemsRequest.setMWSAuthToken(mwsAuthToken);
+                        ListOrderItemsRequestRequests.add(ListOrderItemsRequest);
+                        List<Object> responseList3 = invokeListOrderItems(client, ListOrderItemsRequestRequests);
+                        Boolean isSuccess3 = false;
+                        List<ListOrderItemsByNextTokenResponseDto> orderItemResponseDtos = new ArrayList<>();
+                        ListOrderItemsByNextTokenResponseDto orderItemResponseDto = null;
+                        for (Object tempResponse : responseList3) {
+                            // Object 转换 listOrdersByNextTokenResponseDto 还是 MarketplaceWebServiceOrdersException
+                            String className = tempResponse.getClass().getName();
+                            if ((ListOrderItemsResponse.class.getName()).equals(className) == true) {
+                                System.out.println("responseList3 类型是 ListOrderItemsByNextTokenResponse。");
+                                ListOrderItemsResponse response = (ListOrderItemsResponse) tempResponse;
+                                orderItemResponseDto = analysisListOrderItemsByNextTokenResponse(response.toXML());
+                                isSuccess3=true;
+                            } else {
+                                System.out.println("responseList3 类型是 MarketplaceWebServiceOrdersException。");
+                                isSuccess3=false;
+                                continue;
+                            }
+                        }
+                        orderItemResponseDtos.add(orderItemResponseDto);
+                        for (int k = 0; k < orderItemResponseDtos.size(); k++) {
+                            List<OrderModel> orderModelList = new ArrayList<OrderModel>();
+                            if(orderItemResponseDtos.get(k) != null && orderItemResponseDtos.get(k).getOrderItems() != null && orderItemResponseDtos.get(k).getOrderItems().size() >0){
+                                for (int m = 0; m < orderItemResponseDtos.get(k).getOrderItems().size(); m++) {
+                                    String product_asin = orderItemResponseDtos.get(k).getOrderItems().get(m).getASIN();
+                                    System.out.println("商品asin码:"+product_asin+"==================");
+                                    String orderItemId = orderItemResponseDtos.get(k).getOrderItems().get(m).getOrderItemId();
+                                    String product_sku = orderItemResponseDtos.get(k).getOrderItems().get(m).getSellerSKU();
+                                    System.out.println("商品sku:"+product_sku+"==================");
+                                    int ordernumber = orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
+                                    System.out.println("订单配送数量："+ordernumber+"============");
+                                    ProductShipAddressEntity addressEntity = new ProductShipAddressEntity();
+                                    String shipname = listOrdersResponseDtos.get(i).getOrders().get(j).getName();
+                                    System.out.println("收件人姓名:"+shipname+"==========");
+                                    String shipaddress = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
+                                    String shipaddress2 = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine2();
+
+                                    System.out.println("收件地址："+shipaddress+"===============");
+                                    String shipcity = listOrdersResponseDtos.get(i).getOrders().get(j).getCity();
+                                    System.out.println("收件人城市:"+shipcity+"====================");
+                                    String shipCounty = listOrdersResponseDtos.get(i).getOrders().get(j).getCounty();
+                                    System.out.println("收件人县:"+shipCounty+"====================");
+                                    String shipCountry = listOrdersResponseDtos.get(i).getOrders().get(j).getCountryCode();
+                                    System.out.println("收件人国家:"+shipCountry+"====================");
+                                    String shipdistrict = listOrdersResponseDtos.get(i).getOrders().get(j).getDistrict();
+                                    System.out.println("收件人区:"+shipdistrict+"====================");
+                                    String shipregion = listOrdersResponseDtos.get(i).getOrders().get(j).getStateOrRegion();
+                                    System.out.println("收件人区域:"+shipregion+"====================");
+                                    String shiptel = listOrdersResponseDtos.get(i).getOrders().get(j).getPhone();
+                                    System.out.println("收件人电话:"+shiptel+"====================");
+                                    String shipzip = listOrdersResponseDtos.get(i).getOrders().get(j).getPostalCode();
+                                    System.out.println("收件人邮编:"+shipzip+"====================");
+                                    //获得订单商品sku
+                                    //进行数据库表查询根据AmazonOrderId，有就更新，没有就插入
+                                    OrderModel orderModel = new OrderModel();
+
+                                    orderModel.setAmazonOrderId(AmazonOrderId);
+                                    String buytime=listOrdersResponseDtos.get(i).getOrders().get(j).getPurchaseDate();
+                                    buytime = buytime.replace("Z", " UTC");// UTC是本地时间
+                                    SimpleDateFormat format = new SimpleDateFormat(
+                                            "yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+                                    Date d=null;
+                                    try{
+                                        d=format.parse(buytime);
+                                    }catch (ParseException e){
+                                        e.getStackTrace();
+                                    }
+                                    Timestamp timeStamep = new Timestamp(d.getTime());
+                                    System.out.println("购买日期:"+timeStamep+"=================================");
+                                    orderModel.setBuyDate(timeStamep);
+                                    orderModel.setOrderStatus(listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus());
+
+                                    if (product_asin != null) {
+                                        orderModel.setProductAsin(product_asin);
+                                    } else {
+                                        orderModel.setProductAsin("");
+                                    }
+                                    if (orderItemId != null) {
+                                        orderModel.setOrderItemId(orderItemId);
+                                    } else {
+                                        orderModel.setOrderItemId("");
+                                    }
+                                    if (product_sku != null) {
+                                        orderModel.setProductSku(product_sku);
+                                    } else {
+                                        orderModel.setProductSku("");
+                                    }
+                                    if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
+                                        String orderMoney = orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
+                                        System.out.println("订单金额："+orderMoney+"============");
+                                        String CurrencyCode=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getCurrencyCode();
+                                        System.out.println("货币代码："+CurrencyCode+"============");
+                                        if (orderMoney != null) {
+                                            BigDecimal OrderMoney = new BigDecimal(orderMoney);
+                                            orderModel.setOrderMoney(OrderMoney);//订单总费用
+                                        } else {
+                                            orderModel.setOrderMoney(new BigDecimal(0));//订单总费用
+                                        }
+                                        if(CurrencyCode!=null){
+                                            orderModel.setCurrencyCode(CurrencyCode);
+                                        }else{
+                                            orderModel.setCurrencyCode("");
+                                        }
+                                    }
+                                    orderModel.setOrderNumber(ordernumber);//订单总量
+                                    if (shopName != null) {
+                                        orderModel.setShopName(shopName);
+                                    } else {
+                                        orderModel.setShopName("");
+                                    }
+                                    if (shipname != null) {
+                                        addressEntity.setShipName(shipname);
+                                    } else {
+                                        addressEntity.setShipName("");
+                                    }
+                                    if (shipaddress != null) {
+                                        addressEntity.setShipAddressLine1(shipaddress);
+                                    } else if (shipaddress2 != null){
+                                        addressEntity.setShipAddressLine1(shipaddress2);
+                                    }else{
+                                        addressEntity.setShipAddressLine1("");
+                                    }
+                                    if (shipcity != null) {
+                                        addressEntity.setShipCity(shipcity);
+
+                                    } else {
+                                        addressEntity.setShipCity("");
+
+                                    }
+                                    /**
+                                     * 国家
+                                     */
+                                    if (shipCountry != null) {
+                                        addressEntity.setShipCountry(shipCountry);
+                                    } else {
+                                        addressEntity.setShipCountry("");
+                                    }
+                                    /**
+                                     * 县
+                                     */
+                                    if(shipCounty !=null){
+                                        addressEntity.setShipCounty(shipCounty);
+                                    }else{
+                                        addressEntity.setShipCounty("");
+                                    }
+                                    if (shipdistrict != null) {
+                                        addressEntity.setShipDistrict(shipdistrict);
+
+                                    } else {
+                                        addressEntity.setShipDistrict("");
+
+                                    }
+                                    if (shipregion != null) {
+                                        addressEntity.setShipRegion(shipregion);
+                                    } else {
+                                        addressEntity.setShipRegion("");
+                                    }
+                                    if (shiptel != null) {
+                                        addressEntity.setShipTel(shiptel);
+                                    } else {
+                                        addressEntity.setShipTel("");
+                                    }
+                                    if (shipzip != null) {
+                                        addressEntity.setShipZip(shipzip);
+                                    } else {
+                                        addressEntity.setShipZip("");
+                                    }
+                                    System.out.println("======================"+orderModel+"=====================");
+                                    orderModel.setProductShipAddressEntity(addressEntity);
+                                    orderModelList.add(orderModel);
+                                    System.out.println("============="+orderModelList.size()+"========================");
+                                }
+                                if(orderModelList.size() > 0){
+                                    orderService.updateOrder(orderModelList);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+
+
+    /**
      * 功能描述：发送订单请求，返回订单列表的响应数据
      *
      *
      */
 
-    public void listOrdersRequest() {
+    /*public void listOrdersRequest() {
 
         Map<String, Object> map = new HashMap<>();
         map.put("region", 0);
@@ -67,9 +365,9 @@ public class OrderTimer {
                 marketplaceId.add(shop.getMarketplaceId());//获取MarketplaceId值
                 String shopName=shop.getShopName();//获得店铺名称
                 // Get a client connection.
-/*
+*//*
                 MarketplaceWebServiceOrdersAsyncClient client = MarketplaceWebServiceOrdersSampleConfig.getAsyncClient(serviceURL);
-*/
+*//*
                 MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
                 config.setServiceURL(serviceURL);
                 // Set other client connection configurations here.
@@ -118,9 +416,9 @@ public class OrderTimer {
                     listOrdersByNextTokenRequest.setMWSAuthToken(mwsAuthToken);
                     listOrdersByNextTokenRequest.setNextToken(listOrdersResponseDto.getNextToken());
                     listOrdersByNextTokenRequests.add(listOrdersByNextTokenRequest);
-                    /**
+                    *//**
                      * 获得订单下一页的响应列表
-                     */
+                     *//*
                     List<Object> responseList2 =invokeListOrdersByNextToken(client, listOrdersByNextTokenRequests);
                     Boolean isSuccess2 = false;
                     for (Object tempResponse : responseList2) {
@@ -160,8 +458,6 @@ public class OrderTimer {
                                 System.out.println("responseList3 类型是 ListOrderItemsByNextTokenResponse。");
                                 ListOrderItemsResponse  response= (ListOrderItemsResponse) tempResponse;
                                 orderItemResponseDto= XMLUtil.analysisListOrderItemsByNextTokenResponseFanWei(response.toXML());
-                            }else {
-                                continue;
                             }
                         }
                         orderItemResponseDtos.add(orderItemResponseDto);
@@ -177,7 +473,8 @@ public class OrderTimer {
                                 String shipaddress=listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
                                 String shipaddress2=listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine2();
                                 String shipcity=listOrdersResponseDtos.get(i).getOrders().get(j).getCity();
-                                String shipCountry=listOrdersResponseDtos.get(i).getOrders().get(j).getCounty();
+                                String shipCounty=listOrdersResponseDtos.get(i).getOrders().get(j).getCounty();//县
+                                String shipCountry=listOrdersResponseDtos.get(i).getOrders().get(j).getCountryCode();//国家
                                 String shipdistrict=listOrdersResponseDtos.get(i).getOrders().get(j).getDistrict();
                                 String shipregion=listOrdersResponseDtos.get(i).getOrders().get(j).getStateOrRegion();
                                 String shiptel=listOrdersResponseDtos.get(i).getOrders().get(j).getPhone();
@@ -261,10 +558,15 @@ public class OrderTimer {
                                     addressEntity.setShipCity("");
 
                                 }
-                                if(shipCountry!=null){
-                                    addressEntity.setShipCounty(shipCountry);
+                                if(shipCounty!=null){
+                                    addressEntity.setShipCounty(shipCounty);
                                 }else{
                                     addressEntity.setShipCounty("");
+                                }
+                                if(shipCountry!=null){
+                                    addressEntity.setShipCountry(shipCountry);
+                                }else{
+                                    addressEntity.setShipCountry("");
                                 }
                                 if(shipdistrict!=null){
                                     addressEntity.setShipDistrict(shipdistrict);
@@ -307,7 +609,7 @@ public class OrderTimer {
 
             }
         }
-    }
+    }*/
 
 
 

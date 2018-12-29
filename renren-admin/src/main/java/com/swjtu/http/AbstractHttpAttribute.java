@@ -27,6 +27,7 @@ import java.util.Map;
  * @see com.swjtu.trans.AbstractTranslator
  * @see com.swjtu.tts.AbstractTTS
  */
+
 public abstract class AbstractHttpAttribute {
     public String url;
     public Map<String, String> formData;
@@ -43,12 +44,12 @@ public abstract class AbstractHttpAttribute {
      * @date: 2018/11/6 16:56
      */
     static {
-        Map<String, String> map = Util.getProxies();
+        Map<String, Object> map = JDBC.getOne();
         // 初始化线程池
         System.out.println("ip:" + map.get("ip"));
         System.out.println("port:" + map.get("port"));
-         params = RequestConfig.custom().setConnectTimeout(3000).setConnectionRequestTimeout(1000).setSocketTimeout(4000)
-            .setProxy(new HttpHost(map.get("ip"), Integer.parseInt(map.get("port")))).setExpectContinueEnabled(true).build();
+        params = RequestConfig.custom().setConnectTimeout(3000).setConnectionRequestTimeout(1000).setSocketTimeout(4000)
+                 .setProxy(new HttpHost(map.get("ip").toString(),Integer.valueOf(map.get("port").toString()))).setExpectContinueEnabled(true).build();
 
         PoolingHttpClientConnectionManager pccm = new PoolingHttpClientConnectionManager();
         pccm.setMaxTotal(300); // 连接池最大并发连接数

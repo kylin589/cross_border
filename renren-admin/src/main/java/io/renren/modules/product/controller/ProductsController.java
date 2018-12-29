@@ -1,10 +1,15 @@
 package io.renren.modules.product.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.swjtu.lang.LANG;
+import com.swjtu.querier.Querier;
+import com.swjtu.trans.AbstractTranslator;
+import com.swjtu.trans.impl.GoogleTranslator;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 
+import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.product.dto.BatchModifyDto;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
@@ -14,6 +19,7 @@ import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysDeptService;
+import io.renren.modules.util.TranslateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -464,83 +470,202 @@ public class ProductsController extends AbstractController {
             productsEntity.setProductLength(batchModifyDto.getProductLength());
             productsEntity.setProductWide(batchModifyDto.getProductWide());
             productsEntity.setProductHeight(batchModifyDto.getProductHeight());
-            Long chineseId = productsEntity.getChineseIntroduction();
-            IntroductionEntity chinesePRE = introductionService.selectById(chineseId);
-            String productTitle = productsEntity.getProductTitle();
+
             //标题前加
             String productTitleQ = batchModifyDto.getProductTitleQ();
             //标题后加
             String productTitleH = batchModifyDto.getProductTitleH();
-
-            if (StringUtils.isNotEmpty(productTitleQ) && StringUtils.isNotEmpty(productTitleH)) {
-                //判断标题前加和后加不为空，进行标题拼接
-                String productTitlesQH = productTitleQ + productTitle + productTitleH;
-                productsEntity.setProductTitle(productTitlesQH);
-                chinesePRE.setProductTitle(productTitlesQH);
-            } else if (StringUtils.isNotEmpty(productTitleQ) && StringUtils.isEmpty(productTitleH)) {
-                //判断标题前加不为空，标题后加为空。进行拼接
-                String productTitles = productTitleQ + productTitle;
-                productsEntity.setProductTitle(productTitles);
-                chinesePRE.setProductTitle(productTitles);
-            } else if (StringUtils.isEmpty(productTitleQ) && StringUtils.isNotEmpty(productTitleH)) {
-                //判断标题前加为空，标题后加不为空。进行拼接
-                String productTitless = productTitle + productTitleH;
-                productsEntity.setProductTitle(productTitless);
-                chinesePRE.setProductTitle(productTitless);
-            } else {
-                //标题前加和标题后加都为空，标题不变
-                productsEntity.setProductTitle(productTitle);
-                chinesePRE.setProductTitle(productTitle);
-            }
-            //获取原来的买点说明
-            String keyPointsJ = chinesePRE.getKeyPoints();
-            //前台获取是否追加
-            boolean keyPointsadd = batchModifyDto.getKeyPointsadd();
-            if (keyPointsadd==true) {
-                //追加不为空，进行追加
-                String keyPointsX = keyPointsJ + batchModifyDto.getKeyPoints();
-                chinesePRE.setKeyPoints(keyPointsX);
-            } else {
-                //追加为空，进行买点说明更新
-                chinesePRE.setKeyPoints(batchModifyDto.getKeyPoints());
-            }
-            //获取原来的关键字
-            String keyWordJ = chinesePRE.getKeyWord();
-            //前台获取是否追加
-            boolean keywordsadd = batchModifyDto.getKeywordsadd();
-            if (keywordsadd==true) {
-                //追加不为空，进行追加
-                String keyWordX = keyWordJ + batchModifyDto.getKeyWord();
-                chinesePRE.setKeyWord(keyWordX);
-            } else {
-                //追加为空，进行关键字更新更新
-                chinesePRE.setKeyWord(batchModifyDto.getKeyWord());
-            }
-            String productDescription = chinesePRE.getProductDescription();
+            //关键字
+            String keyWord = batchModifyDto.getKeyWord();
+            //要点说明
+            String keyPoints = batchModifyDto.getKeyPoints();
             //描述前加
             String productDescriptionQ = batchModifyDto.getProductDescriptionQ();
             //描述后加
             String productDescriptionH = batchModifyDto.getProductDescriptionH();
-            if (StringUtils.isNotEmpty(productDescriptionQ) && StringUtils.isNotEmpty(productDescriptionH)) {
-                //判断描述前加和后加不为空，进行描述拼接
-                String productDescriptionQH = productDescriptionQ + productDescription + productDescriptionH;
-                chinesePRE.setProductDescription(productDescriptionQH);
-            } else if (StringUtils.isNotEmpty(productDescriptionQ) && StringUtils.isEmpty(productDescriptionH)) {
-                //判断描述前加不为空，描述后加为空。进行拼接
-                String productDescriptions = productDescriptionQ + productDescription;
-                chinesePRE.setProductDescription(productDescriptions);
-            } else if (StringUtils.isEmpty(productDescriptionQ) && StringUtils.isNotEmpty(productDescriptionH)) {
-                //判断描述前加不为空，描述后加为空。进行拼接
-                String productDescriptionss = productDescription + productDescriptionH;
-                chinesePRE.setProductDescription(productDescriptionss);
-            } else {
-                //无需更新
-                chinesePRE.setProductDescription(productDescription);
+            StringBuffer strBuf = new StringBuffer();
+            if(StringUtils.isNotBlank(productTitleQ)){
+                strBuf.append(productTitleQ);
+                strBuf.append(" ===== ");
+            }else{
+                strBuf.append(" ===== ");
             }
-            introductionService.updateById(chinesePRE);
+            if(StringUtils.isNotBlank(productTitleH)){
+                strBuf.append(productTitleH);
+                strBuf.append(" ===== ");
+            }else{
+                strBuf.append("  ===== ");
+            }
+            if(StringUtils.isNotBlank(keyWord)){
+                strBuf.append(keyWord);
+                strBuf.append(" ===== ");
+            }else{
+                strBuf.append("  ===== ");
+            }
+            if(StringUtils.isNotBlank(keyPoints)){
+                strBuf.append(keyPoints);
+                strBuf.append(" ===== ");
+            }else{
+                strBuf.append("  ===== ");
+            }
+            if(StringUtils.isNotBlank(productDescriptionQ)){
+                strBuf.append(productDescriptionQ);
+                strBuf.append(" ===== ");
+            }else{
+                strBuf.append("  ===== ");
+            }
+            if(StringUtils.isNotBlank(productDescriptionH)){
+                strBuf.append(productDescriptionH);
+            }else{
+                strBuf.append(" ");
+            }
+            String translate = strBuf.toString();
+            Querier<AbstractTranslator> querierTrans = new Querier<>();
+            querierTrans.attach(new GoogleTranslator());
+            //翻译标识
+            int[] translates = batchModifyDto.getTranslates();
+            if(translates!= null && translates.length >0){
+                for(int q = 0; q < translates.length; q++){
+                    switch (q){
+                        case 0:
+                            IntroductionEntity enIntroduction = introductionService.selectById(productsEntity.getBritainIntroduction());
+                            enIntroduction.setCountry("EN");
+                            updateProductTranslate(translate,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),enIntroduction);
+                            break;
+                        case 1:
+                            IntroductionEntity fraIntroduction = introductionService.selectById(productsEntity.getFranceIntroduction());
+                            fraIntroduction.setCountry("FRA");
+                            querierTrans.setParams(LANG.EN, LANG.FRA, translate);
+                            List<String> resultList1 = querierTrans.execute();
+                            if(resultList1 != null && resultList1.size() > 0){
+                                if (resultList1.get(0) != null &&resultList1.get(0) != ""){
+                                    String result = resultList1.get(0);
+                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),fraIntroduction);
+                                }
+                            }
+                            break;
+                        case 2:
+                            IntroductionEntity itIntroduction = introductionService.selectById(productsEntity.getItalyIntroduction());
+                            itIntroduction.setCountry("IT");
+                            querierTrans.setParams(LANG.EN, LANG.IT, translate);
+                            List<String> resultList2 = querierTrans.execute();
+                            if(resultList2 != null && resultList2.size() > 0){
+                                if (resultList2.get(0) != null &&resultList2.get(0) != ""){
+                                    String result = resultList2.get(0);
+                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),itIntroduction);
+                                }
+                            }
+                            break;
+                        case 3:
+                            IntroductionEntity spaIntroduction = introductionService.selectById(productsEntity.getSpainIntroduction());
+                            spaIntroduction.setCountry("SPA");
+                            querierTrans.setParams(LANG.EN, LANG.SPA, translate);
+                            List<String> resultList3 = querierTrans.execute();
+                            if(resultList3 != null && resultList3.size() > 0){
+                                if (resultList3.get(0) != null &&resultList3.get(0) != ""){
+                                    String result = resultList3.get(0);
+                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),spaIntroduction);
+                                }
+                            }
+                            updateProductTranslate(translate,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),spaIntroduction);
+                            break;
+                        case 4:
+                            IntroductionEntity deIntroduction = introductionService.selectById(productsEntity.getGermanyIntroduction());
+                            deIntroduction.setCountry("DE");
+                            querierTrans.setParams(LANG.EN, LANG.DE, translate);
+                            List<String> resultList4 = querierTrans.execute();
+                            if(resultList4 != null && resultList4.size() > 0){
+                                if (resultList4.get(0) != null &&resultList4.get(0) != ""){
+                                    String result = resultList4.get(0);
+                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),deIntroduction);
+                                }
+                            }
+                            break;
+                        case 5:
+                            IntroductionEntity jpIntroduction = introductionService.selectById(productsEntity.getJapanIntroduction());
+                            jpIntroduction.setCountry("JP");
+                            querierTrans.setParams(LANG.EN, LANG.JP, translate);
+                            List<String> resultList5 = querierTrans.execute();
+                            if(resultList5 != null && resultList5.size() > 0){
+                                if (resultList5.get(0) != null &&resultList5.get(0) != ""){
+                                    String result = resultList5.get(0);
+                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),jpIntroduction);
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                String productTitle = introductionService.selectById(productsEntity.getBritainIntroduction()).getProductTitle();
+                productsEntity.setProductTitle(productTitle);
+            }
             productsService.updateById(productsEntity);
         }
         return R.ok();
+    }
+
+    /**
+     * 批量修改——语言
+     */
+    private void updateProductTranslate(String combination, boolean keywordsadd, boolean keyPointsadd, IntroductionEntity introductionEntity ){
+        String[] combinations = combination.split("=====");
+        String productTitleQ = TranslateUtils.toUpperCase(combinations[0].trim());
+        String productTitleH = TranslateUtils.toUpperCase(combinations[1].trim());
+        String keyWord = TranslateUtils.toUpperCase(combinations[2].trim());
+        String keyPoints = combinations[3].trim();
+        String productDescriptionQ = combinations[4].trim();
+        String productDescriptionH = combinations[5].trim();
+        String productTitle = introductionEntity.getProductTitle().trim();
+        if (StringUtils.isNotEmpty(productTitleQ) && StringUtils.isNotEmpty(productTitleH)) {
+            //判断标题前加和后加不为空，进行标题拼接
+            introductionEntity.setProductTitle(productTitleQ + " " + productTitle + " " +  productTitleH);
+        } else if (StringUtils.isNotEmpty(productTitleQ) && StringUtils.isEmpty(productTitleH)) {
+            //判断标题前加不为空，标题后加为空。进行拼接
+            introductionEntity.setProductTitle(productTitleQ.trim() + " " + productTitle);
+        } else if (StringUtils.isEmpty(productTitleQ) && StringUtils.isNotEmpty(productTitleH)) {
+            //判断标题前加为空，标题后加不为空。进行拼接
+            introductionEntity.setProductTitle(productTitle + " " +  productTitleH);
+        } else {
+            //标题前加和标题后加都为空，标题不变
+            introductionEntity.setProductTitle(productTitle);
+        }
+
+        //获取原来的买点说明
+        String keyPointsJ = introductionEntity.getKeyPoints();
+        if (keyPointsadd==true) {
+            //追加不为空，进行追加
+            introductionEntity.setKeyPoints(keyPointsJ + keyPoints);
+        } else {
+            //追加为空，进行买点说明更新
+            introductionEntity.setKeyPoints(keyPoints);
+        }
+        //获取原来的关键字
+        String keyWordJ = introductionEntity.getKeyWord();
+        if (keywordsadd==true) {
+            //追加不为空，进行追加
+            String keyWordX = keyWordJ + keyWord;
+            introductionEntity.setKeyWord(keyWordX);
+        } else {
+            //追加为空，进行关键字更新更新
+            introductionEntity.setKeyWord(keyWord);
+        }
+        String productDescription = introductionEntity.getProductDescription();
+
+        if (StringUtils.isNotEmpty(productDescriptionQ) && StringUtils.isNotEmpty(productDescriptionH)) {
+            //判断描述前加和后加不为空，进行描述拼接
+            introductionEntity.setProductDescription(productDescriptionQ + " " + productDescription + " " + productDescriptionH);
+        } else if (StringUtils.isNotEmpty(productDescriptionQ) && StringUtils.isEmpty(productDescriptionH)) {
+            //判断描述前加不为空，描述后加为空。进行拼接
+            introductionEntity.setProductDescription(productDescriptionQ + " " + productDescription);
+        } else if (StringUtils.isEmpty(productDescriptionQ) && StringUtils.isNotEmpty(productDescriptionH)) {
+            //判断描述前加不为空，描述后加为空。进行拼接
+            introductionEntity.setProductDescription(productDescription + " " + productDescriptionH);
+        } else {
+            //无需更新
+            introductionEntity.setProductDescription(productDescription);
+        }
+        introductionService.updateById(introductionEntity);
     }
 
     /**

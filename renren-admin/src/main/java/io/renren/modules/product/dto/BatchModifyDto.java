@@ -96,31 +96,10 @@ public class BatchModifyDto {
      */
     private boolean  keywordsadd;
     /**
-     * 中文介绍
+     * 翻译标识（0英,1法,2意,3西,4德，5日）
      */
-    private String chinese;
-    /**
-     * 英文介绍
-     */
-    private String britain;
-    /**
-     * 法语介绍
-     */
-    private String france;
-    /**
-     * 德语介绍
-     */
-    private String germany;
-    /**
-     * 意大利语介绍
-     */
+    private int[] translates;
 
-    private String italy;
-
-    /**
-     * 西班牙语介绍
-     */
-    private String spain;
     //产品的内部分类
     private String productCategory;
 
@@ -308,52 +287,12 @@ public class BatchModifyDto {
         this.keywordsadd = keywordsadd;
     }
 
-    public String getChinese() {
-        return chinese;
+    public int[] getTranslates() {
+        return translates;
     }
 
-    public void setChinese(String chinese) {
-        this.chinese = chinese;
-    }
-
-    public String getBritain() {
-        return britain;
-    }
-
-    public void setBritain(String britain) {
-        this.britain = britain;
-    }
-
-    public String getFrance() {
-        return france;
-    }
-
-    public void setFrance(String france) {
-        this.france = france;
-    }
-
-    public String getGermany() {
-        return germany;
-    }
-
-    public void setGermany(String germany) {
-        this.germany = germany;
-    }
-
-    public String getItaly() {
-        return italy;
-    }
-
-    public void setItaly(String italy) {
-        this.italy = italy;
-    }
-
-    public String getSpain() {
-        return spain;
-    }
-
-    public void setSpain(String spain) {
-        this.spain = spain;
+    public void setTranslates(int[] translates) {
+        this.translates = translates;
     }
 
     @Override
@@ -380,12 +319,6 @@ public class BatchModifyDto {
                 ", productDescriptionH='" + productDescriptionH + '\'' +
                 ", keyPointsadd='" + keyPointsadd + '\'' +
                 ", keywordsadd='" + keywordsadd + '\'' +
-                ", chinese='" + chinese + '\'' +
-                ", britain='" + britain + '\'' +
-                ", france='" + france + '\'' +
-                ", germany='" + germany + '\'' +
-                ", italy='" + italy + '\'' +
-                ", spain='" + spain + '\'' +
                 '}';
     }
 }
