@@ -9,6 +9,16 @@
             .layui-col-md3{
                 width: 20%;
             }
+            .el-icon-circle-close{
+                position: relative;
+                margin-left: -40px;
+                color: #bbb;
+                margin-right: 21.6px;
+                display: none;
+            }
+            /*.sousuoAreaInput:focus .el-icon-circle-close{*/
+                /*display: inline-block;*/
+            /*}*/
         </style>
         </head>
 <body>
@@ -16,20 +26,24 @@
     <!--搜索区域-->
     <div class="search1">
         <input type="text" class="sousuoAreaInput" placeholder="产品类目" v-model="nowProType" @click="typeClickINput">
+        <i class="el-icon-circle-close" @click="quxiaoFlSel"></i>
         <div class="sousuoArea">
             <div class="areaOne">
                 <ul>
                     <li v-for="categoryOneItem in categoryOneList" :data-id="categoryOneItem.categoryId" :data-pId="categoryOneItem.parentId" :data-val = 'categoryOneItem.categoryName' @click="clickTypeItem"> {{ categoryOneItem.categoryName }}（{{categoryOneItem.count}}）</li>
+                    <!--<li style="color: #fe996a">取消</li>-->
                 </ul>
             </div>
             <div class="areaTwo" v-if="categoryTwoList.length != 0">
                 <ul>
                     <li v-for="categoryTwoItem in categoryTwoList" :data-index="2" :data-id="categoryTwoItem.categoryId" :data-pId="categoryTwoItem.parentId" :data-val = 'categoryTwoItem.categoryName' @click="clickTypeItem"> {{ categoryTwoItem.categoryName }}（{{categoryTwoItem.count}}）</li>
+                    <!--<li style="color: #fe996a">取消</li>-->
                 </ul>
             </div>
             <div class="areaThree" v-if="categoryThreeList.length != 0">
                 <ul>
                     <li v-for="categoryThreeItem in categoryThreeList" :data-index="3" :data-id="categoryThreeItem.categoryId" :data-pId="categoryThreeItem.parentId" :data-val = 'categoryThreeItem.categoryName' @click="clickTypeItem"> {{ categoryThreeItem.categoryName }}（{{categoryThreeItem.count}}）</li>
+                    <!--<li style="color: #fe996a">取消</li>-->
                 </ul>
             </div>
         </div>

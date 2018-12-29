@@ -26,7 +26,7 @@
             <th>分类类型</th>
             <th>更新时间</th>
             <th>产品状态</th>
-            <th style="text-align: center">操作</th>
+            <th style="text-align: left;width: 270px">操作</th>
         </tr>
         <tr v-for = '(item,index) in prolist'>
             <td>{{ index }}</td>
@@ -43,7 +43,7 @@
                 <span v-if="item.uploadState == 3" class="red">上传失败</span>
                 <span v-if="item.uploadState == 4" class="org">有警告</span>
             </td>
-            <td style="text-align: center">
+            <td style="text-align: left;width: 270px">
                 <div class="operation">
                     <div @click="delFunc(item.uploadId)">
                         <i class="layui-icon layui-icon-delete"></i>

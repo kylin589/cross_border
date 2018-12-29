@@ -16,7 +16,11 @@ window.onload = function () {
     // 点击分类框元素外部隐藏元素
     $(document).click(function(){
         $(".sousuoArea").hide();
+        $('.el-icon-circle-close').hide();
     });
+    $('.el-icon-circle-close').click(function (event) {
+        event.stopPropagation();
+    })
     // 点击分类框元素时阻止事件冒泡
     $(".sousuoArea").click(function(event){
         event.stopPropagation();
@@ -25,6 +29,13 @@ window.onload = function () {
     $('.sousuoAreaInput').click(function(event){
         event.stopPropagation();
     })
+
+    $('.search1 .sousuoAreaInput').focus(function () {
+        $('.el-icon-circle-close').css('display','inline-block');
+    })
+    // $('.search1 .sousuoAreaInput').blur(function () {
+    //     $('.el-icon-circle-close').css('display','none');
+    // })
 
     // 商品单机选中
     /* $('.pro_list .item').click(function () {
@@ -290,6 +301,13 @@ var vm = new Vue({
             });
         },
 
+        // 取消分类搜索（列表）
+        quxiaoFlSel:function () {
+            vm.nowProType = '';
+            vm.nowProTypeId = '';
+            $('.sousuoArea').hide();
+        },
+
         // 分页器
         laypage: function () {
             // var tempTotalCount;
@@ -522,6 +540,8 @@ var vm = new Vue({
                 'display':'flex',
             })
             vm.getProTypeOne();
+            vm.categoryTwoList=[];
+            vm.categoryThreeList=[];
 
             // 点击分类框元素外部隐藏元素
             $(document).click(function(){

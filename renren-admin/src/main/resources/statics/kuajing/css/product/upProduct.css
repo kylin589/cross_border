@@ -21,7 +21,7 @@ p button{
 .operation{
     width: 100%;
     /* display: flex; */
-    text-align: center;
+    /* text-align: center; */
 }
 .operation>div{
     /* flex: 1; */
@@ -37,16 +37,16 @@ p button{
     font-size: 12px;
 }
 .operation>div:nth-child(1){
-    color: #e2700b;
+    color: #e2240b;
 }
 .operation>div:nth-child(2){
     color: #67b502;
 }
 .operation>div:nth-child(3){
-    color: #32ace9;
+    color: #ffae62;
 }
 .operation>div:nth-child(4){
-    color: #fe8060;
+    color: #00d2d8;
 }
 table{
     width: 100%;

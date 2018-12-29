@@ -12,6 +12,7 @@ import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.product.entity.IntroductionEntity;
 import io.renren.modules.product.service.IntroductionService;
 import io.renren.modules.product.vm.TranslateVM;
+import io.renren.modules.util.TranslateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,19 +155,19 @@ public class IntroductionController {
         List<String> titleList = querierTrans.execute();
         if (titleList.get(0) != "" && titleList.get(0) != null){
             //谷歌
-            introductionEn.setProductTitle(toUpperCase(titleList.get(0)));
+            introductionEn.setProductTitle(TranslateUtils.toUpperCase(titleList.get(0)));
         }else{
             //百度
-            introductionEn.setProductTitle(toUpperCase(titleList.get(1)));
+            introductionEn.setProductTitle(TranslateUtils.toUpperCase(titleList.get(1)));
         }
 
         //翻译关键字
         querierTrans.setText(keyWord);
         List<String> keyWordList = querierTrans.execute();
         if (keyWordList.get(0) != "" && keyWordList.get(0) != null){
-            introductionEn.setKeyWord(toUpperCase(keyWordList.get(0)));
+            introductionEn.setKeyWord(TranslateUtils.toUpperCase(keyWordList.get(0)));
         }else{
-            introductionEn.setKeyWord(toUpperCase(keyWordList.get(1)));
+            introductionEn.setKeyWord(TranslateUtils.toUpperCase(keyWordList.get(1)));
         }
 
         //翻译要点说明
@@ -277,30 +278,30 @@ public class IntroductionController {
         IntroductionEntity introduction = new IntroductionEntity();
         //翻译
         List<String> resultList = querierTrans.execute();
-        if (resultList.get(0) != "" && resultList.get(0) != null){
+        if (resultList.get(0) != null &&resultList.get(0) != ""){
             String result = resultList.get(0);
             String[] results = result.split("=====");
-            introduction.setProductTitle(toUpperCase(results[0]));
-            introduction.setKeyWord(toUpperCase(results[1]));
+            introduction.setProductTitle(TranslateUtils.toUpperCase(results[0]));
+            introduction.setKeyWord(TranslateUtils.toUpperCase(results[1]));
             introduction.setKeyPoints(results[2]);
             introduction.setProductDescription(results[3]);
         }
 //        else if(titleList.get(1) != "" && titleList.get(1) != null){
-//            introduction.setProductTitle(toUpperCase(titleList.get(1)));
+//            introduction.setProductTitle(TranslateUtils.toUpperCase(titleList.get(1)));
 //        }else{
-//            introduction.setProductTitle(toUpperCase(titleList.get(2)));
+//            introduction.setProductTitle(TranslateUtils.toUpperCase(titleList.get(2)));
 //        }
 
         /*//翻译关键字
         querierTrans.setText(introductionEn.getKeyWord());
         List<String> keyWordList = querierTrans.execute();
         if (keyWordList.get(0) != "" && keyWordList.get(0) != null){
-            introduction.setKeyWord(toUpperCase(keyWordList.get(0)));
+            introduction.setKeyWord(TranslateUtils.toUpperCase(keyWordList.get(0)));
         }*/
 //        else if(keyWordList.get(1) != "" && keyWordList.get(1) != null){
-//            introduction.setKeyWord(toUpperCase(keyWordList.get(1)));
+//            introduction.setKeyWord(TranslateUtils.toUpperCase(keyWordList.get(1)));
 //        }else{
-//            introduction.setKeyWord(toUpperCase(keyWordList.get(2)));
+//            introduction.setKeyWord(TranslateUtils.toUpperCase(keyWordList.get(2)));
 //        }
 
         //翻译要点说明
@@ -364,30 +365,5 @@ public class IntroductionController {
 //        list.add(introductionSpa);
 //        list.add(introductionJp);
 //        return list;
-    }
-    /**
-     * toUpperCase 所有首字母转为大写
-     * @param: [text]
-     * @return: java.lang.String
-     * @auther: wdh
-     * @date: 2018/11/5 17:16
-     */
-    public String toUpperCase(String text) {
-        if(text != null && !"".equals(text)){
-            String[] strs = text.split(" ");
-            StringBuilder sb = new StringBuilder();
-            for (String strTmp : strs) {
-                char[] ch = strTmp.toCharArray();
-                if(ch.length>0){
-                    if (ch[0] >= 'a' && ch[0] <= 'z') {
-                        ch[0] = (char) (ch[0] - 32);
-                    }
-                    String strT = new String(ch);
-                    sb.append(strT).append(" ");
-                }
-            }
-            return sb.toString().trim();
-        }
-        return null;
     }
 }

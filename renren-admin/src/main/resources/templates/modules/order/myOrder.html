@@ -198,16 +198,16 @@
                 </span>
             </td>
             <td>
-                {{ item.orderMoney }} ({{item.rateCode}})<br>
-                <span style="color: #999">¥ {{ item.orderMoneyCny }}</span>
+                {{ item.orderMoney }} <span v-if="item.rateCode">({{item.rateCode}})</span><br>
+                <span style="color: #999" v-if="item.orderMoneyCny">¥ {{ item.orderMoneyCny }}</span>
             </td>
             <td>
-                {{item.amazonCommission}} ({{item.rateCode}})<br>
-                <span style="color: #999">¥ {{item.amazonCommissionCny}}</span>
+                {{item.amazonCommission}} <span v-if="item.rateCode">({{item.rateCode}})</span><br>
+                <span style="color: #999" v-if="item.amazonCommissionCny">¥ {{item.amazonCommissionCny}}</span>
             </td>
             <td>
-                {{item.accountMoney}} ({{item.rateCode}})<br>
-                <span style="color: #999">¥ {{item.accountMoneyCny}}</span>
+                {{item.accountMoney}} <span v-if="item.rateCode">({{item.rateCode}})</span><br>
+                <span style="color: #999" v-if="item.accountMoneyCny">¥ {{item.accountMoneyCny}}</span>
             </td>
             <td>
                 <span v-if="(item.orderState == '待付款')||(item.orderState == '虚发货')||(item.orderState == '缺货')" class="org">

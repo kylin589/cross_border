@@ -2009,87 +2009,93 @@ var vm = new Vue({
         // 修改保存
         savePro:function () {
 
-            var u = $('.ul1');
-            var shunx = [];
-            for(var j = 0;j<u.length;j++){
-                var arr = u.eq(j).find('li');
-                shunx[j] = []
-                for(var i = 0;i<arr.length;i++){
-                    shunx[j].push(arr.eq(i).attr('data-index'))
+            if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == ''){
+                layer.msg('厂商名称、品牌名称、库存数量、采购价格不能为空！！');
+            }else {
+                var u = $('.ul1');
+                var shunx = [];
+                for(var j = 0;j<u.length;j++){
+                    var arr = u.eq(j).find('li');
+                    shunx[j] = []
+                    for(var i = 0;i<arr.length;i++){
+                        shunx[j].push(arr.eq(i).attr('data-index'))
+                    }
                 }
+
+                // var arr = $('.ul1 li');
+                // var shunx = [];
+                // for(var i = 0;i<arr.length;i++){
+                //     shunx.push(arr.eq(i).attr('data-index'))
+                // }
+                console.log(shunx);
+
+                shunx.forEach(function (v,i) {
+                    var t = vm.recommendAll[i];
+                    console.log(t);
+                    var string = '';
+                    v.forEach(function (n) {
+                        string+=t.img[n]+','
+                    })
+                    console.log('11111111');
+                    // console.log(v.join(','));
+                    vm.proDetails.variantsInfos[i].variantId = i;
+                    vm.proDetails.variantsInfos[i].eanCode = t.code;
+                    vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
+                    vm.proDetails.variantsInfos[i].variantSku = t.sku;
+                    vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+                    vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
+                })
+
+                // vm.recommendAll.forEach(function (t,i) {
+                //     vm.proDetails.variantsInfos[i].variantId = i;
+                //     vm.proDetails.variantsInfos[i].eanCode = t.code;
+                //     vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
+                //     vm.proDetails.variantsInfos[i].variantSku = t.sku;
+                //     vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+                //     vm.proDetails.variantsInfos[i].imageUrl = (t.img).join(',');
+                // })
+
+                // vm.proDetails.variantsInfos.eanCode = vm.recommendAll.code;
+                // vm.proDetails.variantsInfos.variantAddPrice = vm.recommendAll.addPrice;
+                // vm.proDetails.variantsInfos.variantSku = vm.recommendAll.sku;
+                // vm.proDetails.variantsInfos.variantStock = vm.recommendAll.stock;
+                console.log(vm.proDetails);
+
+
+
+                layer.confirm('确定修改吗？', function(index){
+
+
+
+                    var index = layer.load();
+                    var index = layer.load(1); //换了种风格
+                    var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                    $.ajax({
+                        type: 'post',
+                        url: '../../product/products/modifyproduct',
+                        contentType: "application/json",
+                        data: JSON.stringify(vm.proDetails),
+                        success: function (r) {
+                            console.log('修改产品');
+                            console.log(r);
+                            console.log(vm.proDetails);
+                            if (r.code == 0) {
+                                layer.close(index);
+
+                                window.location.href = document.referrer;
+
+                            } else {
+                                alert(r.msg);
+                            }
+                        }
+                    });
+
+
+
+                });
             }
 
-            // var arr = $('.ul1 li');
-            // var shunx = [];
-            // for(var i = 0;i<arr.length;i++){
-            //     shunx.push(arr.eq(i).attr('data-index'))
-            // }
-            console.log(shunx);
 
-            shunx.forEach(function (v,i) {
-                var t = vm.recommendAll[i];
-                console.log(t);
-                var string = '';
-                v.forEach(function (n) {
-                    string+=t.img[n]+','
-                })
-                console.log('11111111');
-                // console.log(v.join(','));
-                vm.proDetails.variantsInfos[i].variantId = i;
-                vm.proDetails.variantsInfos[i].eanCode = t.code;
-                vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
-                vm.proDetails.variantsInfos[i].variantSku = t.sku;
-                vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
-                vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
-            })
-
-            // vm.recommendAll.forEach(function (t,i) {
-            //     vm.proDetails.variantsInfos[i].variantId = i;
-            //     vm.proDetails.variantsInfos[i].eanCode = t.code;
-            //     vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
-            //     vm.proDetails.variantsInfos[i].variantSku = t.sku;
-            //     vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
-            //     vm.proDetails.variantsInfos[i].imageUrl = (t.img).join(',');
-            // })
-
-            // vm.proDetails.variantsInfos.eanCode = vm.recommendAll.code;
-            // vm.proDetails.variantsInfos.variantAddPrice = vm.recommendAll.addPrice;
-            // vm.proDetails.variantsInfos.variantSku = vm.recommendAll.sku;
-            // vm.proDetails.variantsInfos.variantStock = vm.recommendAll.stock;
-            console.log(vm.proDetails);
-
-
-
-            layer.confirm('确定修改吗？', function(index){
-
-
-
-                var index = layer.load();
-                var index = layer.load(1); //换了种风格
-                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-                $.ajax({
-                    type: 'post',
-                    url: '../../product/products/modifyproduct',
-                    contentType: "application/json",
-                    data: JSON.stringify(vm.proDetails),
-                    success: function (r) {
-                        console.log('修改产品');
-                        console.log(r);
-                        console.log(vm.proDetails);
-                        if (r.code == 0) {
-                            layer.close(index);
-
-                            window.location.href = document.referrer;
-
-                        } else {
-                            alert(r.msg);
-                        }
-                    }
-                });
-
-
-
-            });
 
 
 

@@ -171,8 +171,11 @@ var vm = new Vue({
         },
         // 定时上传
         timeUpFunc:function () {
-            if (this.shopinfo!='') {
-                // var countryCode;
+
+            if(vm.shopinfo == '' || vm.inputche.length == 0 || vm.nodeId == '' || vm.amazonCategory == ''){
+                layer.msg('授权店铺、更新选项、分类节点、分类节点id不能为空！！')
+
+            }else {
                 var grantShop = '';
                 vm.marketplace.forEach(function (t) {
                     if(t.grantShopId == vm.shopinfo){
@@ -269,9 +272,8 @@ var vm = new Vue({
 
                     }
                 });
-            }else {
-                layer.msg("请选择店铺");
             }
+
         },
         // 全选
         allSelFunc:function () {
@@ -296,92 +298,98 @@ var vm = new Vue({
         },
         //立即上传
         addUpload:function () {
+            if(vm.shopinfo == '' || vm.inputche.length == 0 || vm.nodeId == '' || vm.amazonCategory == ''){
+                layer.msg('授权店铺、更新选项、分类节点、分类节点id不能为空！！')
 
-            layer.confirm('确定上传吗？',function (index) {
+            }else {
+                layer.confirm('确定上传吗？',function (index) {
 
 
-                var index = layer.load();
-                var index = layer.load(1); //换了种风格
-                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                    var index = layer.load();
+                    var index = layer.load(1); //换了种风格
+                    var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
 
-                console.log(vm.shopinfo);
-                // vm.uploadIds = vm.uploadIdsstr;
-                vm.uploadIds = vm.uploadIdsstr.split(',');
-                console.log(vm.uploadIds);
-                // if (vm.inputche[0]==true){
-                //
-                //     vm.operateItem = [0,1,2,3,4];
-                // }else {
-                //     for (var i=0;i<vm.inputche.length;i++){
-                //         if (vm.inputche[i]==true){
-                //             console.log('2222');
-                //             vm.operateItem.push(i-1);
-                //         }
-                //     }
-                // }
-                console.log(vm.shopinfo);
+                    console.log(vm.shopinfo);
+                    // vm.uploadIds = vm.uploadIdsstr;
+                    vm.uploadIds = vm.uploadIdsstr.split(',');
+                    console.log(vm.uploadIds);
+                    // if (vm.inputche[0]==true){
+                    //
+                    //     vm.operateItem = [0,1,2,3,4];
+                    // }else {
+                    //     for (var i=0;i<vm.inputche.length;i++){
+                    //         if (vm.inputche[i]==true){
+                    //             console.log('2222');
+                    //             vm.operateItem.push(i-1);
+                    //         }
+                    //     }
+                    // }
+                    console.log(vm.shopinfo);
 
-                var grantShop = '';
-                vm.marketplace.forEach(function (t) {
-                    if(t.grantShopId == vm.shopinfo){
-                        grantShop = t.shopName
-                    }
-                })
-
-                var templateDisplayName = '';
-                vm.flModleList.forEach(function (t) {
-                    if(t.templateId == vm.flModleValue){
-                        console.log(t.templateId);
-                        templateDisplayName = t.templateDisplayName;
-                    }
-                })
-                console.log(vm.flModleValue);
-                console.log(templateDisplayName);
-
-                // vm.grantShopId = vm.shopinfo.grantShopId;
-                // vm.grantShop = vm.shopinfo.shopName;
-                // console.log(vm.grantShopId);
-                $.ajax({
-                    url: '../../product/upload/againUploadByForm',
-                    type: 'post',
-                    data: JSON.stringify({
-                        'uploadId':parseInt(vm.id),
-                        'startId': parseInt(vm.startId),
-                        'endId': parseInt(vm.endId),
-                        'uploadIds': vm.uploadIds,
-                        'grantShopId': parseInt(vm.shopinfo),
-                        // 'grantShopId': parseInt(vm.grantShopId),
-                        'isAttribute': '',
-                        'grantShop':grantShop,
-                        'amazonCategoryId': vm.amazonCategoryId,
-                        'amazonCategory': vm.amazonCategory,
-                        'amazonTemplateId': parseInt(vm.flModleValue),
-                        'amazonTemplate': templateDisplayName,
-                        'operateItem': vm.inputche,
-                        'fieldsEntityList':vm.modelAttr,
-                        'amazonNodeId':vm.nodeId,
-                    }),
-                    contentType: "application/json",
-                    // dataType: 'json',
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-
-                            layer.msg("上传成功");
-                            layer.close(index);
-                            window.location.href="upProduct.html";
-
-                        } else {
-                            layer.alert(r.msg);
+                    var grantShop = '';
+                    vm.marketplace.forEach(function (t) {
+                        if(t.grantShopId == vm.shopinfo){
+                            grantShop = t.shopName
                         }
+                    })
+
+                    var templateDisplayName = '';
+                    vm.flModleList.forEach(function (t) {
+                        if(t.templateId == vm.flModleValue){
+                            console.log(t.templateId);
+                            templateDisplayName = t.templateDisplayName;
+                        }
+                    })
+                    console.log(vm.flModleValue);
+                    console.log(templateDisplayName);
+
+                    // vm.grantShopId = vm.shopinfo.grantShopId;
+                    // vm.grantShop = vm.shopinfo.shopName;
+                    // console.log(vm.grantShopId);
+                    $.ajax({
+                        url: '../../product/upload/againUploadByForm',
+                        type: 'post',
+                        data: JSON.stringify({
+                            'uploadId':parseInt(vm.id),
+                            'startId': parseInt(vm.startId),
+                            'endId': parseInt(vm.endId),
+                            'uploadIds': vm.uploadIds,
+                            'grantShopId': parseInt(vm.shopinfo),
+                            // 'grantShopId': parseInt(vm.grantShopId),
+                            'isAttribute': '',
+                            'grantShop':grantShop,
+                            'amazonCategoryId': vm.amazonCategoryId,
+                            'amazonCategory': vm.amazonCategory,
+                            'amazonTemplateId': parseInt(vm.flModleValue),
+                            'amazonTemplate': templateDisplayName,
+                            'operateItem': vm.inputche,
+                            'fieldsEntityList':vm.modelAttr,
+                            'amazonNodeId':vm.nodeId,
+                        }),
+                        contentType: "application/json",
+                        // dataType: 'json',
+                        success: function (r) {
+                            console.log(r);
+                            if (r.code === 0) {
+
+                                layer.msg("上传成功");
+                                layer.close(index);
+                                window.location.href="upProduct.html";
+
+                            } else {
+                                layer.alert(r.msg);
+                            }
 
 
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
+                        }
+                    });
                 });
-            });
+            }
+
+
 
 
         },
