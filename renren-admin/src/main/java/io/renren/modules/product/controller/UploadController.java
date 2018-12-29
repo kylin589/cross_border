@@ -278,7 +278,7 @@ public class UploadController extends AbstractController {
                 return R.error(dto2.getMsg());
             }
         }
-        if (ret.size()==0){
+        if (ret.size() == 0) {
             return R.error("请填写需要上传的产品编码！");
         }
         uploadEntity.setUploadProductsList(ret);
@@ -290,16 +290,24 @@ public class UploadController extends AbstractController {
         uploadEntity.setGrantShopId(addUploadVM.getGrantShopId());
         uploadEntity.setGrantShop(addUploadVM.getGrantShop());
         //设置分类
-        uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        if (addUploadVM.getAmazonCategoryId() != null) {
+            uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        }
         uploadEntity.setAmazonCategory(amazonCategory.getDisplayName());
         //设置分类节点id
         String countryCode = amazonGrantShop.getCountryCode();
         uploadEntity.setCountryCode(countryCode);
-        uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+        if (addUploadVM.getAmazonNodeId() != null) {
+            uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+        }
 
         //设置模板
-        uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
-        uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+        if (addUploadVM.getAmazonTemplateId() != null) {
+            uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
+        }
+        if (addUploadVM.getAmazonTemplate() != null) {
+            uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+        }
         //设置操作类型（0：上传;1：修改）
         uploadEntity.setOperateType(0);
         //数组转','号隔开的字符串
@@ -400,7 +408,7 @@ public class UploadController extends AbstractController {
                 return R.error(dto2.getMsg());
             }
         }
-        if (ret.size()==0){
+        if (ret.size() == 0) {
             return R.error("请填写需要上传的产品编码！");
         }
         uploadEntity.setUploadProductsList(ret);
@@ -412,16 +420,24 @@ public class UploadController extends AbstractController {
         uploadEntity.setGrantShopId(addUploadVM.getGrantShopId());
         uploadEntity.setGrantShop(addUploadVM.getGrantShop());
         //设置分类
-        uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        if (addUploadVM.getAmazonCategoryId() != null) {
+            uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        }
         uploadEntity.setAmazonCategory(amazonCategory.getDisplayName());
         //设置分类节点id
         String countryCode = amazonGrantShop.getCountryCode();
         uploadEntity.setCountryCode(countryCode);
-        uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+        if (addUploadVM.getAmazonNodeId() != null) {
+            uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+        }
 
         //设置模板
-        uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
-        uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+        if (addUploadVM.getAmazonTemplateId() != null) {
+            uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
+        }
+        if (addUploadVM.getAmazonTemplate() != null) {
+            uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+        }
         //设置操作类型（0：上传;1：修改）
         uploadEntity.setOperateType(0);
         //数组转','号隔开的字符串
@@ -543,7 +559,7 @@ public class UploadController extends AbstractController {
                 return R.error(dto2.getMsg());
             }
         }
-        if (ret.size()==0){
+        if (ret.size() == 0) {
             return R.error("请填写需要上传的产品编码！");
         }
 
@@ -634,7 +650,7 @@ public class UploadController extends AbstractController {
                 return R.error(dto2.getMsg());
             }
         }
-        if (ret.size()==0){
+        if (ret.size() == 0) {
             return R.error("请填写需要上传的产品编码！");
         }
         uploadEntity.setUploadProductsList(ret);
@@ -646,16 +662,24 @@ public class UploadController extends AbstractController {
         uploadEntity.setGrantShopId(addUploadVM.getGrantShopId());
         uploadEntity.setGrantShop(addUploadVM.getGrantShop());
         //设置分类
-        uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        if (addUploadVM.getAmazonCategoryId() != null) {
+            uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        }
         uploadEntity.setAmazonCategory(amazonCategory.getDisplayName());
         //设置分类节点id
         String countryCode = amazonGrantShop.getCountryCode();
         uploadEntity.setCountryCode(countryCode);
-        uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+        if (addUploadVM.getAmazonNodeId() != null) {
+            uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+        }
 
         //设置模板
-        uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
-        uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+        if (addUploadVM.getAmazonTemplateId() != null) {
+            uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
+        }
+        if (addUploadVM.getAmazonTemplate() != null) {
+            uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+        }
         //设置操作类型（0：上传;1：修改）
         uploadEntity.setOperateType(0);
         //数组转','号隔开的字符串
@@ -750,7 +774,7 @@ public class UploadController extends AbstractController {
                 return R.error(dto2.getMsg());
             }
         }
-        if (ret.size()==0){
+        if (ret.size() == 0) {
             return R.error("请填写需要上传的产品编码！");
         }
 
@@ -848,7 +872,7 @@ public class UploadController extends AbstractController {
                 return R.error(dto2.getMsg());
             }
         }
-        if (ret.size()==0){
+        if (ret.size() == 0) {
             return R.error("请填写需要上传的产品编码！");
         }
         uploadEntity.setUploadProductsList(ret);
@@ -860,16 +884,24 @@ public class UploadController extends AbstractController {
         uploadEntity.setGrantShopId(addUploadVM.getGrantShopId());
         uploadEntity.setGrantShop(addUploadVM.getGrantShop());
         //设置分类
-        uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        if (addUploadVM.getAmazonCategoryId() != null) {
+            uploadEntity.setAmazonCategoryId(addUploadVM.getAmazonCategoryId());
+        }
         uploadEntity.setAmazonCategory(amazonCategory.getDisplayName());
         //设置分类节点id
         String countryCode = amazonGrantShop.getCountryCode();
         uploadEntity.setCountryCode(countryCode);
-        uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+        if (addUploadVM.getAmazonNodeId() != null) {
+            uploadEntity.setAmazonCategoryNodeId(addUploadVM.getAmazonNodeId());
+        }
 
         //设置模板
-        uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
-        uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+        if (addUploadVM.getAmazonTemplateId() != null) {
+            uploadEntity.setAmazonTemplateId(addUploadVM.getAmazonTemplateId());
+        }
+        if (addUploadVM.getAmazonTemplate() != null) {
+            uploadEntity.setAmazonTemplate(addUploadVM.getAmazonTemplate());
+        }
         //设置操作类型（0：上传;1：修改）
         uploadEntity.setOperateType(0);
         //数组转','号隔开的字符串

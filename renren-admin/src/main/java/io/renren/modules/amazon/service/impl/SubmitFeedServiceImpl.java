@@ -160,7 +160,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             templateName = templateService.selectById(uploadEntity.getAmazonTemplateId()).getTemplateName();
         }
 
-
         // 生成xml文件路径
         Map<String, String> filePathMap = new HashMap<>();
         for (int i = 0; i < operateItemStr.length; i++) {
@@ -194,7 +193,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     break;
             }
         }
-
         // 上传xml
         FeedSubmissionInfoDto productFeedSubmissionInfoDto = null;
         // 0 是产品基本信息xml
@@ -912,6 +910,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
                 break;
             default:
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
         }
         return filePath;
     }
