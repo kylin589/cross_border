@@ -26,7 +26,7 @@
 			<artifactId>renren-common</artifactId>
 			<version>3.2.0</version>
 			<scope>system</scope>
-			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\renren-common.jar</systemPath>
+			<systemPath>${project.basedir}/src/lib/renren-common.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -99,7 +99,7 @@
 			<artifactId>mws-orders</artifactId>
 			<version>2013-09-01-2015-09-25</version>
 			<scope>system</scope>
-			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\mws-orders-2013-09-01-2015-09-25.jar</systemPath>
+			<systemPath>${project.basedir}/src/lib/mws-orders-2013-09-01-2015-09-25.jar</systemPath>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/amazon/mws-client -->
 		<dependency>
@@ -107,7 +107,7 @@
 			<artifactId>mws-client</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
-			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\mws-client-1.0.jar</systemPath>
+			<systemPath>${project.basedir}/src/lib/mws-client-1.0.jar</systemPath>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/amazon/feeds -->
@@ -116,7 +116,7 @@
 			<artifactId>feeds</artifactId>
 			<version>1.1</version>
 			<scope>system</scope>
-			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\feeds-1.1.jar</systemPath>
+			<systemPath>${project.basedir}/src/lib/feeds-1.1.jar</systemPath>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/amazon/maws -->
 		<dependency>
@@ -124,7 +124,7 @@
 			<artifactId>maws</artifactId>
 			<version>1.1</version>
 			<scope>system</scope>
-			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\maws-1.1.jar</systemPath>
+			<systemPath>${project.basedir}/src/lib/maws-1.1.jar</systemPath>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/amazon/mws-sellers -->
 		<dependency>
@@ -132,7 +132,7 @@
 			<artifactId>mws-sellers</artifactId>
 			<version>2011-07-01</version>
 			<scope>system</scope>
-			<systemPath>F:\SpringCloud\cross_border\renren-admin\src\lib\mws-sellers-2011-07-01.jar</systemPath>
+			<systemPath>${project.basedir}/src/lib/mws-sellers-2011-07-01.jar</systemPath>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
 		<dependency>
