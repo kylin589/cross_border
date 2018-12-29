@@ -65,7 +65,7 @@
         </div>
         <!--统计-->
         <div class="statistics">
-            <span>{{ statistics.name }}</span>
+            <!--<span>{{ statistics.name }}</span>-->
             <!--<span>新增产品数：<span v-model="allChart1Data[0]">{{ statistics.addProductsCounts }}</span></span>-->
             <span>订单数：<span v-model="allChart1Data[1]">{{ statistics.addOrderCounts }}</span></span>
             <!--<span>退货订单数：<span v-model="allChart1Data[2]">{{ statistics.returnCounts }}</span></span>-->
@@ -78,15 +78,15 @@
 
         <div class="chart chart2" style="height:152px">
             <div>
-                {{ statisticsProfit.allProfit }}   <span>万元</span>
+                {{ statisticsProfit.allProfit/10000 }}   <span>万元</span>
                 <p>销售额</p>
             </div>
             <div>
-                {{ statisticsProfit.choucheng }}   <span>万元</span>
+                {{ statisticsProfit.choucheng/10000 }}   <span>万元</span>
                 <p>利润</p>
             </div>
             <div>
-                {{ statisticsProfit.userProfit }}   <span>万元</span>
+                {{ statisticsProfit.userProfit/10000 }}   <span>万元</span>
                 <p>提成</p>
             </div>
         </div>
@@ -96,13 +96,13 @@
         <!--统计图-->
         <div class="chart">
             <div>
-                <div id="allChart1"></div>
+                <div id="allChartY1"></div>
             </div>
             <div>
-                <div id="allChart2"></div>
+                <div id="allChartY2"></div>
             </div>
             <div>
-                <div id="allChart3"></div>
+                <div id="allChartY3"></div>
             </div>
         </div>
     </div>
@@ -123,6 +123,6 @@
 <script src="${request.contextPath}/statics/libs/echarts/9.js"></script>
 <script src="${request.contextPath}/statics/libs/echarts/10.js"></script>
 <script src="${request.contextPath}/statics/kuajing/js/step/inance/chart.js"></script>
-<script src="${request.contextPath}/statics/kuajing/js/step/inance/profit.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/step/inance/profitY.js"></script>
 </body>
 </html>

@@ -54,15 +54,15 @@
         <!--统计图-->
         <div class="chart chart2" style="height:152px">
             <div>
-                {{ statisticsProfit.allProfit }}   <span>万元</span>
+                {{ (statisticsProfit.allProfit/10000).toFixed(3) }}   <span>万元</span>
                 <p>总盈利</p>
             </div>
             <div>
-                {{ statisticsProfit.choucheng }}   <span>万元</span>
+                {{ (statisticsProfit.choucheng/10000).toFixed(3) }}   <span>万元</span>
                 <p>所有加盟商订单抽成</p>
             </div>
             <div>
-                {{ statisticsProfit.userProfit }}   <span>万元</span>
+                {{ (statisticsProfit.userProfit/10000).toFixed(3) }}   <span>万元</span>
                 <p>总部员工销售利润</p>
             </div>
         </div>
@@ -121,7 +121,7 @@
         </div>
         <!--统计-->
         <div class="statistics">
-            <span>{{ statistics.name }}</span>
+            <!--<span>{{ statistics.name }}</span>-->
             <span>新增产品数：<span v-model="allChart1Data[0]">{{ statistics.addProductsCounts }}</span></span>
             <span>订单数：<span v-model="allChart1Data[1]">{{ statistics.addOrderCounts }}</span></span>
             <span>退货订单数：<span v-model="allChart1Data[2]">{{ statistics.returnCounts }}</span></span>
@@ -192,7 +192,7 @@
         </div>
         <!--统计-->
         <div class="statistics">
-            <span>{{ statisticsShop.name }}</span>
+            <!--<span>{{ statisticsShop.name }}</span>-->
             <span>订单数：<span>{{ statisticsShop.addOrderCounts }}</span></span>
             <span>销售额：<span v-model="shopChart3Data[0]">{{ statisticsShop.salesVolume }}</span></span>
             <span>成本：<span v-model="shopChart3Data[1]">{{ statisticsShop.allCost }}</span></span>
@@ -201,8 +201,9 @@
         </div>
         <!--统计图-->
         <div class="chart chart1">
-            <div>
-                <div id="shopChart1"></div>
+            <div style="text-align: center">
+                <h3 style="color: #4abdf3;font-size: 24px;margin-top: 110px;margin-bottom: 10px">{{statisticsShop.addOrderCounts}}</h3>
+                <span style="color: #666;font-style: 15px;">订单数</span>
             </div>
             <div>
                 <div id="shopChart2"></div>

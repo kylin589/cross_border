@@ -13,7 +13,7 @@
 
 
     <div class="item">
-        <h4>总部员工</h4>
+        <h4>加盟商员工</h4>
         <div class="nav_title">
             <ul>
                 <li class="action" @click="oneLevelQueryUser('day')">日统计</li>
@@ -47,7 +47,7 @@
                     <!--<option value="0">全部</option>-->
                     <!--<option v-for="item in staff" :value="item.userId">{{ item.username }}</option>-->
                 <!--</select>-->
-                <el-select v-model="yuangonguserid" filterable placeholder="请选择员工">
+                <el-select v-model="yuangonguserid" filterable placeholder="请选择员工" @click="selectOneLevelUserList">
                     <el-option
                             v-for="item in staff"
                             :key="item.userId"
@@ -65,7 +65,7 @@
         </div>
         <!--统计-->
         <div class="statistics">
-            <span>{{ statistics.name }}</span>
+            <!--<span>{{ statistics.name }}</span>-->
             <span>新增产品数：<span v-model="allChart1Data[0]">{{ statistics.addProductsCounts }}</span></span>
             <span>订单数：<span v-model="allChart1Data[1]">{{ statistics.addOrderCounts }}</span></span>
             <span>退货订单数：<span v-model="allChart1Data[2]">{{ statistics.returnCounts }}</span></span>
@@ -77,15 +77,15 @@
 
         <div class="chart chart2" style="height:152px">
             <div>
-                {{ statisticsProfit.allProfit }}   <span>万元</span>
+                {{ (statistics.salesVolume/10000).toFixed(3) }}   <span>万元</span>
                 <p>销售额</p>
             </div>
             <div>
-                {{ statisticsProfit.choucheng }}   <span>万元</span>
+                {{ statistics.addOrderCounts }}
                 <p>订单数</p>
             </div>
             <div>
-                {{ statisticsProfit.userProfit }}   <span>万元</span>
+                {{ (statistics.profit/10000).toFixed(3) }}   <span>万元</span>
                 <p>利润</p>
             </div>
         </div>
@@ -95,13 +95,16 @@
         <!--统计图-->
         <div class="chart">
             <div>
-                <div id="allChart1"></div>
+                <!--<div id="allChart1"></div>-->
+                <div id="allChartJ1"></div>
             </div>
             <div>
-                <div id="allChart2"></div>
+                <!--<div id="allChart2"></div>-->
+                <div id="allChartJ2"></div>
             </div>
             <div>
-                <div id="allChart3"></div>
+                <!--<div id="allChart3"></div>-->
+                <div id="allChartJ3"></div>
             </div>
         </div>
     </div>
@@ -122,6 +125,6 @@
 <script src="${request.contextPath}/statics/libs/echarts/9.js"></script>
 <script src="${request.contextPath}/statics/libs/echarts/10.js"></script>
 <script src="${request.contextPath}/statics/kuajing/js/step/inance/chart.js"></script>
-<script src="${request.contextPath}/statics/kuajing/js/step/inance/profit.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/step/inance/profitJ.js"></script>
 </body>
 </html>

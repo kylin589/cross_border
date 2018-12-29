@@ -73,7 +73,7 @@
     <form>
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
-              <a href="javascript:window.location.href = document.referrer;">我的产品 / </a>
+              <a @click="returnFunc">我的产品 / </a>
               <a><cite>产品详情</cite></a>
             </span>
             <input type="button" class="return" @click="returnFunc" value="返回" />
@@ -385,23 +385,19 @@
                     <h4>产品介绍</h4>
                 </div>
                 <div class="pro_inf chengben">
+                    <input type="button" value="翻译" @click="fanyiFunc">
                     <div class="layui-tab">
                         <ul class="layui-tab-title">
-                            <li class="layui-this">中文</li>
-                            <li>英语</li>
+                            <li class="layui-this">英语</li>
                             <li>法语</li>
                             <li>意大利语</li>
                             <li>西班牙语</li>
                             <li>德语</li>
                             <li>日语</li>
+                            <li>中文</li>
                         </ul>
+
                         <div class="layui-tab-content active">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.chinesePRE.productTitle">建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.chinesePRE.keyWord">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.chinesePRE.keyPoints">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.chinesePRE.productDescription">建议填写</textarea></span><br>
-                        </div>
-                        <div class="layui-tab-content">
                             <span><label for="">产品标题：</label><textarea v-model="proDetails.britainPRE.productTitle">建议填写</textarea></span><br>
                             <span><label for="">关键字：</label><textarea v-model="proDetails.britainPRE.keyWord">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.britainPRE.keyPoints">建议填写</textarea></span><br>
@@ -436,6 +432,12 @@
                             <span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints">建议填写</textarea></span><br>
                             <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription">建议填写</textarea></span><br>
+                        </div>
+                        <div class="layui-tab-content">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.chinesePRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.chinesePRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.chinesePRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.chinesePRE.productDescription">建议填写</textarea></span><br>
                         </div>
                     </div>
 
@@ -531,7 +533,7 @@
 
             <!-- 鼠标拖拽出的遮罩 （定位为 position:absolute）-->
             <!-- 遮罩最好是在绑定了mouseover事件的元素内部，并且不要阻止遮罩的冒泡事件。这样鼠标移到了遮罩上面，依然可以利用冒泡执行父元素的mouseover事件，就不会出现遮罩只能扩大，不能缩小的情况了（亲自试过） -->
-            <div id="moveSelected1">11111</div>
+            <!--<div id="moveSelected1">11111</div>-->
         </div>
 
         <!--变体添加-->

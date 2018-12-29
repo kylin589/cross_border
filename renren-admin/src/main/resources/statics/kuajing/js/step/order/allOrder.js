@@ -110,6 +110,8 @@ var vm = new Vue({
         // 获取员工列表
         getManList:function () {
             console.log('11111');
+
+
             if(vm.allGongsiValue != ''){
                 console.log('@@@@@@');
                 console.log(vm.allYUanGValue);
@@ -170,6 +172,8 @@ var vm = new Vue({
                 })
             }
 
+
+
         },
         // 获取公司列表
         getCouList:function(){
@@ -191,7 +195,10 @@ var vm = new Vue({
                             deptId:'',
                             name:'全部'
                         })
-                        console.log(vm.allGongsi)
+                        console.log(vm.allGongsi);
+                        if(vm.allGongsi.length == 2){
+                            vm.allGongsiValue = vm.allGongsi[1].deptId;
+                        }
                         // vm.getPage();
 
                     } else {

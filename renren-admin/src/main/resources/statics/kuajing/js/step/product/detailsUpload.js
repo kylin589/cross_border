@@ -153,8 +153,15 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['确定','取消'],
                 btn1: function (index) {
+
+                    vm.amazonAllCategory = '';
+                    vm.amazonAllArr.forEach(function (t) {
+                        vm.amazonAllCategory+=t+'/'
+                    })
+                    vm.amazonAllCategory.substr(0, vm.amazonAllCategory.length - 1);
                     $('#fenleiTankuang div.con li').removeClass('active');
                     layer.close(index);
+
 
                 },
                 btn2: function (index) {
@@ -496,6 +503,7 @@ var vm = new Vue({
                             vm.amazonCategory = list.displayName;
                             vm.amazonAllArr.push(list.displayName);
                             console.log(vm.amazonAllArr);
+                            vm.nodeId = list.nodeId;
                         }else {
                             vm.amazonCategoryId = list.amazonCategoryId;
                             vm.amazonCategory = list.displayName;
@@ -506,6 +514,7 @@ var vm = new Vue({
                             })
                             vm.amazonAllCategory+=list.displayName;
                             console.log(vm.amazonAllCategory);
+                            vm.nodeId = list.nodeId;
                             // amazonAllCategory =
                         }
 

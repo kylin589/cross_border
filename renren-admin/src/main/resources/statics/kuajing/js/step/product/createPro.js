@@ -2255,7 +2255,7 @@ var vm = new Vue({
                             layer.msg('取消成功');
                             layer.close(index);
                             // vm.getPage();
-                            window.location.href = document.referrer;
+                            window.location.href = 'myProduct.html';
 
                         } else {
                             layer.alert(r.msg);
@@ -2290,12 +2290,12 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
-                        // vm.proDetails.francePRE = r.introductionFra;
-                        // vm.proDetails.spainPRE = r.introductionSpa;
-                        // vm.proDetails.germanyPRE = r.introductionDe;
-                        // vm.proDetails.italyPRE = r.introductionIt;
+                        vm.proDetails.francePRE = r.introductionFra;
+                        vm.proDetails.spainPRE = r.introductionSpa;
+                        vm.proDetails.germanyPRE = r.introductionDe;
+                        vm.proDetails.italyPRE = r.introductionIt;
                         // vm.proDetails.britainPRE = r.introductionEn;
-                        // vm.proDetails.japanPRE = r.introductionJp;
+                        vm.proDetails.japanPRE = r.introductionJp;
                         layer.close(index);
                         layer.msg("翻译成功");
 

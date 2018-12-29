@@ -285,6 +285,7 @@ var vm = new Vue({
     data: {
         // 产品id
         id:null,
+        pUrl:'',
         // 产品详情
         proDetails:{
             "americanFC": {
@@ -422,19 +423,7 @@ var vm = new Vue({
         // 成本运费
         costFreight:{},
         // 产品相册
-        proAlbum:[{
-            id:'0',
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            id:'0',
-            url:'../../statics/kuajing/img/img2.jpg'
-        },{
-            id:'0',
-            url:'../../statics/kuajing/img/img1.jpg'
-        },{
-            id:'0',
-            url:'../../statics/kuajing/img/img2.jpg'
-        }],
+        proAlbum:[],
         // 产品回收站
         proStation:[{
             url:'../../statics/kuajing/img/img1.jpg'
@@ -551,19 +540,11 @@ var vm = new Vue({
 
 
                             })
-                        })
-                        setTimeout(function(){
-                            for(var nn = 0;nn<$('.ul1').length;nn++){
-                                var _index = nn;
-                                var aLi = $(".ul1").eq(_index).find('li');
-                                var aLiLast = $(".ul1").eq(_index).find('li:last-child');
+                        });
 
-                                var _height = aLiLast[0].offsetTop+60;
-                                aLiLast.parent().css('height',_height+'px');
-                                aLiLast.parent().parent().siblings().css('line-height',_height+'px')
-
-                            }
-                        }, 1000);
+                        // setTimeout(function(){
+                        //
+                        // }, 1000);
 
                         // console.log('运费')
                         // console.log(vm.proDetails.americanFC.freight)
@@ -1574,6 +1555,12 @@ var vm = new Vue({
             console.log(vm.proDetails.variantsInfos);
 
         },
+        // 返回
+        returnFunc:function () {
+            layer.confirm('确定返回吗？',function () {
+                window.location.href = vm.pUrl;
+            })
+        }
     },
 
     created:function () {
@@ -1588,6 +1575,7 @@ var vm = new Vue({
         this.id = parseInt(id);
         // console.log(this.id);
         this.getProDetails();
+        this.pUrl=document.referrer;
         // this.getcostFreight();
         // this.getVariant();
 
@@ -1631,6 +1619,22 @@ var vm = new Vue({
         //     })
         // })
         // console.log(this.recommendAll);
+    },
+    updated:function () {
+
+        for(var nn = 0;nn<$('.ul1').length;nn++){
+            var _index = nn;
+            var aLi = $(".ul1").eq(_index).find('li');
+            if(aLi.length != 0){
+                var aLiLast = $(".ul1").eq(_index).find('li:last-child');
+
+                var _height = aLiLast[0].offsetTop+60;
+                aLiLast.parent().css('height',_height+'px');
+                aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+            }
+
+
+        }
     }
 
 })

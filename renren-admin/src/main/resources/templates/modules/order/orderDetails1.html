@@ -19,7 +19,7 @@
     <form>
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
-              <a href="javascript:window.location.href = document.referrer;">订单列表 / </a>
+              <a href="javascript:window.location.href = 'allOrder.html';">订单列表</a>
               <a><cite>订单详情</cite></a>
             </span>
 
@@ -29,15 +29,16 @@
         <div class="form_item one">
             <div class="item">
                 <div>
-                    <img src="../../statics/kuajing/img/img1.jpg" alt="">
+                    <!--<img src="../../statics/kuajing/img/img1.jpg" alt="">-->
+                    <img :src="orderDetails.productImageUrl" alt="">
                 </div>
                 <div>
-                    <h4>{{ orderDetails.productTitle }}</h4>
+                    <h4><a :href="orderDetails.amazonProductUrl" target="_blank">{{ orderDetails.productTitle }}</a></h4>
                     <!--<p>sdkfjbsanklnsml;kdgfuasbjkdnlcxm </p>-->
                     <!--<p>{{ orderDetails.shipAddress }}</p>-->
 
                     <span><label for="">店铺：</label><span>{{ orderDetails.shopName }}</span></span><br>
-                    <span><label for="">SKU：</label><span>{{ orderDetails.productSku }}</span></span>
+                    <span><label for="">SKU：</label><span :lay-href="'modules/product/detailsProduct1.html?id='+orderDetails.productId" layadmin-event="message" lay-text="产品详情" style="color: #12ace8;cursor:pointer;">{{ orderDetails.productSku }}</span></span>
                     <span><label for="">ASIN：</label><span>{{ orderDetails.productAsin }}</span></span><br>
                     <span><label for="">数量：</label><span>{{ orderDetails.orderNumber }}</span></span>
                     <span><label for="">采购价（￥）：</label><span>{{ orderDetails.purchasePrice }}</span></span>
@@ -400,6 +401,14 @@
 
 
 <script src="${request.contextPath}/statics/kuajing/js/step/order/orderDetails.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/layui.js?t=1"></script>
+<script>
+    layui.config({
+        base: '${request.contextPath}/statics/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index','console');
+</script>
 
 </body>
 </html>

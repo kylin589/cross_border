@@ -143,17 +143,21 @@
             <th>Amazon佣金</th>
             <th>到账金额</th>
 
-            <th>状态</th>
-            <th>异常状态</th>
+            <!--<th>状态</th>-->
+            <!--<th>异常状态</th>-->
             <!--<th>国际运单</th>-->
             <!--<th>国内运单</th>-->
 
             <th>当天汇率</th>
             <th>采购价</th>
-            <th>利润</th>
-            <th>利润率</th>
             <th>国际运费</th>
             <th>平台佣金</th>
+            <th>利润</th>
+            <th>利润率</th>
+
+
+            <th>状态</th>
+            <th>异常状态</th>
             <!--<th>退货费用</th>-->
             <th style="width: 100px">下单时间</th>
             <th>操作</th>
@@ -232,6 +236,23 @@
                 {{item.accountMoney}} <span v-if="item.rateCode">({{item.rateCode}})</span><br>
                 <span style="color: #999" v-if="item.accountMoneyCny">¥ {{item.accountMoneyCny}}</span>
             </td>
+
+            <!--<td>803216550758084158</td>-->
+            <!--<td>{{ item.abroadWaybill }}</td>-->
+            <!--<td>{{ item.domesticWaybill }}</td>-->
+
+            <td>{{item.momentRate}}</td>
+            <td>{{item.purchasePrice }}</td>
+            <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.interFreight}}</td>
+            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
+            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
+            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
+            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
+            <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.platformCommissions}}</td>
+            <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.orderProfit}}</td>
+            <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.profitRate}}</td>
+
+
             <td>
                 <span v-if="(item.orderState == '待付款')||(item.orderState == '虚发货')||(item.orderState == '缺货')" class="org">
                     {{ item.orderState }}
@@ -250,16 +271,6 @@
                 <span v-if="JSON.stringify(item.abnormalStatus) != 'null' " style="padding: 2px 6px;border-radius: 3px;background: #ff6154;color: #fff;">{{item.abnormalState}}</span>
                 <span v-if="JSON.stringify(item.abnormalStatus) == 'null' "></span>
             </td>
-            <!--<td>803216550758084158</td>-->
-            <!--<td>{{ item.abroadWaybill }}</td>-->
-            <!--<td>{{ item.domesticWaybill }}</td>-->
-
-            <td>{{item.momentRate}}</td>
-            <td>{{item.purchasePrice }}</td>
-            <td>{{item.orderProfit }}</td>
-            <td>{{item.accountMoneyCny}}</td>
-            <td>{{item.interFreight}}</td>
-            <td>{{item.platformCommissions}}</td>
             <!--<td>{{item.accountMoneyCny}}</td>-->
             <td style="width: 100px;color: #999;">{{ item.buyDate }}</td>
             <td>

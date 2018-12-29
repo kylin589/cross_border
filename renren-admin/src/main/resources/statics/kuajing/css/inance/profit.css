@@ -55,7 +55,7 @@
     border-radius: 3px;
 }
 .statistics>span:nth-child(1){
-    font-weight: bold;
+    /*font-weight: bold;*/
 }
 .statistics>span{
     display: inline-block;
@@ -159,5 +159,9 @@
     background: none;
 }
 .statistics>span span{
+    display: none;
     color: transparent;
+}
+.statistics>span:nth-child(1){
+    /*color: transparent;/*/
 }

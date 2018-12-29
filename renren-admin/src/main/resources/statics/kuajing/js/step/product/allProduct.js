@@ -153,17 +153,21 @@ var vm = new Vue({
         // 所选员工的value
         allYUanGValue:'1-1',
         // 所有公司
-        allGongsi:[],
+        allGongsi:[{
+            deptId:'1-1',
+            name:'全部'
+        }],
         // 所选公司的value
         allGongsiValue:'1-1'
     },
     methods: {
         // 获取员工列表
         getManList:function () {
-            console.log('11111');
+            // console.log('11111');
+
             if(vm.allGongsiValue != '1-1'){
-                console.log('@@@@@@');
-                console.log(vm.allYUanGValue);
+                // console.log('@@@@@@');
+                // console.log(vm.allYUanGValue);
                 $.ajax({
                     url: '../../sys/user/getUserList',
                     type: 'get',
@@ -221,6 +225,8 @@ var vm = new Vue({
                 })
             }
 
+
+
         },
         // 获取公司列表
         getCouList:function(){
@@ -242,6 +248,10 @@ var vm = new Vue({
                             deptId:'1-1',
                             name:'全部'
                         })
+
+                        if(vm.allGongsi.length == 2){
+                            vm.allGongsiValue = vm.allGongsi[1].deptId;
+                        }
                         console.log(vm.allGongsi)
                         // vm.getPage();
 

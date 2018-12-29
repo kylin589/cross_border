@@ -160,7 +160,9 @@ var vm = new Vue({
             "productDescriptionQ": "",
             "productDescriptionH": "",
             "productCategory":"",
+            'translates':[]
         },
+        quanAll:'',
         // 采集产品分类
         caijiTypeList:[],
         caijiNowType:'',
@@ -168,6 +170,7 @@ var vm = new Vue({
         caijiUrl:'',
         caijiProgress:0,
         caijiProgressIf:false,
+        // 批量修改翻译
 
 
     },
@@ -1065,8 +1068,25 @@ var vm = new Vue({
         // 原创
         createPro:function () {
             window.location.href="createPro.html";
-        }
+        },
+        // 批量修改全选
+        quanxuanFunc:function () {
+            if(vm.quanAll){
+                vm.xiugaiData.translates = ['0','1','2','3','4','5'];
+            }else {
+                vm.xiugaiData.translates = [];
+            }
 
+        },
+        // 改变
+        changeQaun:function () {
+            if(vm.xiugaiData.translates.length != 6){
+                vm.quanAll = false;
+            }else {
+                vm.quanAll = true;
+            }
+
+        }
 
     },
     created: function () {
