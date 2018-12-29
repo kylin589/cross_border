@@ -19,6 +19,14 @@ window.onload = function (ev) {
         vm.addOrder();
     })
 
+    // $('.layui-tab-title li').click(function () {
+    //     // console.log(111111);
+    //     $('.layui-tab-title li').removeClass('layui-this');
+    //     $(this).addClass('layui-this');
+    //     $('.layui-tab-content ul li').removeClass('active');
+    //     $('.layui-tab-content ul li').eq($(this).index()).addClass('active');
+    // })
+
     // // 鼠标移入图片放大
     // $('table tr td.imgtd img').mouseover(function () {
     //     console.log(111111);

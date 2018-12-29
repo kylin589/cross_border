@@ -8,7 +8,7 @@ $(function () {
 
     // 语言选项卡
     $('.layui-tab-title li').click(function () {
-        console.log(111111);
+        // console.log(111111);
         $('.layui-tab-title li').removeClass('layui-this');
         $(this).addClass('layui-this');
         $('.layui-tab-content').removeClass('active');

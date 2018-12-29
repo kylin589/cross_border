@@ -208,71 +208,60 @@ var vm = new Vue({
                     btn: ['上传', '取消'],
                     btn1: function (index) {
 
-                        var index = layer.load();
-                        var index = layer.load(1); //换了种风格
-                        var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                        if(vm.changeTime == ''){
+                            layer.msg('请转换时间')
+                        }else {
+                            var index = layer.load();
+                            var index = layer.load(1); //换了种风格
+                            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
 
-                        vm.operateItem = [];
-                        console.log(vm.inputche)
-                        vm.uploadIds = vm.uploadIdsstr.split(',');
-                        console.log(typeof(vm.uploadIds));
-                        // if (vm.inputche[0]==true){
-                        //
-                        //     vm.operateItem = [0,1,2,3,4];
-                        // }else {
-                        //     for (var i=0;i<vm.inputche.length;i++){
-                        //         if (vm.inputche[i]==true){
-                        //             console.log('2222');
-                        //             vm.operateItem.push(i-1);
-                        //         }
-                        //     }
-                        // }
+                            vm.operateItem = [];
+                            // console.log(vm.inputche)
+                            vm.uploadIds = vm.uploadIdsstr.split(',');
 
-                        console.log(vm.inputche);
-                        console.log(vm.operateItem);
-                        // vm.grantShopId = vm.shopinfo.grantShopId;
-                        // vm.grantShop = vm.shopinfo.shopName;
-                        console.log(vm);
-                        $.ajax({
-                            url: '../../product/upload/renewTimingUpload',
-                            type: 'post',
-                            data: JSON.stringify({
-                                'uploadId':vm.id,
-                                'startId': vm.startId,
-                                'endId': vm.endId,
-                                'uploadIds': vm.uploadIds,
-                                'grantShopId': parseInt(vm.shopinfo),
-                                'isAttribute': vm.isAttribute,
-                                'grantShop':grantShop,
-                                'amazonCategoryId': vm.amazonCategoryId,
-                                'amazonCategory': vm.amazonCategory,
-                                'amazonTemplateId': vm.flModleValue,
-                                'amazonTemplate': templateDisplayName,
-                                'operateItem': vm.inputche,
-                                'time':vm.changeTime,
-                                'countryCode':vm.countryCode,
-                                'fieldsEntityList':vm.modelAttr,
-                                'amazonNodeId':vm.nodeId,
-                            }),
-                            // dataType: 'json',
-                            contentType: "application/json",
-                            success: function (r) {
-                                console.log(r);
-                                if (r.code === 0) {
+                            $.ajax({
+                                url: '../../product/upload/renewTimingUpload',
+                                type: 'post',
+                                data: JSON.stringify({
+                                    'uploadId':vm.id,
+                                    'startId': vm.startId,
+                                    'endId': vm.endId,
+                                    'uploadIds': vm.uploadIds,
+                                    'grantShopId': parseInt(vm.shopinfo),
+                                    'isAttribute': vm.isAttribute,
+                                    'grantShop':grantShop,
+                                    'amazonCategoryId': vm.amazonCategoryId,
+                                    'amazonCategory': vm.amazonCategory,
+                                    'amazonTemplateId': vm.flModleValue,
+                                    'amazonTemplate': templateDisplayName,
+                                    'operateItem': vm.inputche,
+                                    'time':vm.changeTime,
+                                    'countryCode':vm.countryCode,
+                                    'fieldsEntityList':vm.modelAttr,
+                                    'amazonNodeId':vm.nodeId,
+                                }),
+                                // dataType: 'json',
+                                contentType: "application/json",
+                                success: function (r) {
+                                    console.log(r);
+                                    if (r.code === 0) {
 
-                                    layer.close(index);
-                                    window.location.href="upProduct.html";
-                                } else {
-                                    // layer.alert(r.message);
-                                    // window.location.href="upProduct.html";
+                                        layer.close(index);
+                                        window.location.href="upProduct.html";
+                                    } else {
+                                        // layer.alert(r.message);
+                                        // window.location.href="upProduct.html";
+                                    }
+
+
+                                },
+                                error: function () {
+                                    layer.msg("网络故障");
                                 }
+                            });
+                        }
 
 
-                            },
-                            error: function () {
-                                layer.msg("网络故障");
-                            }
-                        });
                     },
                     btn2: function (index) {
 

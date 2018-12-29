@@ -68,8 +68,8 @@ var vm = new Vue({
                         if(vm.allGongsi.length == 2){
                             vm.allGongsiValue = vm.allGongsi[1].deptId;
                         }
-                        console.log(r.deptList.deptId);
-                        vm.selectOneLevelUserList(r.deptList.deptId);
+                        console.log(r.deptList[1].deptId);
+                        vm.selectOneLevelUserList(r.deptList[1].deptId);
                         console.log(vm.allGongsi)
                         // vm.getPage();
 
@@ -202,7 +202,7 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         // vm.statisticsProfit = r.platformStatisticsDto;
-                        vm.statistics = r.userStatisticsDto;
+                        vm.statistics = r.franchiseeStatisticsDto;
                         vm.allChart1Data[0] = vm.statistics.addProductsCounts;
                         vm.allChart1Data[1] = vm.statistics.addOrderCounts;
                         vm.allChart1Data[2] = vm.statistics.returnCounts;
@@ -210,9 +210,9 @@ var vm = new Vue({
                         vm.allChart2Data[1] = vm.statistics.cost + vm.statistics.orderFreight;
                         vm.allChart2Data[2] = vm.statistics.profit;
                         vm.allChart3Data = vm.statistics.profitRate;
-                        allChart1(vm.allChart1Data,vm.statistics.name);
-                        allChart2(vm.allChart2Data,vm.statistics.name);
-                        allChart3(vm.allChart3Data);
+                        allChartJ1(vm.allChart1Data,vm.statistics.name);
+                        allChartJ2(vm.allChart2Data,vm.statistics.name);
+                        allChartJ3(vm.allChart3Data);
                     } else {
                         layer.alert(r.msg);
                     }

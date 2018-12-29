@@ -41,7 +41,9 @@ window.onload = function (ev) {
     // })
 
     // 选项卡
+    console.log($('.layui-tab-title li'));
     $('.layui-tab-title li').click(function () {
+        console.log($('.layui-tab-title li'));
         var _index = $(this).index();
         $('.layui-tab-title li').removeClass('layui-this');
         $(this).addClass('layui-this');
@@ -486,32 +488,34 @@ var vm = new Vue({
             console.log(vm.remark)
             if (vm.remark==''){
                 layer.alert('请输入备注内容');
-            }if (vm.remarkType==''){
-                layer.alert('请输入备注类型');
             }else {
-                $.ajax({
-                    url: '../../order/remark/save',
-                    type: 'post',
-                    data: JSON.stringify({
-                        orderId:this.orderid,
-                        remark:vm.remark,
-                        remarkType:vm.remarkType
-                    }),
-                    contentType: "application/json",
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-                            layer.alert('添加成功');
+                if (vm.remarkType==''){
+                    layer.alert('请输入备注类型');
+                }else {
+                    $.ajax({
+                        url: '../../order/remark/save',
+                        type: 'post',
+                        data: JSON.stringify({
+                            orderId:this.orderid,
+                            remark:vm.remark,
+                            remarkType:vm.remarkType
+                        }),
+                        contentType: "application/json",
+                        success: function (r) {
                             console.log(r);
-                            vm.getOrderInfo();
-                        } else {
-                            layer.alert(r.msg);
+                            if (r.code === 0) {
+                                layer.msg('添加成功');
+                                console.log(r);
+                                vm.getOrderInfo();
+                            } else {
+                                layer.alert(r.msg);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
                         }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                });
+                    });
+                }
             }
         },
         // 生成国际运单号
@@ -565,6 +569,14 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             });
+        },
+        // 选项卡
+        tabFcun:function () {
+            var _index = $(event.target).index();
+            $('.layui-tab-title1 li').removeClass('layui-this');
+            $(event.target).addClass('layui-this');
+            $('.layui-tab-content').removeClass('action');
+            $('.layui-tab-content').eq(_index).addClass('action');
         }
     },
     created:function () {

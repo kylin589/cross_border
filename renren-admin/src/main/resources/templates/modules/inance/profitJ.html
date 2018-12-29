@@ -47,11 +47,11 @@
                     <!--<option value="0">全部</option>-->
                     <!--<option v-for="item in staff" :value="item.userId">{{ item.username }}</option>-->
                 <!--</select>-->
-                <el-select v-model="yuangonguserid" filterable placeholder="请选择员工" @click="selectOneLevelUserList">
+                <el-select v-model="yuangonguserid" filterable placeholder="请选择员工">
                     <el-option
                             v-for="item in staff"
                             :key="item.userId"
-                            :label="item.username"
+                            :label="item.displayName"
                             :value="item.userId"
                     >
                     </el-option>

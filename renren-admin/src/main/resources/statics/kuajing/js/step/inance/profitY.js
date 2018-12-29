@@ -32,10 +32,7 @@ var vm = new Vue({
         jiamenguserid:'',
         value1:'',
         value2:'',
-        value3:'',
-        value4:'',
-        value5:'',
-        value6:'',
+
         timetype1:'',
         timetype2:'',
         timetype3:'',
@@ -56,8 +53,8 @@ var vm = new Vue({
                 data:''
                 // 'productIds': JSON.stringify(vm.activeProlist)
                 ,
-                contentType: "application/json",
-                // dataType: 'json',
+                // contentType: "application/json",
+                dataType: 'json',
                 success: function (r) {
                     console.log('获取公司');
                     console.log(r);
@@ -68,6 +65,11 @@ var vm = new Vue({
                             deptId:'',
                             name:'全部'
                         })
+                        if(vm.allGongsi.length == 2){
+                            vm.allGongsiValue = vm.allGongsi[1].deptId;
+                        }
+                        console.log(r.deptList.deptId);
+                        vm.selectOneLevelUserList(r.deptList.deptId);
                         console.log(vm.allGongsi)
                         // vm.getPage();
 
@@ -83,34 +85,28 @@ var vm = new Vue({
         //默认盈利明细
         oneLevelStatisticsDefault:function () {
             $.ajax({
-                url: '../../sys/finance/oneLevelStatisticsDefault',
+                url: '../../sys/finance/userStatistics',
                 type: 'get',
                 data:  {
                 },
                 dataType: 'json',
                 success: function (r) {
                     if (r.code === 0) {
-                        vm.statisticsProfit = r.dto.platformStatisticsDto;
-                        vm.statistics = r.dto.userStatisticsDto;
-                        vm.statisticsShop = r.dto.franchiseeStatisticsDto;
-                        vm.shopChart3Data[0] = vm.statisticsShop.salesVolume;
-                        vm.shopChart3Data[1] = vm.statisticsShop.allCost;
-                        vm.shopChart3Data[2] = vm.statisticsShop.profit;
-                        vm.shopChart2Data = vm.statisticsShop.profitRate;
-                        vm.allChart1Data[0] = vm.statistics.addProductsCounts;
-                        vm.allChart1Data[1] = vm.statistics.addOrderCounts;
-                        vm.allChart1Data[2] = vm.statistics.returnCounts;
+                        console.log(r);
+                        vm.statistics = r.userStatisticsDto;
+
+                        // vm.allChart1Data[0] = vm.statistics.addProductsCounts;
+                        // vm.allChart1Data[1] = vm.statistics.addOrderCounts;
+                        // vm.allChart1Data[2] = vm.statistics.returnCounts;
                         vm.allChart2Data[0] = vm.statistics.salesVolume;
                         vm.allChart2Data[1] = vm.statistics.cost + vm.statistics.orderFreight;
                         vm.allChart2Data[2] = vm.statistics.profit;
                         vm.allChart3Data = vm.statistics.profitRate;
-                        console.log(r);
-                        allChart1(vm.allChart1Data);
-                        allChart2(vm.allChart2Data);
-                        allChart3(vm.allChart3Data);
-                        shopChart3(vm.shopChart3Data);
-                        shopChart2(vm.shopChart2Data);
-                        shopChart1(vm.shopChart1Data);
+
+                        // allChartY1(vm.allChart1Data);
+                        allChartY2(vm.allChart2Data);
+                        allChartY3(vm.allChart3Data);
+
                     } else {
                         layer.alert(r.msg);
                     }
@@ -122,11 +118,12 @@ var vm = new Vue({
             });
         },
         //选择员工
-        selectOneLevelUserList:function () {
+        selectOneLevelUserList:function (id) {
             $.ajax({
-                url: '../../sys/user/selectOneLevelUserList',
+                url: '../../sys/user/getUserList',
                 type: 'get',
                 data:  {
+                    'deptId':id
                 },
                 dataType: 'json',
                 success: function (r) {
@@ -146,61 +143,7 @@ var vm = new Vue({
                 }
             });
         },
-        //平台利润查询
-        oneLevelQueryPlatform:function (type) {
-            vm.timetype1=type;
-            if(type == 'time'){
-                vm.pingtTime = true;
-            }else {vm.pingtTime = false;
-                $.ajax({
-                    url: '../../sys/finance/oneLevelQueryPlatform',
-                    type: 'post',
-                    data:  JSON.stringify({
-                        type:type,
-                        startDate:'',
-                        endDate:''
-                    }),
-                    contentType: "application/json",
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-                            vm.statisticsProfit = r.platformStatisticsDto;
-                        } else {
-                            layer.alert(r.msg);
-                        }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                });
-            }
-        },
-        //点击查询1
-        oneLevelQueryPlatform1:function(){
-            console.log(vm.value5);
-            console.log(vm.timetype1);
-            $.ajax({
-                url: '../../sys/finance/oneLevelQueryPlatform',
-                type: 'post',
-                data:  JSON.stringify({
-                    type:vm.timetype1,
-                    startDate:vm.value5,
-                    endDate:vm.value6
-                }),
-                contentType: "application/json",
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        vm.statisticsProfit = r.platformStatisticsDto;
-                    } else {
-                        layer.alert(r.msg);
-                    }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
-            });
-        },
+
         //总部员工查询
         oneLevelQueryUser:function (type) {
             vm.timetype2=type;
@@ -209,7 +152,7 @@ var vm = new Vue({
             }else {
                 vm.zongbuTime = false;
                 $.ajax({
-                    url: '../../sys/finance/oneLevelQueryUser',
+                    url: '../../sys/finance/franchiseeQueryStatistics',
                     type: 'post',
                     data:  JSON.stringify({
                         type:type,
@@ -222,17 +165,17 @@ var vm = new Vue({
                         console.log(r);
                         if (r.code === 0) {
                             // vm.statisticsProfit = r.platformStatisticsDto;
-                            vm.statistics = r.userStatisticsDto;
-                            vm.allChart1Data[0] = vm.statistics.addProductsCounts;
-                            vm.allChart1Data[1] = vm.statistics.addOrderCounts;
-                            vm.allChart1Data[2] = vm.statistics.returnCounts;
+                            vm.statistics = r.franchiseeStatisticsDto;
+                            // vm.allChart1Data[0] = vm.statistics.addProductsCounts;
+                            // vm.allChart1Data[1] = vm.statistics.addOrderCounts;
+                            // vm.allChart1Data[2] = vm.statistics.returnCounts;
                             vm.allChart2Data[0] = vm.statistics.salesVolume;
                             vm.allChart2Data[1] = vm.statistics.cost + vm.statistics.orderFreight;
                             vm.allChart2Data[2] = vm.statistics.profit;
                             vm.allChart3Data = vm.statistics.profitRate;
-                            allChart1(vm.allChart1Data,vm.statistics.name);
-                            allChart2(vm.allChart2Data,vm.statistics.name);
-                            allChart3(vm.allChart3Data);
+                            // allChartY1(vm.allChart1Data);
+                            allChartY2(vm.allChart2Data);
+                            allChartY3(vm.allChart3Data);
                         } else {
                             layer.alert(r.msg);
                         }
@@ -246,7 +189,7 @@ var vm = new Vue({
         //点击查询2
         oneLevelQueryUser1:function(){
             $.ajax({
-                url: '../../sys/finance/oneLevelQueryUser',
+                url: '../../sys/finance/franchiseeQueryStatistics',
                 type: 'post',
                 data:  JSON.stringify({
                     type:vm.timetype2,
@@ -259,17 +202,17 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         // vm.statisticsProfit = r.platformStatisticsDto;
-                        vm.statistics = r.userStatisticsDto;
-                        vm.allChart1Data[0] = vm.statistics.addProductsCounts;
-                        vm.allChart1Data[1] = vm.statistics.addOrderCounts;
-                        vm.allChart1Data[2] = vm.statistics.returnCounts;
+                        vm.statistics = r.franchiseeStatisticsDto;
+                        // vm.allChart1Data[0] = vm.statistics.addProductsCounts;
+                        // vm.allChart1Data[1] = vm.statistics.addOrderCounts;
+                        // vm.allChart1Data[2] = vm.statistics.returnCounts;
                         vm.allChart2Data[0] = vm.statistics.salesVolume;
                         vm.allChart2Data[1] = vm.statistics.cost + vm.statistics.orderFreight;
                         vm.allChart2Data[2] = vm.statistics.profit;
                         vm.allChart3Data = vm.statistics.profitRate;
                         allChart1(vm.allChart1Data,vm.statistics.name);
-                        allChart2(vm.allChart2Data,vm.statistics.name);
-                        allChart3(vm.allChart3Data);
+                        allChartY2(vm.allChart2Data,vm.statistics.name);
+                        allChartY3(vm.allChart3Data);
                     } else {
                         layer.alert(r.msg);
                     }
@@ -279,85 +222,13 @@ var vm = new Vue({
                 }
             });
         },
-        //加盟商查询
-        oneLevelQueryFranchisee:function (type) {
-            vm.timetype3=type;
-            if(type == 'time'){
-                vm.jiamTime = true;
-            }else {
-                vm.jiamTime = false;
-                $.ajax({
-                    url: '../../sys/finance/oneLevelQueryFranchisee',
-                    type: 'post',
-                    data:  JSON.stringify({
-                        type:type,
-                        startDate:vm.value3,
-                        endDate:vm.value3,
-                        deptId:vm.allGongsiValue
-                    }),
-                    contentType: "application/json",
-                    success: function (r) {
-                        console.log(r);
-                        if (r.code === 0) {
-                            // vm.statisticsProfit = r.platformStatisticsDto;
-                            vm.statisticsShop = r.franchiseeStatisticsDto;
-                            vm.shopChart3Data[0] = vm.statisticsShop.salesVolume;
-                            vm.shopChart3Data[1] = vm.statisticsShop.allCost;
-                            vm.shopChart3Data[2] = vm.statisticsShop.profit;
-                            vm.shopChart2Data = vm.statisticsShop.profitRate;
-                            shopChart3(vm.shopChart3Data,vm.statistics.name);
-                            shopChart2(vm.shopChart2Data);
-                            shopChart1(vm.shopChart1Data);
-                        } else {
-                            layer.alert(r.msg);
-                        }
-                    },
-                    error: function () {
-                        layer.msg("网络故障");
-                    }
-                });
-            }
 
-        },
-        //点击查询3
-        oneLevelQueryFranchisee1:function () {
-            $.ajax({
-                url: '../../sys/finance/oneLevelQueryFranchisee',
-                type: 'post',
-                data:  JSON.stringify({
-                    type:vm.timetype3,
-                    startDate:vm.value3,
-                    endDate:vm.value4,
-                    deptId:vm.allGongsiValue
-                }),
-                contentType: "application/json",
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        // vm.statisticsProfit = r.platformStatisticsDto;
-                        vm.statisticsShop = r.franchiseeStatisticsDto;
-                        vm.shopChart3Data[0] = vm.statisticsShop.salesVolume;
-                        vm.shopChart3Data[1] = vm.statisticsShop.allCost;
-                        vm.shopChart3Data[2] = vm.statisticsShop.profit;
-                        vm.shopChart2Data = vm.statisticsShop.profitRate;
-                        shopChart3(vm.shopChart3Data,vm.statistics.name);
-                        shopChart2(vm.shopChart2Data);
-                        shopChart1(vm.shopChart1Data);
-                    } else {
-                        layer.alert(r.msg);
-                    }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                }
-            });
-        }
 
     },
     created:function(){
         this.getCouList();
         this.oneLevelStatisticsDefault();
-        this.selectOneLevelUserList();
+
 
     },
     mounted:function () {

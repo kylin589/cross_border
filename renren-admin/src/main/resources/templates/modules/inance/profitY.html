@@ -73,20 +73,20 @@
             <span>成本：<span v-model="allChart2Data[1]">{{ statistics.cost+statistics.orderFreight}}</span></span>
             <span>利润：<span v-model="allChart2Data[2]">{{ statistics.profit }}</span></span>
             <span>平均利润率：<span v-model="allChart3Data">{{ statistics.profitRate }}</span></span>
-            <span>提成：<span v-model="allChart3Data">{{ statistics.profitRate }}</span></span>
+            <span>提成：<span v-model="allChart3Data">{{ statistics.servicePrice }}</span></span>
         </div>
 
         <div class="chart chart2" style="height:152px">
             <div>
-                {{ statisticsProfit.allProfit/10000 }}   <span>万元</span>
+                {{ (statistics.salesVolume/10000).toFixed(3) }}   <span>万元</span>
                 <p>销售额</p>
             </div>
             <div>
-                {{ statisticsProfit.choucheng/10000 }}   <span>万元</span>
+                {{ (statistics.profit/10000).toFixed(3) }}   <span>万元</span>
                 <p>利润</p>
             </div>
             <div>
-                {{ statisticsProfit.userProfit/10000 }}   <span>万元</span>
+                {{ (statistics.servicePrice/10000).toFixed(3) }}   <span>万元</span>
                 <p>提成</p>
             </div>
         </div>
@@ -95,8 +95,9 @@
 
         <!--统计图-->
         <div class="chart">
-            <div>
-                <div id="allChartY1"></div>
+            <div style="text-align: center">
+                <h3 style="color: #4abdf3;font-size: 24px;margin-top: 110px;margin-bottom: 10px">{{statistics.addOrderCounts}}</h3>
+                <span style="color: #666;font-style: 15px;">订单数</span>
             </div>
             <div>
                 <div id="allChartY2"></div>

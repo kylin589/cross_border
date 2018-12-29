@@ -19,7 +19,7 @@
     <form>
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
-              <a href="javascript:window.location.href = 'allOrder.html';">订单列表</a>
+              <a href="javascript:window.location.href = 'allOrder.html';">订单列表 / </a>
               <a><cite>订单详情</cite></a>
             </span>
 
@@ -148,6 +148,7 @@
                             <th>国际运费</th>
                             <th>平台佣金</th>
                             <th>利润</th>
+                            <th>利润率</th>
                             <th>退货费用</th>
                         </tr>
                         <tr class="two">
@@ -155,6 +156,7 @@
                             <td>{{ orderDetails.orderMoneyForeign }}</td>
                             <td>{{ orderDetails.amazonCommissionForeign }}</td>
                             <td>{{ orderDetails.accountMoneyForeign }}</td>
+                            <td>--</td>
                             <td>--</td>
                             <td>--</td>
                             <td>--</td>
@@ -170,6 +172,7 @@
                             <td>{{ orderDetails.interFreight }}</td>
                             <td>{{ orderDetails.platformCommissions }}</td>
                             <td>{{ orderDetails.orderProfit }}</td>
+                            <td>{{ orderDetails.profitRate }}</td>
                             <td>{{ orderDetails.returnCost }}</td>
                         </tr>
                         <!--<tr class="two">-->
@@ -207,13 +210,14 @@
                 </div>
                 <div class="pro_inf chengben">
                     <div class="layui-tab">
-                        <ul class="layui-tab-title">
-                            <li class="layui-this">内部备注</li>
-                            <li>操作日志</li>
+                        <ul class="layui-tab-title1">
+                            <li class="layui-this" @click="tabFcun">内部备注</li>
+                            <li @click="tabFcun">操作日志</li>
                         </ul>
                         <div class="layui-tab-content action">
                             <ul class="operationLog">
-                                <li v-for="item in orderDetails.remarkList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark }}</span></li>
+                                <li v-if="orderDetails.remarkList.length==0" style="color: #666">暂无备注</li>
+                                <li v-if="orderDetails.remarkList.length!=0" v-for="item in orderDetails.remarkList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark }}</span></li>
                             </ul>
                             <!--<textarea placeholder="留言备注" style="margin-bottom: 10px" v-model="remark"></textarea>-->
                             <!--<br>-->
@@ -228,7 +232,8 @@
                         </div>
                         <div class="layui-tab-content">
                             <ul class="operationLog">
-                                <li v-for="item in orderDetails.logList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark}}</span></li>
+                                <li v-if="orderDetails.logList.length==0" style="color: #666">暂无日志</li>
+                                <li v-if="orderDetails.logList.length!=0" v-for="item in orderDetails.logList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark}}</span></li>
                             </ul>
 
                         </div>

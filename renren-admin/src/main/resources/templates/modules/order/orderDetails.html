@@ -23,7 +23,7 @@
     <form>
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
-              <a href="javascript:window.location.href = 'myOrder.html';">订单列表</a>
+              <a href="javascript:window.location.href = 'myOrder.html';">订单列表 / </a>
               <a><cite>订单详情</cite></a>
             </span>
 
@@ -216,18 +216,20 @@
                 </div>
                 <div class="pro_inf chengben">
                     <div class="layui-tab">
-                        <ul class="layui-tab-title">
-                            <li class="layui-this">内部备注</li>
-                            <li>操作日志</li>
+                        <ul class="layui-tab-title1">
+                            <li class="layui-this" @click="tabFcun">内部备注</li>
+                            <li @click="tabFcun">操作日志</li>
                         </ul>
                         <div class="layui-tab-content action">
                             <ul class="operationLog">
-                                <li v-for="item in orderDetails.remarkList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark }}</span></li>
+                                <li v-if="orderDetails.remarkList.length==0" style="color: #666">暂无备注</li>
+                                <li v-if="orderDetails.remarkList.length!=0" v-for="item in orderDetails.remarkList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark }}</span></li>
                             </ul>
                             <textarea placeholder="留言备注" style="margin-bottom: 10px" v-model="remark"></textarea>
                             <br>
                             <select id="remark_type" name="remark_type" class="form-control" v-model="remarkType">
-                                <option value="" selected="selected">内部备注</option>
+                                <option value="" selected="selected">选择备注类型</option>
+                                <option value="内部备注" selected="selected"></option>
                                 <option value="收件人地址异常">收件人地址异常</option>
                                 <option value="采购异常">采购异常</option>
                                 <option value="国内快递异常">国内快递异常</option>
@@ -237,7 +239,8 @@
                         </div>
                         <div class="layui-tab-content">
                             <ul class="operationLog">
-                                <li v-for="item in orderDetails.logList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark}}</span></li>
+                                <li v-if="orderDetails.logList.length==0" style="color: #666">暂无日志</li>
+                                <li v-if="orderDetails.logList.length!=0" v-for="item in orderDetails.logList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark}}</span></li>
                             </ul>
 
                         </div>
