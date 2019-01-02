@@ -31,7 +31,7 @@
             <!--<option :value="item.shopName" v-for="item in shopList">{{item.shopName}}</option>-->
         <!--</select>-->
 
-        <#if shiro.hasPermission("sys:dept:list")>
+        <#if shiro.hasPermission("sys:dept:sign")>
             <el-select v-model="allGongsiValue" filterable @change="chanGongsiFunc" placeholder="请选择公司">
                 <el-option
                         v-for="item in allGongsi"

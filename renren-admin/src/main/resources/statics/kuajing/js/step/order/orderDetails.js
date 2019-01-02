@@ -547,7 +547,7 @@ var vm = new Vue({
         // 同步国际运单
         tongbu:function () {
             $.ajax({
-                url: '../../product/order/createAbroadWaybill',
+                url: '../../product/order/synchronization',
                 type: 'post',
                 data: {
                     orderId:this.orderid

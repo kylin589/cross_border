@@ -27,7 +27,7 @@
     <!--搜索区域-->
     <div class="search1" style="padding: 0">
 
-        <#if shiro.hasPermission("sys:dept:list")>
+        <#if shiro.hasPermission("sys:dept:sign")>
             <el-select v-model="allGongsiValue" filterable @change="chanGongsiFunc" placeholder="请选择公司">
                 <el-option
                         v-for="item in allGongsi"

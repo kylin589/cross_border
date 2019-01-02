@@ -982,6 +982,7 @@ var vm = new Vue({
                 btn: ['采集','取消'],
                 btn1: function (index) {
                     // console.log(vm.xiugaiData);
+                    console.log("111111111111111111111111");
                     console.log(vm.caijiUrl)
                     console.log(vm.caijiThreeId);
                     vm.caijiProgressIf = true;
@@ -995,6 +996,7 @@ var vm = new Vue({
                         }
 
                     },1000);
+                    layer.close(index);
                     $.ajax({
                         url: 'http://127.0.0.1:5000/getCollectionInfo',
                         type: 'post',
@@ -1028,7 +1030,7 @@ var vm = new Vue({
                                             console.log(r);
                                             layer.alert('操作成功');
                                             vm.getPage();
-                                            layer.close(index);
+                                            // layer.close(index);
                                         } else {
 
 

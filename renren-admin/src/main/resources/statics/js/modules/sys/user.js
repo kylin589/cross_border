@@ -137,6 +137,30 @@ var vm = new Vue({
                 });
             });
         },
+        resetPassword: function () {
+            var userIds = getSelectedRows();
+            if(userIds == null){
+                return ;
+            }
+
+            confirm('确定要重置选中的记录？', function(){
+                $.ajax({
+                    type: "POST",
+                    url: baseURL + "sys/user/resetPassword",
+                    contentType: "application/json",
+                    data: JSON.stringify(userIds),
+                    success: function(r){
+                        if(r.code == 0){
+                            alert('重置成功', function(){
+                                vm.reload();
+                            });
+                        }else{
+                            alert(r.msg);
+                        }
+                    }
+                });
+            });
+        },
         saveOrUpdate: function () {
             var url = vm.user.userId == null ? "sys/user/save" : "sys/user/update";
             $.ajax({
@@ -159,7 +183,6 @@ var vm = new Vue({
             $.get(baseURL + "sys/user/info/"+userId, function(r){
                 vm.user = r.user;
                 vm.user.password = null;
-
                 vm.getDept();
             });
         },

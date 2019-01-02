@@ -52,7 +52,7 @@
     <!--搜索区域-->
     <div class="search1" style="padding: 0">
 
-        <#if shiro.hasPermission("sys:dept:list")>
+        <#if shiro.hasPermission("sys:dept:sign")>
             <el-select v-model="allGongsiValue" filterable @change="chanGongsiFunc" placeholder="请选择公司">
                 <el-option
                         v-for="item in allGongsi"
@@ -178,7 +178,7 @@
     <div id="renlTk" style="padding: 16px;display: none">
         <h3>认领到</h3>
         <br>
-        <#if shiro.hasPermission("sys:dept:list")>
+        <#if shiro.hasPermission("sys:dept:sign")>
             <label for="">选择公司：</label>
             <el-select v-model="allGongsiValue1" filterable @change="chanGongsiFunc" placeholder="请选择公司">
                 <el-option
