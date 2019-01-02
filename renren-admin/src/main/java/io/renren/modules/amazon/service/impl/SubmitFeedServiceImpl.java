@@ -116,7 +116,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     }
 
     @Override
-    @Async
+    @Async("taskExecutor")
     public void submitFeed(UploadEntity uploadEntity) {
         System.out.println("submitFeed被调用！");
 

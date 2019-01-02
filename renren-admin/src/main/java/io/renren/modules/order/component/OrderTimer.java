@@ -73,7 +73,7 @@ public class OrderTimer {
     /***
      * 获得单个店铺订单和订单详情
      */
-    @Async
+    @Async("taskExecutor")
     public void getSingleShopOrderList(Map map) {
         System.out.println("111111111111111111111111");
         List<String> marketplaceId = new ArrayList<>();
