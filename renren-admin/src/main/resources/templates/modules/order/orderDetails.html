@@ -146,7 +146,10 @@
                             <span>{{ orderDetails.abroadLogistics.shipTime }}</span>
                             <p>
                                 <a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>
-                                <a v-if="orderDetails.orderState in ['虚发货','入库','国际已发货'] && orderDetails.abroadLogistics.isSynchronization == 0" href="javascript:;" @click="tongbu">同步</a>
+                                <template v-if="orderDetails.abroadLogistics.isSynchronization == 0">
+                                    <a v-if="orderDetails.orderState == '虚发货' || orderDetails.orderState == '入库' || orderDetails.orderState == '国际已发货'" href="javascript:;" @click="tongbu">同步</a>
+                                </template>
+
                                 <span v-if="orderDetails.abroadLogistics.isSynchronization == 1" href="javascript:;" >已同步</span>
                                 <!--<a href="javascript:;" class="detailsOrderA">明细</a>-->
                             </p>
