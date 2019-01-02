@@ -53,7 +53,7 @@ public class AmazonGrantShopController extends AbstractController{
     public R allShopList(@RequestParam Map<String, Object> params){
         List<AmazonGrantShopEntity> shopList = new ArrayList<AmazonGrantShopEntity>();
         if(getDeptId() == 1){
-            shopList = amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>());
+            shopList = amazonGrantShopService.selectList(null);
         }else{
             shopList = amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("dept_id",getDeptId()));
         }

@@ -12,7 +12,8 @@ import java.util.StringTokenizer;
 //连接ftp服务器的工具类
 public class FtpUtil {
     //ftp服务器ip地址
-    private static final String FTP_ADDRESS = "132.232.22.202";
+//    private static final String FTP_ADDRESS = "132.232.22.202";
+    private static final String FTP_ADDRESS = "39.105.120.226";
     //端口号
     private static final int FTP_PORT = 21;
     //用户名

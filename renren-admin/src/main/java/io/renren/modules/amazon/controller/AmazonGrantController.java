@@ -105,6 +105,14 @@ public class AmazonGrantController extends AbstractController {
         amazonGrant.setUserId(getUserId());
         amazonGrant.setDeptId(getDeptId());
         amazonGrant.setCreateTime(new Date());
+        //判断是否重复
+        if(amazonGrantService.selectCount(new EntityWrapper<AmazonGrantEntity>().eq("amazon_account",amazonAccount).eq("region",amazonGrant.getRegion())) > 0){
+            return R.error("该账户已授权过此地区，请查证后再尝试");
+        }
+        //判断当前账户是否已经添加过该地区的授权
+        if(amazonGrantService.selectCount(new EntityWrapper<AmazonGrantEntity>().eq("user_id",getUserId()).eq("region",amazonGrant.getRegion())) > 0){
+            return R.error("同一账户不能添加同一地区的授权");
+        }
         //添加到Amazon授权表
         amazonGrantService.insert(amazonGrant);
         //生成店铺

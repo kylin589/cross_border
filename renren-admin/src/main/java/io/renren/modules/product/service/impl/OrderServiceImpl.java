@@ -233,7 +233,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         Map<String, Object> condition = new HashMap<>(1);
         if(deptId == 1L){
             //总公司
-            orderCounts = baseMapper.statisticsOrderCounts(condition);
+            if(baseMapper.statisticsOrderCounts(condition) != null){
+                orderCounts = baseMapper.statisticsOrderCounts(condition);
+            }
             //核算订单数
             int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
             orderCounts.setOrderCounts(completeCounts);
@@ -243,7 +245,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }else{
             //加盟商
             condition.put("deptId",deptId);
-            orderCounts = baseMapper.statisticsOrderCounts(condition);
+            if(baseMapper.statisticsOrderCounts(condition) != null){
+                orderCounts = baseMapper.statisticsOrderCounts(condition);
+            }
             //核算订单数
             int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
             orderCounts.setOrderCounts(completeCounts);
@@ -398,10 +402,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 //订单状态
                 String modelStatus = orderModel.getOrderStatus();
                 if(orderEntity == null){
-                    //新增订单 && !"Shipped".equals(modelStatus)
-                    if(!"Canceled".equals(modelStatus)){
+                    //新增订单
+                    if(!"Canceled".equals(modelStatus) && !"Shipped".equals(modelStatus)){
                         //设置基本属性
                         orderEntity = new OrderEntity();
+
                         orderEntity.setAmazonOrderId(amazonOrderId);
                         orderEntity.setOrderItemId(orderModel.getOrderItemId());
                         orderEntity.setBuyDate(orderModel.getBuyDate());
@@ -417,6 +422,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
                             orderEntity.setCountryCode(orderModel.getProductShipAddressEntity().getShipCountry());
                         }
+                        orderEntity.setShopId(orderModel.getShopId());
                         orderEntity.setShopName(orderModel.getShopName());
                         orderEntity.setProductSku(orderModel.getProductSku());
                         orderEntity.setProductAsin(orderModel.getProductAsin());

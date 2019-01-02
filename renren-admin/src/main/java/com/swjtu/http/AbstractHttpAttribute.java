@@ -34,7 +34,6 @@ public abstract class AbstractHttpAttribute {
     public Map<LANG, String> langMap;
     public CloseableHttpClient httpClient;
     private static PoolingHttpClientConnectionManager pccm = null;
-    private static RequestConfig params = null;
     private static HttpRequestRetryHandler retryHandler = null;
     /**
      * static initializer:构建httpclient
@@ -44,13 +43,6 @@ public abstract class AbstractHttpAttribute {
      * @date: 2018/11/6 16:56
      */
     static {
-        Map<String, Object> map = JDBC.getOne();
-        // 初始化线程池
-        System.out.println("ip:" + map.get("ip"));
-        System.out.println("port:" + map.get("port"));
-        params = RequestConfig.custom().setConnectTimeout(3000).setConnectionRequestTimeout(1000).setSocketTimeout(4000)
-                 .setProxy(new HttpHost(map.get("ip").toString(),Integer.valueOf(map.get("port").toString()))).setExpectContinueEnabled(true).build();
-
         PoolingHttpClientConnectionManager pccm = new PoolingHttpClientConnectionManager();
         pccm.setMaxTotal(300); // 连接池最大并发连接数
         pccm.setDefaultMaxPerRoute(50); // 单路由最大并发数
@@ -81,7 +73,7 @@ public abstract class AbstractHttpAttribute {
      * @date: 2018/11/6 16:57
      */
     public static CloseableHttpClient getHttpClient() {
-        CloseableHttpClient httpClient =  HttpClients.custom().setConnectionManager(pccm).setDefaultRequestConfig(params).setRetryHandler(retryHandler)
+        CloseableHttpClient httpClient =  HttpClients.custom().setConnectionManager(pccm).setRetryHandler(retryHandler)
                 .build();
         return httpClient;
     }

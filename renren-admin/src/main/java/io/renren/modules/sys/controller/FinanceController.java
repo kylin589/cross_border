@@ -51,6 +51,7 @@ public class FinanceController extends AbstractController{
     @RequestMapping("/oneLevelQueryUser")
     public R oneLevelQueryUser(@RequestBody StatisticsVM vm){
         //总部员工统计数据模型
+        System.out.println("type:" + vm.getType());
         UserStatisticsDto userStatisticsDto = orderService.oneLevelUserStatistics(vm);
         return R.ok().put("userStatisticsDto",userStatisticsDto);
     }

@@ -16,6 +16,7 @@
 
 package io.renren.modules.sys.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
@@ -28,6 +29,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,8 +67,12 @@ public class SysRoleController extends AbstractController {
 	@RequestMapping("/select")
 	@RequiresPermissions("sys:role:select")
 	public R select(){
-		List<SysRoleEntity> list = sysRoleService.selectList(null);
-		
+		List<SysRoleEntity> list = new ArrayList<SysRoleEntity>();
+		if(getDeptId() == 1L){
+			list = sysRoleService.selectList(null);
+		}else{
+			list = sysRoleService.selectList(new EntityWrapper<SysRoleEntity>().like("remark","加盟商"));
+		}
 		return R.ok().put("list", list);
 	}
 	

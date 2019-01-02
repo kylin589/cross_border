@@ -61,7 +61,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                 .eq(StringUtils.isNotBlank(productNumber), "product_type", productNumber)
                 .eq("create_user_id", userId)//当前用户
                 .eq("is_deleted", 0)
-                .orderBy(true, "create_time", false);//时间排序
+                .orderBy(true, "last_operation_time", false);//时间排序
         Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
         PageUtils pageUtils = new PageUtils(page);
         List<ProductsEntity> list = (List<ProductsEntity>) pageUtils.getList();
@@ -141,7 +141,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq(StringUtils.isNotBlank(userId), "create_user_id", userId)
                     .eq(StringUtils.isNotBlank(qDeptId), "dept_id", qDeptId)
                     .eq("is_deleted", 0)
-                    .orderBy(true, "create_time", false);//时间排序
+                    .orderBy(true, "last_operation_time", false);//时间排序
         } else {
             //加盟商
             wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)

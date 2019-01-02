@@ -131,7 +131,8 @@ public class ImageAddressController extends AbstractController {
             String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
             String date = String.valueOf(calendar.get(Calendar.DATE));
             // 文件上传后是保存在本地的路径
-            String filePath = "E:/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
+//            String filePath = "D:/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
+            String filePath = "usr/linshi/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
             File dest = new File(filePath);
             if (!dest.getParentFile().exists()) {
                 // 检测是否存在目录不存在创建一个文件
@@ -146,7 +147,8 @@ public class ImageAddressController extends AbstractController {
             BufferedImage buffImg = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
             buffImg.getGraphics().drawImage(srcImg.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH), 0, 0, null);
             //修改图片大小后保存到本地
-            String filePathGB="D:/"+fileUUID+suffixName;
+//            String filePathGB="D:/test/"+fileUUID+suffixName;
+            String filePathGB="usr/test/"+fileUUID+suffixName;
             //保存到ftp上的文件名字
             String fileNameFTP=fileUUID+suffixName;
             //修改后写到本地
@@ -266,7 +268,8 @@ public class ImageAddressController extends AbstractController {
         for (int i = 0; i < imageIds.length; i++) {
             ImageAddressEntity addressEntity = imageAddressService.selectById(imageIds[i]);
             // 文件上传后是保存在本地的路径
-            String filePath = "E:/test/";
+//            String filePath = "D:/test/";
+            String filePath = "usr/test/";
             String url = filePath + addressEntity.getImageUrl();
             File file = new File(url);
             file.delete();

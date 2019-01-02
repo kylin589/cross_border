@@ -31,7 +31,7 @@ public class AbroadLogisticsUtil {
 
     public final static String testUrl = "http://127.0.0.1:8081/renren-api/api/test";
 
-    public final static String key = "5c0d54e1d5184c36921d7f08fa10dcae";
+    public final static String key = "8e44b19aeb154ab0befce731e08eb469";
 
     public final static Base64.Decoder decoder = Base64.getDecoder();
 

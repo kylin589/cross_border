@@ -26,4 +26,6 @@ public class AbroadLogisticsServiceImpl extends ServiceImpl<AbroadLogisticsDao, 
         return new PageUtils(page);
     }
 
+
+
 }

@@ -118,12 +118,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
     }
 
 	@Override
+	public boolean resetPassword(Long[] userIds) {
+		List<SysUserEntity> userList = new ArrayList<SysUserEntity>();
+		for(int i=0; i < userIds.length; i++){
+			SysUserEntity userEntity = this.selectById(userIds[0]);
+			String newPassword = ShiroUtils.sha256("123456", userEntity.getSalt());
+			userEntity.setPassword(newPassword);
+			userList.add(userEntity);
+		}
+		return this.updateBatchById(userList);
+	}
+
+	@Override
 	public List<SysUserEntity> selectUserList(Long deptId) {
 		List<SysUserEntity> userList = new ArrayList<>();
 		if(deptId != 1L){
 			userList = this.selectList(new EntityWrapper<SysUserEntity>().eq("dept_id",deptId));
 		}else{
-			userList = this.selectList(new EntityWrapper<SysUserEntity>());
+			userList = this.selectList(null);
 		}
 		return userList;
 	}

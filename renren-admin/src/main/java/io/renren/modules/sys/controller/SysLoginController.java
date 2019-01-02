@@ -26,10 +26,11 @@ import io.renren.modules.product.entity.EanUpcEntity;
 import io.renren.modules.product.entity.OrderEntity;
 import io.renren.modules.product.service.EanUpcService;
 import io.renren.modules.product.service.OrderService;
-import io.renren.modules.sys.entity.NoticeEntity;
-import io.renren.modules.sys.entity.SysDeptEntity;
+import io.renren.modules.sys.entity.*;
 import io.renren.modules.sys.service.NoticeService;
 import io.renren.modules.sys.service.SysDeptService;
+import io.renren.modules.sys.service.SysRoleService;
+import io.renren.modules.sys.service.SysUserRoleService;
 import io.renren.modules.sys.shiro.ShiroUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -66,6 +67,10 @@ public class SysLoginController extends AbstractController{
 	private EanUpcService eanUpcService;
 	@Autowired
 	private NoticeService noticeService;
+	@Autowired
+	private SysUserRoleService sysUserRoleService;
+	@Autowired
+	private SysRoleService roleService;
 
 	@RequestMapping("captcha.jpg")
 	public void captcha(HttpServletResponse response)throws IOException {
@@ -146,6 +151,18 @@ public class SysLoginController extends AbstractController{
 			dept.setEstimatedCost(estimatedCost);
 			//可用余额
 			BigDecimal availableBalance = dept.getBalance().subtract(estimatedCost).setScale(2,BigDecimal.ROUND_HALF_UP);
+			if(availableBalance.compareTo(new BigDecimal(50)) == -1){
+				SysRoleEntity roleEntity = roleService.selectOne(new EntityWrapper<SysRoleEntity>().eq("role_name","加盟商管理员"));
+				if(sysUserRoleService.selectCount(new EntityWrapper<SysUserRoleEntity>().eq("user_id",getUserId()).eq("role_id",roleEntity.getRoleId())) > 0){
+					NoticeEntity notice = new NoticeEntity();
+					notice.setDeptId(getDeptId());
+					notice.setUserId(getUserId());
+					notice.setNoticeContent("公司可用余额不足，为避免订单出现异常，请及时充值。");
+					notice.setCreateTime(new Date());
+					notice.setNoticeType("余额");
+					noticeService.insert(notice);
+				}
+			}
 			dept.setAvailableBalance(availableBalance);
 			//预计还可生成单数
 			int estimatedOrder = availableBalance.divide(new BigDecimal(50),0,BigDecimal.ROUND_HALF_DOWN).intValue();

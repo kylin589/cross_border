@@ -136,6 +136,7 @@ public class OrderEntity implements Serializable {
 	 */
 	private String abroadWaybill;
 
+	private Long shopId;
 
 	private Long userId;
 
@@ -494,5 +495,13 @@ public class OrderEntity implements Serializable {
 
 	public void setProfitRate(BigDecimal profitRate) {
 		this.profitRate = profitRate;
+	}
+
+	public Long getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(Long shopId) {
+		this.shopId = shopId;
 	}
 }

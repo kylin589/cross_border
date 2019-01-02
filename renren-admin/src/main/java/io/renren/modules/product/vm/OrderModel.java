@@ -33,6 +33,15 @@ public class OrderModel {
     private Long userId;
 
     private Long deptId;
+    private Long shopId;
+
+    public Long getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(Long shopId) {
+        this.shopId = shopId;
+    }
 
     private ProductShipAddressEntity productShipAddressEntity;//地址信息
 
