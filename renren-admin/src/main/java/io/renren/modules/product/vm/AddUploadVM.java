@@ -1,6 +1,7 @@
 package io.renren.modules.product.vm;
 
 import io.renren.modules.product.controller.TemplateCategoryFieldsController;
+import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.TemplateCategoryFieldsEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 
@@ -23,6 +24,10 @@ public class AddUploadVM {
     private Long endId;
     //上传id列表
     private Long[] uploadIds;
+    //真正要上传的id
+    private String uploadProductsIds;
+    //真正要上传的产品列表
+    private List<ProductsEntity> uploadProductsList;
     //授权店铺id
     private Long grantShopId;
     //授权店铺
@@ -53,6 +58,22 @@ public class AddUploadVM {
     private Long userId;
     //公司id
     private Long deptId;
+
+    public List<ProductsEntity> getUploadProductsList() {
+        return uploadProductsList;
+    }
+
+    public void setUploadProductsList(List<ProductsEntity> uploadProductsList) {
+        this.uploadProductsList = uploadProductsList;
+    }
+
+    public String getUploadProductsIds() {
+        return uploadProductsIds;
+    }
+
+    public void setUploadProductsIds(String uploadProductsIds) {
+        this.uploadProductsIds = uploadProductsIds;
+    }
 
     public String getAmazonNodeId() {
         return amazonNodeId;
