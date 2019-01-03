@@ -112,7 +112,7 @@ public class VariantParameterController {
     @RequestMapping("/update")
 //    @RequiresPermissions("product:variantparameter:update")
     public R update(@RequestBody VariantParameterEntity variantParameter){
-        ValidatorUtils.validateEntity(variantParameter);
+        //ValidatorUtils.validateEntity((variantParameter);
         variantParameterService.updateAllColumnById(variantParameter);//全部更新
 
         return R.ok();

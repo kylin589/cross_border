@@ -72,7 +72,7 @@ public class FieldMiddleController {
     @RequestMapping("/update")
     @RequiresPermissions("product:fieldmiddle:update")
     public R update(@RequestBody FieldMiddleEntity fieldMiddle){
-        ValidatorUtils.validateEntity(fieldMiddle);
+        //ValidatorUtils.validateEntity((fieldMiddle);
         fieldMiddleService.updateAllColumnById(fieldMiddle);//全部更新
         
         return R.ok();

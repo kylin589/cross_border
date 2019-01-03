@@ -102,7 +102,7 @@ public class SysRoleController extends AbstractController {
 	@RequestMapping("/save")
 	@RequiresPermissions("sys:role:save")
 	public R save(@RequestBody SysRoleEntity role){
-		ValidatorUtils.validateEntity(role);
+//		//ValidatorUtils.validateEntity((role);
 		
 		sysRoleService.save(role);
 		
@@ -116,7 +116,7 @@ public class SysRoleController extends AbstractController {
 	@RequestMapping("/update")
 	@RequiresPermissions("sys:role:update")
 	public R update(@RequestBody SysRoleEntity role){
-		ValidatorUtils.validateEntity(role);
+//		//ValidatorUtils.validateEntity((role);
 		
 		sysRoleService.update(role);
 		

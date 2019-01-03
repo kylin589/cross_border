@@ -301,7 +301,7 @@ var vm = new Vue({
                     $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
                 }
                 $.ajax({
-                    url: 'http://127.0.0.1:5000/domestic/updateLogistics',
+                    url: 'http://39.106.131.222:8000/domestic/updateLogistics',
                     type: 'get',
                     data: {
                         orderId:vm.orderid,
@@ -360,7 +360,7 @@ var vm = new Vue({
         queryLogistic:function (waybill) {
             console.log(waybill);
             $.ajax({
-                url: 'http://127.0.0.1:5000/domestic/queryLogistic',
+                url: 'http://39.106.131.222:8000/domestic/queryLogistic',
                 type: 'get',
                 data: {
                     waybill:waybill,
@@ -413,7 +413,7 @@ var vm = new Vue({
                 btn1: function (index) {
 
                     $.ajax({
-                        url: 'http://127.0.0.1:5000/domestic/getLogisticsCompany',
+                        url: 'http://39.106.131.222:8000/domestic/getLogisticsCompany',
                         type: 'get',
                         data: {
                             orderId:vm.orderid,

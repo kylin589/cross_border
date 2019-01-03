@@ -95,7 +95,7 @@ public class ListOrdersAsyncServiceTest {
 
         //打印生成xml数据
         FileWriter outdata = null;
-        String filePath="usr/shipping/shipping.xml";
+        String filePath="/usr/shipping/shipping.xml";
         String feedType="_POST_ORDER_FULFILLMENT_DATA_";
         try {
             outdata = new FileWriter(filePath);

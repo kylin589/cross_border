@@ -5,7 +5,7 @@
 		<version>3.2.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>renren-admin</artifactId>
+	<artifactId>cross_border</artifactId>
 	<packaging>war</packaging>
 	<description>war包对应的pom，打war包，执行【mvn clean package -f pom-war.xml】</description>
 
@@ -25,6 +25,8 @@
 			<groupId>io.renren</groupId>
 			<artifactId>renren-common</artifactId>
 			<version>3.2.0</version>
+			<!--<scope>system</scope>
+			<systemPath>${project.basedir}/src/lib/renren-common-3.2.0.jar</systemPath>-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -233,6 +235,7 @@
 				</configuration>
 				<!-- 运行命令 mvn clean package docker:build 打包并生成docker镜像 -->
 			</plugin>
+			<!-- 將本地jar包导入war包 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>

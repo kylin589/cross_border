@@ -91,7 +91,7 @@ public class TemplateController {
     @RequestMapping("/update")
     @RequiresPermissions("product:template:update")
     public R update(@RequestBody TemplateEntity template) {
-        ValidatorUtils.validateEntity(template);
+        //ValidatorUtils.validateEntity((template);
         templateService.updateAllColumnById(template);//全部更新
 
         return R.ok();

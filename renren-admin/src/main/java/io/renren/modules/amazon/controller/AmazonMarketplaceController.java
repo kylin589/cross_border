@@ -3,7 +3,7 @@ package io.renren.modules.amazon.controller;
 import java.util.Arrays;
 import java.util.Map;
 
-import io.renren.common.validator.ValidatorUtils;
+import io.renren.common.utils.ValidatorUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,7 +72,7 @@ public class AmazonMarketplaceController {
     @RequestMapping("/update")
     @RequiresPermissions("amazon:amazonmarketplace:update")
     public R update(@RequestBody AmazonMarketplaceEntity amazonMarketplace){
-        ValidatorUtils.validateEntity(amazonMarketplace);
+        //ValidatorUtils.validateEntity((amazonMarketplace);
         amazonMarketplaceService.updateAllColumnById(amazonMarketplace);//全部更新
         
         return R.ok();

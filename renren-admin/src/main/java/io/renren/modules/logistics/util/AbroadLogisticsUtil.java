@@ -23,13 +23,13 @@ public class AbroadLogisticsUtil {
     //用户标识
     public final static Long userdean = 238370684928L;
 
-    public final static String pushUrl = "http://test.oofay.trylose.cn:60254/api/ExpressAccess/GetOrderDataFromOtherPlatform";
+    public final static String pushUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/GetOrderDataFromOtherPlatform";
 
-    public final static String detailUrl = "http://test.oofay.trylose.cn:60254/api/ExpressAccess/GetOrderDetailByOrderSn";
+    public final static String detailUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/GetOrderDetailByOrderSn";
 
-    public final static String updateUrl = "http://test.oofay.trylose.cn:60254/api/ExpressAccess/UpdateOrderDetailStatusByOrderSn";
+    public final static String updateUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/UpdateOrderDetailStatusByOrderSn";
 
-    public final static String testUrl = "http://127.0.0.1:8081/renren-api/api/test";
+    public final static String testUrl = "http://oofay.trylose.cn:60254/renren-api/api/test";
 
     public final static String key = "8e44b19aeb154ab0befce731e08eb469";
 

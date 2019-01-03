@@ -88,7 +88,7 @@ public class AmazonCategoryController {
     @RequiresPermissions("product:amazoncategory:update")
     public R update(@RequestBody AmazonCategoryEntity amazonCategory) {
 
-        ValidatorUtils.validateEntity(amazonCategory);
+        //ValidatorUtils.validateEntity((amazonCategory);
         amazonCategoryService.updateAllColumnById(amazonCategory);//全部更新
 
         return R.ok();

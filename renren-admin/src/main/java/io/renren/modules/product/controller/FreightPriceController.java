@@ -72,7 +72,7 @@ public class FreightPriceController {
     @RequestMapping("/update")
     @RequiresPermissions("product:freightprice:update")
     public R update(@RequestBody FreightPriceEntity freightPrice){
-        ValidatorUtils.validateEntity(freightPrice);
+        //ValidatorUtils.validateEntity((freightPrice);
         freightPriceService.updateAllColumnById(freightPrice);//全部更新
         
         return R.ok();

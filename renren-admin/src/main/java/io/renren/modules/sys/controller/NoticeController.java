@@ -111,7 +111,7 @@ public class NoticeController extends AbstractController{
     @RequestMapping("/update")
     @RequiresPermissions("sys:notice:update")
     public R update(@RequestBody NoticeEntity notice){
-        ValidatorUtils.validateEntity(notice);
+        //ValidatorUtils.validateEntity((notice);
         noticeService.updateAllColumnById(notice);//全部更新
         return R.ok();
     }

@@ -72,7 +72,7 @@ public class ProductShipAddressController {
     @RequestMapping("/update")
     @RequiresPermissions("order:productshipaddress:update")
     public R update(@RequestBody ProductShipAddressEntity productShipAddress){
-        ValidatorUtils.validateEntity(productShipAddress);
+        //ValidatorUtils.validateEntity((productShipAddress);
         productShipAddressService.updateAllColumnById(productShipAddress);//全部更新
         
         return R.ok();

@@ -79,7 +79,7 @@ public class EanUpcController {
     @RequestMapping("/update")
     @RequiresPermissions("product:eanupc:update")
     public R update(@RequestBody EanUpcEntity eanUpc){
-        ValidatorUtils.validateEntity(eanUpc);
+        //ValidatorUtils.validateEntity((eanUpc);
         eanUpcService.updateAllColumnById(eanUpc);//全部更新
         
         return R.ok();

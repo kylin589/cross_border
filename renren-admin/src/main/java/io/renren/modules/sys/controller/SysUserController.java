@@ -162,7 +162,7 @@ public class SysUserController extends AbstractController {
 		//获取公司账户限制数量
 		int accountCount = sysDeptService.selectOne(new EntityWrapper<SysDeptEntity>().eq("dept_id",user.getDeptId())).getAccountCount();
 		if(count < accountCount){
-			ValidatorUtils.validateEntity(user, AddGroup.class);
+//			//ValidatorUtils.validateEntity((user, AddGroup.class);
 			sysUserService.save(user);
 			return R.ok();
 		}else{
@@ -177,7 +177,7 @@ public class SysUserController extends AbstractController {
 	@RequestMapping("/update")
 	@RequiresPermissions("sys:user:update")
 	public R update(@RequestBody SysUserEntity user){
-		ValidatorUtils.validateEntity(user, UpdateGroup.class);
+//		//ValidatorUtils.validateEntity((user, UpdateGroup.class);
 
 		sysUserService.update(user);
 		

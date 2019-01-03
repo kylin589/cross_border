@@ -27,6 +27,7 @@ public class FtpUtil {
         //创建FTPClient客户端
         FTPClient ftp = new FTPClient();
         ftp.setControlEncoding("GBK");
+        ftp.enterLocalActiveMode();
         try {
             int reply;
             // 连接FTP服务器,ip地址，端口号
@@ -38,7 +39,10 @@ public class FtpUtil {
                 ftp.disconnect();
                 return success;
             }
-            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+            //主动模式
+//            ftp.enterLocalActiveMode();
+            //被动模式
+            ftp.enterLocalPassiveMode();
             boolean a = ftp.changeWorkingDirectory("/");
             //如果输入的路径为空或者为根路径，则不转换操作目录
             if (StringUtils.isBlank(ftpBasepath) || ftpBasepath.equals("/")) {

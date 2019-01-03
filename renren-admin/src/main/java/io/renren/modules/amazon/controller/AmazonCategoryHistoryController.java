@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import io.renren.common.validator.ValidatorUtils;
+import io.renren.common.utils.ValidatorUtils;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class AmazonCategoryHistoryController extends AbstractController{
     @RequestMapping("/update")
     @RequiresPermissions("amazon:amazoncategoryhistory:update")
     public R update(@RequestBody AmazonCategoryHistoryEntity amazonCategoryHistory){
-        ValidatorUtils.validateEntity(amazonCategoryHistory);
+        //ValidatorUtils.validateEntity((amazonCategoryHistory);
         amazonCategoryHistoryService.updateAllColumnById(amazonCategoryHistory);//全部更新
         
         return R.ok();

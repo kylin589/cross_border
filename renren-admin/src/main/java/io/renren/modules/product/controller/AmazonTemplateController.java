@@ -87,7 +87,7 @@ public class AmazonTemplateController {
     @RequestMapping("/update")
     @RequiresPermissions("product:amazontemplate:update")
     public R update(@RequestBody AmazonTemplateEntity amazonTemplate){
-        ValidatorUtils.validateEntity(amazonTemplate);
+        //ValidatorUtils.validateEntity((amazonTemplate);
         amazonTemplateService.updateAllColumnById(amazonTemplate);//全部更新
         
         return R.ok();

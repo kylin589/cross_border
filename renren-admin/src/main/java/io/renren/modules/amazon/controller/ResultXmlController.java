@@ -76,7 +76,7 @@ public class ResultXmlController {
     @RequestMapping("/update")
     @RequiresPermissions("amazon:resultxml:update")
     public R update(@RequestBody ResultXmlEntity resultXml){
-        ValidatorUtils.validateEntity(resultXml);
+        //ValidatorUtils.validateEntity((resultXml);
         resultXmlService.updateAllColumnById(resultXml);//全部更新
         
         return R.ok();

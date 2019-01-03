@@ -72,7 +72,7 @@ public class DomesticLogisticsController {
     @RequestMapping("/update")
     @RequiresPermissions("logistics:domesticlogistics:update")
     public R update(@RequestBody DomesticLogisticsEntity domesticLogistics){
-        ValidatorUtils.validateEntity(domesticLogistics);
+        //ValidatorUtils.validateEntity((domesticLogistics);
         domesticLogisticsService.updateAllColumnById(domesticLogistics);//全部更新
         
         return R.ok();

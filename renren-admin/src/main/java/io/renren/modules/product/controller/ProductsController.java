@@ -262,7 +262,7 @@ public class ProductsController extends AbstractController {
      */
     @RequestMapping("/update")
     public R update(@RequestBody ProductsEntity products) {
-        ValidatorUtils.validateEntity(products);
+        //ValidatorUtils.validateEntity((products);
         //全部更新
         productsService.updateAllColumnById(products);
 

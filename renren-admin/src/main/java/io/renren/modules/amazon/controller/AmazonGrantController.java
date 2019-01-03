@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import io.renren.common.validator.ValidatorUtils;
+import io.renren.common.utils.ValidatorUtils;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.entity.AmazonMarketplaceEntity;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
@@ -73,7 +73,7 @@ public class AmazonGrantController extends AbstractController {
     @RequestMapping("/update")
 //    @RequiresPermissions("amazon:amazongrant:update")
     public R update(@RequestBody AmazonGrantEntity amazonGrant) {
-        ValidatorUtils.validateEntity(amazonGrant);
+        //ValidatorUtils.validateEntity((amazonGrant);
         amazonGrantService.updateAllColumnById(amazonGrant);//全部更新
 
         return R.ok();

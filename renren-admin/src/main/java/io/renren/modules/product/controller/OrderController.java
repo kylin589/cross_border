@@ -287,7 +287,7 @@ public class OrderController extends AbstractController{
     @RequestMapping("/update")
     @RequiresPermissions("product:order:update")
     public R update(@RequestBody OrderEntity order){
-        ValidatorUtils.validateEntity(order);
+        //ValidatorUtils.validateEntity((order);
         //全部更新
         orderService.updateAllColumnById(order);
         

@@ -94,7 +94,7 @@ public class IntroductionController {
     @RequestMapping("/update")
     @RequiresPermissions("product:introduction:update")
     public R update(@RequestBody IntroductionEntity introduction){
-        ValidatorUtils.validateEntity(introduction);
+        //ValidatorUtils.validateEntity((introduction);
         introductionService.updateAllColumnById(introduction);//全部更新
 
         return R.ok();

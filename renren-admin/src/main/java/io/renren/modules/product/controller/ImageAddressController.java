@@ -82,7 +82,7 @@ public class ImageAddressController extends AbstractController {
     @RequestMapping("/update")
     @RequiresPermissions("product:imageaddress:update")
     public R update(@RequestBody ImageAddressEntity imageAddress) {
-        ValidatorUtils.validateEntity(imageAddress);
+        //ValidatorUtils.validateEntity((imageAddress);
         imageAddressService.updateAllColumnById(imageAddress);//全部更新
 
         return R.ok();
@@ -107,7 +107,7 @@ public class ImageAddressController extends AbstractController {
      * @date: 2018/11/6 15:54
      */
     //保存到数据库的Url前缀
-    private static final String fileUrl = "http://www.threeee.cn/";
+    private static final String fileUrl = "http://39.105.120.226/";
     @RequestMapping("/upload")
     @ResponseBody
     public R upload(@RequestParam(value = "file") MultipartFile file,@RequestParam(value = "productId") Long productId) throws Exception {
@@ -132,7 +132,7 @@ public class ImageAddressController extends AbstractController {
             String date = String.valueOf(calendar.get(Calendar.DATE));
             // 文件上传后是保存在本地的路径
 //            String filePath = "D:/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
-            String filePath = "usr/linshi/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
+            String filePath = "/usr/linshi/images/" + productId + "/" + fileUUID + suffixName;
             File dest = new File(filePath);
             if (!dest.getParentFile().exists()) {
                 // 检测是否存在目录不存在创建一个文件
@@ -148,13 +148,13 @@ public class ImageAddressController extends AbstractController {
             buffImg.getGraphics().drawImage(srcImg.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH), 0, 0, null);
             //修改图片大小后保存到本地
 //            String filePathGB="D:/test/"+fileUUID+suffixName;
-            String filePathGB="usr/test/"+fileUUID+suffixName;
+//            String filePathGB="/usr/test/"+fileUUID+suffixName;
             //保存到ftp上的文件名字
             String fileNameFTP=fileUUID+suffixName;
             //修改后写到本地
-            ImageIO.write(buffImg, "jpg", new File(filePathGB));
+            ImageIO.write(buffImg, "jpg", new File(filePath));
             //再把修改后的图片读取出来
-            File fileFtp = new File(filePathGB);
+            File fileFtp = new File(filePath);
             InputStream input = new FileInputStream(fileFtp);
             String filePathFTP = "/images/" + year + "/" + month + "/" + date + "/" + productId + "/";
             //调用FtpUtil的方法，连接ftp服务器，并把图片上传到服务器上
@@ -269,7 +269,7 @@ public class ImageAddressController extends AbstractController {
             ImageAddressEntity addressEntity = imageAddressService.selectById(imageIds[i]);
             // 文件上传后是保存在本地的路径
 //            String filePath = "D:/test/";
-            String filePath = "usr/test/";
+            String filePath = "/usr/test/";
             String url = filePath + addressEntity.getImageUrl();
             File file = new File(url);
             file.delete();

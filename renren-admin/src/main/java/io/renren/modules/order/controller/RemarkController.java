@@ -102,7 +102,7 @@ public class RemarkController extends AbstractController{
     @RequestMapping("/update")
     @RequiresPermissions("order:remark:update")
     public R update(@RequestBody RemarkEntity remark){
-        ValidatorUtils.validateEntity(remark);
+        //ValidatorUtils.validateEntity((remark);
         remarkService.updateAllColumnById(remark);//全部更新
         
         return R.ok();
