@@ -40,7 +40,7 @@ var vm = new Vue({
                 area: ['400px', '400px'],
                 shadeClose: true,
                 btn: ['添加','取消'],
-                btn1: function (index) {
+                btn1: function (index1) {
                     var eanarry = vm.ean.split('\n');
                     function getTextByJs(arr) {
                         var str = "";
@@ -58,7 +58,10 @@ var vm = new Vue({
                     var ean = ean2.join(',');
 
                     console.log(ean);
-                    console.log(vm.sel)
+                    console.log(vm.sel);
+                    var index = layer.load();
+                    var index = layer.load(1); //换了种风格
+                    var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                     $.ajax({
                         url: '../../product/eanupc/batchadd',
                         type: 'post',
@@ -71,7 +74,8 @@ var vm = new Vue({
                             console.log(r);
                             if (r.code === 0) {
                                 vm.getauthorizeList();
-                                layer.close(index)
+                                layer.close(index);
+                                layer.close(index1);
                             } else {
                                 layer.alert(r.msg);
                             }
