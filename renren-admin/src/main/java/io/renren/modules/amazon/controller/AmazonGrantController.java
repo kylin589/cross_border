@@ -102,6 +102,12 @@ public class AmazonGrantController extends AbstractController {
         List<AmazonGrantShopEntity> shopList = new ArrayList<AmazonGrantShopEntity>();
         String shopName = amazonGrant.getShopName();
         String amazonAccount = amazonGrant.getAmazonAccount();
+        // 店铺id，令牌去空格
+        String merchantId = amazonGrant.getMerchantId().trim();
+        String grantToken = amazonGrant.getGrantToken().trim();
+
+        amazonGrant.setMerchantId(merchantId);
+        amazonGrant.setGrantToken(grantToken);
         amazonGrant.setUserId(getUserId());
         amazonGrant.setDeptId(getDeptId());
         amazonGrant.setCreateTime(new Date());
