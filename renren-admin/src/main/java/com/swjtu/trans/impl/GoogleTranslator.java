@@ -91,14 +91,15 @@ public final class GoogleTranslator extends AbstractTranslator {
         System.out.println("port:" + map.get("port"));
         CloseableHttpClient httpClient = getHttpClient();
         RequestConfig defaultRequestConfig = RequestConfig.custom()
-                .setSocketTimeout(3000)
-                .setConnectTimeout(5000)
-                .setConnectionRequestTimeout(5000)
+                .setSocketTimeout(2000)
+                .setConnectTimeout(3000)
+                .setConnectionRequestTimeout(3000)
                 .build();
         RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig)
                 .setProxy(new HttpHost(map.get("ip").toString(), Integer.parseInt(map.get("port").toString())))
                 .build();
         request.setConfig(requestConfig);
+//        request.setConfig(defaultRequestConfig);
         CloseableHttpResponse response = httpClient.execute(request);
         HttpEntity entity = response.getEntity();
 
@@ -123,8 +124,8 @@ public final class GoogleTranslator extends AbstractTranslator {
         String tk = "";
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
         try {
-//            FileReader reader = new FileReader("D://tk/Google.js");
-            FileReader reader = new FileReader("/usr/tk/Google.js");
+            FileReader reader = new FileReader("D://tk/Google.js");
+//            FileReader reader = new FileReader("/usr/tk/Google.js");
             engine.eval(reader);
 
             if (engine instanceof Invocable) {
