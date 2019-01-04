@@ -534,7 +534,7 @@
             <h3>添加变体</h3>
             <div>
                 <label for="">变体名称</label>
-                <select name="" id="variantName" v-model="selVar"  placeholder="变体名称">
+                <select name="" id="variantName" v-model="selVar"  placeholder="变体名称" @change="vChange">
                     <option value="0">颜色（color）</option>
                     <option value="1">尺寸（sizeNam）</option>
                 </select>
@@ -545,9 +545,9 @@
             </div>
             <div>
                 <label for="">推荐：</label>
-                <span v-if="selVar == 0" v-for="item in recommend" @click="clickAddV">{{ item }}</span>
+                <span v-if="selVar == 0" v-for="(item,index) in recommend" @click="clickAddV" :data-val="recommendE[index]">{{ item }}</span>
                 <!--<br>-->
-                <span v-if="selVar == 1" v-for="item in recommend1" @click="clickAddV">{{ item }}</span>
+                <span v-if="selVar == 1" v-for="(item,index) in recommend1" @click="clickAddV" :data-val="recommend1E[index]">{{ item }}</span>
             </div>
         </div>
 
@@ -556,7 +556,7 @@
             <h3>添加变体</h3>
             <div>
                 <label for="">变体名称</label>
-                <select name="" id="variantName1" v-model="upVariantList.id"  placeholder="变体名称">
+                <select name="" id="variantName1" v-model="upVariantList.id"  placeholder="变体名称" @change="vChange">
                     <option value="0">颜色（color）</option>
                     <option value="1">尺寸（sizeNam）</option>
                 </select>
@@ -567,9 +567,9 @@
             </div>
             <div>
                 <label for="">推荐：</label>
-                <span v-if="upVariantList.id == 0" v-for="item in recommend" @click="clickAddV1">{{ item }}</span>
+                <span v-if="upVariantList.id == 0" v-for="(item,index) in recommend" @click="clickAddV1" :data-val="recommendE[index]">{{ item }}</span>
                 <br>
-                <span v-if="upVariantList.id == 1" v-for="item in recommend1" @click="clickAddV1">{{ item }}</span>
+                <span v-if="upVariantList.id == 1" v-for="(item,index) in recommend1" @click="clickAddV1" :data-val="recommend1E[index]">{{ item }}</span>
             </div>
         </div>
 

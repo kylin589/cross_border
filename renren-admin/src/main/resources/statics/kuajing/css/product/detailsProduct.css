@@ -520,7 +520,7 @@ table.tableY tr th,table.tableY tr td{
     width: 50px;
 }
 .tableV tr th:nth-child(2) , .tableV tr td:nth-child(2){
-    width: 90px;
+    width: 140px;
 }
 .tableV tr th:nth-child(7) , .tableV tr td:nth-child(7){
     width: 60px;

@@ -474,8 +474,11 @@ var vm = new Vue({
         variantList:[
 
         ],
-        recommend:['红色','橙色','黄色','绿色','青色','蓝色','紫色','米色','黑色','白色','棕色','金色','灰色','银色'],
-        recommend1:['S','M','L','XL','XXL','XXXL','大号','中号','小号'],
+
+        recommend:['米色','黑色','蓝色','青铜','棕色','明确','铜','奶油','金','绿色','灰色','金属','多色','橙子','粉','紫色','红','银','白色','黄色'],
+        recommendE:['Beige','Black','Blue','Bronze','Brown','Clear','Copper','Cream','Gold','Green','Grey','Metallic','Multi-colored','Orange','Pink','Purple','Red','Silver','White','Yellow'],
+        recommend1:['均码','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL'],
+        recommend1E:['OneSize','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL'],
         recommendAll:[],
         freightData:{
             'usa':122,
@@ -510,6 +513,7 @@ var vm = new Vue({
         },
         // 变体参数
         selVar:0,
+        isUP:true
 
     },
     methods:{
@@ -1579,9 +1583,9 @@ var vm = new Vue({
             // $(event.target).toggleClass('active');
             var _text = $('textarea.variantType').val();
             if(_text != ''){
-                _text += ','+$(event.target).text();
+                _text += ','+$(event.target).attr('data-val');
             }else {
-                _text += $(event.target).text();
+                _text += $(event.target).attr('data-val');
             }
             // _text += ','+$(event.target).text();
             $('textarea.variantType').val(_text);
@@ -1597,9 +1601,9 @@ var vm = new Vue({
             // $(event.target).toggleClass('active');
             var _text = $('textarea.variantType').eq(1).val();
             if(_text != ''){
-                _text += ','+$(event.target).text();
+                _text += ','+$(event.target).attr('data-val');
             }else {
-                _text += $(event.target).text();
+                _text += $(event.target).attr('data-val');
             }
             // _text += ','+$(event.target).text();
             $('textarea.variantType').val(_text);
@@ -2056,44 +2060,50 @@ var vm = new Vue({
         },
         // 上传
         shangchuan:function () {
-            $("#demo1").zyUpload({
-                width            :   "780px",                 // 宽度
-                height           :   "400px",                 // 宽度
-                itemWidth        :   "100px",                 // 文件项的宽度
-                itemHeight       :   "100px",                 // 文件项的高度
-                url               :   "../../product/imageaddress/upload?productId="+vm.id,  // 上传文件的路径
-                fileType         :   ["jpg","JPG"],// 上传文件的类型
-                fileSize         :   51200000,                // 上传文件的大小
-                multiple         :   true,                    // 是否可以多个文件上传
-                dragDrop         :   true,                    // 是否可以拖动上传文件
-                tailor           :   false,                    // 是否可以裁剪图片
-                del              :   true,                    // 是否可以删除文件
-                finishDel       :   true,                    // 是否在上传文件完成后删除预览
-                /* 外部获得的回调接口 */
-                // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
-                onSelect: function(selectFiles, allFiles){
-                },
-                // 删除一个文件的回调方法
-                onDelete: function(file){
-                    // alert("当前删除了此文件："+file.name);
-                },
-                // 每文件上传成功的回调方法
-                onSuccess: function(file, response){
-                    // alert("此文件上传成功："+file.name);
-                    layer.msg('上传成功');
-                },
-                // 文件上传失败的回调方法
-                onFailure: function(file, response){
-                    // alert("此文件上传失败:"+file.name);
-                    layer.msg('上传失败')
-                },
-                // 上传完成的回调方法
-                onComplete: function(response){
-                    // alert("1111："+file.name);
-                    layer.msg('上传成功');
-                    vm.getProAlbum();
-                }
-            });
+            $('#demo1').html('');
+
+            if(vm.isUP){
+                $("#demo1").zyUpload({
+                    width            :   "780px",                 // 宽度
+                    height           :   "400px",                 // 宽度
+                    itemWidth        :   "100px",                 // 文件项的宽度
+                    itemHeight       :   "100px",                 // 文件项的高度
+                    url               :   "../../product/imageaddress/upload?productId="+vm.id,  // 上传文件的路径
+                    fileType         :   ["jpg","JPG"],// 上传文件的类型
+                    fileSize         :   51200000,                // 上传文件的大小
+                    multiple         :   true,                    // 是否可以多个文件上传
+                    dragDrop         :   true,                    // 是否可以拖动上传文件
+                    tailor           :   false,                    // 是否可以裁剪图片
+                    del              :   true,                    // 是否可以删除文件
+                    finishDel       :   true,                    // 是否在上传文件完成后删除预览
+                    /* 外部获得的回调接口 */
+                    // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
+                    onSelect: function(selectFiles, allFiles){
+                    },
+                    // 删除一个文件的回调方法
+                    onDelete: function(file){
+                        // alert("当前删除了此文件："+file.name);
+                    },
+                    // 每文件上传成功的回调方法
+                    onSuccess: function(file, response){
+                        // alert("此文件上传成功："+file.name);
+                        layer.msg('上传成功');
+                    },
+                    // 文件上传失败的回调方法
+                    onFailure: function(file, response){
+                        // alert("此文件上传失败:"+file.name);
+                        layer.msg('上传失败')
+                    },
+                    // 上传完成的回调方法
+                    onComplete: function(response){
+                        // alert("1111："+file.name);
+                        layer.msg('上传成功');
+                        vm.getProAlbum();
+                    }
+                });
+                vm.isUP = false;
+            }
+
             layer.open({
                 type: 1,
                 title: false,
@@ -2186,6 +2196,9 @@ var vm = new Vue({
         // 鼠标按下时开启拖拽多选，将遮罩定位并展现
         mousedownV:function () {
 
+        },
+        vChange:function () {
+            // upVariantList.type = '';
         }
 
     },
