@@ -238,6 +238,9 @@ public class ProductsController extends AbstractController {
         String enBrand = user.getEnBrand();
         String SKU = companySku+"-"+enName + "-" + enBrand + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
+        //生成库存
+        int IStock = (int)(200+Math.random()*(300-200+1));
+        productsEntity.setStock(new BigDecimal(IStock));
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
@@ -710,6 +713,9 @@ public class ProductsController extends AbstractController {
         String enBrand = user.getEnBrand();
         String SKU = companySku+"-"+enName + "-" + enBrand + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
+        //生成库存
+        int IStock = (int)(200+Math.random()*(300-200+1));
+        productsEntity.setStock(new BigDecimal(IStock));
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
