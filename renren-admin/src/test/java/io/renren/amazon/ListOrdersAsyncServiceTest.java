@@ -1,7 +1,14 @@
 package io.renren.amazon;
 
+
 import io.renren.common.utils.DateUtils;
+import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
+import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.service.ListOrdersAsyncService;
+import io.renren.modules.logistics.entity.*;
+import io.renren.modules.logistics.entity.Message;
+import io.renren.modules.logistics.service.SubmitLogisticsService;
+import io.renren.modules.logistics.util.XmlUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -39,6 +49,84 @@ public class ListOrdersAsyncServiceTest {
 
     @Autowired
     private ListOrdersAsyncService listOrdersAsyncService;
+    @Autowired
+    private SubmitLogisticsService submitLogisticsService;
+    @Autowired
+    private AmazonGrantShopService amazonGrantShopService;
+    public void invokeListFeedsTest() {
+        //定义一个map集合存储
+        Map<String, Object> map = new HashMap<>();
+        map.put("region", 0);//存储区域id--0代表欧洲区域
+        List<String> serviceURL = new ArrayList<>();
+        List<String> marketplaceIds = new ArrayList<>();
+        List<AmazonGrantShopEntity> shopList = amazonGrantShopService.selectByMap(map);
+        for(AmazonGrantShopEntity shop: shopList){
+            serviceURL.add(shop.getMwsPoint());
+            marketplaceIds.add(shop.getMarketplaceId());//获取MarketplaceId值
+        }
+        Shipping u1 = new Shipping();
+        u1.setMessageType("OrderFulfillment");
+        Header header=new Header();
+        header.setDocumentVersion("1.01");
+        header.setMerchantIdentifier("MYID");//<MerchantIdentifier>此选项可以随便填写，，
+        Message message=new Message();//如果要确认多个订单可以增加多个<message>
+        message.setMessageID("1");
+        OrderFulfillment orderful=new OrderFulfillment();
+        orderful.setAmazonOrderID("171-7366447-0960300");
+        orderful.setFulfillmentDate("2018-12-26T09:06:00");
+        FulfillmentData fd=new FulfillmentData();
+        fd.setCarrierName("Yun Express");
+        fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
+        fd.setShipperTrackingNumber("YT1836121208000624");
+        Item item=new Item();
+        item.setAmazonOrderItemCode("56799397374259");
+        item.setQuantity("1");
+        orderful.setFulfillmentData(fd);
+        orderful.setItem(item);
+        message.setOrderFulfillment(orderful);
+        u1.setHeader(header);
+        u1.setMessage(message);
+        List<Shipping> List = new ArrayList<Shipping>();
+        List.add(u1);
+        /**
+         * 根据List数组，生成XML数据
+         */
+        String resultXml = XmlUtils.getXmlFromList(List);
+
+        //打印生成xml数据
+        FileWriter outdata = null;
+        String filePath="/usr/shipping/shipping.xml";
+        String feedType="_POST_ORDER_FULFILLMENT_DATA_";
+        try {
+            outdata = new FileWriter(filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        PrintWriter outfile=new PrintWriter(outdata);
+        outfile.println(resultXml);// 输出String
+        outfile.flush();// 输出缓冲区的数据
+        outfile.close();
+//         List<Object> responseList =listOrdersAsyncService.invokeListOrders(client,requestList);
+        //进行数据上传(步骤一)
+        // TODO: 2018/12/26 数据上传
+        String feedSubmissionId=submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath);
+        //进行数据上传(步骤二)
+        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId);
+        System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
+        if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
+            //进行数据上传(步骤三)
+            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0));
+        }
+    }
+
+
+
+
+
+
+
+
+
 
     @Test
     @Ignore
@@ -77,6 +165,10 @@ public class ListOrdersAsyncServiceTest {
         listOrdersAsyncService.invokeListOrders(client, requestList);
 
     }
+
+
+
+
 
     @Test
     @Ignore

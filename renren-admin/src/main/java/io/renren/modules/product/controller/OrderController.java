@@ -1,17 +1,25 @@
 package io.renren.modules.product.controller;
 
+import com.aliyun.oss.model.Grant;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.renren.common.utils.DateUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.amazon.entity.AmazonGrantEntity;
+import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.entity.AmazonMarketplaceEntity;
+import io.renren.modules.amazon.service.AmazonGrantService;
+import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.service.AmazonMarketplaceService;
 import io.renren.modules.amazon.util.ConstantDictionary;
+import io.renren.modules.amazon.util.FileUtil;
 import io.renren.modules.logistics.DTO.ReceiveOofayData;
-import io.renren.modules.logistics.entity.AbroadLogisticsEntity;
-import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
+import io.renren.modules.logistics.entity.*;
 import io.renren.modules.logistics.service.AbroadLogisticsService;
 import io.renren.modules.logistics.service.DomesticLogisticsService;
+import io.renren.modules.logistics.service.SubmitLogisticsService;
 import io.renren.modules.logistics.util.AbroadLogisticsUtil;
+import io.renren.modules.logistics.util.XmlUtils;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.entity.RemarkEntity;
 import io.renren.modules.order.service.ProductShipAddressService;
@@ -34,12 +42,17 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -78,6 +91,14 @@ public class OrderController extends AbstractController{
     private DataDictionaryService dataDictionaryService;
     @Autowired
     private AmazonMarketplaceService amazonMarketplaceService;
+    @Autowired
+    private AmazonGrantShopService amazonGrantShopService;
+    @Autowired
+    private SubmitLogisticsService submitLogisticsService;
+    @Autowired
+    private AmazonGrantService amazonGrantService;
+    @Value(("${file.path}"))
+    private String fileStoragePath;
     /**
      * 我的订单
      */
@@ -94,7 +115,7 @@ public class OrderController extends AbstractController{
     @RequestMapping("/getAllList")
 //    @RequiresPermissions("product:order:alllist")
     public R getAllList(@RequestParam Map<String, Object> params){
-        Map<String, Object> map = orderService.queryAllPage(params, getUserId());
+        Map<String, Object> map = orderService.queryAllPage(params, getDeptId());
         return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts"));
     }
     /**
@@ -266,7 +287,7 @@ public class OrderController extends AbstractController{
     @RequestMapping("/update")
     @RequiresPermissions("product:order:update")
     public R update(@RequestBody OrderEntity order){
-        ValidatorUtils.validateEntity(order);
+        //ValidatorUtils.validateEntity((order);
         //全部更新
         orderService.updateAllColumnById(order);
         
@@ -337,6 +358,7 @@ public class OrderController extends AbstractController{
         if(dept.getAvailableBalance().compareTo(new BigDecimal(50.00)) != 1){
             return R.error("余额不足，请联系公司管理员及时充值后再次尝试");
         }
+
         Long orderId = orderVM.getOrderId();
         Random random = new Random();
         StringBuffer stringBuffer = new StringBuffer();
@@ -352,7 +374,6 @@ public class OrderController extends AbstractController{
         order.setOrderState("虚发货");
         //设置国际物流单号
         order.setAbroadWaybill(abroadWaybill);
-        orderService.updateById(order);
         //生成国际物流对象
         AbroadLogisticsEntity abroadLogistics = new AbroadLogisticsEntity();
         abroadLogistics = new AbroadLogisticsEntity();
@@ -361,8 +382,13 @@ public class OrderController extends AbstractController{
         abroadLogistics.setIsSynchronization(0);
         abroadLogistics.setCreateTime(new Date());
         abroadLogistics.setUpdateTime(new Date());
+        abroadLogistics.setShipTime(DateUtils.addDateHours(order.getBuyDate(),8));
         abroadLogisticsService.insert(abroadLogistics);
-        // TODO: 2018/12/18 将运单号同步到亚马逊平台
+        orderService.updateById(order);
+        //准备订单国际物流上传信息模型
+        SendDataMoedl sendDataMoedl = synchronizationXuModel(order,abroadLogistics);
+        // 将运单号同步到亚马逊平台
+        amazonUpdateLogistics(sendDataMoedl,orderId);
         return R.ok().put("abroadLogistics",abroadLogistics);
     }
     /**
@@ -375,12 +401,18 @@ public class OrderController extends AbstractController{
         OrderEntity order = orderService.selectById(orderId);
         order.getAmazonOrderId();
         AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
-        //获取运单号
-        String abroadWaybill = abroadLogistics.getAbroadWaybill();
-        //获取跟踪号
-        String trackWaybill = abroadLogistics.getTrackWaybill();
+        String orderStatus = order.getOrderStatus();
+        SendDataMoedl sendDataMoedl;
+        if(ConstantDictionary.OrderStateCode.ORDER_STATE_SHIPPED.equals(orderStatus)){
+            //准备订单国际物流上传信息模型——虚发货
+            sendDataMoedl = synchronizationXuModel(order,abroadLogistics);
+        }else{
+            //准备订单国际物流上传信息模型——实际发货
+            sendDataMoedl = synchronizationZhenModel(order,abroadLogistics);
+        }
+        // 将运单号同步到亚马逊平台
+        amazonUpdateLogistics(sendDataMoedl,orderId);
         boolean flag = false;
-        // TODO: 2018/12/18 将运单号同步到亚马逊平台
         if(flag){
             abroadLogistics.setIsSynchronization(1);
             abroadLogistics.setUpdateTime(new Date());
@@ -388,6 +420,146 @@ public class OrderController extends AbstractController{
             return R.ok();
         }else{
             return R.error("同步失败");
+        }
+    }
+
+    /**
+     * 虚发货——封装物流信息
+     * 后置：上传数据到亚马逊
+     * @param orderEntity
+     * @param abroadLogisticsEntity
+     */
+    private SendDataMoedl synchronizationXuModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String orderItemId = orderEntity.getOrderItemId();
+        String amazonOrderId = orderEntity.getAmazonOrderId();
+        String abroadWaybill = abroadLogisticsEntity.getAbroadWaybill();
+        Date date = abroadLogisticsEntity.getShipTime();
+        Shipping u1 = new Shipping();
+        u1.setMessageType("OrderFulfillment");
+        Header header=new Header();
+        header.setDocumentVersion("1.01");
+        header.setMerchantIdentifier("MYID");//<MerchantIdentifier>此选项可以随便填写，，
+        Message message=new Message();//如果要确认多个订单可以增加多个<message>
+        message.setMessageID("1");
+        OrderFulfillment orderful=new OrderFulfillment();
+        orderful.setAmazonOrderID(amazonOrderId);
+        orderful.setFulfillmentDate(simpleDateFormat.format(date));
+        FulfillmentData fd=new FulfillmentData();
+        fd.setCarrierName("Yun Express");
+        fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
+        fd.setShipperTrackingNumber(abroadWaybill);
+        Item item=new Item();
+        item.setAmazonOrderItemCode(orderItemId);
+        item.setQuantity(orderEntity.getOrderNumber().toString());
+        AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(orderEntity.getShopId());
+        List<String> serviceURL = new ArrayList<>();
+        List<String> marketplaceIds = new ArrayList<>();
+        serviceURL.add(shopEntity.getMwsPoint());
+        marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
+        orderful.setFulfillmentData(fd);
+        orderful.setItem(item);
+        message.setOrderFulfillment(orderful);
+        u1.setHeader(header);
+        u1.setMessage(message);
+        List<Shipping> list = new ArrayList<Shipping>();
+        list.add(u1);
+        AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(shopEntity.getGrantId());
+        String sellerId = amazonGrantEntity.getMerchantId();
+        String mwsAuthToken = amazonGrantEntity.getGrantToken();
+        SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
+        return sendDataMoedl;
+    }
+    /**
+     * 真实发货信息 ——封装物流信息
+     * 后置：上传数据到亚马逊
+     * @param orderEntity
+     * @param abroadLogisticsEntity
+     */
+    private SendDataMoedl synchronizationZhenModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String orderItemId = orderEntity.getOrderItemId();
+        String amazonOrderId = orderEntity.getAmazonOrderId();
+        String abroadWaybill = abroadLogisticsEntity.getAbroadWaybill();
+        Date date = abroadLogisticsEntity.getShipTime();
+        Shipping u1 = new Shipping();
+        u1.setMessageType("OrderFulfillment");
+        Header header=new Header();
+        header.setDocumentVersion("1.01");
+        header.setMerchantIdentifier("MYID");//<MerchantIdentifier>此选项可以随便填写，，
+        Message message=new Message();//如果要确认多个订单可以增加多个<message>
+        message.setMessageID("1");
+        OrderFulfillment orderful=new OrderFulfillment();
+        orderful.setAmazonOrderID(amazonOrderId);
+        orderful.setFulfillmentDate(simpleDateFormat.format(date));
+        FulfillmentData fd=new FulfillmentData();
+        fd.setCarrierName(abroadLogisticsEntity.getDestTransportCompany());
+        fd.setShippingMethod(abroadLogisticsEntity.getDestChannel());//<ShippingMethod>根据自己的需求可以有可以没有
+        fd.setShipperTrackingNumber(abroadWaybill);
+        Item item=new Item();
+        item.setAmazonOrderItemCode(orderItemId);
+        item.setQuantity(orderEntity.getOrderNumber().toString());
+        AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(orderEntity.getShopId());
+        List<String> serviceURL = new ArrayList<>();
+        List<String> marketplaceIds = new ArrayList<>();
+        serviceURL.add(shopEntity.getMwsPoint());
+        marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
+        orderful.setFulfillmentData(fd);
+        orderful.setItem(item);
+        message.setOrderFulfillment(orderful);
+        u1.setHeader(header);
+        u1.setMessage(message);
+        List<Shipping> list = new ArrayList<Shipping>();
+        list.add(u1);
+        AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(shopEntity.getGrantId());
+        String sellerId = amazonGrantEntity.getMerchantId();
+        String mwsAuthToken = amazonGrantEntity.getGrantToken();
+        SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
+        return sendDataMoedl;
+    }
+    /**
+     * 上传国际物流信息到amazon
+     * @param sendDataMoedl
+     */
+    @Async("taskExecutor")
+    public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl,Long orderId){
+        List<Shipping> list = sendDataMoedl.getList();
+        List<String> serviceURL = sendDataMoedl.getServiceURL();
+        List<String> marketplaceIds = sendDataMoedl.getMarketplaceIds();
+        String sellerId = sendDataMoedl.getSellerId();
+        String mwsAuthToken = sendDataMoedl.getMwsAuthToken();
+        /**
+         * 根据List数组，生成XML数据
+         */
+        String resultXml = XmlUtils.getXmlFromList(list);
+
+        //打印生成xml数据
+        FileWriter outdata = null;
+        FileUtil.generateFilePath(fileStoragePath,"shipping");
+        String filePath = FileUtil.generateFilePath(fileStoragePath,"shipping");
+        String feedType="_POST_ORDER_FULFILLMENT_DATA_";
+        try {
+            outdata = new FileWriter(filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        PrintWriter outfile=new PrintWriter(outdata);
+        outfile.println(resultXml);// 输出String
+        outfile.flush();// 输出缓冲区的数据
+        outfile.close();
+//         List<Object> responseList =listOrdersAsyncService.invokeListOrders(client,requestList);
+        //进行数据上传(步骤一)
+        String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath);
+        //进行数据上传(步骤二)
+        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId);
+        System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
+        if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
+            //进行数据上传(步骤三)
+            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0));
+            //同步成功后把物流状态改为同步
+            AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
+            abroadLogisticsEntity.setIsSynchronization(1);
+            abroadLogisticsService.updateById(abroadLogisticsEntity);
         }
     }
     /**
@@ -513,16 +685,8 @@ public class OrderController extends AbstractController{
                         if(StringUtils.isNotBlank(receiveOofayData.getDestTransportCompany())){
                             abroadLogisticsEntity.setDestTransportCompany(receiveOofayData.getDestTransportCompany());
                         }
-                        //设置国际物流跟踪号
-                        if(StringUtils.isBlank(receiveOofayData.getTrackWaybill())){
-                            abroadLogisticsEntity.setTrackWaybill(receiveOofayData.getTrackWaybill());
-                            NoticeEntity noticeEntity = new NoticeEntity();
-                            noticeEntity.setCreateTime(new Date());
-                            noticeEntity.setNoticeContent("订单编号：" + orderId + "的物流跟踪号以生成，请尽快同步。");
-                            noticeEntity.setUserId(orderEntity.getUserId());
-                            noticeEntity.setDeptId(orderEntity.getDeptId());
-                            noticeService.insert(noticeEntity);
-                        }else if(!abroadLogisticsEntity.getTrackWaybill().equals(receiveOofayData.getTrackWaybill())){
+                        //设置国际物流跟踪号(虚发货时已生成物流跟踪号，所以肯定不为空)
+                        if(StringUtils.isNotBlank(receiveOofayData.getTrackWaybill()) && !abroadLogisticsEntity.getTrackWaybill().equals(receiveOofayData.getTrackWaybill())){
                             abroadLogisticsEntity.setTrackWaybill(receiveOofayData.getTrackWaybill());
                             abroadLogisticsEntity.setIsSynchronization(0);
                             NoticeEntity noticeEntity = new NoticeEntity();
@@ -570,7 +734,7 @@ public class OrderController extends AbstractController{
                             BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
                             abroadLogisticsEntity.setInterFreight(interFreight);
                             orderEntity.setInterFreight(interFreight);
-                            //到账金额
+                            //到账金额(人民币)
                             BigDecimal accountMoney = orderEntity.getAccountMoneyCny();
                             //平台佣金
                             BigDecimal companyPoint = deptService.selectById(orderEntity.getDeptId()).getCompanyPoints();
@@ -590,9 +754,10 @@ public class OrderController extends AbstractController{
                             orderEntity.setOrderState("入库");
                             abroadLogisticsEntity.setState("入库");
                         }else{
-                            if(receiveOofayData.getStatusStr() != null && receiveOofayData.getStatusStr() != ""){
+                            if(StringUtils.isNotBlank(receiveOofayData.getStatusStr())){
                                 status = Integer.parseInt(receiveOofayData.getStatusStr());
                                 if(status == 2){
+                                    //国际已发货,并扣款
                                     orderService.internationalShipments(orderEntity);
                                     abroadLogisticsEntity.setState("出库");
                                 }

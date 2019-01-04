@@ -18,6 +18,7 @@ package io.renren.modules.sys.controller;
 
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.R;
+import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.product.service.AmazonCategoryService;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
@@ -190,6 +191,7 @@ public class SysDeptController extends AbstractController {
 	@RequestMapping("/save")
 	@RequiresPermissions("sys:dept:save")
 	public R save(@RequestBody SysDeptEntity dept){
+//		//ValidatorUtils.validateEntity((dept);
 		dept.setUpdateTime(new Date());
 		dept.setCreateTime(new Date());
 		sysDeptService.insert(dept);
@@ -202,6 +204,7 @@ public class SysDeptController extends AbstractController {
 	@RequestMapping("/update")
 	@RequiresPermissions("sys:dept:update")
 	public R update(@RequestBody SysDeptEntity dept){
+//		//ValidatorUtils.validateEntity((dept);
 		dept.setUpdateTime(new Date());
 		sysDeptService.updateById(dept);
 		return R.ok();

@@ -2323,9 +2323,6 @@ var vm = new Vue({
                 }
             })
         },
-        vChange:function () {
-            // upVariantList.type = '';
-        }
     },
 
     created:function () {

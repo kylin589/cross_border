@@ -9,12 +9,10 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 
-import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.product.dto.BatchModifyDto;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
 import io.renren.modules.product.vm.ChangeAuditStatusVM;
-import io.renren.modules.product.vm.EanUpcvm;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
@@ -264,7 +262,7 @@ public class ProductsController extends AbstractController {
      */
     @RequestMapping("/update")
     public R update(@RequestBody ProductsEntity products) {
-        ValidatorUtils.validateEntity(products);
+        //ValidatorUtils.validateEntity((products);
         //全部更新
         productsService.updateAllColumnById(products);
 
@@ -724,13 +722,13 @@ public class ProductsController extends AbstractController {
             eanUpcEntity.setProductId(productId);
             eanUpcService.updateById(eanUpcEntity);
         }
-
-        Long categoryThreeId = productsEntity.getCategoryThreeId();
+        //设置分类
+        /*Long categoryThreeId = productsEntity.getCategoryThreeId();
         String s = categoryService.queryParentByChildIdAndCategory(categoryThreeId, productsEntity);
         System.out.println(s);
         String[] ids = s.split(",");
         productsEntity.setCategoryOneId(Long.parseLong(ids[0]));
-        productsEntity.setCategoryTwoId(Long.parseLong(ids[1]));
+        productsEntity.setCategoryTwoId(Long.parseLong(ids[1]));*/
         //根据主图片的id查出主图片的url
         Long mainImageId = productsEntity.getMainImageId();
         if (mainImageId!=null){
@@ -738,48 +736,14 @@ public class ProductsController extends AbstractController {
             String imageUrl = imageAddressEntity.getImageUrl();
             productsEntity.setMainImageUrl(imageUrl);
         }
-
-
-        FreightCostEntity americanFC = new FreightCostEntity();
-        productsEntity.setAmericanFC(americanFC);
-        FreightCostEntity canadaFC = new FreightCostEntity();
-        productsEntity.setCanadaFC(canadaFC);
-        FreightCostEntity mexicoFC = new FreightCostEntity();
-        productsEntity.setMexicoFC(mexicoFC);
-        FreightCostEntity britainFC = new FreightCostEntity();
-        productsEntity.setBritainFC(britainFC);
-        FreightCostEntity franceFC = new FreightCostEntity();
-        productsEntity.setFranceFC(franceFC);
-        FreightCostEntity germanyFC = new FreightCostEntity();
-        productsEntity.setGermanyFC(germanyFC);
-        FreightCostEntity italyFC = new FreightCostEntity();
-        productsEntity.setItalyFC(italyFC);
-        FreightCostEntity spainFC = new FreightCostEntity();
-        productsEntity.setSpainFC(spainFC);
-        FreightCostEntity japanFC = new FreightCostEntity();
-        productsEntity.setJapanFC(japanFC);
-        FreightCostEntity australiaFC = new FreightCostEntity();
-        productsEntity.setAustraliaFC(australiaFC);
-        IntroductionEntity newChinesePRE = new IntroductionEntity();
-        IntroductionEntity chinesePRE = productsEntity.getChinesePRE();
-        if (chinesePRE == null) {
-            productsEntity.setChinesePRE(newChinesePRE);
+        if(productsEntity.getBritainIntroduction() != null){
+            IntroductionEntity introductionEntity = introductionService.selectById(productsEntity.getBritainIntroduction());
+            productsEntity.setProductTitle(introductionEntity.getProductTitle());
         }
-        IntroductionEntity newBritainPRE = new IntroductionEntity();
-        IntroductionEntity britainPRE = productsEntity.getBritainPRE();
-        if (britainFC == null) {
-            productsEntity.setBritainPRE(newBritainPRE);
+        if(productsEntity.getChineseIntroduction() != null){
+            IntroductionEntity introductionEntity = introductionService.selectById(productsEntity.getChineseIntroduction());
+            productsEntity.setProductTitle(introductionEntity.getProductTitle());
         }
-        IntroductionEntity francePRE = new IntroductionEntity();
-        productsEntity.setFrancePRE(francePRE);
-        IntroductionEntity germanyPRE = new IntroductionEntity();
-        productsEntity.setGermanyPRE(germanyPRE);
-        IntroductionEntity italyPRE = new IntroductionEntity();
-        productsEntity.setItalyPRE(italyPRE);
-        IntroductionEntity spainPRE = new IntroductionEntity();
-        productsEntity.setSpainPRE(spainPRE);
-        IntroductionEntity japanPRE = new IntroductionEntity();
-        productsEntity.setJapanPRE(japanPRE);
         productsEntity.setCreateTime(new Date());
         productsEntity.setLastOperationTime(new Date());
         productsEntity.setCreateUserId(getUserId());
@@ -1216,10 +1180,10 @@ public class ProductsController extends AbstractController {
             }
         }
         //产品标题
-        if (chinesePRE.getProductTitle() != null) {
-            products.setProductTitle(chinesePRE.getProductTitle());
-        } else if (britainPRE.getProductTitle() != null) {
+        if (britainPRE.getProductTitle() != null) {
             products.setProductTitle(britainPRE.getProductTitle());
+        } else if (chinesePRE.getProductTitle() != null) {
+            products.setProductTitle(chinesePRE.getProductTitle());
         }
         //法语介绍
         IntroductionEntity francePRE = products.getFrancePRE();
@@ -1314,7 +1278,7 @@ public class ProductsController extends AbstractController {
             eanUpcEntity.setSize(size);
             //查出未使用的EAN码，修改为使用
             List<EanUpcEntity> eanUpcEntities =eanUpcService.selectByLimit(eanUpcEntity);
-            if (eanUpcEntities!=null&&eanUpcEntities.size()!=0&&eanUpcEntities.size()==variantsInfosList.size()) {
+            if (eanUpcEntities != null&&eanUpcEntities.size() > 0 && eanUpcEntities.size() == variantsInfosList.size()) {
                 for (int i = 0; i < eanUpcEntities.size(); i++) {
                     eanUpcEntities.get(i).setState(1);
                     eanUpcEntities.get(i).setProductId(products.getProductId());
@@ -1327,12 +1291,11 @@ public class ProductsController extends AbstractController {
                 String code = eanUpcEntities.get(i).getCode();
                 VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
                 variantsInfoEntity.setEanCode(code);
-                variantsInfoEntity.setVariantSku(correctionLaterString+"-"+code);
+                variantsInfoEntity.setVariantSku(correctionLaterString+"-"+i);
                 variantsInfoEntity.setProductId(products.getProductId());
             }
             variantsInfoService.insertBatch(variantsInfosList);
         }
-
         //根据产品id进行更新
         productsService.updateById(products);
         return R.ok();

@@ -72,7 +72,7 @@ public class SysConfigController extends AbstractController {
 	@RequestMapping("/save")
 	@RequiresPermissions("sys:config:save")
 	public R save(@RequestBody SysConfigEntity config){
-		ValidatorUtils.validateEntity(config);
+//		//ValidatorUtils.validateEntity((config);
 
 		sysConfigService.save(config);
 		
@@ -86,7 +86,7 @@ public class SysConfigController extends AbstractController {
 	@RequestMapping("/update")
 	@RequiresPermissions("sys:config:update")
 	public R update(@RequestBody SysConfigEntity config){
-		ValidatorUtils.validateEntity(config);
+//		//ValidatorUtils.validateEntity((config);
 		
 		sysConfigService.update(config);
 		

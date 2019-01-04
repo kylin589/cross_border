@@ -91,7 +91,7 @@ public class VariantsInfoController {
     @RequestMapping("/update")
     @RequiresPermissions("product:variantsinfo:update")
     public R update(@RequestBody VariantsInfoEntity variantsInfo){
-        ValidatorUtils.validateEntity(variantsInfo);
+        //ValidatorUtils.validateEntity((variantsInfo);
         variantsInfoService.updateAllColumnById(variantsInfo);//全部更新
         
         return R.ok();

@@ -86,4 +86,5 @@ mws-config:
   app-version: 1.0
 
 file:
-  path: D:/FeedFile/
+  path: /usr/FeedFile/
+#  path: D:/FeedFile/

@@ -2,6 +2,7 @@ package com.swjtu.trans.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swjtu.http.JDBC;
 import com.swjtu.lang.LANG;
 import com.swjtu.trans.AbstractTranslator;
 import com.swjtu.util.Util;
@@ -82,18 +83,22 @@ public final class GoogleTranslator extends AbstractTranslator {
             String value = formData.get(key);
             uri.addParameter(key, value);
         }
-        HttpUriRequest request = new HttpGet(uri.toString());
+//        HttpUriRequest request = new HttpGet(uri.toString());
+        HttpGet request = new HttpGet(uri.toString());
+        Map<String, Object> map = JDBC.getOne();
+        // 初始化线程池
+        System.out.println("ip:" + map.get("ip"));
+        System.out.println("port:" + map.get("port"));
         CloseableHttpClient httpClient = getHttpClient();
-        /*RequestConfig defaultRequestConfig = RequestConfig.custom()
+        RequestConfig defaultRequestConfig = RequestConfig.custom()
                 .setSocketTimeout(3000)
                 .setConnectTimeout(5000)
                 .setConnectionRequestTimeout(5000)
                 .build();
-
         RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig)
-                .setProxy(new HttpHost(Util.getProxies().get("ip"), Integer.parseInt(Util.getProxies().get("port"))))
+                .setProxy(new HttpHost(map.get("ip").toString(), Integer.parseInt(map.get("port").toString())))
                 .build();
-        request.setConfig(requestConfig);*/
+        request.setConfig(requestConfig);
         CloseableHttpResponse response = httpClient.execute(request);
         HttpEntity entity = response.getEntity();
 
@@ -118,7 +123,8 @@ public final class GoogleTranslator extends AbstractTranslator {
         String tk = "";
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
         try {
-            FileReader reader = new FileReader("D:/tk/Google.js");
+//            FileReader reader = new FileReader("D://tk/Google.js");
+            FileReader reader = new FileReader("/usr/tk/Google.js");
             engine.eval(reader);
 
             if (engine instanceof Invocable) {

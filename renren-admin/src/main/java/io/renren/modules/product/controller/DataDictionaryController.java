@@ -95,7 +95,7 @@ public class DataDictionaryController extends AbstractController {
     @RequestMapping("/update")
     @RequiresPermissions("product:datadictionary:update")
     public R update(@RequestBody DataDictionaryEntity dataDictionary) {
-        ValidatorUtils.validateEntity(dataDictionary);
+        //ValidatorUtils.validateEntity((dataDictionary);
         dataDictionaryService.updateAllColumnById(dataDictionary);//全部更新
 
         return R.ok();

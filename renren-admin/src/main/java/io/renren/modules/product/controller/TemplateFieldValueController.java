@@ -72,7 +72,7 @@ public class TemplateFieldValueController {
     @RequestMapping("/update")
     @RequiresPermissions("product:templatefieldvalue:update")
     public R update(@RequestBody TemplateFieldValueEntity templateFieldValue){
-        ValidatorUtils.validateEntity(templateFieldValue);
+        //ValidatorUtils.validateEntity((templateFieldValue);
         templateFieldValueService.updateAllColumnById(templateFieldValue);//全部更新
         
         return R.ok();

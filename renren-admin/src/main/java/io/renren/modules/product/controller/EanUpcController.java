@@ -42,7 +42,7 @@ public class EanUpcController {
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = eanUpcService.queryPage(params);
         //码的总数
-        int count = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>());
+        int count = eanUpcService.selectCount(null);
         //未使用的
         int noStateCount = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>().eq("state", 0));
         //已使用的
@@ -79,7 +79,7 @@ public class EanUpcController {
     @RequestMapping("/update")
     @RequiresPermissions("product:eanupc:update")
     public R update(@RequestBody EanUpcEntity eanUpc){
-        ValidatorUtils.validateEntity(eanUpc);
+        //ValidatorUtils.validateEntity((eanUpc);
         eanUpcService.updateAllColumnById(eanUpc);//全部更新
         
         return R.ok();

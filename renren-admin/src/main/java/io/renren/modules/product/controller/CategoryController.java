@@ -93,7 +93,7 @@ public class CategoryController {
     @RequestMapping("/update")
     @RequiresPermissions("product:category:update")
     public R update(@RequestBody CategoryEntity category) {
-        ValidatorUtils.validateEntity(category);
+        //ValidatorUtils.validateEntity((category);
         //全部更新
         categoryService.updateAllColumnById(category);
 

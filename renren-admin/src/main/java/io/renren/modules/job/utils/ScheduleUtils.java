@@ -80,6 +80,7 @@ public class ScheduleUtils {
             	pauseJob(scheduler, scheduleJob.getJobId());
             }
         } catch (SchedulerException e) {
+            System.out.println("e:" + e);
             throw new RRException("创建定时任务失败", e);
         }
     }

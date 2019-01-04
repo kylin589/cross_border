@@ -72,7 +72,7 @@ public class ConsumeController {
     @RequestMapping("/update")
     @RequiresPermissions("sys:consume:update")
     public R update(@RequestBody ConsumeEntity consume){
-        ValidatorUtils.validateEntity(consume);
+        //ValidatorUtils.validateEntity((consume);
         consumeService.updateAllColumnById(consume);//全部更新
         
         return R.ok();

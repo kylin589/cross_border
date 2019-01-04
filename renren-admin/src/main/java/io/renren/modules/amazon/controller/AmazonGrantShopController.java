@@ -3,7 +3,7 @@ package io.renren.modules.amazon.controller;
 import java.util.*;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import io.renren.common.validator.ValidatorUtils;
+import io.renren.common.utils.ValidatorUtils;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.service.SysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -53,7 +53,7 @@ public class AmazonGrantShopController extends AbstractController{
     public R allShopList(@RequestParam Map<String, Object> params){
         List<AmazonGrantShopEntity> shopList = new ArrayList<AmazonGrantShopEntity>();
         if(getDeptId() == 1){
-            shopList = amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>());
+            shopList = amazonGrantShopService.selectList(null);
         }else{
             shopList = amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("dept_id",getDeptId()));
         }
@@ -89,7 +89,7 @@ public class AmazonGrantShopController extends AbstractController{
     @RequestMapping("/update")
     @RequiresPermissions("amazon:amazongrantshop:update")
     public R update(@RequestBody AmazonGrantShopEntity amazonGrantShop){
-        ValidatorUtils.validateEntity(amazonGrantShop);
+        //ValidatorUtils.validateEntity((amazonGrantShop);
         amazonGrantShopService.updateAllColumnById(amazonGrantShop);//全部更新
         
         return R.ok();

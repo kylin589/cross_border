@@ -68,7 +68,6 @@ public interface SubmitFeedService {
      *
      * @param uploadEntity
      */
-    @Async
     void submitFeed(UploadEntity uploadEntity);
 
     /**

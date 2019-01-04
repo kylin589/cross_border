@@ -72,7 +72,7 @@ public class AgentIpController {
     @RequestMapping("/update")
     @RequiresPermissions("sys:agentip:update")
     public R update(@RequestBody AgentIpEntity agentIp){
-        ValidatorUtils.validateEntity(agentIp);
+//        //ValidatorUtils.validateEntity((agentIp);
         agentIpService.updateAllColumnById(agentIp);//全部更新
         
         return R.ok();

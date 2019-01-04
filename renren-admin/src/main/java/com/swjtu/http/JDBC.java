@@ -18,7 +18,8 @@ public class JDBC {
 
     private static Connection getConn() {
         String driver = "com.mysql.jdbc.Driver";
-        String url = "jdbc:mysql://121.42.27.61:3306/cross_border";
+//        String url = "jdbc:mysql://121.42.27.61:3306/cross_border";
+        String url = "jdbc:mysql://127.0.0.1:3306/cross_border";
         String username = "root";
         String password = "admin";
         Connection conn = null;

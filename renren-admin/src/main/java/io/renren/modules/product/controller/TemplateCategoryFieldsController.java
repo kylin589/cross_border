@@ -72,7 +72,7 @@ public class TemplateCategoryFieldsController {
     @RequestMapping("/update")
     @RequiresPermissions("product:templatecategoryfields:update")
     public R update(@RequestBody TemplateCategoryFieldsEntity templateCategoryFields){
-        ValidatorUtils.validateEntity(templateCategoryFields);
+        //ValidatorUtils.validateEntity((templateCategoryFields);
         templateCategoryFieldsService.updateAllColumnById(templateCategoryFields);//全部更新
         
         return R.ok();

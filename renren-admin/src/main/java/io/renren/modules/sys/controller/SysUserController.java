@@ -121,7 +121,20 @@ public class SysUserController extends AbstractController {
 		
 		return R.ok();
 	}
-	
+	/**
+	 * 修改登录用户密码
+	 */
+	@SysLog("重置密码")
+	@RequestMapping("/resetPassword")
+	@RequiresPermissions("sys:user:reset")
+	public R resetPassword(@RequestBody Long[] userIds){
+		//更新密码
+		boolean flag = sysUserService.resetPassword(userIds);
+		if(!flag){
+			return R.error("重置失败");
+		}
+		return R.ok();
+	}
 	/**
 	 * 用户信息
 	 */
@@ -149,7 +162,7 @@ public class SysUserController extends AbstractController {
 		//获取公司账户限制数量
 		int accountCount = sysDeptService.selectOne(new EntityWrapper<SysDeptEntity>().eq("dept_id",user.getDeptId())).getAccountCount();
 		if(count < accountCount){
-			ValidatorUtils.validateEntity(user, AddGroup.class);
+//			//ValidatorUtils.validateEntity((user, AddGroup.class);
 			sysUserService.save(user);
 			return R.ok();
 		}else{
@@ -164,7 +177,7 @@ public class SysUserController extends AbstractController {
 	@RequestMapping("/update")
 	@RequiresPermissions("sys:user:update")
 	public R update(@RequestBody SysUserEntity user){
-		ValidatorUtils.validateEntity(user, UpdateGroup.class);
+//		//ValidatorUtils.validateEntity((user, UpdateGroup.class);
 
 		sysUserService.update(user);
 		

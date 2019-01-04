@@ -72,7 +72,7 @@ public class AmazonRateController {
     @RequestMapping("/update")
     @RequiresPermissions("product:amazonrate:update")
     public R update(@RequestBody AmazonRateEntity amazonRate){
-        ValidatorUtils.validateEntity(amazonRate);
+        //ValidatorUtils.validateEntity((amazonRate);
         amazonRateService.updateAllColumnById(amazonRate);//全部更新
         
         return R.ok();

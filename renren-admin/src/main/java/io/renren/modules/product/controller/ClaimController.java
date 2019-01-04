@@ -143,7 +143,7 @@ public class ClaimController extends AbstractController{
     @RequestMapping("/update")
     @RequiresPermissions("product:claim:update")
     public R update(@RequestBody ClaimEntity claim){
-        ValidatorUtils.validateEntity(claim);
+        //ValidatorUtils.validateEntity((claim);
         claimService.updateAllColumnById(claim);//全部更新
         
         return R.ok();

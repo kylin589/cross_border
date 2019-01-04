@@ -70,7 +70,7 @@ public class SysDictController {
     @RequiresPermissions("sys:dict:save")
     public R save(@RequestBody SysDictEntity dict){
         //校验类型
-        ValidatorUtils.validateEntity(dict);
+//        //ValidatorUtils.validateEntity((dict);
 
         sysDictService.insert(dict);
 
@@ -84,7 +84,7 @@ public class SysDictController {
     @RequiresPermissions("sys:dict:update")
     public R update(@RequestBody SysDictEntity dict){
         //校验类型
-        ValidatorUtils.validateEntity(dict);
+//        //ValidatorUtils.validateEntity((dict);
 
         sysDictService.updateById(dict);
 

@@ -53,7 +53,8 @@ public class ImageDemo extends AbstractController {
             // 获取上传文件的后缀名
             String suffixName = fileName.substring(fileName.lastIndexOf("."));
             // 文件上传后是保存在本地的路径
-            String filePath = "E:/test/";
+//            String filePath = "D:/test/";
+            String filePath = "/usr/test/";
             String url = 2 + "/" + fileName;
             //文件上传的位置
             File dest = new File(filePath + 2 + "/" + fileName);
@@ -156,7 +157,8 @@ public class ImageDemo extends AbstractController {
         for (int i = 0; i < imageIds.length; i++) {
             ImageAddressEntity imageAddressEntity = imageAddressService.selectById(imageIds[i]);
             String url = imageAddressEntity.getImageUrl();
-            File file = new File("E:/test/" + url);
+//            File file = new File("D:/test/" + url);
+            File file = new File("/usr/test/" + url);
             file.delete();
             imageAddressService.deleteById(imageIds[i]);
         }

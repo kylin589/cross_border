@@ -1583,9 +1583,9 @@ var vm = new Vue({
             // $(event.target).toggleClass('active');
             var _text = $('textarea.variantType').val();
             if(_text != ''){
-                _text += ','+$(event.target).attr('data-val');
+                _text += ','+$(event.target).text();
             }else {
-                _text += $(event.target).attr('data-val');
+                _text += $(event.target).text();
             }
             // _text += ','+$(event.target).text();
             $('textarea.variantType').val(_text);
@@ -1601,9 +1601,9 @@ var vm = new Vue({
             // $(event.target).toggleClass('active');
             var _text = $('textarea.variantType').eq(1).val();
             if(_text != ''){
-                _text += ','+$(event.target).attr('data-val');
+                _text += ','+$(event.target).text();
             }else {
-                _text += $(event.target).attr('data-val');
+                _text += $(event.target).text();
             }
             // _text += ','+$(event.target).text();
             $('textarea.variantType').val(_text);
@@ -2060,8 +2060,6 @@ var vm = new Vue({
         },
         // 上传
         shangchuan:function () {
-            $('#demo1').html('');
-
             if(vm.isUP){
                 $("#demo1").zyUpload({
                     width            :   "780px",                 // 宽度
@@ -2196,9 +2194,6 @@ var vm = new Vue({
         // 鼠标按下时开启拖拽多选，将遮罩定位并展现
         mousedownV:function () {
 
-        },
-        vChange:function () {
-            // upVariantList.type = '';
         }
 
     },

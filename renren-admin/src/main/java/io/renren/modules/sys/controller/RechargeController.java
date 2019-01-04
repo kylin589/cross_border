@@ -107,7 +107,7 @@ public class RechargeController extends AbstractController {
     @RequestMapping("/update")
     @RequiresPermissions("sys:recharge:update")
     public R update(@RequestBody RechargeEntity recharge){
-        ValidatorUtils.validateEntity(recharge);
+//        //ValidatorUtils.validateEntity((recharge);
         rechargeService.updateAllColumnById(recharge);//全部更新
         
         return R.ok();

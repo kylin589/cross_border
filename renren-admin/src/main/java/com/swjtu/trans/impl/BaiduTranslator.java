@@ -104,7 +104,8 @@ public final class BaiduTranslator extends AbstractTranslator {
         String result = "";
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
         try {
-            FileReader reader = new FileReader("D:/tk/Baidu.js");
+//            FileReader reader = new FileReader("D:/tk/Baidu.js");
+            FileReader reader = new FileReader("/usr/tk/Baidu.js");
             engine.eval(reader);
             if (engine instanceof Invocable) {
                 Invocable invoke = (Invocable)engine;

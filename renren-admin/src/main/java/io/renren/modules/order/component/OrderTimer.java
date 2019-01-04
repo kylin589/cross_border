@@ -52,7 +52,7 @@ public class OrderTimer {
      * 获得店铺授权列表信息
      */
     public void getShopGrantlist(){
-        List<AmazonGrantEntity> grantList = amazonGrantService.selectList(new EntityWrapper<AmazonGrantEntity>());
+        List<AmazonGrantEntity> grantList = amazonGrantService.selectList(null);
         Map map=new HashMap();
         List<AmazonGrantShopEntity> shoplist=null;
         for (AmazonGrantEntity grant : grantList) {
@@ -65,6 +65,9 @@ public class OrderTimer {
                 map.put("shopname",shop.getShopName());
                 map.put("serviceURL",shop.getMwsPoint());
                 map.put("marketplaceId",shop.getMarketplaceId());
+                map.put("shopId",shop.getGrantShopId());
+                map.put("userId",shop.getUserId());
+                map.put("deptId",shop.getDeptId());
                 getSingleShopOrderList(map);//获得单个店铺列表
             }
         }
@@ -73,13 +76,16 @@ public class OrderTimer {
     /***
      * 获得单个店铺订单和订单详情
      */
-    @Async
+    @Async("taskExecutor")
     public void getSingleShopOrderList(Map map) {
         System.out.println("111111111111111111111111");
         List<String> marketplaceId = new ArrayList<>();
         String sellerId = (String) map.get("sellerId");
         String mwsAuthToken = (String) map.get("mwsAuthToken");
         String shopName = (String) map.get("shopname");
+        Long shopId = (Long)map.get("shopId");
+        Long userId = (Long)map.get("userId");
+        Long deptId = (Long)map.get("deptId");
         String serviceURL = (String) map.get("serviceURL");
         marketplaceId.add((String) map.get("marketplaceId"));
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
@@ -188,10 +194,12 @@ public class OrderTimer {
                                     ProductShipAddressEntity addressEntity = new ProductShipAddressEntity();
                                     String shipname = listOrdersResponseDtos.get(i).getOrders().get(j).getName();
                                     System.out.println("收件人姓名:"+shipname+"==========");
-                                    String shipaddress = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
+                                    String shipaddress1 = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
                                     String shipaddress2 = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine2();
 
-                                    System.out.println("收件地址："+shipaddress+"===============");
+                                    System.out.println("收件地址1："+shipaddress1+"===============");
+                                    System.out.println("收件地址2："+shipaddress2+"===============");
+
                                     String shipcity = listOrdersResponseDtos.get(i).getOrders().get(j).getCity();
                                     System.out.println("收件人城市:"+shipcity+"====================");
                                     String shipCounty = listOrdersResponseDtos.get(i).getOrders().get(j).getCounty();
@@ -264,17 +272,24 @@ public class OrderTimer {
                                     } else {
                                         orderModel.setShopName("");
                                     }
+
+                                    orderModel.setShopId(shopId);
+                                    orderModel.setUserId(userId);
+                                    orderModel.setDeptId(deptId);
                                     if (shipname != null) {
                                         addressEntity.setShipName(shipname);
                                     } else {
                                         addressEntity.setShipName("");
                                     }
-                                    if (shipaddress != null) {
-                                        addressEntity.setShipAddressLine1(shipaddress);
-                                    } else if (shipaddress2 != null){
-                                        addressEntity.setShipAddressLine1(shipaddress2);
-                                    }else{
+                                    if (shipaddress1 != null) {
+                                        addressEntity.setShipAddressLine1(shipaddress1);
+                                    } else{
                                         addressEntity.setShipAddressLine1("");
+                                    }
+                                    if (shipaddress2 != null){
+                                        addressEntity.setShipAddressLine2(shipaddress2);
+                                    }else{
+                                        addressEntity.setShipAddressLine2("");
                                     }
                                     if (shipcity != null) {
                                         addressEntity.setShipCity(shipcity);
