@@ -1,5 +1,6 @@
 package io.renren.modules.product.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.renren.common.utils.R;
 import io.renren.modules.amazon.entity.AmazonCategoryHistoryEntity;
@@ -7,6 +8,7 @@ import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonCategoryHistoryService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.util.COUNTY;
+import io.renren.modules.job.entity.ScheduleJobEntity;
 import io.renren.modules.job.service.ScheduleJobService;
 import io.renren.modules.product.entity.AmazonCategoryEntity;
 import io.renren.modules.product.entity.ProductsEntity;
@@ -46,8 +48,13 @@ public class TimingUploadController {
     @Autowired
     private UploadController uploadController;
 
+    @Autowired
+    private ScheduleJobService scheduleJobService;
 
     public void timingUpload(String params) {
+        //删除定时任务数据.
+        scheduleJobService.delete(new EntityWrapper<ScheduleJobEntity>().eq("params",params));
+
         //使用ObjectMapper将传过来的字符串参数变成实体
         ObjectMapper om = new ObjectMapper();
         AddUploadVM addUploadVM = null;
@@ -62,6 +69,9 @@ public class TimingUploadController {
 
 
     public void renewTimingUpload(String params) {
+        //删除定时任务数据.
+        scheduleJobService.delete(new EntityWrapper<ScheduleJobEntity>().eq("params",params));
+
         //使用ObjectMapper将传过来的字符串参数变成实体
         ObjectMapper om = new ObjectMapper();
         AddUploadVM addUploadVM = null;
