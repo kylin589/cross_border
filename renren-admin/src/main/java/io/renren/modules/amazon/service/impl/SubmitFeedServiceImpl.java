@@ -160,6 +160,20 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             templateName = templateService.selectById(uploadEntity.getAmazonTemplateId()).getTemplateName();
         }
 
+        // 判断是否是单商品上传
+        if (productsEntityList.size()==1){
+            Long pId = productsEntityList.get(0).getProductId();
+            List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", pId).orderBy(true, "variant_sort", true));
+            if (variantsInfoEntityList.size() == 0) {
+                //没有变体，不生成关系XML
+                for (int i = 0; i < operateItemStr.length; i++) {
+                    if ("1".equals(operateItemStr[i])){
+                        operateItemStr[i] = "-1";
+                    }
+                }
+            }
+        }
+
         // 生成xml文件路径
         Map<String, String> filePathMap = new HashMap<>();
         for (int i = 0; i < operateItemStr.length; i++) {
@@ -190,22 +204,33 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     filePathMap.put("4", pricesPath);
                     break;
                 default:
-                    break;
             }
         }
+
         // 上传xml
+
+        UploadEntity updateUploadEntity = new UploadEntity();
+        updateUploadEntity.setUpdateTime(new Date());
+        updateUploadEntity.setUploadId(uploadId);
+
         FeedSubmissionInfoDto productFeedSubmissionInfoDto = null;
+
         // 0 是产品基本信息xml
         if (filePathMap.containsKey("0")) {
             // 产品信息上传
             productFeedSubmissionInfoDto = submitProductFeed(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap.get("0"), filePathMap.get("0"), marketplaceIdList);
             //使用FeedSubmissionId获取的亚马逊对于xml的处理状态
+
+            // 处理总状态--正在上传
+            updateUploadEntity.setUploadState(1);
+            uploadService.updateById(updateUploadEntity);
+
             while (true) {
                 try {
                     List<String> feedSubmissionList = new ArrayList<>();
                     feedSubmissionList.add(productFeedSubmissionInfoDto.getFeedSubmissionId());
                     productFeedSubmissionInfoDto = getFeedSubmissionListAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionList).get(0);
-
+                    // 成功
                     if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(1)) {
                         break;
                     }
@@ -216,7 +241,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                         updateFeedUpload(uploadId, tempList, 3);
                         break;
                     }
-                    // 设置睡眠的时间 60 秒
+
+                    // 设置睡眠的时间 120 秒
                     Thread.sleep(2 * 60 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -245,9 +271,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             }
         }
 
-
-        // FeedSubmissionInfoDto 数据存放，等待上传
-        updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 0);
+        // FeedSubmissionInfoDto 数据存放，正在上传
+        updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
 
         List<String> feedSubmissionIdList = new ArrayList<>();
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
@@ -299,9 +324,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             }
         }
 
-        UploadEntity updateUploadEntity = new UploadEntity();
-        updateUploadEntity.setUpdateTime(new Date());
-        updateUploadEntity.setUploadId(uploadId);
+
         String tempPath;
         List<Integer> typeStatus = new ArrayList();
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
@@ -332,43 +355,43 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     ResultXmlEntity resultXmlEntity1;
                     switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
                         case "_POST_PRODUCT_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "products");
+                            resultXmlEntity1 = isExist(uploadId, "基本信息");
                             if (resultXmlEntity1 != null) {
                                 resultXmlEntity.setId(resultXmlEntity1.getId());
                             }
-                            resultXmlEntity.setType("products");
+                            resultXmlEntity.setType("基本信息");
                             updateUploadEntity.setProductsResultStatus(tempStatus);
                             break;
                         case "_POST_PRODUCT_RELATIONSHIP_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "relationships");
+                            resultXmlEntity1 = isExist(uploadId, "关系");
                             if (resultXmlEntity1 != null) {
                                 resultXmlEntity.setId(resultXmlEntity1.getId());
                             }
-                            resultXmlEntity.setType("relationships");
+                            resultXmlEntity.setType("关系");
                             updateUploadEntity.setProductsResultStatus(tempStatus);
                             break;
                         case "_POST_PRODUCT_IMAGE_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "images");
+                            resultXmlEntity1 = isExist(uploadId, "图片");
                             if (resultXmlEntity1 != null) {
                                 resultXmlEntity.setId(resultXmlEntity1.getId());
                             }
-                            resultXmlEntity.setType("images");
+                            resultXmlEntity.setType("图片");
                             updateUploadEntity.setProductsResultStatus(tempStatus);
                             break;
                         case "_POST_INVENTORY_AVAILABILITY_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "inventory");
+                            resultXmlEntity1 = isExist(uploadId, "库存");
                             if (resultXmlEntity1 != null) {
                                 resultXmlEntity.setId(resultXmlEntity1.getId());
                             }
-                            resultXmlEntity.setType("inventory");
+                            resultXmlEntity.setType("库存");
                             updateUploadEntity.setProductsResultStatus(tempStatus);
                             break;
                         case "_POST_PRODUCT_PRICING_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "prices");
+                            resultXmlEntity1 = isExist(uploadId, "价格");
                             if (resultXmlEntity1 != null) {
                                 resultXmlEntity.setId(resultXmlEntity1.getId());
                             }
-                            resultXmlEntity.setType("prices");
+                            resultXmlEntity.setType("价格");
                             updateUploadEntity.setProductsResultStatus(tempStatus);
                             break;
                     }
