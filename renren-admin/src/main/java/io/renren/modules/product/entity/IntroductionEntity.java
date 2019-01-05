@@ -1,5 +1,6 @@
 package io.renren.modules.product.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
@@ -42,6 +43,12 @@ public class IntroductionEntity implements Serializable {
 	 * 产品描述
 	 */
 	private String productDescription=" ";
+
+	@TableField(exist = false)
+	/**
+	 * 返回信息
+	 */
+	private String msg = "";
 
 	/**
 	 * 设置：产品介绍id
@@ -114,5 +121,13 @@ public class IntroductionEntity implements Serializable {
 	 */
 	public String getProductDescription() {
 		return productDescription;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
 	}
 }

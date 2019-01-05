@@ -301,7 +301,8 @@ var vm = new Vue({
                     $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
                 }
                 $.ajax({
-                    url: 'http://39.106.131.222:8000/domestic/updateLogistics',
+                    // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
+                    url: 'http://www.threeee.cn/domestic/updateLogistics',
                     type: 'get',
                     data: {
                         orderId:vm.orderid,
@@ -360,7 +361,8 @@ var vm = new Vue({
         queryLogistic:function (waybill,event) {
             console.log(waybill);
             $.ajax({
-                url: 'http://39.106.131.222:8000/domestic/queryLogistic',
+                // url: 'http://39.106.131.222:8000/domestic/queryLogistic',
+                url: 'http://www.threeee.cn/domestic/queryLogistic',
                 type: 'get',
                 data: {
                     waybill:waybill,
@@ -413,7 +415,8 @@ var vm = new Vue({
                 btn1: function (index) {
 
                     $.ajax({
-                        url: 'http://39.106.131.222:8000/domestic/getLogisticsCompany',
+                        // url: 'http://39.106.131.222:8000/domestic/getLogisticsCompany',
+                        url: 'http://www.threeee.cn/domestic/getLogisticsCompany',
                         type: 'get',
                         data: {
                             orderId:vm.orderid,
