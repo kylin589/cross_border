@@ -904,34 +904,39 @@ var vm = new Vue({
         },
         // 成本运费
         getcostFreight:function () {
-            $.ajax({
-                type: 'post',
-                url: '../../product/products/costFreight',
-                contentType: "application/json",
-                data: JSON.stringify(vm.proDetails),
-                success: function (r) {
-                    console.log('成本运费');
-                    console.log(r)
-                    if (r.code == 0) {
-                        console.log('成本运费成功')
-                        vm.proDetails.americanFC = r.productsEntity.americanFC;
-                        vm.proDetails.canadaFC = r.productsEntity.canadaFC;
-                        vm.proDetails.mexicoFC = r.productsEntity.mexicoFC;
-                        vm.proDetails.britainFC = r.productsEntity.britainFC;
-                        vm.proDetails.franceFC = r.productsEntity.franceFC;
-                        vm.proDetails.germanyFC = r.productsEntity.germanyFC;
-                        vm.proDetails.italyFC = r.productsEntity.italyFC;
-                        vm.proDetails.spainFC = r.productsEntity.spainFC;
-                        vm.proDetails.japanFC = r.productsEntity.japanFC;
-                        vm.proDetails.australiaFC = r.productsEntity.australiaFC;
-                        // this.costFreight = r.categoryOneList;
+            if($(event.target).val() == ''){
+                layer.msg('内容不能为空')
+            }else {
+                $.ajax({
+                    type: 'post',
+                    url: '../../product/products/costFreight',
+                    contentType: "application/json",
+                    data: JSON.stringify(vm.proDetails),
+                    success: function (r) {
+                        console.log('成本运费');
+                        console.log(r)
+                        if (r.code == 0) {
+                            console.log('成本运费成功')
+                            vm.proDetails.americanFC = r.productsEntity.americanFC;
+                            vm.proDetails.canadaFC = r.productsEntity.canadaFC;
+                            vm.proDetails.mexicoFC = r.productsEntity.mexicoFC;
+                            vm.proDetails.britainFC = r.productsEntity.britainFC;
+                            vm.proDetails.franceFC = r.productsEntity.franceFC;
+                            vm.proDetails.germanyFC = r.productsEntity.germanyFC;
+                            vm.proDetails.italyFC = r.productsEntity.italyFC;
+                            vm.proDetails.spainFC = r.productsEntity.spainFC;
+                            vm.proDetails.japanFC = r.productsEntity.japanFC;
+                            vm.proDetails.australiaFC = r.productsEntity.australiaFC;
+                            // this.costFreight = r.categoryOneList;
 
-                        // console.log(vm.categoryOneList)
-                    } else {
-                        alert(r.msg);
+                            // console.log(vm.categoryOneList)
+                        } else {
+                            alert(r.msg);
+                        }
                     }
-                }
-            });
+                });
+            }
+
         },
         // 刷新 利润，利润率
         lirFunc:function () {
@@ -1085,7 +1090,7 @@ var vm = new Vue({
 
         },
         // 点击图片相册选中
-        clickActiveImg:function () {
+        clickActiveImg:function (event) {
             console.log(111);
             $(event.target).parent().toggleClass('active');
         },
@@ -1607,7 +1612,7 @@ var vm = new Vue({
             });
         },
         // 点击添加变体信息
-        clickAddV:function () {
+        clickAddV:function (event) {
             console.log(11111);
             console.log($(event.target).text());
             // vm.upVariantList = vm.variantList[a];
@@ -1625,7 +1630,7 @@ var vm = new Vue({
             $('textarea.variantType').val(_text);
         },
         // 点击添加变体信息
-        clickAddV1:function () {
+        clickAddV1:function (event) {
             console.log(11111);
             console.log($(event.target).text());
             // vm.upVariantList = vm.variantList[a];
@@ -1958,8 +1963,8 @@ var vm = new Vue({
         // 修改保存
         savePro:function () {
 
-            if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == ''){
-                layer.msg('厂商名称、品牌名称、库存数量、采购价格不能为空！！');
+            if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == '' || vm.proDetails.domesticFreight == '' || vm.proDetails.productWeight == '' || vm.proDetails.productLength == '' || vm.proDetails.productWide == '' || vm.proDetails.productHeight == ''){
+                layer.msg('厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
             }else {
 
                 var u = $('.ul1');

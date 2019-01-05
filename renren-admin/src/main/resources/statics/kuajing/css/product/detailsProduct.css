@@ -177,7 +177,7 @@ form .chengben label{
 
 /*单选框美化*/
 .rdo {
-    width: 0px;
+    width: 14px;
     margin-right: 25px;/*选项之间的距离*/
     position: relative;
 }

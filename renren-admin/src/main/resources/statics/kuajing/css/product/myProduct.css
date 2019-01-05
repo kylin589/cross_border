@@ -291,7 +291,15 @@
     font-size: 13px;
     cursor: pointer;
 }
-.sousuoArea>div.areaOne ul li:hover{
+.sousuoArea>div.areaOne ul li:hover , .sousuoArea>div.areaOne ul li.active{
+    background: #cbe7ef;
+    color: #2293b1;
+}
+.sousuoArea>div.areaTwo ul li:hover , .sousuoArea>div.areaTwo ul li.active{
+    background: #cbe7ef;
+    color: #2293b1;
+}
+.sousuoArea>div.areaThree ul li:hover , .sousuoArea>div.areaThree ul li.active{
     background: #cbe7ef;
     color: #2293b1;
 }
@@ -313,9 +321,9 @@
     font-size: 13px;
     cursor: pointer;
 }
-.sousuoArea>div.areaTwo ul li:hover{
-    background: #fff;
-}
+/*.sousuoArea>div.areaTwo ul li:hover{*/
+    /*background: #fff;*/
+/*}*/
 .sousuoArea>div.areaThree ul{
     padding: 0;
     margin: 0;

@@ -228,7 +228,7 @@ var vm = new Vue({
             });
         },
         //编辑修改寄件信息
-        editJijian:function () {
+        editJijian:function (event) {
             // console.log(index);
             if($(event.target).val() == '编辑'){
                 $(event.target).val('保存');
@@ -280,7 +280,7 @@ var vm = new Vue({
             }
         },
         //编辑修改国内物流
-        edit:function (domesticLogisticsId,index) {
+        edit:function (domesticLogisticsId,index,event) {
             console.log(index);
             if($(event.target).val() == '编辑'){
                 $(event.target).val('保存');
@@ -357,7 +357,7 @@ var vm = new Vue({
             }
         },
         //物流信息
-        queryLogistic:function (waybill) {
+        queryLogistic:function (waybill,event) {
             console.log(waybill);
             $.ajax({
                 url: 'http://39.106.131.222:8000/domestic/queryLogistic',
@@ -393,7 +393,7 @@ var vm = new Vue({
             }
         },
         // 鼠标一处物流消失
-        xiaoshiFcun:function () {
+        xiaoshiFcun:function (event) {
             if($(event.target).attr('data-ok') == 'true'){
                 $('.logisticsDiv').css({
                     'display':'none',
@@ -571,7 +571,7 @@ var vm = new Vue({
             });
         },
         // 选项卡
-        tabFcun:function () {
+        tabFcun:function (event) {
             var _index = $(event.target).index();
             $('.layui-tab-title1 li').removeClass('layui-this');
             $(event.target).addClass('layui-this');

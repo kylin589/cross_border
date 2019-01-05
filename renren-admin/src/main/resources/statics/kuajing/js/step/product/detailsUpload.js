@@ -272,7 +272,7 @@ var vm = new Vue({
 
         },
         // 全选
-        allSelFunc:function () {
+        allSelFunc:function (event) {
 
             var _if = $(event.target).prop('checked');
             // vm.inputche[1] = 0;
@@ -280,7 +280,12 @@ var vm = new Vue({
             // vm.inputche[3] = 2;
             // vm.inputche[4] = 3;
             // vm.inputche[5] = 4;
-            vm.inputche = ['0','1','2','3','4'];
+            if(vm.inputche1){
+                vm.inputche = ['0','1','2','3','4'];
+            }else {
+                vm.inputche = [];
+            }
+
 
             // $('#operateItem input').prop('checked',_if);
             console.log(vm.inputche1);
@@ -458,7 +463,7 @@ var vm = new Vue({
 
         },
         // 子级分类
-        amazonItemCategory:function (list) {
+        amazonItemCategory:function (list,event) {
             $('.inner-content-div2').slimScroll({
                 height: '270px' //设置显示的高度
             });
@@ -610,7 +615,7 @@ var vm = new Vue({
                 layer.msg('请选择店铺');
             }
         },
-        lishiSelFunc:function () {
+        lishiSelFunc:function (event) {
             vm.amazonCategory = $(event.target).attr('data-val');
             vm.amazonCategoryId = $(event.target).attr('id');
             vm.amazonAllCategory = $(event.target).attr('data-allV');
@@ -679,7 +684,7 @@ var vm = new Vue({
             });
         },
         // 点击模版分类属性可选值选中
-        clickValActive:function (v) {
+        clickValActive:function (v,event) {
             // $(event.target).siblings().removeClass('active');
             // $(event.target).addClass('active');
             v.value = $(event.target).attr('data-val');

@@ -19,7 +19,7 @@
         height : '250px',
 
         // 滚动条和轨道的像素宽度
-        size : '2px',
+        size : '4px',
 
         // 滚动条颜色，接受任何进制颜色值
         color: '#2895e5',
@@ -67,10 +67,10 @@
         allowPageScroll : false,
 
         // 滚动量
-        wheelStep : 20,
+        wheelStep : 4,
 
         // 当用户使用手势时应用的滚动量
-        touchScrollStep : 200,
+        touchScrollStep : 20,
 
         // 设置边界半径
         borderRadius: '7px',

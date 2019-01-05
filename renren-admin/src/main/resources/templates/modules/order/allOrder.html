@@ -119,13 +119,13 @@
         <span class="stateBtn" v-if="yichangListValue!=''" @click="updateAbnormalState" style="cursor:pointer;">确定</span>
         <!--统计-->
         <div class="statistics" style="">
-            核算订单数: <span>{{ statistics.orderNum }}</span>
-            总金额: <span>{{ statistics.allPrice }}</span>
-            利润: <span>{{ statistics.profit }}</span>
-            运费: <span>{{ statistics.freight }}</span>
-            采购: <span>{{ statistics.purchase }}</span>
-            退款数: <span>{{ statistics.refund }}</span>
-            退款成本: <span>{{ statistics.refundCost }}</span>
+            核算订单数: <span>{{ statistics.orderCounts }}</span>
+            总金额: <span>{{ statistics.orderMoney }}</span>
+            利润: <span>{{ statistics.orderProfit }}</span>
+            运费: <span>{{ statistics.orderFreight }}</span>
+            采购: <span>{{ statistics.purchasePrice }}</span>
+            退款数: <span>{{ statistics.returnCounts }}</span>
+            退款成本: <span>{{ statistics.returnCost }}</span>
         </div>
     </div>
 

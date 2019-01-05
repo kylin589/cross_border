@@ -197,7 +197,7 @@
                                 <span class="title">可选值：</span>
                             </div>
                             <div>
-                                <span v-for="val in item.templateFieldValueDtos" class="val" :data-val="val.value" @click="clickValActive(item)">{{val.cnValue}}</span>
+                                <span v-for="val in item.templateFieldValueDtos" class="val" :data-val="val.value" @click="clickValActive(item,$event)">{{val.cnValue}}</span>
                             </div>
 
                         </div>
@@ -215,7 +215,7 @@
                         <div class="inner-content-div2" style="">
                             <!--要加滚动条的具体内容-->
                             <ul>
-                                <li v-for='list in item' :data-index="index" :id="list.amazonCategoryId" :data-if="list.ifNext" @click="amazonItemCategory(list)">{{ list.displayName }}</li>
+                                <li v-for='list in item' :data-index="index" :id="list.amazonCategoryId" :data-if="list.ifNext" @click="amazonItemCategory(list,$event)">{{ list.displayName }}</li>
                             </ul>
                         </div>
                     </div>

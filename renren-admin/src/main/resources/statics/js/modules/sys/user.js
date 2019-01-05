@@ -71,7 +71,18 @@ var vm = new Vue({
             deptId:null,
             deptName:null,
             roleIdList:[]
-        }
+        },
+        chanUserNameMsg:'',
+        chanUserNameMsgE:'',
+        chanUserNameMsgE1:'',
+        erroMsg1:'',
+        erroMsg2:'',
+        erroMsg3:'',
+        erroMsg4:'',
+        erroMsg5:'',
+        erroMsg6:'',
+        erroMsg7:'',
+        erroMsg9:'',
     },
     methods: {
         query: function () {
@@ -99,6 +110,41 @@ var vm = new Vue({
                     vm.user.deptName = node.name;
                 }
             })
+        },
+        chanUserNameE:function () {
+            // console.log(vm.user.username)
+            var reg =/\s/;
+            console.log(reg.test(vm.user.enName));
+            if(reg.test(vm.user.enName)){
+                console.log(11111);
+                vm.chanUserNameMsgE = '英文名称中不能有空格'
+            }else {
+                vm.chanUserNameMsgE = ''
+            }
+        },
+        chanUserNameE1:function () {
+            // console.log(vm.user.username)
+            var reg =/\s/;
+            if(reg.test(vm.user.enBrand)){
+                vm.chanUserNameMsgE1 = '英文品牌中不能有空格'
+            }else {
+                vm.chanUserNameMsgE1 = ''
+            }
+        },
+        chanUserName:function () {
+            console.log(vm.user.username)
+            if(vm.user.username.length>20 || vm.user.username.length<6){
+                vm.chanUserNameMsg = '账号长度必须在6到20个字符之间'
+            }else {
+                vm.chanUserNameMsg = ''
+            }
+        },
+        okPassword:function () {
+            if(vm.user.password1 != vm.user.password){
+                vm.erroMsg5 = '确认密码错误'
+            }else {
+                vm.erroMsg5 = '';
+            }
         },
         update: function () {
             var userId = getSelectedRow();
@@ -162,22 +208,63 @@ var vm = new Vue({
             });
         },
         saveOrUpdate: function () {
-            var url = vm.user.userId == null ? "sys/user/save" : "sys/user/update";
-            $.ajax({
-                type: "POST",
-                url: baseURL + url,
-                contentType: "application/json",
-                data: JSON.stringify(vm.user),
-                success: function(r){
-                    if(r.code === 0){
-                        alert('操作成功', function(){
-                            vm.reload();
-                        });
-                    }else{
-                        alert(r.msg);
+            console.log(vm.user.enBrand);
+            vm.erroMsg1 = '';
+            vm.erroMsg3 = '';
+            vm.erroMsg4 = '';
+            vm.erroMsg5 = '';
+            vm.erroMsg6 = '';
+            vm.erroMsg7 = '';
+            vm.erroMsg9 = '';
+            var reg =/\s/;
+            if(!vm.user.username){
+                vm.chanUserNameMsg = '账号不能为空'
+            }else if(vm.user.username.length>20 || vm.user.username.length<6){
+                vm.chanUserNameMsg = '账号长度必须在6到20个字符之间'
+            }else if(!vm.user.deptName){
+                vm.erroMsg1 = '请选择所属公司'
+            }else if(!vm.user.enName){
+                vm.chanUserNameMsgE = '英文品牌不能为空'
+            }else if(!vm.user.enBrand){
+                vm.chanUserNameMsgE1 = '英文品牌不能为空'
+            }else if(reg.test(vm.user.enName)){
+                vm.chanUserNameMsgE = '英文名称中不能有空格'
+            }else if(reg.test(vm.user.enBrand)){
+                vm.chanUserNameMsgE1 = '英文品牌中不能有空格'
+            }else if(!vm.user.displayName){
+                vm.erroMsg3 = '昵称不能为空'
+            }else if(!vm.user.password){
+                vm.erroMsg4 = '密码不能为空'
+            }else if(!vm.user.password1){
+                vm.erroMsg5 = '确认密码不能为空'
+            }else if(!vm.user.email){
+                vm.erroMsg6 = '邮箱不能为空'
+            }else if(!vm.user.mobile){
+                vm.erroMsg7 = '手机号不能为空'
+            }else if(vm.user.roleIdList.length == 0){
+                vm.erroMsg9 = '请选择角色'
+            }else if(vm.user.password1 != vm.user.password){
+                vm.erroMsg5 = '确认密码错误'
+            }else {
+                var url = vm.user.userId == null ? "sys/user/save" : "sys/user/update";
+                $.ajax({
+                    type: "POST",
+                    url: baseURL + url,
+                    contentType: "application/json",
+                    data: JSON.stringify(vm.user),
+                    success: function(r){
+                        if(r.code === 0){
+                            alert('操作成功', function(){
+                                vm.reload();
+                            });
+                        }else{
+                            alert(r.msg);
+                        }
                     }
-                }
-            });
+                });
+            }
+
+
         },
         getUser: function(userId){
             $.get(baseURL + "sys/user/info/"+userId, function(r){

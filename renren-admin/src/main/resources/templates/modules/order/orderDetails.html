@@ -104,11 +104,11 @@
                     <div v-for="(item,index) in orderDetails.domesticLogisticsList">
 
                         <span><label for="">采购价(￥)：</label><input type="text" :placeholder="orderDetails.purchasePrice" v-model="price[index]"></span>
-                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(item.waybill)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  :placeholder="item.waybill" v-model="waybill[index]"></a></span>
+                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(item.waybill,$event)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  :placeholder="item.waybill" v-model="waybill[index]"></a></span>
                         <span><label for="">物流公司：</label><input class="" type="text" :placeholder="item.logisticsCompany"></span>
                         <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="item.issuanceDate"></span>
                         <div class="fr" style="">
-                            <input class="edit" type="button" value="编辑" @click="edit(item.domesticLogisticsId,index)">
+                            <input class="edit" type="button" value="编辑" @click="edit(item.domesticLogisticsId,index,$event)">
                             <input class="noedit" type="button" value="取消" @click="noedit">
                         </div>
                     </div>
