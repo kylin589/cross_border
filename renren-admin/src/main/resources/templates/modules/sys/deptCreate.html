@@ -58,7 +58,7 @@
     <form>
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
-              <a href="javascript:window.location.href = document.referrer;">公司列表</a>
+              <a href="javascript:window.location.href = document.referrer;">公司列表 / </a>
               <a><cite>详情修改</cite></a>
             </span>
             <input type="button" class="return" @click="returnFunc" value="返回" />
@@ -80,7 +80,7 @@
                     <span><label for="">公司SKU信息：</label><input type="text" placeholder="公司SKU信息" v-model="couDetails.companySku"></span>
                     <span><label for="">公司地址：</label><input type="text" placeholder="公司地址" v-model="couDetails.companyAddress"></span><br>
                     <span><label for="">公司负责人：</label><input type="text" placeholder="公司负责人" v-model="couDetails.companyPerson"></span>
-                    <span><label for="">电话：</label><input type="text" placeholder="内部电话SKU" v-model="couDetails.companyTel"></span><br>
+                    <span><label for="">电话：</label><input type="text" placeholder="电话" v-model="couDetails.companyTel"></span><br>
                     <span><label for="">QQ：</label><input type="text" placeholder="QQ" v-model="couDetails.companyQq"></span>
 
                 </div>

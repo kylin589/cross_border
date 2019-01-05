@@ -85,14 +85,14 @@ var vm = new Vue({
         startDate:'',
         endDate:'',
         statistics:{
-            orderAll:12324,
-            orderNum:123,
-            allPrice:32784523.2346,
-            profit:3442763487,
-            freight:21356,
-            purchase:238175,
-            refund:123,
-            refundCost:-2378.23
+            // orderAll:12324,
+            // orderNum:123,
+            // allPrice:32784523.2346,
+            // profit:3442763487,
+            // freight:21356,
+            // purchase:238175,
+            // refund:123,
+            // refundCost:-2378.23
         },
         yichangList:[],
         yichangListValue:'',
@@ -316,6 +316,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         vm.prolist = r.page.list;
                         vm.allOrderCount = r.page.totalCount;
+                        vm.statistics = r.orderCounts;
                         console.log(vm.allOrderCount)
                         vm.laypage();
                     } else {

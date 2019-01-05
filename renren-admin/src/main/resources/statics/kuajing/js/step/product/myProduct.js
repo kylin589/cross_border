@@ -480,6 +480,8 @@ var vm = new Vue({
             // $(event.target)
             var pId = $(event.target).attr('data-pid');
             var id = $(event.target).attr('data-id');
+            $(event.target).siblings().removeClass('active');
+            $(event.target).addClass('active');
 
             console.log(parseInt($(event.target).attr('data-pid')));
             console.log(vm.categoryOneList[vm.categoryOneList.length-1]);
