@@ -137,7 +137,11 @@ public class GenerateProductXML {
             String titleStr = "\\t";
             Element title = descriptionData.addElement("Title");
             if (introductionEntity.getProductTitle() != null) {
-                titleStr = introductionEntity.getProductTitle();
+                if (introductionEntity.getProductTitle().length() > 200) {
+                    titleStr = introductionEntity.getProductTitle().trim().substring(0, 200);
+                } else {
+                    titleStr = introductionEntity.getProductTitle();
+                }
             }
             title.addText(titleStr);
 
@@ -153,30 +157,48 @@ public class GenerateProductXML {
             String descriptionStr = "\\t";
             Element description = descriptionData.addElement("Description");
             if (introductionEntity.getProductDescription() != null) {
-                descriptionStr = introductionEntity.getProductDescription();
+                if (introductionEntity.getProductDescription().length() > 2000) {
+                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000);
+                } else {
+                    descriptionStr = introductionEntity.getProductDescription();
+                }
             }
             description.addText(descriptionStr);
 
             // BulletPoint-重点，有可能需要多个，但最多5个
             if (introductionEntity.getKeyPoints() != null) {
-                String[] kepPoints = introductionEntity.getKeyPoints().split("\r\n");
+                String[] kepPoints = introductionEntity.getKeyPoints().split("\n");
                 if (kepPoints.length <= 5) {
                     for (int j = 0; j < kepPoints.length; j++) {
+                        String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
-                        bulletPoint.addText(kepPoints[j]);
+                        if (kepPoints[j].length() > 1000) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 1000);
+                        } else {
+                            tempKepPoints = kepPoints[j].trim();
+                        }
+                        bulletPoint.addText(tempKepPoints);
                     }
                 } else {
                     for (int j = 0; j < 4; j++) {
+                        String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
-                        bulletPoint.addText(kepPoints[j]);
+                        if (kepPoints[j].length() > 1000) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 1000);
+                        } else {
+                            tempKepPoints = kepPoints[j].trim();
+                        }
+                        bulletPoint.addText(tempKepPoints);
                     }
 
                 }
             } else {
-                for (int j = 0; j < 4; j++) {
+                Element bulletPoint = descriptionData.addElement("BulletPoint");
+                bulletPoint.addText("\\t");
+               /* for (int j = 0; j < 4; j++) {
                     Element bulletPoint = descriptionData.addElement("BulletPoint");
                     bulletPoint.addText("\\t");
-                }
+                }*/
             }
 
             // Manufacturer - 生产厂家
@@ -286,24 +308,38 @@ public class GenerateProductXML {
 
                     // BulletPoint-重点，有可能需要多个，但最多5个
                     if (introductionEntity.getKeyPoints() != null) {
-                        String[] kepPoints = introductionEntity.getKeyPoints().split("\r\n");
+                        String[] kepPoints = introductionEntity.getKeyPoints().split("\n");
                         if (kepPoints.length <= 5) {
                             for (int z = 0; z < kepPoints.length; z++) {
+                                String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
-                                vieDulletPoint.addText(kepPoints[z]);
+                                if (kepPoints[z].length() > 1000) {
+                                    tmep = kepPoints[z].trim().substring(0, 1000);
+                                } else {
+                                    tmep = kepPoints[z];
+                                }
+                                vieDulletPoint.addText(tmep);
                             }
                         } else {
                             for (int x = 0; x < 4; x++) {
+                                String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
-                                vieDulletPoint.addText(kepPoints[x]);
+                                if (kepPoints[x].length() > 1000) {
+                                    tmep = kepPoints[x].trim().substring(0, 1000);
+                                } else {
+                                    tmep = kepPoints[x];
+                                }
+                                vieDulletPoint.addText(tmep);
                             }
 
                         }
                     } else {
-                        for (int x = 0; x < 4; x++) {
+                        /*for (int x = 0; x < 4; x++) {
                             Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
                             vieDulletPoint.addText("\\t");
-                        }
+                        }*/
+                        Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
+                        vieDulletPoint.addText("\\t");
                     }
 
                     // Manufacturer - 生产厂家
@@ -781,7 +817,7 @@ public class GenerateProductXML {
                     Element type = relation.addElement("Type");
                     type.addText("Variation");
                 }
-            }else {
+            } else {
                 // 没有变体
                 break;
             }
@@ -880,7 +916,11 @@ public class GenerateProductXML {
             String titleStr = "\\t";
             Element title = descriptionData.addElement("Title");
             if (introductionEntity.getProductTitle() != null) {
-                titleStr = introductionEntity.getProductTitle();
+                if (introductionEntity.getProductTitle().length() > 200) {
+                    titleStr = introductionEntity.getProductTitle().trim().substring(0, 200);
+                } else {
+                    titleStr = introductionEntity.getProductTitle();
+                }
             }
             title.addText(titleStr);
 
@@ -896,30 +936,48 @@ public class GenerateProductXML {
             String descriptionStr = "\\t";
             Element description = descriptionData.addElement("Description");
             if (introductionEntity.getProductDescription() != null) {
-                descriptionStr = introductionEntity.getProductDescription();
+                if (introductionEntity.getProductDescription().length() > 2000) {
+                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000);
+                } else {
+                    descriptionStr = introductionEntity.getProductDescription();
+                }
             }
             description.addText(descriptionStr);
 
             // BulletPoint-重点，有可能需要多个，但最多5个
             if (introductionEntity.getKeyPoints() != null) {
-                String[] kepPoints = introductionEntity.getKeyPoints().split("\r\n");
+                String[] kepPoints = introductionEntity.getKeyPoints().split("\n");
                 if (kepPoints.length <= 5) {
                     for (int j = 0; j < kepPoints.length; j++) {
+                        String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
-                        bulletPoint.addText(kepPoints[j]);
+                        if (kepPoints[j].length() > 1000) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 1000);
+                        } else {
+                            tempKepPoints = kepPoints[j].trim();
+                        }
+                        bulletPoint.addText(tempKepPoints);
                     }
                 } else {
                     for (int j = 0; j < 4; j++) {
+                        String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
-                        bulletPoint.addText(kepPoints[j]);
+                        if (kepPoints[j].length() > 1000) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 1000);
+                        } else {
+                            tempKepPoints = kepPoints[j].trim();
+                        }
+                        bulletPoint.addText(tempKepPoints);
                     }
 
                 }
             } else {
-                for (int j = 0; j < 4; j++) {
+                Element bulletPoint = descriptionData.addElement("BulletPoint");
+                bulletPoint.addText("\\t");
+               /* for (int j = 0; j < 4; j++) {
                     Element bulletPoint = descriptionData.addElement("BulletPoint");
                     bulletPoint.addText("\\t");
-                }
+                }*/
             }
 
             // Manufacturer - 生产厂家
@@ -960,7 +1018,6 @@ public class GenerateProductXML {
                     recommendedBrowseNode.addText(uploadEntity.getAmazonCategoryNodeId());
                     break;
                 default:
-                    break;
             }
 
             Element productData = product.addElement("ProductData");
@@ -1168,24 +1225,38 @@ public class GenerateProductXML {
 
                     // BulletPoint-重点，有可能需要多个，但最多5个
                     if (introductionEntity.getKeyPoints() != null) {
-                        String[] kepPoints = introductionEntity.getKeyPoints().split("\r\n");
+                        String[] kepPoints = introductionEntity.getKeyPoints().split("\n");
                         if (kepPoints.length <= 5) {
                             for (int z = 0; z < kepPoints.length; z++) {
+                                String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
-                                vieDulletPoint.addText(kepPoints[z]);
+                                if (kepPoints[z].length() > 1000) {
+                                    tmep = kepPoints[z].trim().substring(0, 1000);
+                                } else {
+                                    tmep = kepPoints[z];
+                                }
+                                vieDulletPoint.addText(tmep);
                             }
                         } else {
                             for (int x = 0; x < 4; x++) {
+                                String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
-                                vieDulletPoint.addText(kepPoints[x]);
+                                if (kepPoints[x].length() > 1000) {
+                                    tmep = kepPoints[x].trim().substring(0, 1000);
+                                } else {
+                                    tmep = kepPoints[x];
+                                }
+                                vieDulletPoint.addText(tmep);
                             }
 
                         }
                     } else {
-                        for (int x = 0; x < 4; x++) {
+                        /*for (int x = 0; x < 4; x++) {
                             Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
                             vieDulletPoint.addText("\\t");
-                        }
+                        }*/
+                        Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
+                        vieDulletPoint.addText("\\t");
                     }
 
                     // Manufacturer - 生产厂家
