@@ -172,8 +172,8 @@ public class GenerateProductXML {
                     for (int j = 0; j < kepPoints.length; j++) {
                         String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
-                        if (kepPoints[j].length() > 1000) {
-                            tempKepPoints = kepPoints[j].trim().substring(0, 1000);
+                        if (kepPoints[j].length() > 500) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 500);
                         } else {
                             tempKepPoints = kepPoints[j].trim();
                         }
@@ -183,8 +183,8 @@ public class GenerateProductXML {
                     for (int j = 0; j < 4; j++) {
                         String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
-                        if (kepPoints[j].length() > 1000) {
-                            tempKepPoints = kepPoints[j].trim().substring(0, 1000);
+                        if (kepPoints[j].length() > 500) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 500);
                         } else {
                             tempKepPoints = kepPoints[j].trim();
                         }
@@ -313,8 +313,8 @@ public class GenerateProductXML {
                             for (int z = 0; z < kepPoints.length; z++) {
                                 String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
-                                if (kepPoints[z].length() > 1000) {
-                                    tmep = kepPoints[z].trim().substring(0, 1000);
+                                if (kepPoints[z].length() > 500) {
+                                    tmep = kepPoints[z].trim().substring(0, 500);
                                 } else {
                                     tmep = kepPoints[z];
                                 }
@@ -324,8 +324,8 @@ public class GenerateProductXML {
                             for (int x = 0; x < 4; x++) {
                                 String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
-                                if (kepPoints[x].length() > 1000) {
-                                    tmep = kepPoints[x].trim().substring(0, 1000);
+                                if (kepPoints[x].length() > 500) {
+                                    tmep = kepPoints[x].trim().substring(0, 500);
                                 } else {
                                     tmep = kepPoints[x];
                                 }
@@ -951,8 +951,8 @@ public class GenerateProductXML {
                     for (int j = 0; j < kepPoints.length; j++) {
                         String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
-                        if (kepPoints[j].length() > 1000) {
-                            tempKepPoints = kepPoints[j].trim().substring(0, 1000);
+                        if (kepPoints[j].length() > 500) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 500);
                         } else {
                             tempKepPoints = kepPoints[j].trim();
                         }
@@ -962,8 +962,8 @@ public class GenerateProductXML {
                     for (int j = 0; j < 4; j++) {
                         String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
-                        if (kepPoints[j].length() > 1000) {
-                            tempKepPoints = kepPoints[j].trim().substring(0, 1000);
+                        if (kepPoints[j].length() > 500) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 500);
                         } else {
                             tempKepPoints = kepPoints[j].trim();
                         }
@@ -1230,8 +1230,8 @@ public class GenerateProductXML {
                             for (int z = 0; z < kepPoints.length; z++) {
                                 String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
-                                if (kepPoints[z].length() > 1000) {
-                                    tmep = kepPoints[z].trim().substring(0, 1000);
+                                if (kepPoints[z].length() > 500) {
+                                    tmep = kepPoints[z].trim().substring(0, 500);
                                 } else {
                                     tmep = kepPoints[z];
                                 }
@@ -1241,8 +1241,8 @@ public class GenerateProductXML {
                             for (int x = 0; x < 4; x++) {
                                 String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
-                                if (kepPoints[x].length() > 1000) {
-                                    tmep = kepPoints[x].trim().substring(0, 1000);
+                                if (kepPoints[x].length() > 500) {
+                                    tmep = kepPoints[x].trim().substring(0, 500);
                                 } else {
                                     tmep = kepPoints[x];
                                 }
