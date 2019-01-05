@@ -1071,7 +1071,8 @@ var vm = new Vue({
 
                     },1000);
                     $.ajax({
-                        url: 'http://39.106.131.222:8000/getCollectionInfo',
+                        // url: 'http://39.106.131.222:8000/getCollectionInfo',
+                        url: 'http://www.threeee.cn/getCollectionInfo',
                         type: 'post',
                         // data:vm.xiugaiData,
                         data:{
