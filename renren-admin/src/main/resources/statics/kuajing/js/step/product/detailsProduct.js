@@ -2253,7 +2253,7 @@ var vm = new Vue({
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 100*1000});
             $.ajax({
-                url: '../../product/introduction/ZhtoEn',
+                url: '../../product/introduction/ZhtoOther',
                 type: 'post',
                 data: JSON.stringify({
                     'productTitle': vm.proDetails.chinesePRE.productTitle,
