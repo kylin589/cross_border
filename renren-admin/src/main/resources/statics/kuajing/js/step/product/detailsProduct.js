@@ -2219,21 +2219,18 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
+                        vm.proDetails.francePRE = r.introductionFra;
+                        vm.proDetails.spainPRE = r.introductionSpa;
+                        vm.proDetails.germanyPRE = r.introductionDe;
+                        vm.proDetails.italyPRE = r.introductionIt;
+                        // vm.proDetails.britainPRE = r.introductionEn;
+                        vm.proDetails.japanPRE = r.introductionJp;
                         if(r.error){
                             layer.msg(r.error);
-                            layer.close(index);
-                        }else {
-                            vm.proDetails.francePRE = r.introductionFra;
-                            vm.proDetails.spainPRE = r.introductionSpa;
-                            vm.proDetails.germanyPRE = r.introductionDe;
-                            vm.proDetails.italyPRE = r.introductionIt;
-                            // vm.proDetails.britainPRE = r.introductionEn;
-                            vm.proDetails.japanPRE = r.introductionJp;
-                            layer.close(index);
+                        }else{
                             layer.msg("翻译成功");
+                            layer.close(index);
                         }
-
-
                         // vm.proAlbum = r.imageInfo;
 
                     } else {
@@ -2266,18 +2263,17 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
+                        vm.proDetails.francePRE = r.introductionFra;
+                        vm.proDetails.spainPRE = r.introductionSpa;
+                        vm.proDetails.germanyPRE = r.introductionDe;
+                        vm.proDetails.italyPRE = r.introductionIt;
+                        vm.proDetails.britainPRE = r.introductionEn;
+                        vm.proDetails.japanPRE = r.introductionJp;
                         if(r.error){
                             layer.msg(r.error);
-                            layer.close(index);
-                        }else {
-                            vm.proDetails.francePRE = r.introductionFra;
-                            vm.proDetails.spainPRE = r.introductionSpa;
-                            vm.proDetails.germanyPRE = r.introductionDe;
-                            vm.proDetails.italyPRE = r.introductionIt;
-                            vm.proDetails.britainPRE = r.introductionEn;
-                            vm.proDetails.japanPRE = r.introductionJp;
-                            layer.close(index);
+                        }else{
                             layer.msg("翻译成功");
+                            layer.close(index);
                         }
 
 

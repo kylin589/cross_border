@@ -330,14 +330,41 @@ public class IntroductionController {
             String result = resultList.get(0);
             String[] results = result.split("=====");
             try{
-                introductionEn.setProductTitle(TranslateUtils.toUpperCase(results[0].replace(","," ")));
-                introductionEn.setKeyWord(TranslateUtils.toUpperCase(results[1].replace(","," ")));
+                String title = TranslateUtils.toUpperCase(results[0].replace(","," "));
+                introductionEn.setProductTitle(title);
+                String keyWord = TranslateUtils.toUpperCase(results[1].replace(","," "));
+                introductionEn.setKeyWord(keyWord);
                 introductionEn.setKeyPoints(results[2].replace(" !!!!! ","\n"));
-                introductionEn.setProductDescription(results[3].replace(" !!!!! ","\n"));
+                String productDescription = results[3].replace(" !!!!! ","\n");
+                introductionEn.setProductDescription(productDescription);
                 introductionEn.setCountry("EN");
                 map.put("querierTrans",querierTrans);
                 map.put("introduction",introductionEn);
                 map.put("tranEnStr",result);
+                StringBuffer errorStr = new StringBuffer();;
+                //判断标题
+                if(title.length() >200){
+                    errorStr.append("翻译失败，英文标题超过200字符");
+                    errorStr.append("\n");
+                }
+                if(keyWord.length() >250){
+                    errorStr.append("翻译失败，英文关键字超过250字符");
+                    errorStr.append("\n");
+                }
+                String[] keyPoints = results[2].split(" !!!!! ");
+                for(int i = 0; i < keyPoints.length; i++){
+                    if(keyPoints[i].length() >1000){
+                        errorStr.append("翻译失败，英文要点说明第" + i + "行超过1000字符");
+                        errorStr.append("\n");
+                    }
+                }
+                if(productDescription.length() >2000){
+                    errorStr.append("翻译失败，英文产品描述超过2000字符");
+                    errorStr.append("\n");
+                }
+                if(StringUtils.isNotBlank(errorStr.toString())){
+                    map.put("error",errorStr.toString().substring(0,errorStr.toString().length()-1));
+                }
                 return map;
             }catch (Exception e){
                 map.put("msg","翻译失败，请重新尝试");
@@ -392,10 +419,38 @@ public class IntroductionController {
             String result = resultList.get(0);
             String[] results = result.split("=====");
             try{
-                introduction.setProductTitle(TranslateUtils.toUpperCase(results[0].replace(","," ")));
-                introduction.setKeyWord(TranslateUtils.toUpperCase(results[1].replace(","," ")));
+                String title = TranslateUtils.toUpperCase(results[0].replace(","," "));
+                introduction.setProductTitle(title);
+                String keyWord = TranslateUtils.toUpperCase(results[1].replace(","," "));
+                introduction.setKeyWord(keyWord);
                 introduction.setKeyPoints(results[2].replace(" !!!!! ","\n"));
-                introduction.setProductDescription(results[3].replace(" !!!!! ","\n"));
+                String productDescription = results[3].replace(" !!!!! ","\n");
+                introduction.setProductDescription(productDescription);
+                introduction.setCountry("EN");
+                StringBuffer errorStr = new StringBuffer();
+                //判断标题
+                if(title.length() >200){
+                    errorStr.append(country + "标题超过200字符");
+                    errorStr.append("\n");
+                }
+                if(keyWord.length() >250){
+                    errorStr.append(country + "关键字超过250字符");
+                    errorStr.append("\n");
+                }
+                String[] keyPoints = results[2].split(" !!!!! ");
+                for(int i = 0; i < keyPoints.length; i++){
+                    if(keyPoints[i].length() >1000){
+                        errorStr.append(country + "要点说明第" + i + "行超过1000字符");
+                        errorStr.append("\n");
+                    }
+                }
+                if(productDescription.length() >2000){
+                    errorStr.append(country + "产品描述超过2000字符");
+                    errorStr.append("\n");
+                }
+                if(StringUtils.isNotBlank(errorStr.toString())){
+                    introduction.setMsg(errorStr.toString().substring(0,errorStr.toString().length()-1));
+                }
             }catch (Exception e){
                 introduction.setMsg(country + "语言翻译失败,请调试");
                 return introduction;

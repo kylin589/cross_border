@@ -29,6 +29,16 @@ public class OrderModel {
     private String shopName;
     //币种代码
     private String currencyCode;
+    //国家
+    private String country;
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
     private Long userId;
 

@@ -420,7 +420,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             orderEntity.setOrderState("已付款");
                         }
                         if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
-                            orderEntity.setCountryCode(orderModel.getProductShipAddressEntity().getShipCountry());
+                            orderEntity.setCountryCode(orderModel.getCountry());
                         }
                         orderEntity.setShopId(orderModel.getShopId());
                         orderEntity.setShopName(orderModel.getShopName());

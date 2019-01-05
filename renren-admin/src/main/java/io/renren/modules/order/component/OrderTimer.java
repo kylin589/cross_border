@@ -56,10 +56,13 @@ public class OrderTimer {
         Map map=new HashMap();
         List<AmazonGrantShopEntity> shoplist=null;
         for (AmazonGrantEntity grant : grantList) {
+            Long grantId = grant.getGrantId();
             String sellerId = grant.getMerchantId();//获得商家id
             String mwsAuthToken = grant.getGrantToken();//获得授权Token
-            shoplist=amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("region",grant.getRegion()));
+
+            shoplist=amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("region",grant.getRegion()).eq("grant_id",grant.getGrantId()));
             for(AmazonGrantShopEntity shop:shoplist){
+                String shopName = shop.getShopName();
                 map.put("sellerId",sellerId);
                 map.put("mwsAuthToken",mwsAuthToken);
                 map.put("shopname",shop.getShopName());
@@ -220,6 +223,7 @@ public class OrderTimer {
 
                                     orderModel.setAmazonOrderId(AmazonOrderId);
                                     String buytime=listOrdersResponseDtos.get(i).getOrders().get(j).getPurchaseDate();
+                                    String country=listOrdersResponseDtos.get(i).getOrders().get(j).getSalesChannel().split(".")[1].toUpperCase();
                                     buytime = buytime.replace("Z", " UTC");// UTC是本地时间
                                     SimpleDateFormat format = new SimpleDateFormat(
                                             "yyyy-MM-dd'T'HH:mm:ss.SSS Z");
@@ -233,7 +237,11 @@ public class OrderTimer {
                                     System.out.println("购买日期:"+timeStamep+"=================================");
                                     orderModel.setBuyDate(timeStamep);
                                     orderModel.setOrderStatus(listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus());
-
+                                    if(country!=null){
+                                        orderModel.setCountry(country);
+                                    }else{
+                                    orderModel.setCountry(country);
+                                    }
                                     if (product_asin != null) {
                                         orderModel.setProductAsin(product_asin);
                                     } else {
