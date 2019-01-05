@@ -1953,6 +1953,14 @@ var vm = new Vue({
                 layer.msg('厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
             }else {
                 // if(vm.)
+                // objectKeyIsEmpty(vm.proDetails.francePRE);
+                // objectKeyIsEmpty(vm.proDetails.spainPRE);
+                // objectKeyIsEmpty(vm.proDetails.germanyPRE);
+                // objectKeyIsEmpty(vm.proDetails.italyPRE);
+                // objectKeyIsEmpty(vm.proDetails.britainPRE);
+                // objectKeyIsEmpty(vm.proDetails.japanPRE);
+                objectKeyIsEmpty(vm.proDetails.chinesePRE);
+
                 var u = $('.ul1');
                 var shunx = [];
                 for(var j = 0;j<u.length;j++){
@@ -1987,27 +1995,7 @@ var vm = new Vue({
                     vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
                 })
 
-                // vm.recommendAll.forEach(function (t,i) {
-                //     vm.proDetails.variantsInfos[i].variantId = i;
-                //     vm.proDetails.variantsInfos[i].eanCode = t.code;
-                //     vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
-                //     vm.proDetails.variantsInfos[i].variantSku = t.sku;
-                //     vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
-                //     vm.proDetails.variantsInfos[i].imageUrl = (t.img).join(',');
-                // })
-
-                // vm.proDetails.variantsInfos.eanCode = vm.recommendAll.code;
-                // vm.proDetails.variantsInfos.variantAddPrice = vm.recommendAll.addPrice;
-                // vm.proDetails.variantsInfos.variantSku = vm.recommendAll.sku;
-                // vm.proDetails.variantsInfos.variantStock = vm.recommendAll.stock;
-                console.log(vm.proDetails);
-
-
-
                 layer.confirm('确定修改吗？', function(index){
-
-
-
                     var index = layer.load();
                     var index = layer.load(1); //换了种风格
                     var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
@@ -2034,6 +2022,28 @@ var vm = new Vue({
 
 
                 });
+            }
+
+            function objectKeyIsEmpty(obj) {
+                console.log(obj);
+                // let empty = null;
+                for (var aa in obj) {
+                    // if (obj.hasOwnProperty(key)) {
+                        console.log(11111);
+                        console.log(aa);
+                        console.log(obj[aa]);
+                        if (obj[aa] == '') {
+                            obj[aa] = ' '
+                            console.log(obj[aa]);
+                        }
+                        else {
+                            // empty = false;
+                            break;
+                        }
+                    // }
+                }
+                // console.log(obj);
+                // return empty;
             }
 
 
@@ -2194,14 +2204,19 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
-                        vm.proDetails.francePRE = r.introductionFra;
-                        vm.proDetails.spainPRE = r.introductionSpa;
-                        vm.proDetails.germanyPRE = r.introductionDe;
-                        vm.proDetails.italyPRE = r.introductionIt;
-                        // vm.proDetails.britainPRE = r.introductionEn;
-                        vm.proDetails.japanPRE = r.introductionJp;
-                        layer.close(index);
-                        layer.msg("翻译成功");
+                        if(r.error){
+                            layer.alert(r.error);
+                        }else {
+                            vm.proDetails.francePRE = r.introductionFra;
+                            vm.proDetails.spainPRE = r.introductionSpa;
+                            vm.proDetails.germanyPRE = r.introductionDe;
+                            vm.proDetails.italyPRE = r.introductionIt;
+                            // vm.proDetails.britainPRE = r.introductionEn;
+                            vm.proDetails.japanPRE = r.introductionJp;
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+
 
                         // vm.proAlbum = r.imageInfo;
 
