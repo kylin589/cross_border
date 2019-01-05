@@ -169,10 +169,11 @@ public class IntroductionController {
         }
         String tranStr = strBuf.toString();
         if(StringUtils.isNotBlank(tranStr)){
-            Map<String, Object> map = ZhtoEn(tranStr);
+            Querier<AbstractTranslator> querierTrans = new Querier<>();
+            querierTrans.attach(new GoogleTranslator());
+            Map<String, Object> map = ZhtoEn(querierTrans, tranStr);
             String msg = (String) map.get("msg");
             if (StringUtils.isBlank(msg)){
-                Querier<AbstractTranslator> querierTrans = (Querier<AbstractTranslator>)map.get("querierTrans");
                 IntroductionEntity introductionEn = (IntroductionEntity)map.get("introduction");
                 String tranEnStr = (String)map.get("tranEnStr");
                 IntroductionEntity introductionFra = EntoOther(querierTrans, tranEnStr,"FRA");
@@ -206,7 +207,7 @@ public class IntroductionController {
                     errorBuf.append("\n");
                 }
                 String error = "";
-                if(StringUtils.isNotBlank(strBuf.toString())){
+                if(StringUtils.isNotBlank(errorBuf.toString())){
                     error = strBuf.toString().substring(0,strBuf.toString().length()-1);
                 }
                 return R.ok().put("introductionEn",introductionEn)
@@ -270,13 +271,37 @@ public class IntroductionController {
         IntroductionEntity introductionIt = EntoOther(querierTrans, tranStr,"IT");
         IntroductionEntity introductionSpa = EntoOther(querierTrans, tranStr,"SPA");
         IntroductionEntity introductionJp = EntoOther(querierTrans, tranStr,"JP");
+        StringBuffer errorBuf = new StringBuffer();
+        if(StringUtils.isNotBlank(introductionFra.getMsg())){
+            errorBuf.append(introductionFra.getMsg());
+            errorBuf.append("\n");
+        }
+        if(StringUtils.isNotBlank(introductionDe.getMsg())){
+            errorBuf.append(introductionDe.getMsg());
+            errorBuf.append("\n");
+        }
+        if(StringUtils.isNotBlank(introductionIt.getMsg())){
+            errorBuf.append(introductionIt.getMsg());
+            errorBuf.append("\n");
+        }
+        if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+            errorBuf.append(introductionSpa.getMsg());
+            errorBuf.append("\n");
+        }
+        if(StringUtils.isNotBlank(introductionJp.getMsg())){
+            errorBuf.append(introductionJp.getMsg());
+            errorBuf.append("\n");
+        }
+        String error = "";
+        if(StringUtils.isNotBlank(errorBuf.toString())){
+            error = strBuf.toString().substring(0,strBuf.toString().length()-1);
+        }
         return R.ok().put("introductionFra",introductionFra)
                 .put("introductionDe",introductionDe)
                 .put("introductionIt",introductionIt)
                 .put("introductionSpa",introductionSpa)
                 .put("introductionJp",introductionJp)
-                .put("error",introductionFra.getMsg() + introductionDe.getMsg()
-                        + introductionIt.getMsg() + introductionSpa.getMsg() + introductionJp.getMsg());
+                .put("error",error);
 //        List<IntroductionEntity> list = new ArrayList<>();
 //        list.add(introductionEn);
 //        list.add(introductionFra);
@@ -294,13 +319,11 @@ public class IntroductionController {
      * @auther: wdh
      * @date: 2018/11/5 16:16
      */
-    private Map<String, Object> ZhtoEn(String tranStr){
+    private Map<String, Object> ZhtoEn(Querier<AbstractTranslator> querierTrans, String tranStr){
         Map<String, Object> map = new HashMap<String, Object>();
-        Querier<AbstractTranslator> querierTrans = new Querier<>();
-        querierTrans.setParams(LANG.ZH, LANG.EN, tranStr);
-        querierTrans.attach(new GoogleTranslator());
         IntroductionEntity introductionEn = new IntroductionEntity();
         //翻译
+        querierTrans.setParams(LANG.ZH, LANG.EN, tranStr);
         List<String> resultList = querierTrans.execute();
         if (resultList.get(0) != null &&resultList.get(0) != ""){
 
