@@ -223,7 +223,8 @@ public class OrderTimer {
 
                                     orderModel.setAmazonOrderId(AmazonOrderId);
                                     String buytime=listOrdersResponseDtos.get(i).getOrders().get(j).getPurchaseDate();
-                                    String country=listOrdersResponseDtos.get(i).getOrders().get(j).getSalesChannel().split(".")[1].toUpperCase();
+                                    String countrys=listOrdersResponseDtos.get(i).getOrders().get(j).getSalesChannel();
+                                    String country = countrys.substring(7,countrys.length()).toUpperCase();
                                     buytime = buytime.replace("Z", " UTC");// UTC是本地时间
                                     SimpleDateFormat format = new SimpleDateFormat(
                                             "yyyy-MM-dd'T'HH:mm:ss.SSS Z");
