@@ -7,7 +7,6 @@ import com.swjtu.trans.AbstractTranslator;
 import com.swjtu.trans.impl.GoogleTranslator;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
-import io.renren.common.validator.ValidatorUtils;
 
 import io.renren.modules.product.dto.BatchModifyDto;
 import io.renren.modules.product.entity.*;
@@ -194,12 +193,14 @@ public class ProductsController extends AbstractController {
      * @auther zjr
      * @date 2018-11-7 11:23
      */
-    @RequestMapping("/generateSKU")
+   /*
+   @RequestMapping("/generateSKU")
     public R generateSKU() {
 
         String SKU = null;
         return R.ok().put("SKU", SKU);
     }
+    */
 
     /**
      * @return R里包括SKU结果。
@@ -236,8 +237,11 @@ public class ProductsController extends AbstractController {
         SysUserEntity user = getUser();
         String enName = user.getEnName();
         String enBrand = user.getEnBrand();
-        String SKU = companySku+"-"+enName + "-" + enBrand + "-" + productsEntity.getProductId();
+        String SKU = companySku + "-" + enName + "-" + enBrand + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
+        //生成库存
+        int IStock = (int) (200 + Math.random() * (300 - 200 + 1));
+        productsEntity.setStock(new BigDecimal(IStock));
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
@@ -455,7 +459,7 @@ public class ProductsController extends AbstractController {
             //通过前台传入的三级分类id获取一个一二三级的字符串id，以逗号拼接的
             Long categoryThreeId = batchModifyDto.getCategoryThreeId();
             if (categoryThreeId != null) {
-                String ids = categoryService.queryParentByChildIdAndCategory(categoryThreeId,productsEntity);
+                String ids = categoryService.queryParentByChildIdAndCategory(categoryThreeId, productsEntity);
                 String[] id = ids.split(",");
                 productsEntity.setCategoryOneId(Long.parseLong(id[0]));
                 productsEntity.setCategoryTwoId(Long.parseLong(id[1]));
@@ -482,39 +486,39 @@ public class ProductsController extends AbstractController {
             //描述后加
             String productDescriptionH = batchModifyDto.getProductDescriptionH();
             StringBuffer strBuf = new StringBuffer();
-            if(StringUtils.isNotBlank(productTitleQ)){
+            if (StringUtils.isNotBlank(productTitleQ)) {
                 strBuf.append(productTitleQ);
                 strBuf.append(" ===== ");
-            }else{
+            } else {
                 strBuf.append(" ===== ");
             }
-            if(StringUtils.isNotBlank(productTitleH)){
+            if (StringUtils.isNotBlank(productTitleH)) {
                 strBuf.append(productTitleH);
                 strBuf.append(" ===== ");
-            }else{
+            } else {
                 strBuf.append("  ===== ");
             }
-            if(StringUtils.isNotBlank(keyWord)){
+            if (StringUtils.isNotBlank(keyWord)) {
                 strBuf.append(keyWord);
                 strBuf.append(" ===== ");
-            }else{
+            } else {
                 strBuf.append("  ===== ");
             }
-            if(StringUtils.isNotBlank(keyPoints)){
+            if (StringUtils.isNotBlank(keyPoints)) {
                 strBuf.append(keyPoints);
                 strBuf.append(" ===== ");
-            }else{
+            } else {
                 strBuf.append("  ===== ");
             }
-            if(StringUtils.isNotBlank(productDescriptionQ)){
+            if (StringUtils.isNotBlank(productDescriptionQ)) {
                 strBuf.append(productDescriptionQ);
                 strBuf.append(" ===== ");
-            }else{
+            } else {
                 strBuf.append("  ===== ");
             }
-            if(StringUtils.isNotBlank(productDescriptionH)){
+            if (StringUtils.isNotBlank(productDescriptionH)) {
                 strBuf.append(productDescriptionH);
-            }else{
+            } else {
                 strBuf.append(" ");
             }
             String translate = strBuf.toString();
@@ -522,23 +526,23 @@ public class ProductsController extends AbstractController {
             querierTrans.attach(new GoogleTranslator());
             //翻译标识
             int[] translates = batchModifyDto.getTranslates();
-            if(translates!= null && translates.length >0){
-                for(int q = 0; q < translates.length; q++){
-                    switch (q){
+            if (translates != null && translates.length > 0) {
+                for (int q = 0; q < translates.length; q++) {
+                    switch (q) {
                         case 0:
                             IntroductionEntity enIntroduction = introductionService.selectById(productsEntity.getBritainIntroduction());
                             enIntroduction.setCountry("EN");
-                            updateProductTranslate(translate,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),enIntroduction);
+                            updateProductTranslate(translate, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), enIntroduction);
                             break;
                         case 1:
                             IntroductionEntity fraIntroduction = introductionService.selectById(productsEntity.getFranceIntroduction());
                             fraIntroduction.setCountry("FRA");
                             querierTrans.setParams(LANG.EN, LANG.FRA, translate);
                             List<String> resultList1 = querierTrans.execute();
-                            if(resultList1 != null && resultList1.size() > 0){
-                                if (resultList1.get(0) != null &&resultList1.get(0) != ""){
+                            if (resultList1 != null && resultList1.size() > 0) {
+                                if (resultList1.get(0) != null && resultList1.get(0) != "") {
                                     String result = resultList1.get(0);
-                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),fraIntroduction);
+                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), fraIntroduction);
                                 }
                             }
                             break;
@@ -547,10 +551,10 @@ public class ProductsController extends AbstractController {
                             itIntroduction.setCountry("IT");
                             querierTrans.setParams(LANG.EN, LANG.IT, translate);
                             List<String> resultList2 = querierTrans.execute();
-                            if(resultList2 != null && resultList2.size() > 0){
-                                if (resultList2.get(0) != null &&resultList2.get(0) != ""){
+                            if (resultList2 != null && resultList2.size() > 0) {
+                                if (resultList2.get(0) != null && resultList2.get(0) != "") {
                                     String result = resultList2.get(0);
-                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),itIntroduction);
+                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), itIntroduction);
                                 }
                             }
                             break;
@@ -559,23 +563,23 @@ public class ProductsController extends AbstractController {
                             spaIntroduction.setCountry("SPA");
                             querierTrans.setParams(LANG.EN, LANG.SPA, translate);
                             List<String> resultList3 = querierTrans.execute();
-                            if(resultList3 != null && resultList3.size() > 0){
-                                if (resultList3.get(0) != null &&resultList3.get(0) != ""){
+                            if (resultList3 != null && resultList3.size() > 0) {
+                                if (resultList3.get(0) != null && resultList3.get(0) != "") {
                                     String result = resultList3.get(0);
-                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),spaIntroduction);
+                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), spaIntroduction);
                                 }
                             }
-                            updateProductTranslate(translate,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),spaIntroduction);
+                            updateProductTranslate(translate, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), spaIntroduction);
                             break;
                         case 4:
                             IntroductionEntity deIntroduction = introductionService.selectById(productsEntity.getGermanyIntroduction());
                             deIntroduction.setCountry("DE");
                             querierTrans.setParams(LANG.EN, LANG.DE, translate);
                             List<String> resultList4 = querierTrans.execute();
-                            if(resultList4 != null && resultList4.size() > 0){
-                                if (resultList4.get(0) != null &&resultList4.get(0) != ""){
+                            if (resultList4 != null && resultList4.size() > 0) {
+                                if (resultList4.get(0) != null && resultList4.get(0) != "") {
                                     String result = resultList4.get(0);
-                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),deIntroduction);
+                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), deIntroduction);
                                 }
                             }
                             break;
@@ -584,10 +588,10 @@ public class ProductsController extends AbstractController {
                             jpIntroduction.setCountry("JP");
                             querierTrans.setParams(LANG.EN, LANG.JP, translate);
                             List<String> resultList5 = querierTrans.execute();
-                            if(resultList5 != null && resultList5.size() > 0){
-                                if (resultList5.get(0) != null &&resultList5.get(0) != ""){
+                            if (resultList5 != null && resultList5.size() > 0) {
+                                if (resultList5.get(0) != null && resultList5.get(0) != "") {
                                     String result = resultList5.get(0);
-                                    updateProductTranslate(result,batchModifyDto.getKeywordsadd(),batchModifyDto.getKeyPointsadd(),jpIntroduction);
+                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), jpIntroduction);
                                 }
                             }
                             break;
@@ -606,7 +610,7 @@ public class ProductsController extends AbstractController {
     /**
      * 批量修改——语言
      */
-    private void updateProductTranslate(String combination, boolean keywordsadd, boolean keyPointsadd, IntroductionEntity introductionEntity ){
+    private void updateProductTranslate(String combination, boolean keywordsadd, boolean keyPointsadd, IntroductionEntity introductionEntity) {
         String[] combinations = combination.split("=====");
         String productTitleQ = TranslateUtils.toUpperCase(combinations[0].trim());
         String productTitleH = TranslateUtils.toUpperCase(combinations[1].trim());
@@ -617,13 +621,13 @@ public class ProductsController extends AbstractController {
         String productTitle = introductionEntity.getProductTitle().trim();
         if (StringUtils.isNotEmpty(productTitleQ) && StringUtils.isNotEmpty(productTitleH)) {
             //判断标题前加和后加不为空，进行标题拼接
-            introductionEntity.setProductTitle(productTitleQ + " " + productTitle + " " +  productTitleH);
+            introductionEntity.setProductTitle(productTitleQ + " " + productTitle + " " + productTitleH);
         } else if (StringUtils.isNotEmpty(productTitleQ) && StringUtils.isEmpty(productTitleH)) {
             //判断标题前加不为空，标题后加为空。进行拼接
             introductionEntity.setProductTitle(productTitleQ.trim() + " " + productTitle);
         } else if (StringUtils.isEmpty(productTitleQ) && StringUtils.isNotEmpty(productTitleH)) {
             //判断标题前加为空，标题后加不为空。进行拼接
-            introductionEntity.setProductTitle(productTitle + " " +  productTitleH);
+            introductionEntity.setProductTitle(productTitle + " " + productTitleH);
         } else {
             //标题前加和标题后加都为空，标题不变
             introductionEntity.setProductTitle(productTitle);
@@ -631,7 +635,7 @@ public class ProductsController extends AbstractController {
 
         //获取原来的买点说明
         String keyPointsJ = introductionEntity.getKeyPoints();
-        if (keyPointsadd==true) {
+        if (keyPointsadd == true) {
             //追加不为空，进行追加
             introductionEntity.setKeyPoints(keyPointsJ + keyPoints);
         } else {
@@ -640,7 +644,7 @@ public class ProductsController extends AbstractController {
         }
         //获取原来的关键字
         String keyWordJ = introductionEntity.getKeyWord();
-        if (keywordsadd==true) {
+        if (keywordsadd == true) {
             //追加不为空，进行追加
             String keyWordX = keyWordJ + keyWord;
             introductionEntity.setKeyWord(keyWordX);
@@ -708,8 +712,11 @@ public class ProductsController extends AbstractController {
         SysUserEntity user = getUser();
         String enName = user.getEnName();
         String enBrand = user.getEnBrand();
-        String SKU = companySku+"-"+enName + "-" + enBrand + "-" + productsEntity.getProductId();
+        String SKU = companySku + "-" + enName + "-" + enBrand + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
+        //生成库存
+        int IStock = (int) (200 + Math.random() * (300 - 200 + 1));
+        productsEntity.setStock(new BigDecimal(IStock));
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
@@ -731,16 +738,16 @@ public class ProductsController extends AbstractController {
         productsEntity.setCategoryTwoId(Long.parseLong(ids[1]));*/
         //根据主图片的id查出主图片的url
         Long mainImageId = productsEntity.getMainImageId();
-        if (mainImageId!=null){
+        if (mainImageId != null) {
             ImageAddressEntity imageAddressEntity = imageAddressService.selectById(mainImageId);
             String imageUrl = imageAddressEntity.getImageUrl();
             productsEntity.setMainImageUrl(imageUrl);
         }
-        if(productsEntity.getBritainIntroduction() != null){
+        if (productsEntity.getBritainIntroduction() != null) {
             IntroductionEntity introductionEntity = introductionService.selectById(productsEntity.getBritainIntroduction());
             productsEntity.setProductTitle(introductionEntity.getProductTitle());
         }
-        if(productsEntity.getChineseIntroduction() != null){
+        if (productsEntity.getChineseIntroduction() != null) {
             IntroductionEntity introductionEntity = introductionService.selectById(productsEntity.getChineseIntroduction());
             productsEntity.setProductTitle(introductionEntity.getProductTitle());
         }
@@ -763,8 +770,8 @@ public class ProductsController extends AbstractController {
     public R cancelOriginal(Long productId) {
         List<ImageAddressEntity> ImageAddressEntitys = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId));
         if (ImageAddressEntitys != null && ImageAddressEntitys.size() != 0) {
-                imageAddressService.delete(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId));
-                }
+            imageAddressService.delete(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId));
+        }
         productsService.deleteById(productId);
         return R.ok();
     }
@@ -901,7 +908,6 @@ public class ProductsController extends AbstractController {
         }
         //英文介绍
         IntroductionEntity britainPRE = products.getBritainPRE();
-        System.out.println("=========================" + britainPRE);
         if (britainPRE != null) {
             if (britainPRE.getIntroductionId() != null) {
                 introductionService.updateById(britainPRE);
@@ -911,10 +917,10 @@ public class ProductsController extends AbstractController {
             }
         }
         //产品标题
-        if (chinesePRE.getProductTitle() != null) {
-            products.setProductTitle(chinesePRE.getProductTitle());
-        } else if (britainPRE.getProductTitle() != null) {
-            products.setProductTitle(britainPRE.getProductTitle());
+        if (StringUtils.isNotBlank(chinesePRE.getProductTitle().trim())) {
+            products.setProductTitle(chinesePRE.getProductTitle().trim());
+        } else if (StringUtils.isNotBlank(britainPRE.getProductTitle().trim())) {
+            products.setProductTitle(britainPRE.getProductTitle().trim());
         }
         //法语介绍
         IntroductionEntity francePRE = products.getFrancePRE();
@@ -991,42 +997,42 @@ public class ProductsController extends AbstractController {
         products.setDeptId(this.getDeptId());
         //获得修正
         String correction = products.getCorrection();
-        StringBuffer correctionLater= new StringBuffer();
+        StringBuffer correctionLater = new StringBuffer();
         String productSku = products.getProductSku();
 
         correctionLater.append(productSku);
         //判断修正是否为空
-        if(correction!=""&&StringUtils.isNotBlank(correction)){
+        if (correction != "" && StringUtils.isNotBlank(correction)) {
             products.setCorrection(correction);
             correctionLater.append("-");
             correctionLater.append(correction);
         }
-        String correctionLaterString=correctionLater.toString();
+        String correctionLaterString = correctionLater.toString();
         //插入变体信息
         List<VariantsInfoEntity> variantsInfosList = products.getVariantsInfos();
         if (variantsInfosList != null && variantsInfosList.size() != 0) {
             int size = variantsInfosList.size();
-            EanUpcEntity eanUpcEntity =new EanUpcEntity();
+            EanUpcEntity eanUpcEntity = new EanUpcEntity();
             eanUpcEntity.setState(0);
             eanUpcEntity.setType("EAN");
             eanUpcEntity.setSize(size);
             //查出未使用的EAN码，修改为使用
-            List<EanUpcEntity> eanUpcEntities =eanUpcService.selectByLimit(eanUpcEntity);
-            if (eanUpcEntities!=null&&eanUpcEntities.size()!=0&&eanUpcEntities.size()==variantsInfosList.size()){
-                for (int i = 0; i <eanUpcEntities.size() ; i++) {
+            List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanUpcEntity);
+            if (eanUpcEntities != null && eanUpcEntities.size() != 0 && eanUpcEntities.size() == variantsInfosList.size()) {
+                for (int i = 0; i < eanUpcEntities.size(); i++) {
                     eanUpcEntities.get(i).setState(1);
                     eanUpcEntities.get(i).setProductId(products.getProductId());
                     eanUpcService.updateById(eanUpcEntities.get(i));
                 }
-            }else {
+            } else {
                 return R.error("EAN码数量不足，尽快添加");
             }
 
-            for (int i = 0; i <variantsInfosList.size() ; i++) {
+            for (int i = 0; i < variantsInfosList.size(); i++) {
                 String code = eanUpcEntities.get(i).getCode();
                 VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
                 variantsInfoEntity.setEanCode(code);
-                variantsInfoEntity.setVariantSku(correctionLaterString+"-"+code);
+                variantsInfoEntity.setVariantSku(correctionLaterString + "-" + code);
                 variantsInfoEntity.setProductId(products.getProductId());
             }
             variantsInfoService.insertBatch(variantsInfosList);
@@ -1170,7 +1176,6 @@ public class ProductsController extends AbstractController {
         }
         //英文介绍
         IntroductionEntity britainPRE = products.getBritainPRE();
-        System.out.println("=========================" + britainPRE);
         if (britainPRE != null) {
             if (britainPRE.getIntroductionId() != null) {
                 introductionService.updateById(britainPRE);
@@ -1180,10 +1185,10 @@ public class ProductsController extends AbstractController {
             }
         }
         //产品标题
-        if (britainPRE.getProductTitle() != null) {
-            products.setProductTitle(britainPRE.getProductTitle());
-        } else if (chinesePRE.getProductTitle() != null) {
-            products.setProductTitle(chinesePRE.getProductTitle());
+        if (StringUtils.isNotBlank(britainPRE.getProductTitle().trim())) {
+            products.setProductTitle(britainPRE.getProductTitle().trim());
+        } else if (StringUtils.isNotBlank(chinesePRE.getProductTitle().trim())) {
+            products.setProductTitle(chinesePRE.getProductTitle().trim());
         }
         //法语介绍
         IntroductionEntity francePRE = products.getFrancePRE();
@@ -1257,41 +1262,41 @@ public class ProductsController extends AbstractController {
         variantsInfoService.delete(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId));
         //获得修正
         String correction = products.getCorrection();
-        StringBuffer correctionLater= new StringBuffer();
+        StringBuffer correctionLater = new StringBuffer();
         String productSku = products.getProductSku();
 
         correctionLater.append(productSku);
         //判断修正是否为空
-        if(correction!=""&&StringUtils.isNotBlank(correction)){
+        if (correction != "" && StringUtils.isNotBlank(correction)) {
             products.setCorrection(correction);
             correctionLater.append("-");
             correctionLater.append(correction);
         }
-        String correctionLaterString=correctionLater.toString();
+        String correctionLaterString = correctionLater.toString();
         //插入变体信息
         List<VariantsInfoEntity> variantsInfosList = products.getVariantsInfos();
         if (variantsInfosList != null && variantsInfosList.size() != 0) {
             int size = variantsInfosList.size();
-            EanUpcEntity eanUpcEntity =new EanUpcEntity();
+            EanUpcEntity eanUpcEntity = new EanUpcEntity();
             eanUpcEntity.setState(0);
             eanUpcEntity.setType("EAN");
             eanUpcEntity.setSize(size);
             //查出未使用的EAN码，修改为使用
-            List<EanUpcEntity> eanUpcEntities =eanUpcService.selectByLimit(eanUpcEntity);
-            if (eanUpcEntities != null&&eanUpcEntities.size() > 0 && eanUpcEntities.size() == variantsInfosList.size()) {
+            List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanUpcEntity);
+            if (eanUpcEntities != null && eanUpcEntities.size() > 0 && eanUpcEntities.size() == variantsInfosList.size()) {
                 for (int i = 0; i < eanUpcEntities.size(); i++) {
                     eanUpcEntities.get(i).setState(1);
                     eanUpcEntities.get(i).setProductId(products.getProductId());
                     eanUpcService.updateById(eanUpcEntities.get(i));
                 }
-            }else {
+            } else {
                 return R.error("EAN码数量不足，尽快添加");
             }
-            for (int i = 0; i <variantsInfosList.size() ; i++) {
+            for (int i = 0; i < variantsInfosList.size(); i++) {
                 String code = eanUpcEntities.get(i).getCode();
                 VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
                 variantsInfoEntity.setEanCode(code);
-                variantsInfoEntity.setVariantSku(correctionLaterString+"-"+i);
+                variantsInfoEntity.setVariantSku(correctionLaterString + "-" + i);
                 variantsInfoEntity.setProductId(products.getProductId());
             }
             variantsInfoService.insertBatch(variantsInfosList);
@@ -2004,8 +2009,8 @@ public class ProductsController extends AbstractController {
     public Double calculatedWeight(Double productLength, Double productWide, Double productHeight) {
         //体积重量按每6000立方厘米折合1公斤计算,体积重量的计算公式为:体积重量=(长X宽X高)/6000
         Double weight = (productHeight * productLength * productWide) / 6000;
-        BigDecimal b=   new BigDecimal(weight);
-        double weightLater=b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+        BigDecimal b = new BigDecimal(weight);
+        double weightLater = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         return weightLater;
     }
 
@@ -2016,7 +2021,7 @@ public class ProductsController extends AbstractController {
             FreightPriceEntity freightPriceEntity = freightPriceService.selectOne(new EntityWrapper<FreightPriceEntity>().eq("type", "小包").eq("country_code", countryCode));
             BigDecimal bigDecimal = new BigDecimal(weight);
             //计算出运费价格
-            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP);
             freightCostEntity.setFreight(freightPrice);
             freightCostEntity.setType("小包");
             return freightCostEntity;
@@ -2025,7 +2030,7 @@ public class ProductsController extends AbstractController {
             FreightPriceEntity freightPriceEntity = freightPriceService.selectOne(new EntityWrapper<FreightPriceEntity>().eq("type", "大包").eq("country_code", countryCode));
             BigDecimal bigDecimal = new BigDecimal(weight);
             //计算出运费价格
-            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal freightPrice = bigDecimal.multiply(freightPriceEntity.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP);
             freightCostEntity.setFreight(freightPrice);
             freightCostEntity.setType("大包");
             return freightCostEntity;

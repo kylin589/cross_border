@@ -62,6 +62,7 @@ window.onload = function () {
 var vm = new Vue({
     el: '#step',
     data: {
+        isAllSel:false,
         // 产品列表
         proList: [],
         // 当前页码
@@ -850,6 +851,10 @@ var vm = new Vue({
 
             }
         },
+        // 全选
+        allSel:function () {
+
+        },
         // 彻底删除
         delCheDiFunc:function () {
             vm.getProIDs();
@@ -870,6 +875,9 @@ var vm = new Vue({
                             console.log(r);
                             if (r.code === 0) {
                                 layer.msg('操作成功');
+
+                                // $('.radiobox').attr("data-checked") == 'true'
+
                                 vm.getPage();
 
                             } else {
