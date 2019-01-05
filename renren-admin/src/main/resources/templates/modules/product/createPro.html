@@ -382,19 +382,29 @@
                     <h4>产品介绍</h4>
                 </div>
                 <div class="pro_inf chengben">
-                    <input type="button" value="翻译" @click="fanyiFunc">
+
                     <div class="layui-tab">
                         <ul class="layui-tab-title">
-                            <li class="layui-this">英语</li>
+                            <li class="layui-this">中文</li>
+                            <li>英语</li>
                             <li>法语</li>
                             <li>意大利语</li>
                             <li>西班牙语</li>
                             <li>德语</li>
                             <li>日语</li>
-                            <li>中文</li>
-                        </ul>
 
+                        </ul>
                         <div class="layui-tab-content active">
+                            <input type="button" value="一键翻译" @click="fanyiFunc1">
+                            <br><br>
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.chinesePRE.productTitle">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.chinesePRE.keyWord">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.chinesePRE.keyPoints">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.chinesePRE.productDescription">建议填写</textarea></span><br>
+                        </div>
+                        <div class="layui-tab-content">
+                            <input type="button" value="一键翻译" @click="fanyiFunc">
+                            <br><br>
                             <span><label for="">产品标题：</label><textarea v-model="proDetails.britainPRE.productTitle">建议填写</textarea></span><br>
                             <span><label for="">关键字：</label><textarea v-model="proDetails.britainPRE.keyWord">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.britainPRE.keyPoints">建议填写</textarea></span><br>
@@ -430,12 +440,7 @@
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints">建议填写</textarea></span><br>
                             <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription">建议填写</textarea></span><br>
                         </div>
-                        <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.chinesePRE.productTitle">建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.chinesePRE.keyWord">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.chinesePRE.keyPoints">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.chinesePRE.productDescription">建议填写</textarea></span><br>
-                        </div>
+
                     </div>
 
                 </div>

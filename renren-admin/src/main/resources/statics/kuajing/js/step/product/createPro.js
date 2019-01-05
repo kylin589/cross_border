@@ -2307,14 +2307,67 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
-                        vm.proDetails.francePRE = r.introductionFra;
-                        vm.proDetails.spainPRE = r.introductionSpa;
-                        vm.proDetails.germanyPRE = r.introductionDe;
-                        vm.proDetails.italyPRE = r.introductionIt;
-                        // vm.proDetails.britainPRE = r.introductionEn;
-                        vm.proDetails.japanPRE = r.introductionJp;
+                        if(r.error){
+                            layer.msg(r.error);
+                            layer.close(index);
+                        }else {
+                            vm.proDetails.francePRE = r.introductionFra;
+                            vm.proDetails.spainPRE = r.introductionSpa;
+                            vm.proDetails.germanyPRE = r.introductionDe;
+                            vm.proDetails.italyPRE = r.introductionIt;
+                            // vm.proDetails.britainPRE = r.introductionEn;
+                            vm.proDetails.japanPRE = r.introductionJp;
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+
+
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
                         layer.close(index);
-                        layer.msg("翻译成功");
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 翻译
+        fanyiFunc1:function () {
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/ZhtoEn',
+                type: 'post',
+                data: JSON.stringify({
+                    'productTitle': vm.proDetails.britainPRE.productTitle,
+                    'keyWord':vm.proDetails.britainPRE.keyWord,
+                    'keyPoints':vm.proDetails.britainPRE.keyPoints,
+                    'productDescription':vm.proDetails.britainPRE.productDescription,
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        if(r.error){
+                            layer.msg(r.error);
+                            layer.close(index);
+                        }else {
+                            vm.proDetails.francePRE = r.introductionFra;
+                            vm.proDetails.spainPRE = r.introductionSpa;
+                            vm.proDetails.germanyPRE = r.introductionDe;
+                            vm.proDetails.italyPRE = r.introductionIt;
+                            vm.proDetails.britainPRE = r.introductionEn;
+                            vm.proDetails.japanPRE = r.introductionJp;
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+
 
                         // vm.proAlbum = r.imageInfo;
 

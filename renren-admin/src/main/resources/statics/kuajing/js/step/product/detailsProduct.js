@@ -1946,20 +1946,47 @@ var vm = new Vue({
         },
         // 修改保存
         savePro:function () {
+            // var arr = {
+            //     'a':'aa',
+            //     'b':'bb',
+            //     'c':'cc'
+            // }
 
+            // objectKeyIsEmpty(arr);
 
             // if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == '' || vm.proDetails.productWeight == ''){
             if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == '' || JSON.stringify(vm.proDetails.domesticFreight) == '' || JSON.stringify(vm.proDetails.productWeight) == '' || JSON.stringify(vm.proDetails.productLength) == '' || JSON.stringify(vm.proDetails.productWide) == '' || JSON.stringify(vm.proDetails.productHeight) == ''){
                 layer.msg('厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
             }else {
                 // if(vm.)
-                // objectKeyIsEmpty(vm.proDetails.francePRE);
-                // objectKeyIsEmpty(vm.proDetails.spainPRE);
-                // objectKeyIsEmpty(vm.proDetails.germanyPRE);
-                // objectKeyIsEmpty(vm.proDetails.italyPRE);
-                // objectKeyIsEmpty(vm.proDetails.britainPRE);
-                // objectKeyIsEmpty(vm.proDetails.japanPRE);
+                objectKeyIsEmpty(vm.proDetails.francePRE);
+                objectKeyIsEmpty(vm.proDetails.spainPRE);
+                objectKeyIsEmpty(vm.proDetails.germanyPRE);
+                objectKeyIsEmpty(vm.proDetails.italyPRE);
+                objectKeyIsEmpty(vm.proDetails.britainPRE);
+                objectKeyIsEmpty(vm.proDetails.japanPRE);
                 objectKeyIsEmpty(vm.proDetails.chinesePRE);
+
+                if(vm.proDetails.manufacturerNumber == ''){
+                    vm.proDetails.manufacturerNumber = ' ';
+                }
+                if(vm.proDetails.productSku == ''){
+                    vm.proDetails.productSku = ' ';
+                }
+                if(vm.proDetails.productSource == ''){
+                    vm.proDetails.productSource = ' ';
+                }
+                if(vm.proDetails.sellerLink == ''){
+                    vm.proDetails.sellerLink = ' ';
+                }
+                if(vm.proDetails.productRemark == ''){
+                    vm.proDetails.productRemark = ' ';
+                }
+                if(vm.proDetails.productAbbreviations == ''){
+                    vm.proDetails.productAbbreviations = ' ';
+                }
+
+
 
                 var u = $('.ul1');
                 var shunx = [];
@@ -2025,22 +2052,13 @@ var vm = new Vue({
             }
 
             function objectKeyIsEmpty(obj) {
-                console.log(obj);
+                // console.log(obj);
                 // let empty = null;
                 for (var aa in obj) {
-                    // if (obj.hasOwnProperty(key)) {
-                        console.log(11111);
-                        console.log(aa);
+                    if (obj[aa] == '') {
+                        obj[aa] = ' '
                         console.log(obj[aa]);
-                        if (obj[aa] == '') {
-                            obj[aa] = ' '
-                            console.log(obj[aa]);
-                        }
-                        else {
-                            // empty = false;
-                            break;
-                        }
-                    // }
+                    }
                 }
                 // console.log(obj);
                 // return empty;
@@ -2183,10 +2201,7 @@ var vm = new Vue({
 
         // 翻译
         fanyiFunc:function () {
-            console.log(vm.proDetails.britainPRE.productTitle)
-            console.log(vm.proDetails.britainPRE.keyWord)
-            console.log(vm.proDetails.britainPRE.keyPoints)
-            console.log(vm.proDetails.britainPRE.productDescription);
+
             var index = layer.load();
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 100*1000});
@@ -2205,13 +2220,61 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         if(r.error){
-                            layer.alert(r.error);
+                            layer.msg(r.error);
+                            layer.close(index);
                         }else {
                             vm.proDetails.francePRE = r.introductionFra;
                             vm.proDetails.spainPRE = r.introductionSpa;
                             vm.proDetails.germanyPRE = r.introductionDe;
                             vm.proDetails.italyPRE = r.introductionIt;
                             // vm.proDetails.britainPRE = r.introductionEn;
+                            vm.proDetails.japanPRE = r.introductionJp;
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+
+
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.close(index);
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 翻译
+        fanyiFunc1:function () {
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/ZhtoEn',
+                type: 'post',
+                data: JSON.stringify({
+                    'productTitle': vm.proDetails.britainPRE.productTitle,
+                    'keyWord':vm.proDetails.britainPRE.keyWord,
+                    'keyPoints':vm.proDetails.britainPRE.keyPoints,
+                    'productDescription':vm.proDetails.britainPRE.productDescription,
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        if(r.error){
+                            layer.msg(r.error);
+                            layer.close(index);
+                        }else {
+                            vm.proDetails.francePRE = r.introductionFra;
+                            vm.proDetails.spainPRE = r.introductionSpa;
+                            vm.proDetails.germanyPRE = r.introductionDe;
+                            vm.proDetails.italyPRE = r.introductionIt;
+                            vm.proDetails.britainPRE = r.introductionEn;
                             vm.proDetails.japanPRE = r.introductionJp;
                             layer.close(index);
                             layer.msg("翻译成功");
