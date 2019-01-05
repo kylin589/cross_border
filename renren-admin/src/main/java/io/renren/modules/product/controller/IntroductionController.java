@@ -174,14 +174,42 @@ public class IntroductionController {
                 IntroductionEntity introductionIt = EntoOther(querierTrans, tranEnStr,"IT");
                 IntroductionEntity introductionSpa = EntoOther(querierTrans, tranEnStr,"SPA");
                 IntroductionEntity introductionJp = EntoOther(querierTrans, tranEnStr,"JP");
+                StringBuffer errorBuf = new StringBuffer();
+                if(StringUtils.isNotBlank(introductionEn.getMsg())){
+                    errorBuf.append(introductionEn.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionFra.getMsg())){
+                    errorBuf.append(introductionFra.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionDe.getMsg())){
+                    errorBuf.append(introductionDe.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionIt.getMsg())){
+                    errorBuf.append(introductionIt.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+                    errorBuf.append(introductionSpa.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionJp.getMsg())){
+                    errorBuf.append(introductionJp.getMsg());
+                    errorBuf.append("\n");
+                }
+                String error = "";
+                if(StringUtils.isNotBlank(strBuf.toString())){
+                    error = strBuf.toString().substring(0,strBuf.toString().length()-1);
+                }
                 return R.ok().put("introductionEn",introductionEn)
                         .put("introductionFra",introductionFra)
                         .put("introductionDe",introductionDe)
                         .put("introductionIt",introductionIt)
                         .put("introductionSpa",introductionSpa)
                         .put("introductionJp",introductionJp)
-                        .put("error",introductionEn.getMsg() + introductionFra.getMsg() + introductionDe.getMsg()
-                                + introductionIt.getMsg() + introductionSpa.getMsg() + introductionJp.getMsg());
+                        .put("error",error);
             }else{
                 return R.error(msg);
             }
