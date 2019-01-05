@@ -56,7 +56,6 @@ public class GenerateProductXML {
      * @param merchantIdentifierText 卖家记号
      * @param productsList           产品列表
      * @param countryCode            国家代码
-     * @param categoryNodeId         分类Id
      * @return XML路径
      * @author zjr
      */
@@ -391,7 +390,7 @@ public class GenerateProductXML {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (FileUtil.judeFileExists(filePath) == false) {
+        if (!FileUtil.judeFileExists(filePath)) {
             return null;
         }
         return filePath;
@@ -473,7 +472,7 @@ public class GenerateProductXML {
 
             // 变体图片
             List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productsEntity.getProductId()).orderBy(true, "variant_sort", true));
-            if (variantsInfoEntityList != null || variantsInfoEntityList.size() != 0) {
+            if (variantsInfoEntityList.size() != 0) {
                 for (int j = 0; j < variantsInfoEntityList.size(); j++) {
                     VariantsInfoEntity variantsInfoEntity = variantsInfoEntityList.get(j);
                     List<String> viImageUrls = new ArrayList<>();
@@ -523,7 +522,7 @@ public class GenerateProductXML {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (FileUtil.judeFileExists(filePath) == false) {
+        if (!FileUtil.judeFileExists(filePath)) {
             return null;
         }
         return filePath;
@@ -570,7 +569,7 @@ public class GenerateProductXML {
             messageId++;
 
             List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productsEntity.getProductId()).orderBy(true, "variant_sort", true));
-            if (variantsInfoEntityList != null || variantsInfoEntityList.size() != 0) {
+            if (variantsInfoEntityList.size() != 0) {
                 for (int j = 0; j < variantsInfoEntityList.size(); j++) {
                     VariantsInfoEntity variantsInfoEntity = variantsInfoEntityList.get(j);
                     Element message1 = root.addElement("Message");
@@ -601,7 +600,7 @@ public class GenerateProductXML {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (FileUtil.judeFileExists(filePath) == false) {
+        if (!FileUtil.judeFileExists(filePath)) {
             return null;
         }
         return filePath;
@@ -708,7 +707,7 @@ public class GenerateProductXML {
             messageId++;
 
             List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productsEntity.getProductId()).orderBy(true, "variant_sort", true));
-            if (variantsInfoEntityList != null || variantsInfoEntityList.size() != 0) {
+            if (variantsInfoEntityList.size() != 0) {
                 for (int j = 0; j < variantsInfoEntityList.size(); j++) {
                     VariantsInfoEntity variantsInfoEntity = variantsInfoEntityList.get(j);
                     Element message1 = root.addElement("Message");
@@ -735,7 +734,7 @@ public class GenerateProductXML {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (FileUtil.judeFileExists(filePath) == false) {
+        if (!FileUtil.judeFileExists(filePath)) {
             return null;
         }
         return filePath;
@@ -765,7 +764,8 @@ public class GenerateProductXML {
             ProductsEntity productsEntity = productsList.get(i);
 
             List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productsEntity.getProductId()).orderBy(true, "variant_sort", true));
-            if (variantsInfoEntityList != null || variantsInfoEntityList.size() != 0) {
+            if (variantsInfoEntityList.size() != 0) {
+                // 有变体
                 Element message = root.addElement("Message");
                 Element messageID = message.addElement("MessageID");
                 messageID.addText(messageId + "");
@@ -781,6 +781,9 @@ public class GenerateProductXML {
                     Element type = relation.addElement("Type");
                     type.addText("Variation");
                 }
+            }else {
+                // 没有变体
+                break;
             }
         }
 
@@ -793,7 +796,7 @@ public class GenerateProductXML {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (FileUtil.judeFileExists(filePath) == false) {
+        if (!FileUtil.judeFileExists(filePath)) {
             return null;
         }
         return filePath;
@@ -1548,7 +1551,7 @@ public class GenerateProductXML {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (FileUtil.judeFileExists(filePath) == false) {
+        if (!FileUtil.judeFileExists(filePath)) {
             return null;
         }
         return filePath;
