@@ -135,8 +135,14 @@ public class IntroductionController {
 //    public List<IntroductionEntity> ZhtoEn(String productTitle,String keyWord,String keyPoints,String productDescription){
         String title = introductionZh.getProductTitle();
         String keyWord = introductionZh.getKeyWord();
-        String keyPoint = introductionZh.getKeyPoints().replace("\n"," !!!!! ");;
-        String productDescription = introductionZh.getProductDescription().replace("\n"," !!!!! ");
+        String keyPoint = "";
+        if (StringUtils.isNotBlank(introductionZh.getKeyPoints())){
+            keyPoint = introductionZh.getKeyPoints().replace("\n"," !!!!! ");;
+        }
+        String productDescription = "";
+        if (StringUtils.isNotBlank(introductionZh.getProductDescription())){
+            productDescription = introductionZh.getProductDescription().replace("\n"," !!!!! ");
+        }
         StringBuffer strBuf = new StringBuffer();
         if(StringUtils.isNotBlank(title)){
             strBuf.append(title);
