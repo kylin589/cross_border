@@ -925,6 +925,8 @@ public class ProductsController extends AbstractController {
             products.setProductTitle(chinesePRE.getProductTitle().trim());
         } else if (StringUtils.isNotBlank(britainPRE.getProductTitle().trim())) {
             products.setProductTitle(britainPRE.getProductTitle().trim());
+        }else{
+            products.setProductTitle("产品标题");
         }
         //法语介绍
         IntroductionEntity francePRE = products.getFrancePRE();
@@ -1193,6 +1195,8 @@ public class ProductsController extends AbstractController {
             products.setProductTitle(britainPRE.getProductTitle().trim());
         } else if (StringUtils.isNotBlank(chinesePRE.getProductTitle().trim())) {
             products.setProductTitle(chinesePRE.getProductTitle().trim());
+        }else{
+            products.setProductTitle("产品标题");
         }
         //法语介绍
         IntroductionEntity francePRE = products.getFrancePRE();
