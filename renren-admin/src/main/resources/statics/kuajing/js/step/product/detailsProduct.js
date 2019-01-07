@@ -2226,11 +2226,11 @@ var vm = new Vue({
                         // vm.proDetails.britainPRE = r.introductionEn;
                         vm.proDetails.japanPRE = r.introductionJp;
                         if(r.error){
+                            layer.close(index);
                             layer.msg(r.error);
-                            layer.close(index);
                         }else{
-                            layer.msg("翻译成功");
                             layer.close(index);
+                            layer.msg("翻译成功");
                         }
                         // vm.proAlbum = r.imageInfo;
 
@@ -2271,11 +2271,11 @@ var vm = new Vue({
                         vm.proDetails.britainPRE = r.introductionEn;
                         vm.proDetails.japanPRE = r.introductionJp;
                         if(r.error){
+                            layer.close(index);
                             layer.msg(r.error);
-                            layer.close(index);
                         }else{
-                            layer.msg("翻译成功");
                             layer.close(index);
+                            layer.msg("翻译成功");
                         }
 
 

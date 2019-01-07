@@ -351,7 +351,9 @@ public class OrderTimer {
                                     System.out.println("============="+orderModelList.size()+"========================");
                                 }
                                 if(orderModelList.size() > 0){
-                                    orderService.updateOrder(orderModelList);
+//                                    orderService.updateOrder(orderModelList);
+                                    System.out.println("执行更新");
+                                    new SaveOrUpdateOrderThread(orderModelList).start();
                                 }
                             }
                         }
