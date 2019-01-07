@@ -58,6 +58,7 @@ var vm = new Vue({
         value9:'',
         //全部订单数量
         allOrderCount:0,
+        allOrderCount1:0,
         //各状态订单个数
         orderStateList:[],
         //异常订单
@@ -341,7 +342,7 @@ var vm = new Vue({
             // console.log(this.endDate);
             this.orderStatus = orderStatus;
             $.ajax({
-                url: '../../product/order/getMyList',
+                url: '../../product/order/getOldAllList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -391,7 +392,7 @@ var vm = new Vue({
             // console.log(this.endDate);
             this.orderStatus = orderStatus;
             $.ajax({
-                url: '../../product/order/getMyList',
+                url: '../../product/order/getOldAllList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -437,7 +438,7 @@ var vm = new Vue({
             console.log(this.endDate);
             this.orderStatus = orderStatus;
             $.ajax({
-                url: '../../product/order/getAllList',
+                url: '../../product/order/getOldAllList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -485,7 +486,7 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
-                        vm.allOrderCount = r.allOrderCount;
+                        vm.allOrderCount1 = r.allOrderCount;
                         for (var i=0;i<r.orderStateList.length;i++){
                             if(r.orderStateList[i].dataContent == "待付款"){
                                 r.orderStateList[i].color = 'org';

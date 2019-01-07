@@ -58,6 +58,7 @@ var vm = new Vue({
         value9:'',
         //全部订单数量
         allOrderCount:0,
+        allOrderCount1:0,
         //各状态订单个数
         orderStateList:[],
         //异常订单
@@ -359,7 +360,7 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('状态');
                         console.log(r);
-                        vm.allOrderCount = r.allOrderCount;
+                        vm.allOrderCount1 = r.allOrderCount;
                         // r.orderStateList.forEach(function (t) {
                         //
                         // })

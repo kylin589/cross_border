@@ -58,6 +58,7 @@ var vm = new Vue({
         value9:'',
         //全部订单数量
         allOrderCount:0,
+        allOrderCount1:0,
         //各状态订单个数
         orderStateList:[],
         //异常订单
@@ -340,8 +341,9 @@ var vm = new Vue({
             // console.log(this.shopName);
             // console.log(this.endDate);
             this.orderStatus = orderStatus;
+
             $.ajax({
-                url: '../../product/order/getMyList',
+                url: '../../product/order/getAllList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -358,16 +360,18 @@ var vm = new Vue({
                     'abroadWaybill':this.abroadWaybill,
                     'startDate':this.startDate,
                     'endDate':this.endDate,
-                    // 'abnormalStatus':this.orderStatus
+                    'deptId':this.allGongsiValue,
+                    'userId':this.allYUanGValue
                 },
                 dataType: 'json',
                 success: function (r) {
-                    console.log('订单列表');
+                    console.log('订单列表')
                     console.log(r);
                     if (r.code === 0) {
                         vm.prolist = r.page.list;
                         vm.allOrderCount = r.page.totalCount;
                         vm.statistics = r.orderCounts;
+                        console.log(vm.allOrderCount)
                         vm.laypage();
                     } else {
                         layer.alert(r.msg);
@@ -391,7 +395,7 @@ var vm = new Vue({
             // console.log(this.endDate);
             this.orderStatus = orderStatus;
             $.ajax({
-                url: '../../product/order/getMyList',
+                url: '../../product/order/getAllList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -408,16 +412,19 @@ var vm = new Vue({
                     'abroadWaybill':this.abroadWaybill,
                     'startDate':this.startDate,
                     'endDate':this.endDate,
+                    'deptId':this.allGongsiValue,
+                    'userId':this.allYUanGValue,
                     'abnormalStatus':this.orderStatus
                 },
                 dataType: 'json',
                 success: function (r) {
-                    console.log('订单列表');
+                    console.log('订单列表')
                     console.log(r);
                     if (r.code === 0) {
                         vm.prolist = r.page.list;
                         vm.allOrderCount = r.page.totalCount;
                         vm.statistics = r.orderCounts;
+                        console.log(vm.allOrderCount)
                         vm.laypage();
                     } else {
                         layer.alert(r.msg);
@@ -427,6 +434,7 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             });
+
         },
         getOrderlist1:function (orderStatus) {
 
@@ -485,7 +493,7 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
-                        vm.allOrderCount = r.allOrderCount;
+                        vm.allOrderCount1 = r.allOrderCount;
                         for (var i=0;i<r.orderStateList.length;i++){
                             if(r.orderStateList[i].dataContent == "待付款"){
                                 r.orderStateList[i].color = 'org';
