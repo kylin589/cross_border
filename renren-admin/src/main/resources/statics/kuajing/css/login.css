@@ -4,7 +4,7 @@ html{
 
 .di{
     width: 840px;
-    height: 500px;
+    height: 540px;
     position: absolute;
     top:50%;
     left:50%;
@@ -18,7 +18,7 @@ html{
 .di>div{
     float: left;
     width: 420px;
-    /* height: 100%; */
+    height: calc(100% + 1px);
 }
 .di>div:nth-child(1){
     position: relative;
@@ -71,7 +71,7 @@ html{
     text-align: left;
 }
 .di>div:nth-child(2)>div>div{
-    margin-top: 30px;
+    margin-top: 20px;
     color: #666;
 }
 .di>div:nth-child(2)>div>div label{
@@ -110,7 +110,7 @@ html{
     /*font-size: 15px;*/
     /*background: #220198;*/
     background: linear-gradient(to  right, #220198, #e052ff);
-    margin-top: 32px;
+    margin-top: 12px;
     /*margin-left: 445px;*/
     border-radius: 10px;
     text-align: center;

@@ -67,19 +67,20 @@
                     <i class="layui-icon layui-icon-password"></i>
                     密码 <span>PASSWORD</span>
                 </label>
-                <input :type="passwordT" placeholder="请输入密码" @keyup.enter="login" v-model="password">
+                <input :type="passwordT" placeholder="请输入密码" v-model="password">
                 <i style="" class="layui-icon layui-icon-password pass" @click="chanpassT"></i>
             </div>
-            <div>
+            <div style="margin-top: 10px">
                 <label for="">
                     <i class="layui-icon layui-icon-vercode"></i>
                     验证码 <span>VERCODE</span>
                 </label>
-                <input type="text" class="form-control" v-model="captcha" @keyup.enter="login" placeholder="验证码">
-                <span class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
                 <br>
-                <img alt="如果看不清楚，请单击图片刷新！" class="pointer" :src="src" @click="refreshCode">
-                <a href="javascript:;" @click="refreshCode">点击刷新</a>
+                <input style="display: inline-block;width: 120px" type="text" class="form-control" v-model="captcha" @keyup.enter="login" placeholder="验证码">
+                <span class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+                <!--<br>-->
+                <img width="130px" alt="如果看不清楚，请单击图片刷新！" class="pointer" :src="src" @click="refreshCode">
+                <a style="color: #7962be;" href="javascript:;" @click="refreshCode">点击刷新</a>
             </div>
             <p style="color: #feb19b;margin-top: 8px;height: 20px">{{msg}}</p>
             <button @click="login">登录</button>
@@ -212,9 +213,10 @@
                             vm.msg = '';
                             parent.location.href = 'index.html';
                         } else {
+                            console.log(result);
                             vm.error = true;
-                            vm.errorMsg = result.msg;
-                            vm.msg = '用户名或密码错误'
+//                            vm.errorMsg = result.msg;
+                            vm.msg = result.msg;
 
                             vm.refreshCode();
                             console.log(111111);
