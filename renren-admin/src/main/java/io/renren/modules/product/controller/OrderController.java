@@ -108,13 +108,30 @@ public class OrderController extends AbstractController{
         Map<String, Object> map = orderService.queryMyPage(params, getUserId());
         return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts"));
     }
-
+    /**
+     * 我的订单(旧)
+     */
+    @RequestMapping("/getOldMyList")
+//    @RequiresPermissions("product:order:mylist")
+    public R getOldMyList(@RequestParam Map<String, Object> params){
+        Map<String, Object> map = orderService.queryOldMyPage(params, getUserId());
+        return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts"));
+    }
     /**
      * 所有订单
      */
     @RequestMapping("/getAllList")
 //    @RequiresPermissions("product:order:alllist")
     public R getAllList(@RequestParam Map<String, Object> params){
+        Map<String, Object> map = orderService.queryAllPage(params, getDeptId());
+        return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts"));
+    }
+    /**
+     * 所有订单(旧)
+     */
+    @RequestMapping("/getOldAllList")
+//    @RequiresPermissions("product:order:alllist")
+    public R getOldAllList(@RequestParam Map<String, Object> params){
         Map<String, Object> map = orderService.queryAllPage(params, getDeptId());
         return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts"));
     }

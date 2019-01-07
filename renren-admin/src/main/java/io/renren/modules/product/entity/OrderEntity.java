@@ -155,6 +155,10 @@ public class OrderEntity implements Serializable {
 	 */
 	private BigDecimal profitRate = new BigDecimal(0.00);
 	/**
+	 * 是否为旧数剧(0：新，1：旧)
+	 */
+	private int isOld = 0;
+	/**
 	 * 国内物流
 	 */
 //	@TableField(exist = false)
@@ -503,5 +507,13 @@ public class OrderEntity implements Serializable {
 
 	public void setShopId(Long shopId) {
 		this.shopId = shopId;
+	}
+
+	public int getIsOld() {
+		return isOld;
+	}
+
+	public void setIsOld(int isOld) {
+		this.isOld = isOld;
 	}
 }

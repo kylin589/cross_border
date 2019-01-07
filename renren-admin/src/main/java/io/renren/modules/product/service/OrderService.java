@@ -31,12 +31,26 @@ public interface OrderService extends IService<OrderEntity> {
      */
     Map<String, Object> queryMyPage(Map<String, Object> params, Long userId);
     /**
+     * 我的订单(旧)
+     * @param params
+     * @param userId 用户id
+     * @return
+     */
+    Map<String, Object> queryOldMyPage(Map<String, Object> params, Long userId);
+    /**
      * 所有订单
      * @param params
      * @param deptId 公司id
      * @return
      */
     Map<String, Object> queryAllPage(Map<String, Object> params, Long deptId);
+    /**
+     * 所有订单(旧)
+     * @param params
+     * @param deptId 公司id
+     * @return
+     */
+    Map<String, Object> queryOldAllPage(Map<String, Object> params, Long deptId);
 
     /**
      * 修改状态
@@ -54,6 +68,10 @@ public interface OrderService extends IService<OrderEntity> {
      * 更新订单列表
      */
     void updateOrder(List<OrderModel> orderModelList);
+    /**
+     * 获取以往订单
+     */
+    void updateOldOrder(List<OrderModel> orderModelList);
     /**
      * 国际已发货
      * 扣款

@@ -34,7 +34,7 @@ public class agentTimer{
     @Autowired
     private AgentIpService agentIpService;
 //    private static String url = "https://www.xicidaili.com/nn/1/"; //API链接
-    private static String url = "https://h.wandouip.com/get/ip-list?pack=1192&num=20&xy=1&type=2&lb=&mr=1&"; //API链接
+    private static String url = "https://h.wandouip.com/get/ip-list?pack=1192&num=10&xy=1&type=2&lb=&mr=1&"; //API链接
     public void getIp(){
         List<AgentIpEntity> agentIpEntityList = wanDouIp(url);
         if(agentIpEntityList != null && agentIpEntityList.size()>0){
