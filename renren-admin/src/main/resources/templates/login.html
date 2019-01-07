@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>跨淘</title>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.min.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>跨淘</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.min.css">
     <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/layui.css" media="all">
-  <link rel="stylesheet" href="${request.contextPath}/statics/css/font-awesome.min.css">
-  <link rel="stylesheet" href="${request.contextPath}/statics/css/AdminLTE.min.css">
-  <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="${request.contextPath}/statics/css/all-skins.min.css">
-  <link rel="stylesheet" href="${request.contextPath}/statics/css/main.css">
-  <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/login.css">
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/font-awesome.min.css">
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/all-skins.min.css">
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/main.css">
+    <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/login.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 
-  <![endif]-->
+    <![endif]-->
     <style>
-        i.pass{
+        i.pass {
             display: inline-block;
             position: relative;
             top: -26px;
@@ -33,143 +33,143 @@
             /* margin-top: -60px; */
             cursor: pointer;
         }
-        i.pass:hover{
+
+        i.pass:hover {
             color: #999;
         }
     </style>
 </head>
 <body class="hold-transition login-page">
 
-    <div class="di" id="rrapp">
+<div class="di" id="rrapp">
+    <div>
+        <img class="bg" src="${request.contextPath}/statics/kuajing/img/login/7d7237b1f9c59f6b840313b1d94b314.png"
+             alt="">
+        <img class="logo" src="${request.contextPath}/statics/kuajing/img/login/41472fc36968b988a22f42afeee71e1.png"
+             alt="">
+        <h3>跨淘电商管理平台</h3>
+    </div>
+    <div>
+        <h2>用户登录</h2>
+        <p>WELCOME TO LOGIN</p>
+        <span></span>
+        <!--<img src="${request.contextPath}/statics/kuajing/img/login/8039ee749efb5de56c660cabdb0f42e.png" alt="" class="deng">-->
         <div>
-            <img class="bg" src="${request.contextPath}/statics/kuajing/img/login/7d7237b1f9c59f6b840313b1d94b314.png" alt="">
-            <img class="logo" src="${request.contextPath}/statics/kuajing/img/login/41472fc36968b988a22f42afeee71e1.png" alt="">
-            <h3>跨淘电商管理平台</h3>
-        </div>
-        <div>
-            <h2>用户登录</h2>
-            <p>WELCOME TO LOGIN</p>
-            <span></span>
-            <!--<img src="${request.contextPath}/statics/kuajing/img/login/8039ee749efb5de56c660cabdb0f42e.png" alt="" class="deng">-->
             <div>
-                <div>
-                    <label for="">
-                        <i class="layui-icon layui-icon-username"></i>
-                        用户名 <span>USERNAME</span>
-                    </label>
-                    <input type="text" placeholder="请输入用户名" v-model="username">
-                </div>
-                <div>
-                    <label for="">
-                        <i class="layui-icon layui-icon-password"></i>
-                        密码 <span>PASSWORD</span>
-                    </label>
-                    <input :type="passwordT" placeholder="请输入密码" @keyup.enter="login"  v-model="password">
-                    <i style="" class="layui-icon layui-icon-password pass" @click="chanpassT"></i>
-                </div>
-                <p style="color: #feb19b;margin-top: 8px;height: 20px">{{msg}}</p>
-                <button @click="login">登录</button>
-
-
+                <label for="">
+                    <i class="layui-icon layui-icon-username"></i>
+                    用户名 <span>USERNAME</span>
+                </label>
+                <input type="text" placeholder="请输入用户名" v-model="username">
             </div>
+            <div>
+                <label for="">
+                    <i class="layui-icon layui-icon-password"></i>
+                    密码 <span>PASSWORD</span>
+                </label>
+                <input :type="passwordT" placeholder="请输入密码" @keyup.enter="login" v-model="password">
+                <i style="" class="layui-icon layui-icon-password pass" @click="chanpassT"></i>
+            </div>
+            <div>
+                <label for="">
+                    <i class="layui-icon layui-icon-vercode"></i>
+                    验证码 <span>VERCODE</span>
+                </label>
+                <input type="text" class="form-control" v-model="captcha" @keyup.enter="login" placeholder="验证码">
+                <span class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+                <br>
+                <img alt="如果看不清楚，请单击图片刷新！" class="pointer" :src="src" @click="refreshCode">
+                <a href="javascript:;" @click="refreshCode">点击刷新</a>
+            </div>
+            <p style="color: #feb19b;margin-top: 8px;height: 20px">{{msg}}</p>
+            <button @click="login">登录</button>
+
         </div>
     </div>
-
-
-
+</div>
 
 
 <!--<div class="bai" id="" v-cloak>-->
 
 
-
-
-
-
-
-    <!--<div class="left">-->
-        <!--<img src="${request.contextPath}/statics/kuajing/img/login/7d7237b1f9c59f6b840313b1d94b314.png"  alt="" class="big">-->
-        <!--<img src="${request.contextPath}/statics/kuajing/img/login/41472fc36968b988a22f42afeee71e1.png" alt="" class="xiaoe">-->
-        <!--<h>跨境电商管理平台</h>-->
-    <!--</div>-->
-    <!--<div class="right">-->
-        <!--<div class="frist"></div>-->
-        <!--<img src="${request.contextPath}/statics/kuajing/img/login/8039ee749efb5de56c660cabdb0f42e.png" alt="" class="deng">-->
-        <!--&lt;!&ndash;西藏自治区通信管理局&ndash;&gt;-->
-        <!--&lt;!&ndash;<img src="img/rr.png" alt="" class="gang">&ndash;&gt;-->
-        <!--&lt;!&ndash;<p>用户</p>&ndash;&gt;-->
-        <!--&lt;!&ndash;<b>登录</b>&ndash;&gt;-->
-        <!--&lt;!&ndash;<img src="img/t7.png" alt="" class="gang2">&ndash;&gt;-->
-        <!--&lt;!&ndash;<strong>WELCOME</strong>&ndash;&gt;-->
-        <!--&lt;!&ndash;<span>TO LOGIN</span>&ndash;&gt;-->
-        <!--<img src="${request.contextPath}/statics/kuajing/img/login/18a2594377534241c71c25cc73c0d47.png" alt="" class="people">-->
-        <!--<div class="zhang">用户名</div>-->
-        <!--<div class="rong">NAME</div>-->
-        <!--<input type="text" placeholder="请输入您的用户名" v-model="username">-->
-        <!--<img src="${request.contextPath}/statics/kuajing/img/login/22826ca099f9e0b9d9cb884542c2fda.png" alt="" class="people">-->
-        <!--<div class="zhang">密码</div>-->
-        <!--<h>PASSWORD</h>-->
-        <!--<input type="password" placeholder="请输入您的密码" @keyup.enter="login"  v-model="password">-->
-        <!--&lt;!&ndash;<a href="">忘记密码?</a>&ndash;&gt;-->
-        <!--<div class="login" @click="login" style="cursor: pointer;">-->
-            <!--&lt;!&ndash;<img src="img/%7B576A0CFC-2132-D7F5-5457-5358EF0E16F4%7D.JPG" alt="">&ndash;&gt;-->
-            <!--登录-->
-            <!--&lt;!&ndash;<img src="img/%7B576A0CFC-2132-D7F5-5457-5358EF0E16F4%7D.JPG" alt="">&ndash;&gt;-->
-            <!--&lt;!&ndash;<br>&ndash;&gt;-->
-            <!--&lt;!&ndash;<div class="fer">SIGN IN NOW</div>&ndash;&gt;-->
-        <!--</div>-->
-    <!--</div>-->
+<!--<div class="left">-->
+<!--<img src="${request.contextPath}/statics/kuajing/img/login/7d7237b1f9c59f6b840313b1d94b314.png"  alt="" class="big">-->
+<!--<img src="${request.contextPath}/statics/kuajing/img/login/41472fc36968b988a22f42afeee71e1.png" alt="" class="xiaoe">-->
+<!--<h>跨境电商管理平台</h>-->
+<!--</div>-->
+<!--<div class="right">-->
+<!--<div class="frist"></div>-->
+<!--<img src="${request.contextPath}/statics/kuajing/img/login/8039ee749efb5de56c660cabdb0f42e.png" alt="" class="deng">-->
+<!--&lt;!&ndash;西藏自治区通信管理局&ndash;&gt;-->
+<!--&lt;!&ndash;<img src="img/rr.png" alt="" class="gang">&ndash;&gt;-->
+<!--&lt;!&ndash;<p>用户</p>&ndash;&gt;-->
+<!--&lt;!&ndash;<b>登录</b>&ndash;&gt;-->
+<!--&lt;!&ndash;<img src="img/t7.png" alt="" class="gang2">&ndash;&gt;-->
+<!--&lt;!&ndash;<strong>WELCOME</strong>&ndash;&gt;-->
+<!--&lt;!&ndash;<span>TO LOGIN</span>&ndash;&gt;-->
+<!--<img src="${request.contextPath}/statics/kuajing/img/login/18a2594377534241c71c25cc73c0d47.png" alt="" class="people">-->
+<!--<div class="zhang">用户名</div>-->
+<!--<div class="rong">NAME</div>-->
+<!--<input type="text" placeholder="请输入您的用户名" v-model="username">-->
+<!--<img src="${request.contextPath}/statics/kuajing/img/login/22826ca099f9e0b9d9cb884542c2fda.png" alt="" class="people">-->
+<!--<div class="zhang">密码</div>-->
+<!--<h>PASSWORD</h>-->
+<!--<input type="password" placeholder="请输入您的密码" @keyup.enter="login"  v-model="password">-->
+<!--&lt;!&ndash;<a href="">忘记密码?</a>&ndash;&gt;-->
+<!--<div class="login" @click="login" style="cursor: pointer;">-->
+<!--&lt;!&ndash;<img src="img/%7B576A0CFC-2132-D7F5-5457-5358EF0E16F4%7D.JPG" alt="">&ndash;&gt;-->
+<!--登录-->
+<!--&lt;!&ndash;<img src="img/%7B576A0CFC-2132-D7F5-5457-5358EF0E16F4%7D.JPG" alt="">&ndash;&gt;-->
+<!--&lt;!&ndash;<br>&ndash;&gt;-->
+<!--&lt;!&ndash;<div class="fer">SIGN IN NOW</div>&ndash;&gt;-->
+<!--</div>-->
+<!--</div>-->
 <!--</div>-->
 
 
-
-
-
-
-
 <!--<div class="login-box" id="" v-cloak>-->
-  <!--<div class="login-logo">-->
-    <!--<b>跨境电商管理平台</b>-->
-  <!--</div>-->
-  <!--&lt;!&ndash; /.login-logo &ndash;&gt;-->
-  <!--<div class="login-box-body">-->
-      <!--<p class="login-box-msg">用户登录</p>-->
-      <!--<div v-if="error" class="alert alert-danger alert-dismissible">-->
-        <!--<h4 style="margin-bottom: 0px;"><i class="fa fa-exclamation-triangle"></i> {{errorMsg}}</h4>-->
-      <!--</div>-->
-      <!--<div class="form-group has-feedback">-->
-        <!--<input type="text" class="form-control" v-model="username" placeholder="账号">-->
-        <!--<span class="glyphicon glyphicon-user form-control-feedback"></span>-->
-      <!--</div>-->
-      <!--<div class="form-group has-feedback">-->
-        <!--<input type="password" class="form-control" @keyup.enter="login"  v-model="password" placeholder="密码">-->
-        <!--<span class="glyphicon glyphicon-lock form-control-feedback"></span>-->
-      <!--</div>-->
-      <!--&lt;!&ndash;<div class="form-group has-feedback">-->
-        <!--<input type="text" class="form-control" v-model="captcha" @keyup.enter="login" placeholder="验证码">-->
-        <!--<span class="glyphicon glyphicon-warning-sign form-control-feedback"></span>-->
-      <!--</div>-->
-      <!--<div class="form-group has-feedback">-->
-        <!--<img alt="如果看不清楚，请单击图片刷新！" class="pointer" :src="src" @click="refreshCode">-->
-        <!--&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" @click="refreshCode">点击刷新</a>-->
-      <!--</div>&ndash;&gt;-->
-      <!---->
-      <!---->
-      <!--<div class="row">-->
-        <!--<div class="col-xs-8">-->
-          <!--<div class="checkbox icheck">-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--&lt;!&ndash; /.col &ndash;&gt;-->
-        <!--<div class="col-xs-4">-->
-          <!--<button type="button" class="btn btn-primary btn-block btn-flat" @click="login">登录</button>-->
-        <!--</div>-->
-        <!--&lt;!&ndash; /.col &ndash;&gt;-->
-      <!--</div>-->
-    <!--&lt;!&ndash; /.social-auth-links &ndash;&gt;-->
+<!--<div class="login-logo">-->
+<!--<b>跨境电商管理平台</b>-->
+<!--</div>-->
+<!--&lt;!&ndash; /.login-logo &ndash;&gt;-->
+<!--<div class="login-box-body">-->
+<!--<p class="login-box-msg">用户登录</p>-->
+<!--<div v-if="error" class="alert alert-danger alert-dismissible">-->
+<!--<h4 style="margin-bottom: 0px;"><i class="fa fa-exclamation-triangle"></i> {{errorMsg}}</h4>-->
+<!--</div>-->
+<!--<div class="form-group has-feedback">-->
+<!--<input type="text" class="form-control" v-model="username" placeholder="账号">-->
+<!--<span class="glyphicon glyphicon-user form-control-feedback"></span>-->
+<!--</div>-->
+<!--<div class="form-group has-feedback">-->
+<!--<input type="password" class="form-control" @keyup.enter="login"  v-model="password" placeholder="密码">-->
+<!--<span class="glyphicon glyphicon-lock form-control-feedback"></span>-->
+<!--</div>-->
+<!--&lt;!&ndash;  <div class="form-group has-feedback">-->
+<!--<input type="text" class="form-control" v-model="captcha" @keyup.enter="login" placeholder="验证码">-->
+<!--<span class="glyphicon glyphicon-warning-sign form-control-feedback"></span>-->
+<!--</div>-->
+<!--<div class="form-group has-feedback">-->
+<!--<img alt="如果看不清楚，请单击图片刷新！" class="pointer" :src="src" @click="refreshCode">-->
+<!--&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" @click="refreshCode">点击刷新</a>-->
+<!--</div>&ndash;&gt;-->
+<!---->
+<!---->
+<!--<div class="row">-->
+<!--<div class="col-xs-8">-->
+<!--<div class="checkbox icheck">-->
+<!--</div>-->
+<!--</div>-->
+<!--&lt;!&ndash; /.col &ndash;&gt;-->
+<!--<div class="col-xs-4">-->
+<!--<button type="button" class="btn btn-primary btn-block btn-flat" @click="login">登录</button>-->
+<!--</div>-->
+<!--&lt;!&ndash; /.col &ndash;&gt;-->
+<!--</div>-->
+<!--&lt;!&ndash; /.social-auth-links &ndash;&gt;-->
 
-  <!--</div>-->
-  <!--&lt;!&ndash; /.login-box-body &ndash;&gt;-->
+<!--</div>-->
+<!--&lt;!&ndash; /.login-box-body &ndash;&gt;-->
 <!--</div>-->
 <!-- /.login-box -->
 <script src="${request.contextPath}/statics/libs/jquery.min.js"></script>
@@ -179,62 +179,62 @@
 <script src="${request.contextPath}/statics/libs/fastclick.min.js"></script>
 <script src="${request.contextPath}/statics/libs/app.js"></script>
 <script type="text/javascript">
-var vm = new Vue({
-	el:'#rrapp',
-	data:{
-		username: '',
-		password: '',
-		captcha: '',
-		error: false,
-		errorMsg: '',
-		src: 'captcha.jpg',
-        msg:'',
-        passwordT:'password'
-	},
-	beforeCreate: function(){
-		if(self != top){
-			top.location.href = self.location.href;
-		}
-	},
-	methods: {
-		refreshCode: function(){
-			this.src = "captcha.jpg?t=" + $.now();
-		},
-		login: function (event) {
-			var data = "username="+vm.username+"&password="+vm.password+"&captcha="+vm.captcha;
-			$.ajax({
-				type: "POST",
-			    url: "sys/login",
-			    data: data,
-			    dataType: "json",
-			    success: function(result){
-					if(result.code == 0){//登录成功
-                        vm.msg = '';
-						parent.location.href ='index.html';
-					}else{
-						vm.error = true;
-						vm.errorMsg = result.msg;
-						vm.msg = '用户名或密码错误'
-						
-						vm.refreshCode();
-						console.log(111111);
-					}
-				},
+    var vm = new Vue({
+        el: '#rrapp',
+        data: {
+            username: '',
+            password: '',
+            captcha: '',
+            error: false,
+            errorMsg: '',
+            src: 'captcha.jpg',
+            msg: '',
+            passwordT: 'password'
+        },
+        beforeCreate: function () {
+            if (self != top) {
+                top.location.href = self.location.href;
+            }
+        },
+        methods: {
+            refreshCode: function () {
+                this.src = "captcha.jpg?t=" + $.now();
+            },
+            login: function (event) {
+                var data = "username=" + vm.username + "&password=" + vm.password + "&captcha=" + vm.captcha;
+                $.ajax({
+                    type: "POST",
+                    url: "sys/login",
+                    data: data,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == 0) {//登录成功
+                            vm.msg = '';
+                            parent.location.href = 'index.html';
+                        } else {
+                            vm.error = true;
+                            vm.errorMsg = result.msg;
+                            vm.msg = '用户名或密码错误'
+
+                            vm.refreshCode();
+                            console.log(111111);
+                        }
+                    },
 //                error:function () {
 //
 //                }
-			});
-		},
-        chanpassT:function () {
-		    if(vm.passwordT == 'text'){
-                vm.passwordT = 'password'
-            }else {
-                vm.passwordT = 'text'
-            }
+                });
+            },
+            chanpassT: function () {
+                if (vm.passwordT == 'text') {
+                    vm.passwordT = 'password'
+                } else {
+                    vm.passwordT = 'text'
+                }
 
+            }
         }
-	}
-});
+    });
 </script>
 </body>
 </html>
