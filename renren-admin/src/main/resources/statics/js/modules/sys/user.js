@@ -147,8 +147,21 @@ var vm = new Vue({
             }
         },
         chanPassword:function () {
+            var reg = /^(?![0-9\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]+$)(?![0-9]+$)(?![0-90-9A-Za-z]+$)(?![\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]+$)(?![A-Za-z]+$)(?![a-zA-Z\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]+$)[0-9A-Za-z\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]{8,}$/;
+            console.log(vm.user.password);
+            console.log(reg.test(vm.user.password));
+            // console.log(reg.match(vm.user.password));
             if(reg.test(vm.user.password)){
-                vm.erroMsg4 = '密码至少8位，要求必须字母、数字加英文符号（不包含空格）'
+                var reg1 = /^[\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]/;
+                if(reg1.test(vm.user.password)){
+                    // console.log(111111);
+                    vm.erroMsg4 = '密码不能以字符开头'
+                }else {
+                    vm.erroMsg4 = ''
+                }
+
+            }else {
+                vm.erroMsg4 = '密码至少8位,要求必须字母、数字加英文符号(不包含空格)';
             }
         },
         update: function () {
@@ -222,6 +235,14 @@ var vm = new Vue({
             vm.erroMsg7 = '';
             vm.erroMsg9 = '';
             var reg =/\s/;
+            var reg2 = /^[\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]/;
+            // if(reg1.test(vm.user.password)){
+            //     console.log(111111);
+            //     vm.erroMsg4 = '不能以字符开头'
+            // }else {
+            //     vm.erroMsg4 = ''
+            // }
+            var reg1 = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,}$/;
             if(!vm.user.username){
                 vm.chanUserNameMsg = '账号不能为空'
             }else if(vm.user.username.length>20 || vm.user.username.length<6){
@@ -240,6 +261,11 @@ var vm = new Vue({
                 vm.erroMsg3 = '昵称不能为空'
             }else if(!vm.user.password){
                 vm.erroMsg4 = '密码不能为空'
+            }else if(reg1.test(vm.user.password)){
+                vm.erroMsg4 = '密码至少8位，要求必须字母、数字加英文符号（不包含空格）'
+            }else if(reg2.test(vm.user.password)){
+                // console.log(111111);
+                vm.erroMsg4 = '密码不能以字符开头'
             }else if(!vm.user.password1){
                 vm.erroMsg5 = '确认密码不能为空'
             }else if(!vm.user.email){
