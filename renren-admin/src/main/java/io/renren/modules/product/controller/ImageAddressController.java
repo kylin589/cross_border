@@ -140,19 +140,27 @@ public class ImageAddressController extends AbstractController {
             }
             //上传图片到本地
             file.transferTo(dest);
+
+           /*
+
+            图片转换
+
             // 从本地读入文件
-       //     File files = new File(filePath);
-        //    Image srcImg = ImageIO.read(files);
+            File files = new File(filePath);
+            Image srcImg = ImageIO.read(files);
             //修改图片的尺寸大小
-         //   BufferedImage buffImg = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
-           // buffImg.getGraphics().drawImage(srcImg.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH), 0, 0, null);
+            BufferedImage buffImg = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+            buffImg.getGraphics().drawImage(srcImg.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH), 0, 0, null);
             //修改图片大小后保存到本地
-//            String filePathGB="D:/test/"+fileUUID+suffixName;
-//            String filePathGB="/usr/test/"+fileUUID+suffixName;
+            //  String filePathGB="D:/test/"+fileUUID+suffixName;
+            String filePathGB="/usr/test/"+fileUUID+suffixName;
             //保存到ftp上的文件名字
-           // String fileNameFTP=fileUUID+suffixName;
+            String fileNameFTP=fileUUID+suffixName;
             //修改后写到本地
-          //  ImageIO.write(buffImg, "jpg", new File(filePath));
+            ImageIO.write(buffImg, "jpg", new File(filePath));
+
+            */
+
 
             //保存到ftp上的文件名字
             String fileNameFTP=fileUUID+suffixName;
