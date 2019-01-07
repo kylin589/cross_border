@@ -124,8 +124,8 @@ public final class GoogleTranslator extends AbstractTranslator {
         String tk = "";
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
         try {
-            FileReader reader = new FileReader("D://tk/Google.js");
-//            FileReader reader = new FileReader("/usr/tk/Google.js");
+//            FileReader reader = new FileReader("D://tk/Google.js");
+            FileReader reader = new FileReader("/usr/tk/Google.js");
             engine.eval(reader);
 
             if (engine instanceof Invocable) {

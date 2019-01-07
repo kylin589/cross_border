@@ -131,7 +131,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 .eq(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
                 .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
                 .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
-                .eq("user_id",userId);
+                .eq("user_id",userId)
+                .eq("is_old",0);
 
         Page<OrderEntity> page = this.selectPage(
                 new Query<OrderEntity>(params).getPage(),
@@ -150,6 +151,187 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         //退货数
         int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
         orderCounts.setReturnCounts(returnCounts);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("page",pageUtils);
+        map.put("orderCounts",orderCounts);
+        return map;
+    }
+    @Override
+    public Map<String, Object> queryOldMyPage(Map<String, Object> params, Long userId) {
+        //店铺名称
+        String shopName = (String) params.get("shopName");
+        //状态标识
+        String orderStatus = (String) params.get("orderStatus");
+        //异常状态标识
+        String abnormalStatus = (String) params.get("abnormalStatus");
+        //订单id
+        String orderIdStr = (String) params.get("orderId");
+        Long orderId = 0L;
+        if(StringUtils.isNotBlank(orderIdStr)){
+            orderId = Long.parseLong(orderIdStr);
+        }
+        //亚马逊订单id
+        String amazonOrderId = (String) params.get("amazonOrderId");
+        //产品id
+        String productIdStr = (String)params.get("productId");
+        Long productId = 0L;
+        if(StringUtils.isNotBlank(productIdStr)){
+            productId = Long.parseLong(productIdStr);
+        }
+        //产品sku
+        String productSku = (String) params.get("productSku");
+        //asin码
+        String productAsin = (String) params.get("productAsin");
+        //国内物流单号
+        String domesticWaybill = (String) params.get("domesticWaybill");
+        //国外物流单号
+        String abroadWaybill = (String) params.get("abroadWaybill");
+        //开始时间
+        String startDate = (String) params.get("startDate");
+        //结束时间
+        String endDate = (String) params.get("endDate");
+        //查询条件
+        EntityWrapper<OrderEntity> wrapper = new EntityWrapper<OrderEntity>();
+        wrapper.like(StringUtils.isNotBlank(shopName), "shop_name", shopName)
+                .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus)
+                .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
+                .like(StringUtils.isNotBlank(productSku), "product_sku", productSku)
+                .like(StringUtils.isNotBlank(productAsin), "product_asin", productAsin)
+                .eq(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                .eq(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
+                .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                .eq("user_id",userId)
+                .eq("is_old",1);
+
+        Page<OrderEntity> page = this.selectPage(
+                new Query<OrderEntity>(params).getPage(),
+                wrapper
+        );
+        PageUtils pageUtils = new PageUtils(page);
+        Map<String, Object> condition = new HashMap<>(1);
+        condition.put("userId",userId);
+        OrderStatisticsEntity orderCounts = baseMapper.statisticsOrderCounts(condition);
+        if(orderCounts == null){
+            orderCounts = new OrderStatisticsEntity();
+        }
+        //核算订单数
+        int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
+        orderCounts.setOrderCounts(completeCounts);
+        //退货数
+        int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+        orderCounts.setReturnCounts(returnCounts);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("page",pageUtils);
+        map.put("orderCounts",orderCounts);
+        return map;
+    }
+    @Override
+    public Map<String, Object> queryOldAllPage(Map<String, Object> params, Long deptId) {
+        //公司
+        String qDeptId = (String) params.get("deptId");
+        //用户
+        String userId = (String) params.get("userId");
+        //店铺名称
+        String shopName = (String) params.get("shopName");
+        //状态标识
+        String orderStatus = (String) params.get("orderStatus");
+        //订单id
+        String orderIdStr = (String) params.get("orderId");
+        Long orderId = 0L;
+        if(StringUtils.isNotBlank(orderIdStr)){
+            orderId = Long.parseLong(orderIdStr);
+        }
+        //亚马逊订单id
+        String amazonOrderId = (String) params.get("amazonOrderId");
+        //产品id
+        String productIdStr = (String)params.get("productId");
+        Long productId = 0L;
+        if(StringUtils.isNotBlank(productIdStr)){
+            productId = Long.parseLong(productIdStr);
+        }
+        //产品sku
+        String productSku = (String) params.get("productSku");
+        //asin码
+        String productAsin = (String) params.get("productAsin");
+        //国内物流单号
+        String domesticWaybill = (String) params.get("domesticWaybill");
+        //国外物流单号
+        String abroadWaybill = (String) params.get("abroadWaybill");
+        //开始时间
+        String startDate = (String) params.get("startDate");
+        //结束时间
+        String endDate = (String) params.get("endDate");
+        //查询条件
+        EntityWrapper<OrderEntity> wrapper = new EntityWrapper<OrderEntity>();
+        if(deptId == 1L){
+            wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
+                    .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                    .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                    .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                    .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
+                    .like(StringUtils.isNotBlank(productSku), "product_sku", productSku)
+                    .like(StringUtils.isNotBlank(productAsin), "product_asin", productAsin)
+                    .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                    .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
+                    .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                    .eq(StringUtils.isNotBlank(userId),"user_id",userId)
+                    .eq(StringUtils.isNotBlank(qDeptId),"dept_id",qDeptId)
+                    .eq("is_old",1);
+        }else{
+            wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
+                    .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                    .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                    .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                    .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
+                    .like(StringUtils.isNotBlank(productSku), "product_sku", productSku)
+                    .like(StringUtils.isNotBlank(productAsin), "product_asin", productAsin)
+                    .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                    .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
+                    .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                    .eq(StringUtils.isNotBlank(userId),"user_id",userId)
+                    .eq("dept_id",deptId)
+                    .eq("is_old",1);
+        }
+
+
+        Page<OrderEntity> page = this.selectPage(
+                new Query<OrderEntity>(params).getPage(),
+                wrapper
+        );
+        PageUtils pageUtils = new PageUtils(page);
+        OrderStatisticsEntity orderCounts = new OrderStatisticsEntity();
+        Map<String, Object> condition = new HashMap<>(1);
+        if(deptId == 1L){
+            //总公司
+            if(baseMapper.statisticsOrderCounts(condition) != null){
+                orderCounts = baseMapper.statisticsOrderCounts(condition);
+            }
+            //核算订单数
+            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
+            orderCounts.setOrderCounts(completeCounts);
+            //退货数
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+            orderCounts.setReturnCounts(returnCounts);
+        }else{
+            //加盟商
+            condition.put("deptId",deptId);
+            if(baseMapper.statisticsOrderCounts(condition) != null){
+                orderCounts = baseMapper.statisticsOrderCounts(condition);
+            }
+            //核算订单数
+            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
+            orderCounts.setOrderCounts(completeCounts);
+            //退货数
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+            orderCounts.setReturnCounts(returnCounts);
+        }
+
         Map<String, Object> map = new HashMap<>(2);
         map.put("page",pageUtils);
         map.put("orderCounts",orderCounts);
@@ -206,7 +388,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
                     .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                     .eq(StringUtils.isNotBlank(userId),"user_id",userId)
-                    .eq(StringUtils.isNotBlank(qDeptId),"dept_id",qDeptId);
+                    .eq(StringUtils.isNotBlank(qDeptId),"dept_id",qDeptId)
+                    .eq("is_old",0);
         }else{
             wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
                     .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
@@ -220,7 +403,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
                     .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                     .eq(StringUtils.isNotBlank(userId),"user_id",userId)
-                    .eq("dept_id",deptId);
+                    .eq("dept_id",deptId)
+                    .eq("is_old",0);
         }
 
 
@@ -261,7 +445,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         map.put("orderCounts",orderCounts);
         return map;
     }
-
     @Override
     public boolean updateState(Long orderId, String orderState) {
         String orderStatus = dataDictionaryService.selectOne(
@@ -515,7 +698,135 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             }
         }
     }
+    /**
+     * 获取以往订单
+     * @param orderModelList
+     */
+    @Override
+    public void updateOldOrder(List<OrderModel> orderModelList) {
+        for(OrderModel orderModel : orderModelList ){
+            //获取亚马逊订单id
+            String amazonOrderId = orderModel.getAmazonOrderId();
+            if(StringUtils.isNotBlank(amazonOrderId)){
+                //判断该订单是否存在
+                OrderEntity orderEntity = this.selectOne(new EntityWrapper<OrderEntity>().eq("amazon_order_id",amazonOrderId));
+                //订单状态
+                String modelStatus = orderModel.getOrderStatus();
+                if(orderEntity == null){
+                    //新增订单
+                    if(!"Canceled".equals(modelStatus) && "Shipped".equals(modelStatus)){
+                        //设置基本属性
+                        orderEntity = new OrderEntity();
 
+                        orderEntity.setAmazonOrderId(amazonOrderId);
+                        orderEntity.setOrderItemId(orderModel.getOrderItemId());
+                        orderEntity.setBuyDate(orderModel.getBuyDate());
+                        if("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)){
+                            //未付款
+                            orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING);
+                            orderEntity.setOrderState("待付款");
+                        }else if("Unshipped".equals(modelStatus) || "PartiallyShipped".equals(modelStatus)){
+                            //已付款
+                            orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED);
+                            orderEntity.setOrderState("已付款");
+                        }
+                        if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
+                            orderEntity.setCountryCode(orderModel.getCountry());
+                        }
+                        orderEntity.setShopId(orderModel.getShopId());
+                        orderEntity.setShopName(orderModel.getShopName());
+                        orderEntity.setProductSku(orderModel.getProductSku());
+                        orderEntity.setProductAsin(orderModel.getProductAsin());
+                        ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));
+                        if(productsEntity != null){
+                            orderEntity.setProductId(productsEntity.getProductId());
+                            orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
+                        }
+                        orderEntity.setOrderNumber(orderModel.getOrderNumber());
+                        String rateCode = orderModel.getCurrencyCode();
+                        orderEntity.setRateCode(rateCode);
+                        orderEntity.setUserId(orderModel.getUserId());
+                        orderEntity.setDeptId(orderModel.getDeptId());
+                        orderEntity.setUpdateTime(new Date());
+                        //设置汇率
+                        BigDecimal rate = new BigDecimal(0.00);
+                        if(StringUtils.isNotBlank(rateCode)){
+                            rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
+                        }
+                        orderEntity.setMomentRate(rate);
+                        //获取订单金额（外币）
+                        BigDecimal orderMoney = orderModel.getOrderMoney();
+                        if(orderMoney.compareTo(new BigDecimal("0.00")) != 0){
+                            orderEntity.setOrderMoney(orderMoney);
+                            orderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                            //获取Amazon佣金（外币）
+                            BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15).setScale(2,BigDecimal.ROUND_HALF_UP));
+                            orderEntity.setAmazonCommission(amazonCommission);
+                            orderEntity.setAmazonCommissionCny(amazonCommission.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                            //到账金额
+                            BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
+                            orderEntity.setAccountMoney(accountMoney);
+                            orderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
+                        }
+                        orderEntity.setIsOld(1);
+                        this.insert(orderEntity);
+                        //新增收货人信息
+                        ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
+                        if(productShipAddressEntity != null){//判断返回值是否有收件人信息
+                            ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
+                                    new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
+                            );
+                            if(shipAddress == null){
+                                productShipAddressEntity.setOrderId(orderEntity.getOrderId());
+                                productShipAddressService.insert(productShipAddressEntity);
+                            }
+                        }
+                    }
+                }else{
+                    //更新订单
+                    //获取状态判断是否为取消
+                    if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)){
+                        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
+                        orderEntity.setOrderState("取消");
+                    }else{
+                        //获取当前订单状态判断是否为待付款、已付款、虚发货
+                        if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(orderEntity.getOrderState())){
+                            //获取返回状态判断是否为待付款、已付款、虚发货
+                            if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(modelStatus)){
+                                //判断两个状态不想等时更改状态
+                                if(!modelStatus.equals(orderEntity.getOrderState())){
+                                    orderEntity.setOrderStatus(modelStatus);
+                                    String orderState = dataDictionaryService.selectOne(
+                                            new EntityWrapper<DataDictionaryEntity>()
+                                                    .eq("data_type","AMAZON_ORDER_STATE")
+                                                    .eq("data_number",modelStatus)
+                                    ).getDataContent();
+                                    orderEntity.setOrderState(orderState);
+                                    this.updateById(orderEntity);
+                                    //新增/修改收货人信息
+                                    ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
+                                    if(productShipAddressEntity != null){//判断返回值是否有收件人信息
+                                        ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
+                                                new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
+                                        );
+                                        if(shipAddress == null){
+                                            productShipAddressEntity.setOrderId(orderEntity.getOrderId());
+                                            productShipAddressService.insert(productShipAddressEntity);
+                                        }else{
+                                            productShipAddressEntity.setOrderId(shipAddress.getOrderId());
+                                            productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
+                                            productShipAddressService.updateById(productShipAddressEntity);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
     @Override
     public void internationalShipments(OrderEntity order) {
         order.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED);

@@ -282,4 +282,16 @@ public class DateUtils {
         currentTime = addDateDays(currentTime,-10);
         return xmlToDate(currentTime);
     }
+    /**
+     * 获取现在时间减10天
+     *
+     * @return 返回时间格式 yyyy-mm-dd  HH:mm:ss
+     * @author zjr
+     * @date 2018-11-19 14:54:47
+     */
+    public static XMLGregorianCalendar getTheDateNowTwoYearShort() {
+        Date currentTime = new Date();
+        currentTime = addDateYears(currentTime,-2);
+        return xmlToDate(currentTime);
+    }
 }
