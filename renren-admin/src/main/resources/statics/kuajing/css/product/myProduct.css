@@ -360,9 +360,10 @@
     flex: 1;
     margin: 0;
     padding: 0;
-    display: flex;
+    /*display: flex;*/
 }
 .screen>div ul li{
+    display: inline-block;
     width: 90px;
     margin-left: 20px;
     height: 25px;
@@ -485,6 +486,11 @@ input[type=checkbox]{
     margin: 10px 10px 10px 0;
     width: calc(16.6% - 14px);
     cursor: pointer;
+}
+@media (max-width:1100px){
+    .pro_list .item{
+        width: calc(50% - 14px);
+    }
 }
 .pro_list .item:hover,.pro_list .item.action{
     border: 2px solid #00a3e8;
