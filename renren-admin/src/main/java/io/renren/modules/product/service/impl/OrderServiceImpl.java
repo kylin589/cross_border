@@ -162,8 +162,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         String shopName = (String) params.get("shopName");
         //状态标识
         String orderStatus = (String) params.get("orderStatus");
-        //异常状态标识
-        String abnormalStatus = (String) params.get("abnormalStatus");
         //订单id
         String orderIdStr = (String) params.get("orderId");
         Long orderId = 0L;
@@ -194,7 +192,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         EntityWrapper<OrderEntity> wrapper = new EntityWrapper<OrderEntity>();
         wrapper.like(StringUtils.isNotBlank(shopName), "shop_name", shopName)
                 .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
-                .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus)
                 .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
                 .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
                 .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
@@ -347,6 +344,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         String shopName = (String) params.get("shopName");
         //状态标识
         String orderStatus = (String) params.get("orderStatus");
+        //异常状态标识
+        String abnormalStatus = (String) params.get("abnormalStatus");
         //订单id
         String orderIdStr = (String) params.get("orderId");
         Long orderId = 0L;
@@ -378,6 +377,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         if(deptId == 1L){
             wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
                     .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                    .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus)
                     .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
                     .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
                     .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)

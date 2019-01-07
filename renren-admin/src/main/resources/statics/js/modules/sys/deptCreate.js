@@ -45,7 +45,7 @@ var vm = new Vue({
         // 修改保存
         saveCou:function () {
 
-            layer.confirm('确定创建改公司吗？', function(index){
+            layer.confirm('确定创建该公司吗？', function(index){
 
                 var index = layer.load();
                 var index = layer.load(1); //换了种风格

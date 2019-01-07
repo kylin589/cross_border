@@ -242,6 +242,8 @@ public class ProductsController extends AbstractController {
         //生成库存
         int IStock = (int) (200 + Math.random() * (300 - 200 + 1));
         productsEntity.setStock(new BigDecimal(IStock));
+        // 生成国内运费，15
+        productsEntity.setDomesticFreight(new BigDecimal(15));
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
@@ -717,6 +719,8 @@ public class ProductsController extends AbstractController {
         //生成库存
         int IStock = (int) (200 + Math.random() * (300 - 200 + 1));
         productsEntity.setStock(new BigDecimal(IStock));
+        // 生成国内运费，15
+        productsEntity.setDomesticFreight(new BigDecimal(15));
         //获取码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {

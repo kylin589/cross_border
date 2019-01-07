@@ -2227,6 +2227,7 @@ var vm = new Vue({
                         vm.proDetails.japanPRE = r.introductionJp;
                         if(r.error){
                             layer.msg(r.error);
+                            layer.close(index);
                         }else{
                             layer.msg("翻译成功");
                             layer.close(index);
@@ -2271,6 +2272,7 @@ var vm = new Vue({
                         vm.proDetails.japanPRE = r.introductionJp;
                         if(r.error){
                             layer.msg(r.error);
+                            layer.close(index);
                         }else{
                             layer.msg("翻译成功");
                             layer.close(index);
