@@ -132,7 +132,7 @@ public class OrderController extends AbstractController{
     @RequestMapping("/getOldAllList")
 //    @RequiresPermissions("product:order:alllist")
     public R getOldAllList(@RequestParam Map<String, Object> params){
-        Map<String, Object> map = orderService.queryAllPage(params, getDeptId());
+        Map<String, Object> map = orderService.queryOldAllPage(params, getDeptId());
         return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts"));
     }
     /**
