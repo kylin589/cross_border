@@ -130,8 +130,8 @@ public class ImageAddressController extends AbstractController {
             String year = String.valueOf(calendar.get(Calendar.YEAR));
             String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
             String date = String.valueOf(calendar.get(Calendar.DATE));
-            // 文件上传后是保存在本地的路径
-//            String filePath = "D:/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
+            // 文件上传后是原始路径
+            // String filePath = "D:/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
             String filePath = "/usr/linshi/images/" + productId + "/" + fileUUID + suffixName;
             File dest = new File(filePath);
             if (!dest.getParentFile().exists()) {
@@ -140,6 +140,11 @@ public class ImageAddressController extends AbstractController {
             }
             //上传图片到本地
             file.transferTo(dest);
+
+           /*
+
+            图片转换
+
             // 从本地读入文件
             File files = new File(filePath);
             Image srcImg = ImageIO.read(files);
@@ -147,12 +152,18 @@ public class ImageAddressController extends AbstractController {
             BufferedImage buffImg = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
             buffImg.getGraphics().drawImage(srcImg.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH), 0, 0, null);
             //修改图片大小后保存到本地
-//            String filePathGB="D:/test/"+fileUUID+suffixName;
-//            String filePathGB="/usr/test/"+fileUUID+suffixName;
+            //  String filePathGB="D:/test/"+fileUUID+suffixName;
+            String filePathGB="/usr/test/"+fileUUID+suffixName;
             //保存到ftp上的文件名字
             String fileNameFTP=fileUUID+suffixName;
             //修改后写到本地
             ImageIO.write(buffImg, "jpg", new File(filePath));
+
+            */
+
+
+            //保存到ftp上的文件名字
+            String fileNameFTP=fileUUID+suffixName;
             //再把修改后的图片读取出来
             File fileFtp = new File(filePath);
             InputStream input = new FileInputStream(fileFtp);
