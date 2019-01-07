@@ -208,7 +208,7 @@ public class IntroductionController {
                 }
                 String error = "";
                 if(StringUtils.isNotBlank(errorBuf.toString())){
-                    error = strBuf.toString().substring(0,strBuf.toString().length()-1);
+                    error = errorBuf.toString().substring(0,strBuf.toString().length()-1);
                 }
                 return R.ok().put("introductionEn",introductionEn)
                         .put("introductionFra",introductionFra)
@@ -294,7 +294,7 @@ public class IntroductionController {
         }
         String error = "";
         if(StringUtils.isNotBlank(errorBuf.toString())){
-            error = strBuf.toString().substring(0,strBuf.toString().length()-1);
+            error = errorBuf.toString().substring(0,strBuf.toString().length()-1);
         }
         return R.ok().put("introductionFra",introductionFra)
                 .put("introductionDe",introductionDe)

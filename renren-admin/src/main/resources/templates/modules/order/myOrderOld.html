@@ -67,15 +67,16 @@
     <div class="screen">
         <div class="audit">
             <span>订单状态</span>
-            <ul>
-                <li class="red active" @click="getOrderlist('')">全部 <span>({{ allOrderCount }})</span></li>
-                <li  v-for="item in orderStateList" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
+            <ul class="zhuangtaiUl">
+                <li class="red action" @click="getOrderlist2('',0)">全部 <span>({{ allOrderCount }})</span></li>
+                <li  v-for="(item,index) in orderStateList" :class="item.color"  @click="getOrderlist2(item.dataNumber,index+1)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
             </ul>
         </div>
         <div class="audit">
             <span>异常状态</span>
-            <ul>
-                <li  v-for="item in orderStateListyc" :class="item.color"  @click="getOrderlist(item.dataNumber)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
+            <ul class="yichangUl">
+                <li class="red action" @click="getOrderlist3('',0)">全部 <span>({{ allOrderCount }})</span></li>
+                <li  v-for="(item,index) in orderStateListyc" :class="item.color"  @click="getOrderlist3(item.dataNumber,index+1)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
             </ul>
         </div>
 
@@ -155,6 +156,10 @@
                         <img src="../../statics/kuajing/img/riben.jpg" alt="">
                         日本
                     </span>
+                    <span v-if="item.countryCode == 'FR'">
+                        <img src="../../statics/kuajing/img/faguo.jpg" alt="">
+                        法国
+                    </span>
                     <span v-if="item.countryCode == 'ES'">
                         <img src="../../statics/kuajing/img/xibanya.jpg" alt="">
                         西班牙
@@ -190,6 +195,7 @@
                     {{ item.shopName }}
                     <span v-if="item.countryCode == 'US'">美国</span>
                     <span v-if="item.countryCode == 'JP'">日本</span>
+                    <span v-if="item.countryCode == 'FR'">法国</span>
                     <span v-if="item.countryCode == 'ES'">西班牙</span>
                     <span v-if="item.countryCode == 'GB'">英国</span>
                     <span v-if="item.countryCode == 'IT'">意大利</span>

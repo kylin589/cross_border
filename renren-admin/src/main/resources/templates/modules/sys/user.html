@@ -29,7 +29,7 @@
 	    <div id="jqGridPager"></div>
     </div>
 
-	<div v-show="!showList" class="panel panel-default">
+	<div v-show="!showList && showList1" class="panel panel-default">
 		<div class="panel-heading">{{title}}</div>
 		<form class="form-horizontal">
 			<div class="form-group">
@@ -116,6 +116,83 @@
 			<div class="form-group">
 				<div class="col-sm-2 control-label"></div>
 				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+	<div v-show="!showList1" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<div class="col-sm-2 control-label">账号</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="user.username" placeholder="登录账号" disabled/>
+					<p style="color: #fe8060;font-size: 13px;height: 20px;margin-top: 4px">{{chanUserNameMsg}}</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">所属公司</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" style="cursor:pointer;" v-model="user.deptName" readonly="readonly" placeholder="所属公司"/>
+					<p style="color: #fe8060;font-size: 13px;height: 20px;margin-top: 4px">{{erroMsg1}}</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">英文名称</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="user.enName" placeholder="英文名称（用于生成SKU）" @change="chanUserNameE"/>
+					<p style="color: #fe8060;font-size: 13px;height: 20px;margin-top: 4px">{{chanUserNameMsgE}}</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">英文品牌</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="user.enBrand" placeholder="英文品牌（用于生成SKU,全大写英文,不能有空格）" @change="chanUserNameE1"/>
+					<p style="color: #fe8060;font-size: 13px;height: 20px;margin-top: 4px">{{chanUserNameMsgE1}}</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">昵称</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="user.displayName" placeholder="中文名字"/>
+					<p style="color: #fe8060;font-size: 13px;height: 20px;margin-top: 4px">{{erroMsg3}}</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">邮箱</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="user.email" placeholder="邮箱"/>
+					<p style="color: #fe8060;font-size: 13px;height: 20px;margin-top: 4px">{{erroMsg6}}</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">手机号</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="user.mobile" placeholder="手机号"/>
+					<p style="color: #fe8060;font-size: 13px;height: 20px;margin-top: 4px">{{erroMsg7}}</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">角色</div>
+				<div class="col-sm-10">
+					<label v-for="role in roleList" class="checkbox-inline">
+						<input type="checkbox" :value="role.roleId" v-model="user.roleIdList">{{role.roleName}}
+						<p style="color: #fe8060;font-size: 13px;height: 20px;margin-top: 4px">{{erroMsg9}}</p>
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">状态</div>
+				<label class="radio-inline">
+					<input type="radio" name="status" value="0" v-model="user.status"/> 禁用
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="status" value="1" v-model="user.status"/> 正常
+				</label>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate1" value="确定"/>
 				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
 			</div>
 		</form>

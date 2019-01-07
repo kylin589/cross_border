@@ -64,6 +64,7 @@ var vm = new Vue({
             username: null
         },
         showList: true,
+        showList1:true,
         title:null,
         roleList:{},
         user:{
@@ -90,6 +91,7 @@ var vm = new Vue({
         },
         add: function(){
             vm.showList = false;
+            vm.showList1 = true;
             vm.title = "新增";
             vm.roleList = {};
             vm.user = {deptName:null, deptId:null, status:1, roleIdList:[]};
@@ -171,6 +173,7 @@ var vm = new Vue({
             }
             $('#user_password').hide();
             vm.showList = false;
+            vm.showList1 = false;
             vm.title = "修改";
 
             vm.getUser(userId);
@@ -297,6 +300,61 @@ var vm = new Vue({
 
 
         },
+        saveOrUpdate1: function () {
+            console.log(vm.user.enBrand);
+            vm.erroMsg1 = '';
+            vm.erroMsg3 = '';
+            vm.erroMsg4 = '';
+            vm.erroMsg5 = '';
+            vm.erroMsg6 = '';
+            vm.erroMsg7 = '';
+            vm.erroMsg9 = '';
+            var reg =/\s/;
+            var reg2 = /^[\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]/;
+            // if(reg1.test(vm.user.password)){
+            //     console.log(111111);
+            //     vm.erroMsg4 = '不能以字符开头'
+            // }else {
+            //     vm.erroMsg4 = ''
+            // }
+            var reg1 = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,}$/;
+            if(!vm.user.enName){
+                vm.chanUserNameMsgE = '英文品牌不能为空'
+            }else if(!vm.user.enBrand){
+                vm.chanUserNameMsgE1 = '英文品牌不能为空'
+            }else if(reg.test(vm.user.enName)){
+                vm.chanUserNameMsgE = '英文名称中不能有空格'
+            }else if(reg.test(vm.user.enBrand)){
+                vm.chanUserNameMsgE1 = '英文品牌中不能有空格'
+            }else if(!vm.user.displayName){
+                vm.erroMsg3 = '昵称不能为空'
+            }else if(!vm.user.email){
+                vm.erroMsg6 = '邮箱不能为空'
+            }else if(!vm.user.mobile){
+                vm.erroMsg7 = '手机号不能为空'
+            }else if(vm.user.roleIdList.length == 0){
+                vm.erroMsg9 = '请选择角色'
+            }else {
+                var url = vm.user.userId == null ? "sys/user/save" : "sys/user/update";
+                $.ajax({
+                    type: "POST",
+                    url: baseURL + url,
+                    contentType: "application/json",
+                    data: JSON.stringify(vm.user),
+                    success: function(r){
+                        if(r.code === 0){
+                            alert('操作成功', function(){
+                                vm.reload();
+                            });
+                        }else{
+                            alert(r.msg);
+                        }
+                    }
+                });
+            }
+
+
+        },
         getUser: function(userId){
             $.get(baseURL + "sys/user/info/"+userId, function(r){
                 vm.user = r.user;
@@ -332,6 +390,7 @@ var vm = new Vue({
         },
         reload: function () {
             vm.showList = true;
+            vm.showList1 = true;
             var page = $("#jqGrid").jqGrid('getGridParam','page');
             $("#jqGrid").jqGrid('setGridParam',{
                 postData:{'username': vm.q.username},

@@ -328,6 +328,106 @@ var vm = new Vue({
                 }
             });
         },
+        getOrderlist2:function (orderStatus,index) {
+
+
+            $('.zhuangtaiUl li').removeClass('action');
+            $('.zhuangtaiUl li').eq(index).addClass('action');
+
+            // console.log(orderStatus);
+            this.startDate = this.value9[0];
+            this.endDate = this.value9[1];
+            // console.log(this.shopName);
+            // console.log(this.endDate);
+            this.orderStatus = orderStatus;
+            $.ajax({
+                url: '../../product/order/getMyList',
+                type: 'post',
+                data: {
+                    'page': this.proCurr,
+                    'limit': this.pageLimit,
+                    'shopName': this.shopName,
+                    'orderStatus':this.orderStatus,
+                    'orderId':this.orderId,
+                    'amazonOrderId':this.amazonOrderId,
+                    //产品id
+                    'productId':this.productId,
+                    'productSku':this.productSku,
+                    'productAsin':this.productAsin,
+                    'domesticWaybill':this.domesticWaybill,
+                    'abroadWaybill':this.abroadWaybill,
+                    'startDate':this.startDate,
+                    'endDate':this.endDate,
+                    // 'abnormalStatus':this.orderStatus
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('订单列表');
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.prolist = r.page.list;
+                        vm.allOrderCount = r.page.totalCount;
+                        vm.statistics = r.orderCounts;
+                        vm.laypage();
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        getOrderlist3:function (orderStatus,index) {
+
+
+            $('.yichangUl li').removeClass('action');
+            $('.yichangUl li').eq(index).addClass('action');
+
+            // console.log(orderStatus);
+            this.startDate = this.value9[0];
+            this.endDate = this.value9[1];
+            // console.log(this.shopName);
+            // console.log(this.endDate);
+            this.orderStatus = orderStatus;
+            $.ajax({
+                url: '../../product/order/getMyList',
+                type: 'post',
+                data: {
+                    'page': this.proCurr,
+                    'limit': this.pageLimit,
+                    'shopName': this.shopName,
+                    'orderStatus':'',
+                    'orderId':this.orderId,
+                    'amazonOrderId':this.amazonOrderId,
+                    //产品id
+                    'productId':this.productId,
+                    'productSku':this.productSku,
+                    'productAsin':this.productAsin,
+                    'domesticWaybill':this.domesticWaybill,
+                    'abroadWaybill':this.abroadWaybill,
+                    'startDate':this.startDate,
+                    'endDate':this.endDate,
+                    'abnormalStatus':this.orderStatus
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log('订单列表');
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.prolist = r.page.list;
+                        vm.allOrderCount = r.page.totalCount;
+                        vm.statistics = r.orderCounts;
+                        vm.laypage();
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
         getOrderlist1:function (orderStatus) {
 
             console.log(orderStatus);
@@ -435,6 +535,7 @@ var vm = new Vue({
                                 vm.orderStateList.push(r.orderStateList[i]);
                             }
                         }
+                        console.log('状态列表');
                         console.log(vm.orderStateList);
                     } else {
                         layer.alert(r.message);
