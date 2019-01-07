@@ -28,12 +28,8 @@ public class FtpUtil {
         //创建FTPClient客户端
         FTPClient ftp = new FTPClient();
         ftp.setControlEncoding("GBK");
-        ftp.enterLocalActiveMode();
-
         try {
             int reply;
-            // 设置ftp上传模式，已二进制方式上传。
-            ftp.setFileType(FTP.BINARY_FILE_TYPE);
             // 连接FTP服务器,ip地址，端口号
             ftp.connect(FTP_ADDRESS, FTP_PORT);
             // 登录账号和密码
@@ -44,9 +40,11 @@ public class FtpUtil {
                 return success;
             }
             //主动模式
-//            ftp.enterLocalActiveMode();
+            // ftp.enterLocalActiveMode();
             //被动模式
             ftp.enterLocalPassiveMode();
+            // 设置ftp上传模式，已二进制方式上传。
+            ftp.setFileType(FTP.BINARY_FILE_TYPE);
             boolean a = ftp.changeWorkingDirectory("/");
             //如果输入的路径为空或者为根路径，则不转换操作目录
             if (StringUtils.isBlank(ftpBasepath) || ftpBasepath.equals("/")) {
