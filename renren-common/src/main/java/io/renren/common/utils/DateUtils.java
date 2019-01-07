@@ -289,9 +289,9 @@ public class DateUtils {
      * @author zjr
      * @date 2018-11-19 14:54:47
      */
-    public static XMLGregorianCalendar getTheDateNowTwoYearShort() {
+    public static XMLGregorianCalendar getTheDateNowOneYearShort() {
         Date currentTime = new Date();
-        currentTime = addDateYears(currentTime,-2);
+        currentTime = addDateYears(currentTime,-1);
         return xmlToDate(currentTime);
     }
 }
