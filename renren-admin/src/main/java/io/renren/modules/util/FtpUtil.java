@@ -2,6 +2,7 @@ package io.renren.modules.util;
 
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
@@ -28,8 +29,11 @@ public class FtpUtil {
         FTPClient ftp = new FTPClient();
         ftp.setControlEncoding("GBK");
         ftp.enterLocalActiveMode();
+
         try {
             int reply;
+            // 设置ftp上传模式，已二进制方式上传。
+            ftp.setFileType(FTP.BINARY_FILE_TYPE);
             // 连接FTP服务器,ip地址，端口号
             ftp.connect(FTP_ADDRESS, FTP_PORT);
             // 登录账号和密码
