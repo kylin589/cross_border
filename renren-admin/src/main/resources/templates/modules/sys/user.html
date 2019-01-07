@@ -70,7 +70,7 @@
 			<div class="form-group" id="user_password">
 				<div class="col-sm-2 control-label">密码</div>
 				<div class="col-sm-10">
-					<input type="password" class="form-control" v-model="user.password" placeholder="密码"/>
+					<input type="password" class="form-control" v-model="user.password" placeholder="密码至少8位，要求必须字母、数字加英文符号（不包含空格）" @change="chanPassword"/>
 					<p style="color: #fe8060;font-size: 13px;height: 20px;margin-top: 4px">{{erroMsg4}}</p>
 				</div>
 			</div>

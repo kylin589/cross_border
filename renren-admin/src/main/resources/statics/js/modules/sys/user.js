@@ -146,6 +146,11 @@ var vm = new Vue({
                 vm.erroMsg5 = '';
             }
         },
+        chanPassword:function () {
+            if(reg.test(vm.user.password)){
+                vm.erroMsg4 = '密码至少8位，要求必须字母、数字加英文符号（不包含空格）'
+            }
+        },
         update: function () {
             var userId = getSelectedRow();
             if(userId == null){

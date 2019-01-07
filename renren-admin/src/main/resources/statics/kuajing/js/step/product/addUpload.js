@@ -110,6 +110,8 @@ var vm = new Vue({
                 layer.msg('授权店铺、更新选项、分类节点、分类节点id不能为空！！')
 
             }else {
+
+
                 var grantShop = '';
                 vm.marketplace.forEach(function (t) {
                     if(t.grantShopId == vm.shopinfo){
@@ -141,48 +143,58 @@ var vm = new Vue({
                         if(vm.changeTime == ''){
                             layer.msg('请转换时间')
                         }else {
-                            var index = layer.load();
-                            var index = layer.load(1); //换了种风格
-                            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-                            $.ajax({
-                                url: '../../product/upload/saveTimingUpload',
-                                type: 'post',
-                                data: JSON.stringify({
-                                    'startId': vm.startId,
-                                    'endId': vm.endId,
-                                    'uploadIds': vm.uploadIds,
-                                    'grantShopId': parseInt(vm.shopinfo),
-                                    'isAttribute': vm.isAttribute,
-                                    'grantShop':grantShop,
-                                    'amazonCategoryId': vm.amazonCategoryId,
-                                    'amazonCategory': vm.amazonCategory,
-                                    'amazonTemplateId': vm.flModleValue,
-                                    'amazonTemplate': templateDisplayName,
-                                    'operateItem': vm.inputche,
-                                    'time':vm.changeTime,
-                                    'countryCode':vm.countryCode,
-                                    'fieldsEntityList':vm.modelAttr,
-                                    'amazonNodeId':vm.nodeId,
-                                }),
-                                // dataType: 'json',
-                                contentType: "application/json",
-                                success: function (r) {
-                                    console.log(r);
-                                    if (r.code === 0) {
 
-                                        layer.close(index);
-                                        window.location.href="upProduct.html";
-                                    } else {
-                                        // layer.alert(r.message);
-                                        // window.location.href="upProduct.html";
+                            var d=new Date(Date.parse(vm.changeTime.replace(/-/g,"/")));
+                            var curDate=new Date();
+                            if(d <=curDate){
+                                layer.msg('定时上传时间小于当前时间，请重新选择')
+                            }else {
+                                // layer.msg('ok');
+                                var index = layer.load();
+                                var index = layer.load(1); //换了种风格
+                                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                                $.ajax({
+                                    url: '../../product/upload/saveTimingUpload',
+                                    type: 'post',
+                                    data: JSON.stringify({
+                                        'startId': vm.startId,
+                                        'endId': vm.endId,
+                                        'uploadIds': vm.uploadIds,
+                                        'grantShopId': parseInt(vm.shopinfo),
+                                        'isAttribute': vm.isAttribute,
+                                        'grantShop':grantShop,
+                                        'amazonCategoryId': vm.amazonCategoryId,
+                                        'amazonCategory': vm.amazonCategory,
+                                        'amazonTemplateId': vm.flModleValue,
+                                        'amazonTemplate': templateDisplayName,
+                                        'operateItem': vm.inputche,
+                                        'time':vm.changeTime,
+                                        'countryCode':vm.countryCode,
+                                        'fieldsEntityList':vm.modelAttr,
+                                        'amazonNodeId':vm.nodeId,
+                                    }),
+                                    // dataType: 'json',
+                                    contentType: "application/json",
+                                    success: function (r) {
+                                        console.log(r);
+                                        if (r.code === 0) {
+
+                                            layer.close(index);
+                                            window.location.href="upProduct.html";
+                                        } else {
+                                            // layer.alert(r.message);
+                                            // window.location.href="upProduct.html";
+                                        }
+
+
+                                    },
+                                    error: function () {
+                                        layer.msg("网络故障");
                                     }
+                                });
+                            }
 
 
-                                },
-                                error: function () {
-                                    layer.msg("网络故障");
-                                }
-                            });
                         }
 
                     },
@@ -191,6 +203,9 @@ var vm = new Vue({
 
                     }
                 });
+
+
+
             }
 
         },
