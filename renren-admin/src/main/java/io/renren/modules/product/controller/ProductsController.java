@@ -186,22 +186,6 @@ public class ProductsController extends AbstractController {
         return R.ok();
     }
 
-
-    /**
-     * @return R里包括SKU结果。
-     * @methodname 生成SKU
-     * @auther zjr
-     * @date 2018-11-7 11:23
-     */
-   /*
-   @RequestMapping("/generateSKU")
-    public R generateSKU() {
-
-        String SKU = null;
-        return R.ok().put("SKU", SKU);
-    }
-    */
-
     /**
      * @return R里包括SKU结果。
      * @methodname 修正SKU
@@ -244,7 +228,9 @@ public class ProductsController extends AbstractController {
         productsEntity.setStock(new BigDecimal(IStock));
         // 生成国内运费，15
         productsEntity.setDomesticFreight(new BigDecimal(15));
-        //获取码
+        // 生成产品标题
+        productsEntity.setProductTitle("产品标题");
+        //获取Ean码
         EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
             String code = eanUpcEntity.getCode();
@@ -925,6 +911,8 @@ public class ProductsController extends AbstractController {
             products.setProductTitle(chinesePRE.getProductTitle().trim());
         } else if (StringUtils.isNotBlank(britainPRE.getProductTitle().trim())) {
             products.setProductTitle(britainPRE.getProductTitle().trim());
+        } else {
+            products.setProductTitle("产品标题");
         }
         //法语介绍
         IntroductionEntity francePRE = products.getFrancePRE();
@@ -1193,6 +1181,8 @@ public class ProductsController extends AbstractController {
             products.setProductTitle(britainPRE.getProductTitle().trim());
         } else if (StringUtils.isNotBlank(chinesePRE.getProductTitle().trim())) {
             products.setProductTitle(chinesePRE.getProductTitle().trim());
+        } else {
+            products.setProductTitle("产品标题");
         }
         //法语介绍
         IntroductionEntity francePRE = products.getFrancePRE();
