@@ -48,7 +48,17 @@ public class IntroductionEntity implements Serializable {
 	/**
 	 * 返回信息
 	 */
-	private String msg = "";
+	private String msg;
+
+	private String space = " ";
+
+	public String getSpace() {
+		return space;
+	}
+
+	public void setSpace(String space) {
+		this.space = space;
+	}
 
 	/**
 	 * 设置：产品介绍id
