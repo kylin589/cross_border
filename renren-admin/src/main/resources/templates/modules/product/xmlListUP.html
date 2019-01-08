@@ -24,7 +24,7 @@
 <div class="box" id="step">
     <p>
         <span class="layui-breadcrumb" style="visibility: visible;">
-          <a href="javascript:window.location.href = document.referrer;">上传产品 / </a>
+          <a href="upProduct.html">上传产品 / </a>
           <a><cite>报告列表</cite></a>
         </span>
     </p>
@@ -40,7 +40,7 @@
             <th>上传结果</th>
             <th>错误代码</th>
             <th>创建时间</th>
-            <!--<th style="text-align: center">操作</th>-->
+            <th>操作</th>
         </tr>
         <tr v-for = '(item,index) in xmllist'>
             <td>{{ item.resultId }}</td>
@@ -68,6 +68,9 @@
                 {{item.resultCode}}
             </td>
             <td>{{ item.creationTime }}</td>
+            <td>
+                <a :href="'detailsProduct2.html?id='+item.productId+'id1='+id" style="color: #3776b4">产品详情</a>
+            </td>
 
         </tr>
     </table>
