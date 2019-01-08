@@ -360,6 +360,9 @@ var vm = new Vue({
         //物流信息
         queryLogistic:function (waybill,event) {
             console.log(waybill);
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 // url: 'http://39.106.131.222:8000/domestic/queryLogistic',
                 url: 'http://www.threeee.cn/domestic/queryLogistic',
@@ -372,12 +375,15 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         vm.logistics = r.data;
+                        layer.close(index);
                     } else {
                         layer.alert(r.msg);
+                        layer.close(index);
                     }
                 },
                 error: function () {
                     layer.msg("网络故障");
+                    layer.close(index);
                 }
             });
             if($(event.target).attr('data-ok') == 'true'){
@@ -413,7 +419,9 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['添加','取消'],
                 btn1: function (index) {
-
+                    var index = layer.load();
+                    var index = layer.load(1); //换了种风格
+                    var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                     $.ajax({
                         // url: 'http://39.106.131.222:8000/domestic/getLogisticsCompany',
                         url: 'http://www.threeee.cn/domestic/getLogisticsCompany',
@@ -438,20 +446,25 @@ var vm = new Vue({
                                         console.log(r);
                                         if (r.code === 0) {
                                             layer.msg("添加成功");
+                                            layer.close(index);
                                         } else {
                                             layer.alert(r.msg);
+                                            layer.close(index);
                                         }
                                     },
                                     error: function () {
                                         layer.msg("网络故障");
+                                        layer.close(index);
                                     }
                                 });
                             } else {
                                 layer.alert(r.msg);
+                                layer.close(index);
                             }
                         },
                         error: function () {
                             layer.msg("网络故障");
+                            layer.close(index);
                         }
                     });
                 },
@@ -463,6 +476,9 @@ var vm = new Vue({
         },
         //修改订单状态
         updateState:function (orderState) {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../product/order/updateState',
                 type: 'post',
@@ -477,12 +493,15 @@ var vm = new Vue({
                     if (r.code === 0) {
                         layer.alert('修改成功');
                         vm.getOrderInfo();
+                        layer.close(index);
                     } else {
                         layer.alert(r.msg);
+                        layer.close(index);
                     }
                 },
                 error: function () {
                     layer.msg("网络故障");
+                    layer.close(index);
                 }
             });
         },
@@ -523,6 +542,9 @@ var vm = new Vue({
         },
         // 生成国际运单号
         getorderID:function () {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../product/order/createAbroadWaybill',
                 type: 'post',
@@ -537,18 +559,24 @@ var vm = new Vue({
                         vm.orderDetails = r.orderDTO;
                         vm.orderDetails.shipAddress.abroadWaybill = r.abroadLogistics;
                         layer.msg('生成成功');
+                        layer.close(index);
 
                     } else {
                         layer.alert(r.msg);
+                        layer.close(index);
                     }
                 },
                 error: function () {
                     layer.msg("网络故障");
+                    layer.close(index);
                 }
             });
         },
         // 同步国际运单
         tongbu:function () {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../product/order/synchronization',
                 type: 'post',
@@ -563,13 +591,16 @@ var vm = new Vue({
                         // vm.orderDetails = r.orderDTO;
                         // vm.orderDetails.shipAddress.abroadWaybill = r.abroadLogistics;
                         layer.msg('同步成功');
+                        layer.close(index);
 
                     } else {
                         layer.alert(r.msg);
+                        layer.close(index);
                     }
                 },
                 error: function () {
                     layer.msg("网络故障");
+                    layer.close(index);
                 }
             });
         },
