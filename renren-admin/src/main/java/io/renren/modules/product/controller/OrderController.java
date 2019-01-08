@@ -327,6 +327,7 @@ public class OrderController extends AbstractController{
     /**
      * 删除国内物流
      */
+    @RequestMapping("/deleteLogistic")
     public R deleteLogistic(@RequestParam Long domesticLogisticsId){
         DomesticLogisticsEntity logisticsEntity = domesticLogisticsService.selectById(domesticLogisticsId);
         OrderEntity orderEntity = orderService.selectById(logisticsEntity.getOrderId());
