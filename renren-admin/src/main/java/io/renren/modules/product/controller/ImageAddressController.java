@@ -108,7 +108,7 @@ public class ImageAddressController extends AbstractController {
         for (int i = 0; i < images.length; i++) {
             ImageAddressEntity imageAddressEntity = images[i];
             imageAddressEntity.setSort(i);
-            imageAddressService.insert(imageAddressEntity);
+            imageAddressService.updateById(imageAddressEntity);
             if (i == 0) {
                 ProductsEntity productsEntity = new ProductsEntity();
                 productsEntity.setProductId(images[i].getProductId());
