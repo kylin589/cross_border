@@ -131,7 +131,7 @@
                     <h4>产品分类</h4>
                 </div>
                 <div>
-                    <input type="text" class="sousuoAreaInput" @click="typeClickINput" placeholder="产品分类" v-model="proDetails.productCategory">
+                    <input type="text" class="sousuoAreaInput" @click="typeClickINput" placeholder="产品分类" v-model="proDetails.productCategory" readonly>
                     <div class="sousuoArea">
                         <div class="areaOne">
                             <ul>
@@ -335,16 +335,16 @@
                     </tr>
                     <tr>
                     <th>最终售价</th>
-                    <td>{{ proDetails.americanFC.finalPrice }}</td>
-                    <td>{{ proDetails.canadaFC.finalPrice }}</td>
-                    <td>{{ proDetails.mexicoFC.finalPrice }}</td>
-                    <td>{{ proDetails.britainFC.finalPrice }}</td>
-                    <td>{{ proDetails.franceFC.finalPrice }}</td>
-                    <td>{{ proDetails.germanyFC.finalPrice }}</td>
-                    <td>{{ proDetails.italyFC.finalPrice }}</td>
-                    <td>{{ proDetails.spainFC.finalPrice }}</td>
-                    <td>{{ proDetails.japanFC.finalPrice }}</td>
-                    <td>{{ proDetails.australiaFC.finalPrice }}</td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.americanFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.canadaFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.mexicoFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.britainFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.franceFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.germanyFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.italyFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.spainFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.japanFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.australiaFC.finalPrice" @change="lirFunc1"></td>
 
                     </tr>
                     <tr>
@@ -401,9 +401,10 @@
                             <!--<input type="button" value="一键翻译" @click="fanyiFunc1">-->
                             <!--<br><br>-->
                             <span><label for="">产品标题：<input type="button" value="一键翻译" @click="titleZhtoOther"></label><textarea v-model="proDetails.chinesePRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
-                            <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordZhtoOther"></label><textarea v-model="proDetails.chinesePRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordZhtoOther"></label><textarea v-model="proDetails.chinesePRE.keyWord" @change="titleChange2">建议填写</textarea></span><br>
                             <span><label for="">重点说明：<input type="button" value="一键翻译" @click="keyPointZhtoOther"></label><textarea v-model="proDetails.chinesePRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionZhtoOther"></label><textarea v-model="proDetails.chinesePRE.productDescription" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionZhtoOther"></label><textarea v-model="proDetails.chinesePRE.productDescription" @change="titleChange3">建议填写</textarea>
+                                <input type="button" value="加粗" @click="inserttag"></span><br>
                         </div>
                         <div class="layui-tab-content">
                             <!--<input type="button" value="一键翻译" @click="fanyiFunc">-->
