@@ -755,7 +755,7 @@ var vm = new Vue({
                         console.log(r);
                         layer.msg('保存成功');
                         layer.close(index);
-                        vm.getProAlbum();
+                        // vm.getProAlbum();
                         // vm.proAlbum = [];
                         // r.imageInfo.forEach(function (item,index) {
                         //     vm.proAlbum.push({
