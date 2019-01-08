@@ -51,6 +51,16 @@ public class ImageAddressEntity implements Serializable {
 	 */
 	private Long lastOperationUserId;
 
+	private Integer sort;
+
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
 	/**
 	 * 设置：图片id
 	 */

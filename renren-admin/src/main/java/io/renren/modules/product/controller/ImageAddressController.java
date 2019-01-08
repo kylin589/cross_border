@@ -100,6 +100,27 @@ public class ImageAddressController extends AbstractController {
     }
 
     /**
+     * 图片移动位置修改
+     */
+    @RequestMapping("/locationsave")
+    //@RequiresPermissions("product:imageaddress:locationsave")
+    public R locationSave(@RequestBody ImageAddressEntity[] images) {
+        for (int i = 0; i < images.length; i++) {
+            ImageAddressEntity imageAddressEntity = images[i];
+            imageAddressEntity.setSort(i);
+            imageAddressService.insert(imageAddressEntity);
+            if (i == 0) {
+                ProductsEntity productsEntity = new ProductsEntity();
+                productsEntity.setProductId(images[i].getProductId());
+                productsEntity.setMainImageUrl(images[i].getImageUrl());
+                productsEntity.setMainImageId(imageAddressEntity.getImageId());
+                productsService.updateById(productsEntity);
+            }
+        }
+        return R.ok();
+    }
+
+    /**
      * @methodname: upload 上传图片
      * @param: [file, productId] 上传的图片文件，产品id
      * @return: io.renren.common.utils.R
@@ -108,9 +129,10 @@ public class ImageAddressController extends AbstractController {
      */
     //保存到数据库的Url前缀
     private static final String fileUrl = "http://39.105.120.226/";
+
     @RequestMapping("/upload")
     @ResponseBody
-    public R upload(@RequestParam(value = "file") MultipartFile file,@RequestParam(value = "productId") Long productId) throws Exception {
+    public R upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "productId") Long productId) throws Exception {
         //判断文件是否为空
         try {
             if (file.isEmpty()) {
@@ -120,8 +142,8 @@ public class ImageAddressController extends AbstractController {
             String fileName = file.getOriginalFilename();
             // 获取上传文件的后缀名
             String suffixName = fileName.substring(fileName.lastIndexOf("."));
-            if (!suffixName.equalsIgnoreCase(".jpg")){
-                return R.error(1,"图片格式不正确，请上传jpg格式的图片");
+            if (!suffixName.equalsIgnoreCase(".jpg")) {
+                return R.error(1, "图片格式不正确，请上传jpg格式的图片");
             }
             //新文件名以uuid为名
             String fileUUID = UUIDUtils.getUUID();
@@ -163,7 +185,7 @@ public class ImageAddressController extends AbstractController {
 
 
             //保存到ftp上的文件名字
-            String fileNameFTP=fileUUID+suffixName;
+            String fileNameFTP = fileUUID + suffixName;
             //再把修改后的图片读取出来
             File fileFtp = new File(filePath);
             InputStream input = new FileInputStream(fileFtp);
@@ -173,7 +195,7 @@ public class ImageAddressController extends AbstractController {
             if (flag == true) {
                 ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
                 //保存到数据库的地址
-                String url = "images/"+year + "/" + month + "/" + date + "/" + productId + "/" + fileNameFTP;
+                String url = "images/" + year + "/" + month + "/" + date + "/" + productId + "/" + fileNameFTP;
                 String urlOne = fileUrl + url;
                 imageAddressEntity.setImageUrl(urlOne);
                 imageAddressEntity.setProductId(productId);
@@ -184,12 +206,13 @@ public class ImageAddressController extends AbstractController {
                 imageAddressEntity.setLastOperationTime(new Date());
                 imageAddressService.insert(imageAddressEntity);
                 Long id = imageAddressEntity.getImageId();
-                return R.ok().put("url", urlOne).put("id", id);}
-            } catch(IllegalStateException e){
-                e.printStackTrace();
-            } catch(IOException e){
-                e.printStackTrace();
+                return R.ok().put("url", urlOne).put("id", id);
             }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return R.error(1, "上传失败");
     }
 
@@ -202,7 +225,7 @@ public class ImageAddressController extends AbstractController {
      */
     @RequestMapping("/imageinfo")
     public R imageinfo(@RequestParam Long productId) throws Exception {
-        List<ImageAddressEntity> imageInfo = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "0"));
+        List<ImageAddressEntity> imageInfo = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "0").orderBy("sort",true));
         if (imageInfo != null && imageInfo.size() != 0) {
             ImageAddressEntity imageAddressEntity = imageInfo.get(0);
             String imageUrl = imageAddressEntity.getImageUrl();
@@ -244,7 +267,7 @@ public class ImageAddressController extends AbstractController {
      */
     @RequestMapping("/querydeleteimage")
     public R isdeleteList(@RequestParam Long productId) {
-        List<ImageAddressEntity> isdeleteList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "1"));
+        List<ImageAddressEntity> isdeleteList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "1").orderBy("sort",true));
         return R.ok().put("isdeleteList", isdeleteList);
     }
 
