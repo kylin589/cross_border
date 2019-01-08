@@ -308,7 +308,8 @@ var vm = new Vue({
                     'startDate':this.startDate,
                     'endDate':this.endDate,
                     'deptId':this.allGongsiValue,
-                    'userId':this.allYUanGValue
+                    'userId':this.allYUanGValue,
+                    'abnormalStatus':this.orderStatus1
                 },
                 dataType: 'json',
                 success: function (r) {
@@ -361,7 +362,8 @@ var vm = new Vue({
                     'startDate':this.startDate,
                     'endDate':this.endDate,
                     'deptId':this.allGongsiValue,
-                    'userId':this.allYUanGValue
+                    'userId':this.allYUanGValue,
+                    'abnormalStatus':this.orderStatus1
                 },
                 dataType: 'json',
                 success: function (r) {
@@ -393,7 +395,7 @@ var vm = new Vue({
             this.endDate = this.value9[1];
             // console.log(this.shopName);
             // console.log(this.endDate);
-            this.orderStatus = orderStatus;
+            this.orderStatus1 = orderStatus;
             $.ajax({
                 url: '../../product/order/getAllList',
                 type: 'post',
@@ -401,7 +403,7 @@ var vm = new Vue({
                     'page': this.proCurr,
                     'limit': this.pageLimit,
                     'shopName': this.shopName,
-                    'orderStatus':'',
+                    'orderStatus':this.orderStatus,
                     'orderId':this.orderId,
                     'amazonOrderId':this.amazonOrderId,
                     //产品id
@@ -414,7 +416,7 @@ var vm = new Vue({
                     'endDate':this.endDate,
                     'deptId':this.allGongsiValue,
                     'userId':this.allYUanGValue,
-                    'abnormalStatus':this.orderStatus
+                    'abnormalStatus':this.orderStatus1
                 },
                 dataType: 'json',
                 success: function (r) {
@@ -463,7 +465,8 @@ var vm = new Vue({
                     'startDate':this.startDate,
                     'endDate':this.endDate,
                     'deptId':this.allGongsiValue,
-                    'userId':this.allYUanGValue
+                    'userId':this.allYUanGValue,
+                    'abnormalStatus':this.orderStatus1
                 },
                 dataType: 'json',
                 success: function (r) {

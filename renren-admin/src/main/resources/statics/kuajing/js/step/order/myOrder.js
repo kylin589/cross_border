@@ -73,6 +73,7 @@ var vm = new Vue({
         shopName:'',
         //订单状态
         orderStatus:'',
+        orderStatus1:'',
         //订单id
         orderId:null,
         //亚马逊订单id
@@ -183,7 +184,7 @@ var vm = new Vue({
                     'abroadWaybill':this.abroadWaybill,
                     'startDate':this.startDate,
                     'endDate':this.endDate,
-                    'abnormalStatus':''
+                    'abnormalStatus':this.orderStatus1
                 },
                 dataType: 'json',
                 success: function (r) {
@@ -233,7 +234,7 @@ var vm = new Vue({
                     'abroadWaybill':this.abroadWaybill,
                     'startDate':this.startDate,
                     'endDate':this.endDate,
-                    // 'abnormalStatus':this.orderStatus
+                    'abnormalStatus':this.orderStatus1
                 },
                 dataType: 'json',
                 success: function (r) {
@@ -264,7 +265,7 @@ var vm = new Vue({
             this.endDate = this.value9[1];
             // console.log(this.shopName);
             // console.log(this.endDate);
-            this.orderStatus = orderStatus;
+            this.orderStatus1 = orderStatus;
             $.ajax({
                 url: '../../product/order/getMyList',
                 type: 'post',
@@ -272,7 +273,7 @@ var vm = new Vue({
                     'page': this.proCurr,
                     'limit': this.pageLimit,
                     'shopName': this.shopName,
-                    'orderStatus':'',
+                    'orderStatus':this.orderStatus,
                     'orderId':this.orderId,
                     'amazonOrderId':this.amazonOrderId,
                     //产品id
@@ -283,7 +284,7 @@ var vm = new Vue({
                     'abroadWaybill':this.abroadWaybill,
                     'startDate':this.startDate,
                     'endDate':this.endDate,
-                    'abnormalStatus':this.orderStatus
+                    'abnormalStatus':this.orderStatus1
                 },
                 dataType: 'json',
                 success: function (r) {
@@ -329,6 +330,7 @@ var vm = new Vue({
                     'abroadWaybill':this.abroadWaybill,
                     'startDate':this.startDate,
                     'endDate':this.endDate,
+                    'abnormalStatus':this.orderStatus1
                 },
                 dataType: 'json',
                 success: function (r) {
