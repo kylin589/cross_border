@@ -33,8 +33,13 @@ import java.util.Properties;
 public final class GoogleTranslator extends AbstractTranslator {
 
     private static final String url = "https://translate.google.cn/translate_a/single";
+    private String ip;
+    private int port;
     public GoogleTranslator(){
         super(url);
+        Map<String, Object> map = JDBC.getOne();
+        ip = map.get("ip").toString();
+        port = Integer.parseInt(map.get("port").toString());
     }
 
     @Override
@@ -85,21 +90,21 @@ public final class GoogleTranslator extends AbstractTranslator {
         }
 //        HttpUriRequest request = new HttpGet(uri.toString());
         HttpGet request = new HttpGet(uri.toString());
-        Map<String, Object> map = JDBC.getOne();
+        //Map<String, Object> map = JDBC.getOne();
+
         // 初始化线程池
-        System.out.println("ip:" + map.get("ip"));
-        System.out.println("port:" + map.get("port"));
         CloseableHttpClient httpClient = getHttpClient();
         RequestConfig defaultRequestConfig = RequestConfig.custom()
                 .setSocketTimeout(2000)
                 .setConnectTimeout(3000)
                 .setConnectionRequestTimeout(3000)
                 .build();
+        System.out.println("ip:" + ip);
+        System.out.println("port:" + port);
         RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig)
-                .setProxy(new HttpHost(map.get("ip").toString(), Integer.parseInt(map.get("port").toString())))
+                .setProxy(new HttpHost(ip,port))
                 .build();
         request.setConfig(requestConfig);
-//        request.setConfig(defaultRequestConfig);
         CloseableHttpResponse response = httpClient.execute(request);
         HttpEntity entity = response.getEntity();
 

@@ -2198,7 +2198,350 @@ var vm = new Vue({
                 window.location.href = 'myProduct.html';
             })
         },
+        // 中文标题翻译
+        titleZhtoOther:function () {
 
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/titleZhtoOther',
+                type: 'post',
+                data: JSON.stringify({
+                    'productTitle': vm.proDetails.chinesePRE.productTitle
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.proDetails.francePRE.productTitle = r.introductionFra.productTitle;
+                        vm.proDetails.spainPRE.productTitle = r.introductionSpa.productTitle;
+                        vm.proDetails.germanyPRE.productTitle = r.introductionDe.productTitle;
+                        vm.proDetails.italyPRE.productTitle = r.introductionIt.productTitle;
+                        vm.proDetails.britainPRE.productTitle = r.introductionEn.productTitle;
+                        vm.proDetails.japanPRE.productTitle = r.introductionJp.productTitle;
+                        if(r.error){
+                            layer.close(index);
+                            layer.msg(r.error);
+                        }else{
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.close(index);
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 中文关键字翻译
+        keyWordZhtoOther:function () {
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/keyWordZhtoOther',
+                type: 'post',
+                data: JSON.stringify({
+                    'keyWord': vm.proDetails.chinesePRE.keyWord
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.proDetails.francePRE.keyWord = r.introductionFra.keyWord;
+                        vm.proDetails.spainPRE.keyWord = r.introductionSpa.keyWord;
+                        vm.proDetails.germanyPRE.keyWord = r.introductionDe.keyWord;
+                        vm.proDetails.italyPRE.keyWord = r.introductionIt.keyWord;
+                        vm.proDetails.britainPRE.keyWord = r.introductionEn.keyWord;
+                        vm.proDetails.japanPRE.keyWord = r.introductionJp.keyWord;
+                        if(r.error){
+                            layer.close(index);
+                            layer.msg(r.error);
+                        }else{
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.close(index);
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 中文重点说明翻译
+        keyPointZhtoOther:function () {
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/keyPointZhtoOther',
+                type: 'post',
+                data: JSON.stringify({
+                    'keyPoints': vm.proDetails.chinesePRE.keyPoints
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.proDetails.francePRE.keyPoints = r.introductionFra.keyPoints;
+                        vm.proDetails.spainPRE.keyPoints = r.introductionSpa.keyPoints;
+                        vm.proDetails.germanyPRE.keyPoints = r.introductionDe.keyPoints;
+                        vm.proDetails.italyPRE.keyPoints = r.introductionIt.keyPoints;
+                        vm.proDetails.britainPRE.keyPoints = r.introductionEn.keyPoints;
+                        vm.proDetails.japanPRE.keyPoints = r.introductionJp.keyPoints;
+                        if(r.error){
+                            layer.close(index);
+                            layer.msg(r.error);
+                        }else{
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.close(index);
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 中文产品描述翻译
+        descriptionZhtoOther:function () {
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/descriptionZhtoOther',
+                type: 'post',
+                data: JSON.stringify({
+                    'productDescription': vm.proDetails.chinesePRE.productDescription
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.proDetails.francePRE.productDescription = r.introductionFra.productDescription;
+                        vm.proDetails.spainPRE.productDescription = r.introductionSpa.productDescription;
+                        vm.proDetails.germanyPRE.productDescription = r.introductionDe.productDescription;
+                        vm.proDetails.italyPRE.productDescription = r.introductionIt.productDescription;
+                        vm.proDetails.britainPRE.productDescription = r.introductionEn.productDescription;
+                        vm.proDetails.japanPRE.productDescription = r.introductionJp.productDescription;
+                        if(r.error){
+                            layer.close(index);
+                            layer.msg(r.error);
+                        }else{
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.close(index);
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 英文标题翻译
+        titleEntoOthers:function () {
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/titleEntoOthers',
+                type: 'post',
+                data: JSON.stringify({
+                    'productTitle': vm.proDetails.britainPRE.productTitle
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.proDetails.francePRE.productTitle = r.introductionFra.productTitle;
+                        vm.proDetails.spainPRE.productTitle = r.introductionSpa.productTitle;
+                        vm.proDetails.germanyPRE.productTitle = r.introductionDe.productTitle;
+                        vm.proDetails.italyPRE.productTitle = r.introductionIt.productTitle;
+                        vm.proDetails.britainPRE.productTitle = r.introductionEn.productTitle;
+                        vm.proDetails.japanPRE.productTitle = r.introductionJp.productTitle;
+                        if(r.error){
+                            layer.close(index);
+                            layer.msg(r.error);
+                        }else{
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.close(index);
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 英文关键字翻译
+        keyWordEntoOthers:function () {
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/keyWordEntoOthers',
+                type: 'post',
+                data: JSON.stringify({
+                    'keyWord': vm.proDetails.britainPRE.keyWord
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.proDetails.francePRE.keyWord = r.introductionFra.keyWord;
+                        vm.proDetails.spainPRE.keyWord = r.introductionSpa.keyWord;
+                        vm.proDetails.germanyPRE.keyWord = r.introductionDe.keyWord;
+                        vm.proDetails.italyPRE.keyWord = r.introductionIt.keyWord;
+                        vm.proDetails.britainPRE.keyWord = r.introductionEn.keyWord;
+                        vm.proDetails.japanPRE.keyWord = r.introductionJp.keyWord;
+                        if(r.error){
+                            layer.close(index);
+                            layer.msg(r.error);
+                        }else{
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.close(index);
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 英文重点说明翻译
+        keyPointEntoOthers:function () {
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/keyPointEntoOthers',
+                type: 'post',
+                data: JSON.stringify({
+                    'keyPoints': vm.proDetails.britainPRE.keyPoints
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.proDetails.francePRE.keyPoints = r.introductionFra.keyPoints;
+                        vm.proDetails.spainPRE.keyPoints = r.introductionSpa.keyPoints;
+                        vm.proDetails.germanyPRE.keyPoints = r.introductionDe.keyPoints;
+                        vm.proDetails.italyPRE.keyPoints = r.introductionIt.keyPoints;
+                        vm.proDetails.britainPRE.keyPoints = r.introductionEn.keyPoints;
+                        vm.proDetails.japanPRE.keyPoints = r.introductionJp.keyPoints;
+                        if(r.error){
+                            layer.close(index);
+                            layer.msg(r.error);
+                        }else{
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.close(index);
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 英文产品描述翻译
+        descriptionEntoOthers:function () {
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+            $.ajax({
+                url: '../../product/introduction/descriptionEntoOthers',
+                type: 'post',
+                data: JSON.stringify({
+                    'productDescription': vm.proDetails.britainPRE.productDescription
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.proDetails.francePRE.productDescription = r.introductionFra.productDescription;
+                        vm.proDetails.spainPRE.productDescription = r.introductionSpa.productDescription;
+                        vm.proDetails.germanyPRE.productDescription = r.introductionDe.productDescription;
+                        vm.proDetails.italyPRE.productDescription = r.introductionIt.productDescription;
+                        vm.proDetails.britainPRE.productDescription = r.introductionEn.productDescription;
+                        vm.proDetails.japanPRE.productDescription = r.introductionJp.productDescription;
+                        if(r.error){
+                            layer.close(index);
+                            layer.msg(r.error);
+                        }else{
+                            layer.close(index);
+                            layer.msg("翻译成功");
+                        }
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.close(index);
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                    layer.msg("网络故障");
+                }
+            })
+        },
         // 翻译
         fanyiFunc:function () {
 

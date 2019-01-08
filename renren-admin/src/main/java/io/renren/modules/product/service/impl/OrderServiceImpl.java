@@ -722,8 +722,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         orderEntity.setAmazonOrderId(amazonOrderId);
                         orderEntity.setOrderItemId(orderModel.getOrderItemId());
                         orderEntity.setBuyDate(orderModel.getBuyDate());
-                        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING);
-                        orderEntity.setOrderState("已发货");
+                        orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_SHIPPED);
+                        orderEntity.setOrderState("虚发货");
                         if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
                             orderEntity.setCountryCode(orderModel.getCountry());
                         }
@@ -777,9 +777,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         }
                     }
                 }else{
+                    //跳过
+                    return;
                     //更新订单
                     //获取状态判断是否为取消
-                    if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)){
+                    /*if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)){
                         orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
                         orderEntity.setOrderState("取消");
                     }else{
@@ -815,7 +817,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
 
             }

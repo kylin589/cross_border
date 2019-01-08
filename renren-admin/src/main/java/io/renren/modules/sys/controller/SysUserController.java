@@ -175,7 +175,7 @@ public class SysUserController extends AbstractController {
 	 */
 	@SysLog("修改用户")
 	@RequestMapping("/update")
-	@RequiresPermissions("sys:user:update")
+//	@RequiresPermissions("sys:user:update")
 	public R update(@RequestBody SysUserEntity user){
 //		//ValidatorUtils.validateEntity((user, UpdateGroup.class);
 

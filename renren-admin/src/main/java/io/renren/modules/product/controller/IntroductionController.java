@@ -122,6 +122,882 @@ public class IntroductionController {
         IntroductionEntity introductionEntity = introductionService.selectById(introductionId);
         return R.ok().put("introductionEntity", introductionEntity);
     }
+    /**
+     * titleZhtoOther 中译其他接口(标题)
+     * @param: introductionZh
+     * @return: java.lang.String
+     * @auther: wdh
+     * @date: 2018/11/5 16:16
+     */
+    @RequestMapping("/titleZhtoOther")
+    public R titleZhtoOther(@RequestBody IntroductionEntity introductionZh){
+//    public List<IntroductionEntity> ZhtoEn(String productTitle,String keyWord,String keyPoints,String productDescription){
+        String title = introductionZh.getProductTitle();
+        if(StringUtils.isNotBlank(title)){
+            Querier<AbstractTranslator> querierTrans = new Querier<>();
+            querierTrans.attach(new GoogleTranslator());
+            Map<String, Object> map = titleZhtoEn(querierTrans, title);
+            String msg = (String) map.get("msg");
+            if (StringUtils.isBlank(msg)){
+                IntroductionEntity introductionEn = (IntroductionEntity)map.get("introduction");
+                String tranEnStr = (String)map.get("tranEnStr");
+                IntroductionEntity introductionFra = titleEntoOther(querierTrans, tranEnStr,"FRA");
+                IntroductionEntity introductionDe = titleEntoOther(querierTrans, tranEnStr,"DE");
+                IntroductionEntity introductionIt = titleEntoOther(querierTrans, tranEnStr,"IT");
+                IntroductionEntity introductionSpa = titleEntoOther(querierTrans, tranEnStr,"SPA");
+                IntroductionEntity introductionJp = titleEntoOther(querierTrans, tranEnStr,"JP");
+                StringBuffer errorBuf = new StringBuffer();
+                if(StringUtils.isNotBlank(introductionEn.getMsg())){
+                    errorBuf.append(introductionEn.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionFra.getMsg())){
+                    errorBuf.append(introductionFra.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionDe.getMsg())){
+                    errorBuf.append(introductionDe.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionIt.getMsg())){
+                    errorBuf.append(introductionIt.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+                    errorBuf.append(introductionSpa.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionJp.getMsg())){
+                    errorBuf.append(introductionJp.getMsg());
+                    errorBuf.append("\n");
+                }
+                String error = "";
+                if(StringUtils.isNotBlank(errorBuf.toString())){
+                    error = errorBuf.toString().substring(0,errorBuf.toString().length()-1);
+                }
+                return R.ok().put("introductionEn",introductionEn)
+                        .put("introductionFra",introductionFra)
+                        .put("introductionDe",introductionDe)
+                        .put("introductionIt",introductionIt)
+                        .put("introductionSpa",introductionSpa)
+                        .put("introductionJp",introductionJp)
+                        .put("error",error);
+            }else{
+                return R.error(msg);
+            }
+        }
+        return R.error("请输入内容后再进行翻译");
+    }
+    /**
+     * titleZhtoEn 中译英(标题)
+     * @param: tranStr
+     * @return: Map<String, Object>
+     * @auther: wdh
+     * @date: 2018/11/5 16:16
+     */
+    private Map<String, Object> titleZhtoEn(Querier<AbstractTranslator> querierTrans, String title){
+        Map<String, Object> map = new HashMap<String, Object>();
+        IntroductionEntity introductionEn = new IntroductionEntity();
+        //翻译
+        querierTrans.setParams(LANG.ZH, LANG.EN, title);
+        try{
+            List<String> resultList = querierTrans.execute();
+            if (StringUtils.isNotBlank(resultList.get(0))){
+                String productTitle = TranslateUtils.toUpperCase(resultList.get(0).replace(","," "));
+                introductionEn.setCountry("EN");
+                introductionEn.setProductTitle(productTitle);
+                map.put("querierTrans",querierTrans);
+                map.put("introduction",introductionEn);
+                map.put("tranEnStr",productTitle);
+                //判断标题
+                if(title.length() >200){
+                    map.put("msg","翻译失败，英文标题超过200字符");
+                }
+                return map;
+            }else{
+                map.put("msg","翻译失败，请重新尝试");
+                return map;
+            }
+        }catch (Exception e){
+            map.put("msg","翻译失败，请重新尝试");
+            return map;
+        }
+    }
+    /**
+     * titleEntoOther 英译其他语言(标题)
+     * @param: [introduction]
+     * @return: io.renren.modules.product.entity.IntroductionEntity
+     * @auther: wdh
+     * @date: 2018/11/6 15:33
+     */
+    private IntroductionEntity titleEntoOther(Querier<AbstractTranslator> querierTrans, String tranEnStr, String country){
+//        Querier<AbstractTranslator> querierTrans = new Querier<>();
+        switch (country){
+            //法国
+            case "FRA":
+                querierTrans.setParams(LANG.EN, LANG.FRA, tranEnStr);
+                break;
+            //德国
+            case "DE":
+                querierTrans.setParams(LANG.EN, LANG.DE, tranEnStr);
+                break;
+            //意大利
+            case "IT":
+                querierTrans.setParams(LANG.EN, LANG.IT, tranEnStr);
+                break;
+            //西班牙
+            case "SPA":
+                querierTrans.setParams(LANG.EN, LANG.SPA, tranEnStr);
+                break;
+            //日本
+            case "JP":
+                querierTrans.setParams(LANG.EN, LANG.JP, tranEnStr);
+                break;
+            default:
+                break;
+        }
+        IntroductionEntity introduction = new IntroductionEntity();
+        //翻译
+        List<String> resultList = querierTrans.execute();
+        if (resultList != null && resultList.size() >0){
+            String title = TranslateUtils.toUpperCase(resultList.get(0));
+            introduction.setProductTitle(title);
+            if(title.length() >200){
+                introduction.setMsg(country + "标题字符超过200");
+            }
+        }else{
+            introduction.setMsg(country + "语言翻译失败,请调试");
+        }
+        introduction.setCountry("country");
+        System.out.println("country:" + introduction.getCountry());
+        System.out.println("title:" + introduction.getProductTitle());
+        return introduction;
+    }
+    /**
+     * keyWordZhtoOther 中译其他接口(关键字)
+     * @param: introductionZh
+     * @return: java.lang.String
+     * @auther: wdh
+     * @date: 2018/11/5 16:16
+     */
+    @RequestMapping("/keyWordZhtoOther")
+    public R keyWordZhtoOther(@RequestBody IntroductionEntity introductionZh){
+        String keyWord = introductionZh.getKeyWord();
+        if(StringUtils.isNotBlank(keyWord)){
+            Querier<AbstractTranslator> querierTrans = new Querier<>();
+            querierTrans.attach(new GoogleTranslator());
+            Map<String, Object> map = keyWordZhtoEn(querierTrans, keyWord);
+            String msg = (String) map.get("msg");
+            if (StringUtils.isBlank(msg)){
+                IntroductionEntity introductionEn = (IntroductionEntity)map.get("introduction");
+                String tranEnStr = (String)map.get("tranEnStr");
+                IntroductionEntity introductionFra = keyWordEntoOther(querierTrans, tranEnStr,"FRA");
+                IntroductionEntity introductionDe = keyWordEntoOther(querierTrans, tranEnStr,"DE");
+                IntroductionEntity introductionIt = keyWordEntoOther(querierTrans, tranEnStr,"IT");
+                IntroductionEntity introductionSpa = keyWordEntoOther(querierTrans, tranEnStr,"SPA");
+                IntroductionEntity introductionJp = keyWordEntoOther(querierTrans, tranEnStr,"JP");
+                StringBuffer errorBuf = new StringBuffer();
+                if(StringUtils.isNotBlank(introductionEn.getMsg())){
+                    errorBuf.append(introductionEn.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionFra.getMsg())){
+                    errorBuf.append(introductionFra.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionDe.getMsg())){
+                    errorBuf.append(introductionDe.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionIt.getMsg())){
+                    errorBuf.append(introductionIt.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+                    errorBuf.append(introductionSpa.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionJp.getMsg())){
+                    errorBuf.append(introductionJp.getMsg());
+                    errorBuf.append("\n");
+                }
+                String error = "";
+                if(StringUtils.isNotBlank(errorBuf.toString())){
+                    error = errorBuf.toString().substring(0,errorBuf.toString().length()-1);
+                }
+                return R.ok().put("introductionEn",introductionEn)
+                        .put("introductionFra",introductionFra)
+                        .put("introductionDe",introductionDe)
+                        .put("introductionIt",introductionIt)
+                        .put("introductionSpa",introductionSpa)
+                        .put("introductionJp",introductionJp)
+                        .put("error",error);
+            }else{
+                return R.error(msg);
+            }
+        }
+        return R.error("请输入内容后再进行翻译");
+    }
+    /**
+     * keyWordZhtoEn 中译英(关键字)
+     * @param: tranStr
+     * @return: Map<String, Object>
+     * @auther: wdh
+     * @date: 2018/11/5 16:16
+     */
+    private Map<String, Object> keyWordZhtoEn(Querier<AbstractTranslator> querierTrans, String key){
+        Map<String, Object> map = new HashMap<String, Object>();
+        IntroductionEntity introductionEn = new IntroductionEntity();
+        //翻译
+        querierTrans.setParams(LANG.ZH, LANG.EN, key);
+        try{
+            List<String> resultList = querierTrans.execute();
+            if (StringUtils.isNotBlank(resultList.get(0))){
+                String keyWord = TranslateUtils.toUpperCase(resultList.get(0).replace(","," "));
+                introductionEn.setKeyWord(keyWord);
+                introductionEn.setCountry("EN");
+                map.put("querierTrans",querierTrans);
+                map.put("introduction",introductionEn);
+                map.put("tranEnStr",keyWord);
+                //判断标题
+                if(keyWord.length() >250){
+                    map.put("msg","翻译失败，英文关键字超过200字符");
+                }
+                return map;
+            }else{
+                map.put("msg","翻译失败，请重新尝试");
+                return map;
+            }
+        }catch (Exception e){
+            map.put("msg","翻译失败，请重新尝试");
+            return map;
+        }
+    }
+    /**
+     * keyWordEntoOther 英译其他语言(关键字)
+     * @param: [introduction]
+     * @return: io.renren.modules.product.entity.IntroductionEntity
+     * @auther: wdh
+     * @date: 2018/11/6 15:33
+     */
+    private IntroductionEntity keyWordEntoOther(Querier<AbstractTranslator> querierTrans, String tranEnStr, String country){
+//        Querier<AbstractTranslator> querierTrans = new Querier<>();
+        switch (country){
+            //法国
+            case "FRA":
+                querierTrans.setParams(LANG.EN, LANG.FRA, tranEnStr);
+                break;
+            //德国
+            case "DE":
+                querierTrans.setParams(LANG.EN, LANG.DE, tranEnStr);
+                break;
+            //意大利
+            case "IT":
+                querierTrans.setParams(LANG.EN, LANG.IT, tranEnStr);
+                break;
+            //西班牙
+            case "SPA":
+                querierTrans.setParams(LANG.EN, LANG.SPA, tranEnStr);
+                break;
+            //日本
+            case "JP":
+                querierTrans.setParams(LANG.EN, LANG.JP, tranEnStr);
+                break;
+            default:
+                break;
+        }
+        IntroductionEntity introduction = new IntroductionEntity();
+        //翻译
+        List<String> resultList = querierTrans.execute();
+        if (resultList != null && resultList.size() >0){
+            String keyWord = TranslateUtils.toUpperCase(resultList.get(0));
+            introduction.setKeyWord(keyWord);
+            if(keyWord.length() >250){
+                introduction.setMsg(country + "关键字字符超过200");
+            }
+        }else{
+            introduction.setMsg(country + "语言翻译失败,请调试");
+        }
+        introduction.setCountry("country");
+        System.out.println("country:" + introduction.getCountry());
+        System.out.println("keyWord:" + introduction.getKeyWord());
+        return introduction;
+    }
+    /**
+     * keyPointsZhtoOther 中译其他接口(要点说明)
+     * @param: introductionZh
+     * @return: java.lang.String
+     * @auther: wdh
+     * @date: 2018/11/5 16:16
+     */
+    @RequestMapping("/keyPointZhtoOther")
+    public R keyPointsZhtoOther(@RequestBody IntroductionEntity introductionZh){
+        String keyPoint = introductionZh.getKeyPoints();
+        if(StringUtils.isNotBlank(keyPoint)){
+            Querier<AbstractTranslator> querierTrans = new Querier<>();
+            querierTrans.attach(new GoogleTranslator());
+            Map<String, Object> map = keyPointZhtoEn(querierTrans, keyPoint);
+            String msg = (String) map.get("msg");
+            if (StringUtils.isBlank(msg)){
+                IntroductionEntity introductionEn = (IntroductionEntity)map.get("introduction");
+                String tranEnStr = (String)map.get("tranEnStr");
+                IntroductionEntity introductionFra = keyPointEntoOther(querierTrans, tranEnStr,"FRA");
+                IntroductionEntity introductionDe = keyPointEntoOther(querierTrans, tranEnStr,"DE");
+                IntroductionEntity introductionIt = keyPointEntoOther(querierTrans, tranEnStr,"IT");
+                IntroductionEntity introductionSpa = keyPointEntoOther(querierTrans, tranEnStr,"SPA");
+                IntroductionEntity introductionJp = keyPointEntoOther(querierTrans, tranEnStr,"JP");
+                StringBuffer errorBuf = new StringBuffer();
+                if(StringUtils.isNotBlank(introductionEn.getMsg())){
+                    errorBuf.append(introductionEn.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionFra.getMsg())){
+                    errorBuf.append(introductionFra.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionDe.getMsg())){
+                    errorBuf.append(introductionDe.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionIt.getMsg())){
+                    errorBuf.append(introductionIt.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+                    errorBuf.append(introductionSpa.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionJp.getMsg())){
+                    errorBuf.append(introductionJp.getMsg());
+                    errorBuf.append("\n");
+                }
+                String error = "";
+                if(StringUtils.isNotBlank(errorBuf.toString())){
+                    error = errorBuf.toString().substring(0,errorBuf.toString().length()-1);
+                }
+                return R.ok().put("introductionEn",introductionEn)
+                        .put("introductionFra",introductionFra)
+                        .put("introductionDe",introductionDe)
+                        .put("introductionIt",introductionIt)
+                        .put("introductionSpa",introductionSpa)
+                        .put("introductionJp",introductionJp)
+                        .put("error",error);
+            }else{
+                return R.error(msg);
+            }
+        }
+        return R.error("请输入内容后再进行翻译");
+    }
+    /**
+     * keyPointZhtoEn 中译英(要点说明)
+     * @param: tranStr
+     * @return: Map<String, Object>
+     * @auther: wdh
+     * @date: 2018/11/5 16:16
+     */
+    private Map<String, Object> keyPointZhtoEn(Querier<AbstractTranslator> querierTrans, String point){
+        Map<String, Object> map = new HashMap<String, Object>();
+        String translateStr = point.replace("\r\n"," !! ").replace("\r"," !! ").replace("\n"," !! ");
+        IntroductionEntity introductionEn = new IntroductionEntity();
+        //翻译
+        querierTrans.setParams(LANG.ZH, LANG.EN, translateStr);
+        try{
+            List<String> resultList = querierTrans.execute();
+            if (StringUtils.isNotBlank(resultList.get(0))){
+                try{
+                    String keyPoint = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                    String[] array = keyPoint.split("\n");
+                    StringBuffer errorBuf = new StringBuffer();
+                    for(int i = 0; i < array.length; i++){
+                        if(array[i].length() > 1000){
+                            errorBuf.append("英文要点说明第" + (i + 1) + "行字符超出1000");
+                            errorBuf.append("\n");
+                        }
+                    }
+                    if(StringUtils.isNotBlank(errorBuf.toString())){
+                        map.put("msg",errorBuf.toString().substring(0,errorBuf.toString().length()-1));
+                    }
+
+                    introductionEn.setKeyPoints(keyPoint);
+                    introductionEn.setCountry("EN");
+                    map.put("querierTrans",querierTrans);
+                    map.put("introduction",introductionEn);
+                    map.put("tranEnStr",resultList.get(0));
+                    return map;
+                }catch (Exception e){
+                    map.put("msg","翻译失败，请重新尝试");
+                    return map;
+                }
+
+            }else{
+                map.put("msg","翻译失败，请重新尝试");
+                return map;
+            }
+        }catch (Exception e){
+            map.put("msg","翻译失败，请重新尝试");
+            return map;
+        }
+
+    }
+    /**
+     * keyPointsEntoOther 英译其他语言(要点说明)
+     * @param: [introduction]
+     * @return: io.renren.modules.product.entity.IntroductionEntity
+     * @auther: wdh
+     * @date: 2018/11/6 15:33
+     */
+    private IntroductionEntity keyPointEntoOther(Querier<AbstractTranslator> querierTrans, String tranEnStr, String country){
+        switch (country){
+            //法国
+            case "FRA":
+                querierTrans.setParams(LANG.EN, LANG.FRA, tranEnStr);
+                break;
+            //德国
+            case "DE":
+                querierTrans.setParams(LANG.EN, LANG.DE, tranEnStr);
+                break;
+            //意大利
+            case "IT":
+                querierTrans.setParams(LANG.EN, LANG.IT, tranEnStr);
+                break;
+            //西班牙
+            case "SPA":
+                querierTrans.setParams(LANG.EN, LANG.SPA, tranEnStr);
+                break;
+            //日本
+            case "JP":
+                querierTrans.setParams(LANG.EN, LANG.JP, tranEnStr);
+                break;
+            default:
+                break;
+        }
+        IntroductionEntity introduction = new IntroductionEntity();
+        //翻译
+        List<String> resultList = querierTrans.execute();
+        if (StringUtils.isNotBlank(resultList.get(0))){
+            try{
+                String[] array = resultList.get(0).split("!!");
+                StringBuffer errorBuf = new StringBuffer();
+                for(int i = 0; i < array.length; i++){
+                    if(array[i].length() > 1000){
+                        errorBuf.append(country + "要点说明第" + (i + 1) + "行字符超出1000");
+                        errorBuf.append("\n");
+                    }
+                }
+                if(StringUtils.isNotBlank(errorBuf.toString())){
+                    introduction.setMsg(errorBuf.toString().substring(0,errorBuf.toString().length()-1));
+                }
+                String keyPoint = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                introduction.setKeyPoints(keyPoint);
+            }catch (Exception e){
+                introduction.setMsg(country + "翻译失败，请重新尝试");
+            }
+
+        }else{
+            introduction.setMsg(country + "翻译失败，请重新尝试");
+        }
+        introduction.setCountry(country);
+        System.out.println("country:" + introduction.getCountry());
+        System.out.println("keyPoint:" + introduction.getKeyPoints());
+        return introduction;
+    }
+
+    /**
+     * keyPointsZhtoOther 中译其他接口(产品描述)
+     * @param: introductionZh
+     * @return: java.lang.String
+     * @auther: wdh
+     * @date: 2018/11/5 16:16
+     */
+    @RequestMapping("/descriptionZhtoOther")
+    public R descriptionZhtoOther(@RequestBody IntroductionEntity introductionZh){
+        String description = introductionZh.getProductDescription();
+        if(StringUtils.isNotBlank(description)){
+            Querier<AbstractTranslator> querierTrans = new Querier<>();
+            querierTrans.attach(new GoogleTranslator());
+            Map<String, Object> map = descriptionZhtoEn(querierTrans, description);
+            String msg = (String) map.get("msg");
+            if (StringUtils.isBlank(msg)){
+                IntroductionEntity introductionEn = (IntroductionEntity)map.get("introduction");
+                String tranEnStr = (String)map.get("tranEnStr");
+                IntroductionEntity introductionFra = descriptionEntoOther(querierTrans, tranEnStr,"FRA");
+                IntroductionEntity introductionDe = descriptionEntoOther(querierTrans, tranEnStr,"DE");
+                IntroductionEntity introductionIt = descriptionEntoOther(querierTrans, tranEnStr,"IT");
+                IntroductionEntity introductionSpa = descriptionEntoOther(querierTrans, tranEnStr,"SPA");
+                IntroductionEntity introductionJp = descriptionEntoOther(querierTrans, tranEnStr,"JP");
+                StringBuffer errorBuf = new StringBuffer();
+                if(StringUtils.isNotBlank(introductionEn.getMsg())){
+                    errorBuf.append(introductionEn.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionFra.getMsg())){
+                    errorBuf.append(introductionFra.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionDe.getMsg())){
+                    errorBuf.append(introductionDe.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionIt.getMsg())){
+                    errorBuf.append(introductionIt.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+                    errorBuf.append(introductionSpa.getMsg());
+                    errorBuf.append("\n");
+                }
+                if(StringUtils.isNotBlank(introductionJp.getMsg())){
+                    errorBuf.append(introductionJp.getMsg());
+                    errorBuf.append("\n");
+                }
+                String error = "";
+                if(StringUtils.isNotBlank(errorBuf.toString())){
+                    error = errorBuf.toString().substring(0,errorBuf.toString().length()-1);
+                }
+                return R.ok().put("introductionEn",introductionEn)
+                        .put("introductionFra",introductionFra)
+                        .put("introductionDe",introductionDe)
+                        .put("introductionIt",introductionIt)
+                        .put("introductionSpa",introductionSpa)
+                        .put("introductionJp",introductionJp)
+                        .put("error",error);
+            }else{
+                return R.error(msg);
+            }
+        }
+        return R.error("请输入内容后再进行翻译");
+    }
+    /**
+     * descriptionZhtoEn 中译英(产品描述)
+     * @param: tranStr
+     * @return: Map<String, Object>
+     * @auther: wdh
+     * @date: 2018/11/5 16:16
+     */
+    private Map<String, Object> descriptionZhtoEn(Querier<AbstractTranslator> querierTrans, String description){
+        Map<String, Object> map = new HashMap<String, Object>();
+        String translateStr = description.replace("\r\n"," !! ").replace("\r"," !! ").replace("\n"," !! ");
+        IntroductionEntity introductionEn = new IntroductionEntity();
+        //翻译
+        querierTrans.setParams(LANG.ZH, LANG.EN, translateStr);
+        try{
+            List<String> resultList = querierTrans.execute();
+            if (StringUtils.isNotBlank(resultList.get(0))){
+                String productDescription = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                if(productDescription.length() >2500){
+                    introductionEn.setMsg("英文产品描述字符超出2500");
+                }
+                introductionEn.setProductDescription(productDescription);
+                introductionEn.setCountry("EN");
+                map.put("querierTrans",querierTrans);
+                map.put("introduction",introductionEn);
+                map.put("tranEnStr",resultList.get(0));
+                return map;
+
+            }else{
+                map.put("msg","翻译失败，请重新尝试");
+                return map;
+            }
+        }catch (Exception e){
+            map.put("msg","翻译失败，请重新尝试");
+            return map;
+        }
+    }
+    /**
+     * descriptionEntoOther 英译其他语言(产品描述)
+     * @param: [introduction]
+     * @return: io.renren.modules.product.entity.IntroductionEntity
+     * @auther: wdh
+     * @date: 2018/11/6 15:33
+     */
+    private IntroductionEntity descriptionEntoOther(Querier<AbstractTranslator> querierTrans, String tranEnStr, String country){
+        switch (country){
+            //法国
+            case "FRA":
+                querierTrans.setParams(LANG.EN, LANG.FRA, tranEnStr);
+                break;
+            //德国
+            case "DE":
+                querierTrans.setParams(LANG.EN, LANG.DE, tranEnStr);
+                break;
+            //意大利
+            case "IT":
+                querierTrans.setParams(LANG.EN, LANG.IT, tranEnStr);
+                break;
+            //西班牙
+            case "SPA":
+                querierTrans.setParams(LANG.EN, LANG.SPA, tranEnStr);
+                break;
+            //日本
+            case "JP":
+                querierTrans.setParams(LANG.EN, LANG.JP, tranEnStr);
+                break;
+            default:
+                break;
+        }
+        IntroductionEntity introduction = new IntroductionEntity();
+        //翻译
+        List<String> resultList = querierTrans.execute();
+        if (StringUtils.isNotBlank(resultList.get(0))){
+            String productDescription = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+            if(productDescription.length() >2500){
+                introduction.setMsg(country + "产品描述字符超出2500");
+            }
+            introduction.setProductDescription(productDescription);
+        }else{
+            introduction.setMsg(country + "翻译失败，请重新尝试");
+        }
+        introduction.setCountry(country);
+        System.out.println("country:" + introduction.getCountry());
+        System.out.println("productDescription:" + introduction.getProductDescription());
+        return introduction;
+    }
+
+
+    /**
+     * titleEntoOthers 英译其他语言接口(标题)
+     * @param: [introductionEn]
+     * @return: io.renren.modules.product.entity.IntroductionEntity
+     * @auther: wdh
+     * @date: 2018/11/6 15:33
+     */
+    @RequestMapping("/titleEntoOthers")
+    public R entoOthers(@RequestBody IntroductionEntity introductionEn){
+        Querier<AbstractTranslator> querierTrans = new Querier<>();
+        querierTrans.attach(new GoogleTranslator());
+        String title = introductionEn.getProductTitle();
+        if(StringUtils.isNotBlank(title.trim())){
+            String productTitle = TranslateUtils.toUpperCase(title.replace(","," "));
+            introductionEn.setProductTitle(productTitle);
+            IntroductionEntity introductionFra = titleEntoOther(querierTrans, productTitle, "FRA");
+            IntroductionEntity introductionDe = titleEntoOther(querierTrans, productTitle,"DE");
+            IntroductionEntity introductionIt = titleEntoOther(querierTrans, productTitle,"IT");
+            IntroductionEntity introductionSpa = titleEntoOther(querierTrans, productTitle,"SPA");
+            IntroductionEntity introductionJp = titleEntoOther(querierTrans, productTitle,"JP");
+            StringBuffer errorBuf = new StringBuffer();
+            if(StringUtils.isNotBlank(introductionFra.getMsg())){
+                errorBuf.append(introductionFra.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionDe.getMsg())){
+                errorBuf.append(introductionDe.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionIt.getMsg())){
+                errorBuf.append(introductionIt.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+                errorBuf.append(introductionSpa.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionJp.getMsg())){
+                errorBuf.append(introductionJp.getMsg());
+                errorBuf.append("\n");
+            }
+            String error = "";
+            if(StringUtils.isNotBlank(errorBuf.toString())){
+                error = errorBuf.toString().substring(0,errorBuf.toString().length()-1);
+            }
+            return R.ok().put("introductionEn",introductionEn)
+                    .put("introductionFra",introductionFra)
+                    .put("introductionDe",introductionDe)
+                    .put("introductionIt",introductionIt)
+                    .put("introductionSpa",introductionSpa)
+                    .put("introductionJp",introductionJp)
+                    .put("error",error);
+        }else{
+            return R.error("请输入内容后再进行翻译");
+        }
+    }
+    /**
+     * keyWordEntoOthers 英译其他语言接口(关键字)
+     * @param: [introductionEn]
+     * @return: io.renren.modules.product.entity.IntroductionEntity
+     * @auther: wdh
+     * @date: 2018/11/6 15:33
+     */
+    @RequestMapping("/keyWordEntoOthers")
+    public R keyWordEntoOthers(@RequestBody IntroductionEntity introductionEn){
+        Querier<AbstractTranslator> querierTrans = new Querier<>();
+        querierTrans.attach(new GoogleTranslator());
+        String key = introductionEn.getKeyWord();
+        if(StringUtils.isNotBlank(key.trim())){
+            String keyWord = TranslateUtils.toUpperCase(key.replace(","," "));
+            introductionEn.setKeyWord(keyWord);
+            IntroductionEntity introductionFra = keyWordEntoOther(querierTrans, keyWord, "FRA");
+            IntroductionEntity introductionDe = keyWordEntoOther(querierTrans, keyWord,"DE");
+            IntroductionEntity introductionIt = keyWordEntoOther(querierTrans, keyWord,"IT");
+            IntroductionEntity introductionSpa = keyWordEntoOther(querierTrans, keyWord,"SPA");
+            IntroductionEntity introductionJp = keyWordEntoOther(querierTrans, keyWord,"JP");
+            StringBuffer errorBuf = new StringBuffer();
+            if(StringUtils.isNotBlank(introductionFra.getMsg())){
+                errorBuf.append(introductionFra.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionDe.getMsg())){
+                errorBuf.append(introductionDe.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionIt.getMsg())){
+                errorBuf.append(introductionIt.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+                errorBuf.append(introductionSpa.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionJp.getMsg())){
+                errorBuf.append(introductionJp.getMsg());
+                errorBuf.append("\n");
+            }
+            String error = "";
+            if(StringUtils.isNotBlank(errorBuf.toString())){
+                error = errorBuf.toString().substring(0,errorBuf.toString().length()-1);
+            }
+            return R.ok().put("introductionEn",introductionEn)
+                    .put("introductionFra",introductionFra)
+                    .put("introductionDe",introductionDe)
+                    .put("introductionIt",introductionIt)
+                    .put("introductionSpa",introductionSpa)
+                    .put("introductionJp",introductionJp)
+                    .put("error",error);
+        }else{
+            return R.error("请输入内容后再进行翻译");
+        }
+    }
+    /**
+     * keyPointEntoOthers 英译其他语言接口(要点说明)
+     * @param: [introductionEn]
+     * @return: io.renren.modules.product.entity.IntroductionEntity
+     * @auther: wdh
+     * @date: 2018/11/6 15:33
+     */
+    @RequestMapping("/keyPointEntoOthers")
+    public R keyPointEntoOthers(@RequestBody IntroductionEntity introductionEn){
+        Querier<AbstractTranslator> querierTrans = new Querier<>();
+        querierTrans.attach(new GoogleTranslator());
+        String point = introductionEn.getKeyPoints();
+        if(StringUtils.isNotBlank(point.trim())){
+            String translateStr = point.replace("\r\n"," !! ").replace("\r"," !! ").replace("\n"," !! ");
+//            System.out.println("tran=====================" + translateStr);
+            String[] array = translateStr.split(" !! ");
+            StringBuffer errorBuff = new StringBuffer();
+            for(int i = 0; i < array.length; i++){
+                if(array[i].length() > 1000){
+                    errorBuff.append("英文要点说明第" + (i + 1) + "行字符超出1000");
+                    errorBuff.append("\n");
+                }
+            }
+            if(StringUtils.isNotBlank(errorBuff.toString())){
+                return R.error(errorBuff.toString().substring(0,errorBuff.toString().length()-1));
+            }
+            introductionEn.setKeyPoints(translateStr.replace(" !! ","\n"));
+            IntroductionEntity introductionFra = keyPointEntoOther(querierTrans, translateStr, "FRA");
+            IntroductionEntity introductionDe = keyPointEntoOther(querierTrans, translateStr,"DE");
+            IntroductionEntity introductionIt = keyPointEntoOther(querierTrans, translateStr,"IT");
+            IntroductionEntity introductionSpa = keyPointEntoOther(querierTrans, translateStr,"SPA");
+            IntroductionEntity introductionJp = keyPointEntoOther(querierTrans, translateStr,"JP");
+            StringBuffer errorBuf = new StringBuffer();
+            if(StringUtils.isNotBlank(introductionFra.getMsg())){
+                errorBuf.append(introductionFra.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionDe.getMsg())){
+                errorBuf.append(introductionDe.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionIt.getMsg())){
+                errorBuf.append(introductionIt.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+                errorBuf.append(introductionSpa.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionJp.getMsg())){
+                errorBuf.append(introductionJp.getMsg());
+                errorBuf.append("\n");
+            }
+            String error = "";
+            if(StringUtils.isNotBlank(errorBuf.toString())){
+                error = errorBuf.toString().substring(0,errorBuf.toString().length()-1);
+            }
+            return R.ok().put("introductionEn",introductionEn)
+                    .put("introductionFra",introductionFra)
+                    .put("introductionDe",introductionDe)
+                    .put("introductionIt",introductionIt)
+                    .put("introductionSpa",introductionSpa)
+                    .put("introductionJp",introductionJp)
+                    .put("error",error);
+        }else{
+            return R.error("请输入内容后再进行翻译");
+        }
+
+    }
+    /**
+     * descriptionEntoOthers 英译其他语言接口(产品描述)
+     * @param: [introduction]
+     * @return: io.renren.modules.product.entity.IntroductionEntity
+     * @auther: wdh
+     * @date: 2018/11/6 15:33
+     */
+    @RequestMapping("/descriptionEntoOthers")
+    public R descriptionEntoOthers(@RequestBody IntroductionEntity introductionEn){
+        Querier<AbstractTranslator> querierTrans = new Querier<>();
+        querierTrans.attach(new GoogleTranslator());
+        String description = introductionEn.getProductDescription();
+        if(StringUtils.isNotBlank(description.trim())){
+            String translateStr = description.replace("\r\n"," !! ").replace("\r"," !! ").replace("\n"," !! ");
+            if(translateStr.length() > 2500){
+                return R.error("英文产品描述字符超过2500");
+            }
+            introductionEn.setProductDescription(translateStr.replace(" !! ","\n"));
+            IntroductionEntity introductionFra = descriptionEntoOther(querierTrans, translateStr, "FRA");
+            IntroductionEntity introductionDe = descriptionEntoOther(querierTrans, translateStr,"DE");
+            IntroductionEntity introductionIt = descriptionEntoOther(querierTrans, translateStr,"IT");
+            IntroductionEntity introductionSpa = descriptionEntoOther(querierTrans, translateStr,"SPA");
+            IntroductionEntity introductionJp = descriptionEntoOther(querierTrans, translateStr,"JP");
+            StringBuffer errorBuf = new StringBuffer();
+            if(StringUtils.isNotBlank(introductionFra.getMsg())){
+                errorBuf.append(introductionFra.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionDe.getMsg())){
+                errorBuf.append(introductionDe.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionIt.getMsg())){
+                errorBuf.append(introductionIt.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionSpa.getMsg())){
+                errorBuf.append(introductionSpa.getMsg());
+                errorBuf.append("\n");
+            }
+            if(StringUtils.isNotBlank(introductionJp.getMsg())){
+                errorBuf.append(introductionJp.getMsg());
+                errorBuf.append("\n");
+            }
+            String error = "";
+            if(StringUtils.isNotBlank(errorBuf.toString())){
+                error = errorBuf.toString().substring(0,errorBuf.toString().length()-1);
+            }
+            return R.ok().put("introductionEn",introductionEn)
+                    .put("introductionFra",introductionFra)
+                    .put("introductionDe",introductionDe)
+                    .put("introductionIt",introductionIt)
+                    .put("introductionSpa",introductionSpa)
+                    .put("introductionJp",introductionJp)
+                    .put("error",error);
+        }else{
+            return R.error("请输入内容后再进行翻译");
+        }
+
+    }
+
+
+
 
     /**
      * ZhtoOther 中译其他
@@ -130,18 +1006,17 @@ public class IntroductionController {
      * @auther: wdh
      * @date: 2018/11/5 16:16
      */
-    @RequestMapping("/ZhtoOther")
+    /*@RequestMapping("/ZhtoOther")
     public R ZhtoOther(@RequestBody IntroductionEntity introductionZh){
-//    public List<IntroductionEntity> ZhtoEn(String productTitle,String keyWord,String keyPoints,String productDescription){
         String title = introductionZh.getProductTitle();
         String keyWord = introductionZh.getKeyWord();
         String keyPoint = "";
         if (StringUtils.isNotBlank(introductionZh.getKeyPoints())){
-            keyPoint = introductionZh.getKeyPoints().replace("\n"," !!!!! ");;
+            keyPoint = introductionZh.getKeyPoints().replace("\n"," !! ");;
         }
         String productDescription = "";
         if (StringUtils.isNotBlank(introductionZh.getProductDescription())){
-            productDescription = introductionZh.getProductDescription().replace("\n"," !!!!! ");
+            productDescription = introductionZh.getProductDescription().replace("\n"," !! ");
         }
         StringBuffer strBuf = new StringBuffer();
         if(StringUtils.isNotBlank(title)){
@@ -223,7 +1098,7 @@ public class IntroductionController {
         }
 
         return R.error("请输入内容后再进行翻译");
-    }
+    }*/
 
     /**
      * entoOthers 英译其他
@@ -232,15 +1107,15 @@ public class IntroductionController {
      * @auther: wdh
      * @date: 2018/11/5 16:16
      */
-    @RequestMapping("/entoOthers")
+    /*@RequestMapping("/entoOthers")
     public R entoOthers(@RequestBody IntroductionEntity introductionEn){
 //    public List<IntroductionEntity> ZhtoEn(String productTitle,String keyWord,String keyPoints,String productDescription){
         Querier<AbstractTranslator> querierTrans = new Querier<>();
         querierTrans.attach(new GoogleTranslator());
         String title = introductionEn.getProductTitle();
         String keyWord = introductionEn.getKeyWord();
-        String keyPoint = introductionEn.getKeyPoints().replace("\n"," !!!!! ");;
-        String productDescription = introductionEn.getProductDescription().replace("\n"," !!!!! ");
+        String keyPoint = introductionEn.getKeyPoints().replace("\n"," !! ");;
+        String productDescription = introductionEn.getProductDescription().replace("\n"," !! ");
         StringBuffer strBuf = new StringBuffer();
         if(StringUtils.isNotBlank(title)){
             strBuf.append(title);
@@ -310,7 +1185,7 @@ public class IntroductionController {
 //        list.add(introductionSpa);
 //        list.add(introductionJp);
 //        return list;
-    }
+    }*/
 
     /**
      * ZhtoOther 中译英
@@ -319,7 +1194,7 @@ public class IntroductionController {
      * @auther: wdh
      * @date: 2018/11/5 16:16
      */
-    private Map<String, Object> ZhtoEn(Querier<AbstractTranslator> querierTrans, String tranStr){
+    /*private Map<String, Object> ZhtoEn(Querier<AbstractTranslator> querierTrans, String tranStr){
         Map<String, Object> map = new HashMap<String, Object>();
         IntroductionEntity introductionEn = new IntroductionEntity();
         //翻译
@@ -334,8 +1209,8 @@ public class IntroductionController {
                 introductionEn.setProductTitle(title);
                 String keyWord = TranslateUtils.toUpperCase(results[1].replace(","," "));
                 introductionEn.setKeyWord(keyWord);
-                introductionEn.setKeyPoints(results[2].replace(" !!!!! ","\n"));
-                String productDescription = results[3].replace(" !!!!! ","\n");
+                introductionEn.setKeyPoints(results[2].replace(" !! ","\n"));
+                String productDescription = results[3].replace(" !! ","\n");
                 introductionEn.setProductDescription(productDescription);
                 introductionEn.setCountry("EN");
                 map.put("querierTrans",querierTrans);
@@ -351,7 +1226,7 @@ public class IntroductionController {
                     errorStr.append("翻译失败，英文关键字超过250字符");
                     errorStr.append("\n");
                 }
-                String[] keyPoints = results[2].split(" !!!!! ");
+                String[] keyPoints = results[2].split(" !! ");
                 for(int i = 0; i < keyPoints.length; i++){
                     if(keyPoints[i].length() >1000){
                         errorStr.append("翻译失败，英文要点说明第" + i + "行超过1000字符");
@@ -374,7 +1249,7 @@ public class IntroductionController {
             map.put("msg","翻译失败，请重新尝试");
             return map;
         }
-    }
+    }*/
 
     /**
      * EntoOther 英译其他语言
@@ -383,7 +1258,7 @@ public class IntroductionController {
      * @auther: wdh
      * @date: 2018/11/6 15:33
      */
-    private IntroductionEntity EntoOther(Querier<AbstractTranslator> querierTrans, String tranEnStr, String country){
+    /*private IntroductionEntity EntoOther(Querier<AbstractTranslator> querierTrans, String tranEnStr, String country){
 //        Querier<AbstractTranslator> querierTrans = new Querier<>();
         switch (country){
             //法国
@@ -423,8 +1298,8 @@ public class IntroductionController {
                 introduction.setProductTitle(title);
                 String keyWord = TranslateUtils.toUpperCase(results[1].replace(","," "));
                 introduction.setKeyWord(keyWord);
-                introduction.setKeyPoints(results[2].replace(" !!!!! ","\n"));
-                String productDescription = results[3].replace(" !!!!! ","\n");
+                introduction.setKeyPoints(results[2].replace(" !! ","\n"));
+                String productDescription = results[3].replace(" !! ","\n");
                 introduction.setProductDescription(productDescription);
                 introduction.setCountry("EN");
                 StringBuffer errorStr = new StringBuffer();
@@ -437,7 +1312,7 @@ public class IntroductionController {
                     errorStr.append(country + "关键字超过250字符");
                     errorStr.append("\n");
                 }
-                String[] keyPoints = results[2].split(" !!!!! ");
+                String[] keyPoints = results[2].split(" !! ");
                 for(int i = 0; i < keyPoints.length; i++){
                     if(keyPoints[i].length() >1000){
                         errorStr.append(country + "要点说明第" + i + "行超过1000字符");
@@ -459,47 +1334,7 @@ public class IntroductionController {
             introduction.setMsg(country + "语言翻译失败,请调试");
             return introduction;
         }
-//        else if(titleList.get(1) != "" && titleList.get(1) != null){
-//            introduction.setProductTitle(TranslateUtils.toUpperCase(titleList.get(1)));
-//        }else{
-//            introduction.setProductTitle(TranslateUtils.toUpperCase(titleList.get(2)));
-//        }
 
-        /*//翻译关键字
-        querierTrans.setText(introductionEn.getKeyWord());
-        List<String> keyWordList = querierTrans.execute();
-        if (keyWordList.get(0) != "" && keyWordList.get(0) != null){
-            introduction.setKeyWord(TranslateUtils.toUpperCase(keyWordList.get(0)));
-        }*/
-//        else if(keyWordList.get(1) != "" && keyWordList.get(1) != null){
-//            introduction.setKeyWord(TranslateUtils.toUpperCase(keyWordList.get(1)));
-//        }else{
-//            introduction.setKeyWord(TranslateUtils.toUpperCase(keyWordList.get(2)));
-//        }
-
-        //翻译要点说明
-        /*querierTrans.setText(introductionEn.getKeyPoints());
-        List<String> keyPointsList = querierTrans.execute();
-        if (keyPointsList.get(0) != "" && keyPointsList.get(0) != null){
-            introduction.setKeyPoints(keyPointsList.get(0));
-        }*/
-//        else if(keyPointsList.get(1) != "" && keyPointsList.get(1) != null){
-//            introduction.setKeyPoints(keyPointsList.get(1));
-//        }else{
-//            introduction.setKeyPoints(keyPointsList.get(2));
-//        }
-
-        //翻译产品描述
-        /*querierTrans.setText(introductionEn.getProductDescription());
-        List<String> productDescriptionList = querierTrans.execute();
-        if (productDescriptionList.get(0) != "" && productDescriptionList.get(0) != null){
-            introduction.setProductDescription(productDescriptionList.get(0));
-        }*/
-//        else if(productDescriptionList.get(1) != "" && productDescriptionList.get(1) != null){
-//            introduction.setKeyPoints(productDescriptionList.get(1));
-//        }else{
-//            introduction.setKeyPoints(productDescriptionList.get(2));
-//        }
         introduction.setCountry(country);
         System.out.println("country:" + introduction.getCountry());
         System.out.println("title:" + introduction.getProductTitle());
@@ -507,6 +1342,5 @@ public class IntroductionController {
         System.out.println("keyPoints:" + introduction.getKeyPoints());
         System.out.println("productDescription:" + introduction.getProductDescription());
         return introduction;
-    }
-
+    }*/
 }
