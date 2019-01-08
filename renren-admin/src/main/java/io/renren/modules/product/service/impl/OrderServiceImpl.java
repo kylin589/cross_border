@@ -837,7 +837,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         deduction(order);
     }
 
-
+    /**
+     * 扣款
+     * @param order
+     */
     @Override
     public void deduction(OrderEntity order){
         //扣款

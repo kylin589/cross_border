@@ -325,6 +325,34 @@ public class OrderController extends AbstractController{
     }
 
     /**
+     * 删除国内物流
+     */
+    public R deleteLogistic(@RequestParam Long domesticLogisticsId){
+        DomesticLogisticsEntity logisticsEntity = domesticLogisticsService.selectById(domesticLogisticsId);
+        OrderEntity orderEntity = orderService.selectById(logisticsEntity.getOrderId());
+        domesticLogisticsService.deleteById(domesticLogisticsId);
+        List<DomesticLogisticsEntity> list = domesticLogisticsService.selectList(new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderEntity.getOrderId()));
+        BigDecimal purchasePrice = new BigDecimal(0.0);
+        if(list != null && list.size() > 0){
+            for(DomesticLogisticsEntity domestic : list){
+                purchasePrice = purchasePrice.add(domestic.getPrice());
+            }
+        }
+        orderEntity.setPurchasePrice(purchasePrice);
+        //已有利润
+        if(orderEntity.getProfitRate().compareTo(new BigDecimal(0.0)) != 0){
+            //利润率
+            //新利润
+            BigDecimal orderProfit = orderEntity.getOrderProfit().add(logisticsEntity.getPrice());
+            orderEntity.setOrderProfit(orderProfit);
+            BigDecimal profitRate = orderProfit.divide(orderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
+            orderEntity.setProfitRate(profitRate);
+            orderService.updateById(orderEntity);
+        }
+        orderService.updateById(orderEntity);
+        return R.ok();
+    }
+    /**
      * 修改订单状态
      */
     @RequestMapping("/updateState")
