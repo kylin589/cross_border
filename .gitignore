@@ -43,3 +43,9 @@ nbdist/
 *.log
 /logs/
 /renren-admin/logs/
+*.rebel.xml.bak
+*.rebel-remote.xml.bak
+/renren-admin/java
+/renren-admin/mvn
+/renren-admin/src/test/
+/.gitignore
