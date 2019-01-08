@@ -301,6 +301,7 @@ var vm = new Vue({
     data: {
         // 产品id
         id:null,
+        id1:null,
         // 产品详情
         proDetails:{
             "americanFC": {
@@ -1979,67 +1980,67 @@ var vm = new Vue({
 
 
             // for(var nn = 0;nn<$('.ul1').length;nn++){
-                //      console.log(nn);
-                // var _index = nn;
-                var aLi = $(".imgDiv>.imgAlbum");
-                if(aLi.length != 0){
-                    // console.log($(".imgDiv>.imgAlbum"));
-                    var aLiLast = $(".imgDiv").find('.imgAlbum:last-child');
-                    // console.log(aLiLast);
-                    var disX = 0;
-                    var disY = 0;
-                    var minZindex = 1;
-                    var aPos = [];
-                    for(var i = 0; i < aLi.length; i++) {
-                        var t = aLi[i].offsetTop;
-                        var l = aLi[i].offsetLeft;
-                        aLi[i].style.top = t + "px";
-                        aLi[i].style.left = l + "px";
-                        aPos[i] = {
-                            left: l,
-                            top: t
-                        };
-                        aLi[i].index = i;
-                    }
-                    for(var i = 0; i < aLi.length; i++) {
-                        // console.log(i);
-                        aLi[i].style.position = "absolute";
-                        aLi[i].style.margin = 0;
-                        setDrag(aLi[i],aLi);
-                    }
-
-                    // if(aLi.length != 0){
-                    //     // var _height = aLiLast[0].offsetTop+60;
-                    //     var _height = aLiLast[0].offsetTop+60;
-                    //     aLiLast.parent().css('height',_height+'px');
-                    //     aLiLast.parent().parent().siblings().css('line-height',_height+'px')
-                    // }
-                    var _height = aLiLast[0].offsetTop+140;
-                    aLiLast.parent().css('height',_height+'px');
-                    // aLiLast.parent().parent().siblings().css('line-height',_height+'px')
-
-                    // console.log(_height);
-
-
-                    // aLi.mouseover(function () {
-                    //     $(this).find('i').css('display','inline-block');
-                    //     $(this).find('i').mouseover(function () {
-                    //         $(this).css('display','inline-block');
-                    //     })
-                    //     $(this).find('i').mouseout(function () {
-                    //         $(this).css('display','none');
-                    //     })
-                    // })
-                    // aLi.mouseout(function () {
-                    //     $(this).find('i').css('display','none');
-                    //     $(this).find('i').mouseover(function () {
-                    //         $(this).css('display','inline-block');
-                    //     })
-                    //     $(this).find('i').mouseout(function () {
-                    //         $(this).css('display','none');
-                    //     })
-                    // })
+            //      console.log(nn);
+            // var _index = nn;
+            var aLi = $(".imgDiv>.imgAlbum");
+            if(aLi.length != 0){
+                // console.log($(".imgDiv>.imgAlbum"));
+                var aLiLast = $(".imgDiv").find('.imgAlbum:last-child');
+                // console.log(aLiLast);
+                var disX = 0;
+                var disY = 0;
+                var minZindex = 1;
+                var aPos = [];
+                for(var i = 0; i < aLi.length; i++) {
+                    var t = aLi[i].offsetTop;
+                    var l = aLi[i].offsetLeft;
+                    aLi[i].style.top = t + "px";
+                    aLi[i].style.left = l + "px";
+                    aPos[i] = {
+                        left: l,
+                        top: t
+                    };
+                    aLi[i].index = i;
                 }
+                for(var i = 0; i < aLi.length; i++) {
+                    // console.log(i);
+                    aLi[i].style.position = "absolute";
+                    aLi[i].style.margin = 0;
+                    setDrag(aLi[i],aLi);
+                }
+
+                // if(aLi.length != 0){
+                //     // var _height = aLiLast[0].offsetTop+60;
+                //     var _height = aLiLast[0].offsetTop+60;
+                //     aLiLast.parent().css('height',_height+'px');
+                //     aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+                // }
+                var _height = aLiLast[0].offsetTop+140;
+                aLiLast.parent().css('height',_height+'px');
+                // aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+
+                // console.log(_height);
+
+
+                // aLi.mouseover(function () {
+                //     $(this).find('i').css('display','inline-block');
+                //     $(this).find('i').mouseover(function () {
+                //         $(this).css('display','inline-block');
+                //     })
+                //     $(this).find('i').mouseout(function () {
+                //         $(this).css('display','none');
+                //     })
+                // })
+                // aLi.mouseout(function () {
+                //     $(this).find('i').css('display','none');
+                //     $(this).find('i').mouseover(function () {
+                //         $(this).css('display','inline-block');
+                //     })
+                //     $(this).find('i').mouseout(function () {
+                //         $(this).css('display','none');
+                //     })
+                // })
+            }
 
             // }
             //拖拽
@@ -2421,7 +2422,7 @@ var vm = new Vue({
                                 if (r.code == 0) {
                                     layer.close(index);
 
-                                    window.location.href = document.referrer;
+                                    window.location.href = 'xmlListUP.html?id='+vm.id1;
 
                                 } else {
                                     layer.close(index);
@@ -2586,7 +2587,7 @@ var vm = new Vue({
         // 返回
         returnFunc:function () {
             layer.confirm('确定返回吗？',function () {
-                window.location.href = 'myProduct.html';
+                window.location.href = 'xmlListUP.html?id='+vm.id1;
             })
         },
         // 中文标题翻译
@@ -3136,9 +3137,14 @@ var vm = new Vue({
 
         var url = decodeURI(window.location.href);
         var argsIndex = url.split("?id=");
-        var id = argsIndex[1];
-        // console.log(id)
+        var _id = argsIndex[1];
+        var _id1 = _id.split('id1=');
+        var id = _id1[0];
+        var id1 = _id1[1];
+        console.log(id)
+        console.log(id1)
         this.id = parseInt(id);
+        this.id1 = parseInt(id1);
         // console.log(this.id);
         this.getProDetails();
         // this.getcostFreight();

@@ -230,21 +230,41 @@ form .chengben label{
 }
 .sousuoArea{
     position: absolute;
-    width: 600px;
+    top: 372px;
+    left: 140px;
+    /*padding: 10px;*/
+    /*width: 510px;*/
     /*display: flex;*/
     display: none;
-    background: #fff;
-    border: 1px solid #ddd;
+    /*background: #fff;*/
+    /*border: 1px solid #eee;*/
+    /*border: 1px solid #ddd;*/
     border-radius: 3px;
     z-index: 1;
+    /*box-shadow: 0 0 10px #ccc;*/
+}
+.sousuoArea1{
+    top: 205px;
+    left: 146px;
+}
+.sousuoArea2{
+    /*width: 400px;*/
+    top: 148px;
+    left: 146px;
 }
 .sousuoArea>div{
-    flex: 1;
+    width: 170px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    box-shadow: 0 0 10px #eee;
+    margin-right: 4px;
+    /*flex: 1;*/
     /*display: none;*/
 }
 
 .sousuoArea>div:nth-child(even){
-    background: #f0f0f0;
+    /*background: #f0f0f0;*/
 }
 .sousuoArea>div ul{
     margin: 0;
@@ -257,7 +277,15 @@ form .chengben label{
     font-size: 13px;
     cursor: pointer;
 }
-.sousuoArea>div.areaOne ul li:hover{
+.sousuoArea>div.areaOne ul li:hover , .sousuoArea>div.areaOne ul li.active{
+    background: #cbe7ef;
+    color: #2293b1;
+}
+.sousuoArea>div.areaTwo ul li:hover , .sousuoArea>div.areaTwo ul li.active{
+    background: #cbe7ef;
+    color: #2293b1;
+}
+.sousuoArea>div.areaThree ul li:hover , .sousuoArea>div.areaThree ul li.active{
     background: #cbe7ef;
     color: #2293b1;
 }
@@ -268,12 +296,31 @@ form .chengben label{
     padding: 0;
     margin: 0;
     height: 100%;
-    display: flex;
+    /*display: flex;*/
     flex-direction: column;
 }
 .sousuoArea>div.areaTwo ul li{
-    flex: 1;
+    /*flex: 1;*/
     list-style: none;
+    padding: 5px;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
+}
+/*.sousuoArea>div.areaTwo ul li:hover{*/
+/*background: #fff;*/
+/*}*/
+.sousuoArea>div.areaThree ul{
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.sousuoArea>div.areaThree ul li{
+    /*flex: 1;*/
+    list-style: none;
+    padding: 5px;
     color: #888;
     font-size: 13px;
     cursor: pointer;

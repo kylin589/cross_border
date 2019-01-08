@@ -106,9 +106,8 @@ var vm = new Vue({
         },
         // 定时上传
         timeUpFunc:function () {
-            if(vm.shopinfo == '' || vm.inputche.length == 0 || vm.nodeId == '' || vm.amazonCategory == ''){
-                layer.msg('授权店铺、更新选项、分类节点、分类节点id不能为空！！')
-
+            if(vm.shopinfo == '' || vm.inputche.length == 0 || vm.nodeId == '' || vm.amazonCategory == '' || vm.flModleValue == ''){
+                layer.msg('授权店铺、更新选项、分类节点、分类节点id、分类模版不能为空！！')
             }else {
 
 
@@ -136,7 +135,7 @@ var vm = new Vue({
                     area: ['530px', '330px'],
                     shadeClose: true,
                     btn: ['上传', '取消'],
-                    btn1: function (index) {
+                    btn1: function (index1) {
                         // console.log(vm.inputche)
                         vm.uploadIds = vm.uploadIdsstr.split(',');
                         // console.log(typeof(vm.uploadIds));
@@ -180,8 +179,10 @@ var vm = new Vue({
                                         if (r.code === 0) {
 
                                             layer.close(index);
+                                            layer.close(index1);
                                             window.location.href="upProduct.html";
                                         } else {
+                                            layer.close(index);
                                             // layer.alert(r.message);
                                             // window.location.href="upProduct.html";
                                         }
@@ -189,6 +190,7 @@ var vm = new Vue({
 
                                     },
                                     error: function () {
+                                        layer.close(index);
                                         layer.msg("网络故障");
                                     }
                                 });
@@ -239,12 +241,11 @@ var vm = new Vue({
         //立即上传
         addUpload:function () {
 
-            if(vm.shopinfo == '' || vm.inputche.length == 0 || vm.nodeId == '' || vm.amazonCategory == ''){
-                layer.msg('授权店铺、更新选项、分类节点、分类节点id不能为空！！')
-
+            if(vm.shopinfo == '' || vm.inputche.length == 0 || vm.nodeId == '' || vm.amazonCategory == '' || vm.flModleValue == ''){
+                layer.msg('授权店铺、更新选项、分类节点、分类节点id、分类模版不能为空！！')
             }else {
                 // layer.msg('请选择店铺');
-                layer.confirm('确定上传吗？',function (index) {
+                layer.confirm('确定上传吗？',function (index1) {
 
                     var index = layer.load();
                     var index = layer.load(1); //换了种风格
@@ -314,16 +315,19 @@ var vm = new Vue({
 
                                 layer.msg("上传成功");
                                 layer.close(index);
+                                layer.close(index1);
                                 window.location.href="upProduct.html";
 
                             } else {
                                 layer.alert(r.msg);
+                                layer.close(index);
                             }
 
 
                         },
                         error: function () {
                             layer.msg("网络故障");
+                            layer.close(index);
                         }
                     });
                 });

@@ -5,8 +5,9 @@
     <title>详情</title>
     <#include "/header_kuajing.html">
         <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
-        <script src="${request.contextPath}/statics/libs/ajaxupload.js"></script>
+        <!--<script src="${request.contextPath}/statics/libs/ajaxupload.js"></script>-->
         <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/zyupload-1.0.0.css" media="all">
+
         <style>
             .ul1 {
                 width: 100%;
@@ -52,14 +53,18 @@
                 border: 2px solid #00a3e8;
                 box-shadow: 0 0 10px #888;
             }
-            .jindutiaoFy{
-                position: fixed;
-                top:0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,.2);
+            #demo>form:nth-child(2){
+                display: none;
             }
+            #moveSelected1{
+                position:absolute;
+                background-color: #89d2ff;
+                opacity:0.3;
+                border:1px dashed #d9d9d9;
+                top:0;
+                left:0;
+            }
+
         </style>
         </head>
 <body>
@@ -69,11 +74,11 @@
     <form>
         <p>
             <span class="layui-breadcrumb" style="visibility: visible;">
-              <a href="javascript:;" @click="returnYuanc">我的产品 / </a>
-              <a><cite>原创产品</cite></a>
+              <a @click="returnFunc">报告列表 / </a>
+              <a><cite>产品详情</cite></a>
             </span>
-            <input type="button" class="return" @click="returnYuanc" value="取消" />
-            <input type="button" class="save" @click="createSava" value="保存并提交" />
+            <input type="button" class="return" @click="returnFunc" value="返回" />
+            <input type="button" class="save" @click="savePro" value="保存并提交" />
 
         </p>
 
@@ -97,28 +102,28 @@
                             <!--@mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)"-->
                             <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
                             <img :src="item.url" alt="" class="imgItem" :data-con="item" @click="clickActiveImg">
-                            <i class="layui-icon layui-icon-close-fill imgDel"></i>
+                            <!--<i class="layui-icon layui-icon-close-fill imgDel"></i>-->
                         </div>
 
 
 
                     </div>
                     <!--<el-upload-->
-                    <!--action="${request.contextPath}/product/imageaddress/upload"-->
-                    <!--list-type="picture-card"-->
-                    <!--:file-list="proAlbum"-->
-                    <!--:on-preview="handlePictureCardPreview"-->
-                    <!--:on-error="upErrorFunc"-->
-                    <!--:on-remove="handleRemove">-->
-                    <!--<i class="el-icon-plus"></i>-->
+                            <!--action="${request.contextPath}/product/imageaddress/upload"-->
+                            <!--list-type="picture-card"-->
+                            <!--:file-list="proAlbum"-->
+                            <!--:on-preview="handlePictureCardPreview"-->
+                            <!--:on-error="upErrorFunc"-->
+                            <!--:on-remove="handleRemove">-->
+                            <!--<i class="el-icon-plus"></i>-->
                     <!--</el-upload>-->
                     <!--<el-dialog :visible.sync="dialogVisible">-->
-                    <!--<img width="100%" :src="dialogImageUrl" alt="">-->
+                        <!--<img width="100%" :src="dialogImageUrl" alt="">-->
                     <!--</el-dialog>-->
-                    <!--<input type="file" value="选择文件" class="selImg">-->
+                    <!--<input type="file" id="upImg" value="选择文件" class="selImg">-->
 
                     <input type="button" value="保存相册" id="upload1" @click="saveXc">
-                    <input type="button" value="开始上传" id="upload" @click="shangchuan">
+                    <input type="button" value="上传图片" id="upload" @click="shangchuan">
                     <input type="button" value="批量删除" id="" @click="proDel">
                     <input type="button" class="proStation" value="图片回收站" @click="prostation">
                 </div>
@@ -128,7 +133,7 @@
                     <h4>产品分类</h4>
                 </div>
                 <div>
-                    <input type="text" class="sousuoAreaInput" @click="typeClickINput" placeholder="产品分类" v-model="proDetails.productCategory">
+                    <input type="text" class="sousuoAreaInput" @click="typeClickINput" placeholder="产品分类" v-model="proDetails.productCategory" readonly>
                     <div class="sousuoArea">
                         <div class="areaOne">
                             <ul>
@@ -221,7 +226,6 @@
                     <span><label for="">厂商编号：</label><input type="text" placeholder="厂商编号" v-model="proDetails.manufacturerNumber"></span>
                     <span><label for="">产品来源：</label><input type="text" placeholder="产品来源" v-model="proDetails.productSource"></span><br>
                     <span><label for="">内部SKU：</label>
-                        <!--<input type="text" placeholder="内部SKU" v-model="proDetails.productSku">-->
                         <input type="text" placeholder="内部SKU" v-model="proDetails.productSku">
                         <input type="text" placeholder="SKU修正,建议两位英文字母" v-model="proDetails.correction">
                     </span>
@@ -262,103 +266,103 @@
                     <!--<span><label class="">产品有电池：</label><input type="checkbox" name="" style="" @change="getcostFreight"> </span><br>-->
 
                     <table class="tableY"  v-if="JSON.stringify(proDecList) != '{}'">
-                        <tr>
-                            <th style="color: #f37d0d;font-size: 14px;font-weight: bold;cursor:pointer;" @click="lirFunc"> <i style="font-size: 10px;cursor: pointer;" class="layui-icon layui-icon-refresh"></i> 获取利润 </th>
-                            <th>美国</th>
-                            <th>加拿大</th>
-                            <th>墨西哥</th>
-                            <th>英国</th>
-                            <th>法国</th>
-                            <th>德国</th>
-                            <th>意大利</th>
-                            <th>西班牙</th>
-                            <th>日本</th>
-                            <th>澳大利亚</th>
-                        </tr>
-                        <tr>
-                            <th>运费（￥）</th>
-                            <td>{{ proDetails.americanFC.freight }} （{{proDetails.americanFC.type}}）</td>
-                            <td>{{ proDetails.canadaFC.freight }} （{{proDetails.canadaFC.type}}）</td>
-                            <td>{{ proDetails.mexicoFC.freight }} （{{proDetails.mexicoFC.type}}）</td>
-                            <td>{{ proDetails.britainFC.freight }} （{{proDetails.britainFC.type}}）</td>
-                            <td>{{ proDetails.franceFC.freight }} （{{proDetails.franceFC.type}}）</td>
-                            <td>{{ proDetails.germanyFC.freight }} （{{proDetails.germanyFC.type}}）</td>
-                            <td>{{ proDetails.italyFC.freight }} （{{proDetails.italyFC.type}}）</td>
-                            <td>{{ proDetails.spainFC.freight }} （{{proDetails.spainFC.type}}）</td>
-                            <td>{{ proDetails.japanFC.freight }} （{{proDetails.japanFC.type}}）</td>
-                            <td>{{ proDetails.australiaFC.freight }} （{{proDetails.australiaFC.type}}）</td>
+                    <tr>
+                    <th style="color: #f37d0d;font-size: 14px;font-weight: bold;cursor:pointer;" @click="lirFunc"> <i style="font-size: 10px;cursor: pointer;" class="layui-icon layui-icon-refresh"></i> 获取利润 </th>
+                    <th>美国</th>
+                    <th>加拿大</th>
+                    <th>墨西哥</th>
+                    <th>英国</th>
+                    <th>法国</th>
+                    <th>德国</th>
+                    <th>意大利</th>
+                    <th>西班牙</th>
+                    <th>日本</th>
+                    <th>澳大利亚</th>
+                    </tr>
+                    <tr>
+                    <th>运费（￥）</th>
+                    <td>{{ proDetails.americanFC.freight }} （{{proDetails.americanFC.type}}）</td>
+                    <td>{{ proDetails.canadaFC.freight }} （{{proDetails.canadaFC.type}}）</td>
+                    <td>{{ proDetails.mexicoFC.freight }} （{{proDetails.mexicoFC.type}}）</td>
+                    <td>{{ proDetails.britainFC.freight }} （{{proDetails.britainFC.type}}）</td>
+                    <td>{{ proDetails.franceFC.freight }} （{{proDetails.franceFC.type}}）</td>
+                    <td>{{ proDetails.germanyFC.freight }} （{{proDetails.germanyFC.type}}）</td>
+                    <td>{{ proDetails.italyFC.freight }} （{{proDetails.italyFC.type}}）</td>
+                    <td>{{ proDetails.spainFC.freight }} （{{proDetails.spainFC.type}}）</td>
+                    <td>{{ proDetails.japanFC.freight }} （{{proDetails.japanFC.type}}）</td>
+                    <td>{{ proDetails.australiaFC.freight }} （{{proDetails.australiaFC.type}}）</td>
 
-                        </tr>
-                        <tr>
-                            <th>售价（￥）</th>
-                            <td>{{ proDetails.americanFC.price }}</td>
-                            <td>{{ proDetails.canadaFC.price }}</td>
-                            <td>{{ proDetails.mexicoFC.price }}</td>
-                            <td>{{ proDetails.britainFC.price }}</td>
-                            <td>{{ proDetails.franceFC.price }}</td>
-                            <td>{{ proDetails.germanyFC.price }}</td>
-                            <td>{{ proDetails.italyFC.price }}</td>
-                            <td>{{ proDetails.spainFC.price }}</td>
-                            <td>{{ proDetails.japanFC.price }}</td>
-                            <td>{{ proDetails.australiaFC.price }}</td>
+                    </tr>
+                    <tr>
+                    <th>售价（￥）</th>
+                    <td>{{ proDetails.americanFC.price }}</td>
+                    <td>{{ proDetails.canadaFC.price }}</td>
+                    <td>{{ proDetails.mexicoFC.price }}</td>
+                    <td>{{ proDetails.britainFC.price }}</td>
+                    <td>{{ proDetails.franceFC.price }}</td>
+                    <td>{{ proDetails.germanyFC.price }}</td>
+                    <td>{{ proDetails.italyFC.price }}</td>
+                    <td>{{ proDetails.spainFC.price }}</td>
+                    <td>{{ proDetails.japanFC.price }}</td>
+                    <td>{{ proDetails.australiaFC.price }}</td>
 
-                        </tr>
-                        <tr>
-                            <th>外币</th>
-                            <td>{{ proDetails.americanFC.foreignCurrency }}</td>
-                            <td>{{ proDetails.canadaFC.foreignCurrency }}</td>
-                            <td>{{ proDetails.mexicoFC.foreignCurrency }}</td>
-                            <td>{{ proDetails.britainFC.foreignCurrency }}</td>
-                            <td>{{ proDetails.franceFC.foreignCurrency }}</td>
-                            <td>{{ proDetails.germanyFC.foreignCurrency }}</td>
-                            <td>{{ proDetails.italyFC.foreignCurrency }}</td>
-                            <td>{{ proDetails.spainFC.foreignCurrency }}</td>
-                            <td>{{ proDetails.japanFC.foreignCurrency }}</td>
-                            <td>{{ proDetails.australiaFC.foreignCurrency }}</td>
+                    </tr>
+                    <tr>
+                    <th>外币</th>
+                    <td>{{ proDetails.americanFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.canadaFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.mexicoFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.britainFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.franceFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.germanyFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.italyFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.spainFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.japanFC.foreignCurrency }}</td>
+                    <td>{{ proDetails.australiaFC.foreignCurrency }}</td>
 
-                        </tr>
-                        <tr>
-                            <th>优化</th>
-                            <td>{{ proDetails.americanFC.optimization }}</td>
-                            <td>{{ proDetails.canadaFC.optimization }}</td>
-                            <td>{{ proDetails.mexicoFC.optimization }}</td>
-                            <td>{{ proDetails.britainFC.optimization }}</td>
-                            <td>{{ proDetails.franceFC.optimization }}</td>
-                            <td>{{ proDetails.germanyFC.optimization }}</td>
-                            <td>{{ proDetails.italyFC.optimization }}</td>
-                            <td>{{ proDetails.spainFC.optimization }}</td>
-                            <td>{{ proDetails.japanFC.optimization }}</td>
-                            <td>{{ proDetails.australiaFC.optimization }}</td>
+                    </tr>
+                    <tr>
+                    <th>优化</th>
+                    <td>{{ proDetails.americanFC.optimization }}</td>
+                    <td>{{ proDetails.canadaFC.optimization }}</td>
+                    <td>{{ proDetails.mexicoFC.optimization }}</td>
+                    <td>{{ proDetails.britainFC.optimization }}</td>
+                    <td>{{ proDetails.franceFC.optimization }}</td>
+                    <td>{{ proDetails.germanyFC.optimization }}</td>
+                    <td>{{ proDetails.italyFC.optimization }}</td>
+                    <td>{{ proDetails.spainFC.optimization }}</td>
+                    <td>{{ proDetails.japanFC.optimization }}</td>
+                    <td>{{ proDetails.australiaFC.optimization }}</td>
 
-                        </tr>
-                        <tr>
-                            <th>最终售价</th>
-                            <td>{{ proDetails.americanFC.finalPrice }}</td>
-                            <td>{{ proDetails.canadaFC.finalPrice }}</td>
-                            <td>{{ proDetails.mexicoFC.finalPrice }}</td>
-                            <td>{{ proDetails.britainFC.finalPrice }}</td>
-                            <td>{{ proDetails.franceFC.finalPrice }}</td>
-                            <td>{{ proDetails.germanyFC.finalPrice }}</td>
-                            <td>{{ proDetails.italyFC.finalPrice }}</td>
-                            <td>{{ proDetails.spainFC.finalPrice }}</td>
-                            <td>{{ proDetails.japanFC.finalPrice }}</td>
-                            <td>{{ proDetails.australiaFC.finalPrice }}</td>
+                    </tr>
+                    <tr>
+                    <th>最终售价</th>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.americanFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.canadaFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.mexicoFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.britainFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.franceFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.germanyFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.italyFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.spainFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.japanFC.finalPrice" @change="lirFunc1"></td>
+                    <td><input type="text" style="width: 90%" v-model="proDetails.australiaFC.finalPrice" @change="lirFunc1"></td>
 
-                        </tr>
-                        <tr>
-                            <th>利润（￥）</th>
-                            <td>{{ proDetails.americanFC.profit }} ({{proDetails.americanFC.profitRate}}) </td>
-                            <td>{{ proDetails.canadaFC.profit }} ({{proDetails.canadaFC.profitRate}}) </td>
-                            <td>{{ proDetails.mexicoFC.profit }} ({{proDetails.mexicoFC.profitRate}}) </td>
-                            <td>{{ proDetails.britainFC.profit }} ({{proDetails.britainFC.profitRate}}) </td>
-                            <td>{{ proDetails.franceFC.profit }} ({{proDetails.franceFC.profitRate}}) </td>
-                            <td>{{ proDetails.germanyFC.profit }} ({{proDetails.germanyFC.profitRate}}) </td>
-                            <td>{{ proDetails.italyFC.profit }} ({{proDetails.italyFC.profitRate}}) </td>
-                            <td>{{ proDetails.spainFC.profit }} ({{proDetails.spainFC.profitRate}}) </td>
-                            <td>{{ proDetails.japanFC.profit }} ({{proDetails.japanFC.profitRate}}) </td>
-                            <td>{{ proDetails.australiaFC.profit }} ({{proDetails.australiaFC.profitRate}}) </td>
+                    </tr>
+                    <tr>
+                    <th>利润（￥）</th>
+                    <td>{{ proDetails.americanFC.profit }} ({{proDetails.americanFC.profitRate}}) </td>
+                    <td>{{ proDetails.canadaFC.profit }} ({{proDetails.canadaFC.profitRate}}) </td>
+                    <td>{{ proDetails.mexicoFC.profit }} ({{proDetails.mexicoFC.profitRate}}) </td>
+                    <td>{{ proDetails.britainFC.profit }} ({{proDetails.britainFC.profitRate}}) </td>
+                    <td>{{ proDetails.franceFC.profit }} ({{proDetails.franceFC.profitRate}}) </td>
+                    <td>{{ proDetails.germanyFC.profit }} ({{proDetails.germanyFC.profitRate}}) </td>
+                    <td>{{ proDetails.italyFC.profit }} ({{proDetails.italyFC.profitRate}}) </td>
+                    <td>{{ proDetails.spainFC.profit }} ({{proDetails.spainFC.profitRate}}) </td>
+                    <td>{{ proDetails.japanFC.profit }} ({{proDetails.japanFC.profitRate}}) </td>
+                    <td>{{ proDetails.australiaFC.profit }} ({{proDetails.australiaFC.profitRate}}) </td>
 
-                        </tr>
+                    </tr>
                     </table>
 
 
@@ -408,50 +412,50 @@
                             <!--<input type="button" value="一键翻译" @click="fanyiFunc">-->
                             <!--<br><br>-->
                             <span><label for="">产品标题：<input type="button" value="一键翻译" @click="titleEntoOthers"></label><textarea v-model="proDetails.britainPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
-                            <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordEntoOthers"></label><textarea v-model="proDetails.britainPRE.keyWord" @change="titleChange2">建议填写</textarea></span><br>
+                            <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordEntoOthers"></label><textarea v-model="proDetails.britainPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">重点说明：<input type="button" value="一键翻译" @click="keyPointEntoOthers"></label><textarea v-model="proDetails.britainPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionEntoOthers"></label><textarea v-model="proDetails.britainPRE.productDescription" @change="titleChange3">建议填写</textarea>
+                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionEntoOthers"></label><textarea v-model="proDetails.britainPRE.productDescription" @change="titleChange1">建议填写</textarea>
                                 <input class="jiacu" type="button" value="加粗" @click="inserttag1">
                             </span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.francePRE.productTitle">建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.francePRE.keyWord">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.francePRE.keyPoints">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.francePRE.productDescription">建议填写</textarea>
-                                <input class="jiacu" type="button" value="加粗" @click="inserttag2">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.francePRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.francePRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.francePRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.francePRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag2">
                             </span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.italyPRE.productTitle">建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.italyPRE.keyWord">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.italyPRE.keyPoints">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.italyPRE.productDescription">建议填写</textarea>
-                                <input class="jiacu" type="button" value="加粗" @click="inserttag3">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.italyPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.italyPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.italyPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.italyPRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag3">
                             </span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.spainPRE.productTitle">建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.spainPRE.keyWord">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.spainPRE.keyPoints">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.spainPRE.productDescription">建议填写</textarea>
-                                <input class="jiacu" type="button" value="加粗" @click="inserttag4">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.spainPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.spainPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.spainPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.spainPRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag4">
                             </span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.germanyPRE.productTitle">建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.germanyPRE.keyWord">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.germanyPRE.keyPoints">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.germanyPRE.productDescription">建议填写</textarea>
-                                <input class="jiacu" type="button" value="加粗" @click="inserttag5">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.germanyPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.germanyPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.germanyPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.germanyPRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag5">
                             </span><br>
                         </div>
                         <div class="layui-tab-content">
-                            <span><label for="">产品标题：</label><textarea v-model="proDetails.japanPRE.productTitle">建议填写</textarea></span><br>
-                            <span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription">建议填写</textarea>
-                                <input class="jiacu" type="button" value="加粗" @click="inserttag6">
+                            <span><label for="">产品标题：</label><textarea v-model="proDetails.japanPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag6">
                             </span><br>
                         </div>
 
@@ -492,7 +496,7 @@
                             <th>已选图片</th>
                         </tr>
                         <tr v-for="(item,index) in recommendAll" :data-index="item.id">
-                            <td>{{ index }}</td>
+                            <td>{{ index+1 }}</td>
                             <td>{{ item.name }}</td>
                             <td><input type="text" v-model="item.sku"></td>
                             <td><input type="text" v-model="item.addPrice"></td>
@@ -533,7 +537,7 @@
         </div>
 
         <!--变体列表选择图片-->
-        <div id="selImg" class="tankuang" style="display: none">
+        <div id="selImg" class="tankuang" style="display: none;position: relative;">
             <h3>产品回收站</h3>
             <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
                 <div class="inner-content-div2">
@@ -546,6 +550,10 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- 鼠标拖拽出的遮罩 （定位为 position:absolute）-->
+            <!-- 遮罩最好是在绑定了mouseover事件的元素内部，并且不要阻止遮罩的冒泡事件。这样鼠标移到了遮罩上面，依然可以利用冒泡执行父元素的mouseover事件，就不会出现遮罩只能扩大，不能缩小的情况了（亲自试过） -->
+            <!--<div id="moveSelected1">11111</div>-->
         </div>
 
         <!--变体添加-->
@@ -553,7 +561,7 @@
             <h3>添加变体</h3>
             <div>
                 <label for="">变体名称</label>
-                <select name="" id="variantName" v-model="selVar"  placeholder="变体名称">
+                <select name="" id="variantName" v-model="selVar"  placeholder="变体名称" @change="vChange">
                     <option value="0">颜色（color）</option>
                     <option value="1">尺寸（sizeNam）</option>
                 </select>
@@ -575,7 +583,7 @@
             <h3>添加变体</h3>
             <div>
                 <label for="">变体名称</label>
-                <select name="" id="variantName1" v-model="upVariantList.id"  placeholder="变体名称">
+                <select name="" id="variantName1" v-model="upVariantList.id"  placeholder="变体名称" @change="vChange" disabled>
                     <option value="0">颜色（color）</option>
                     <option value="1">尺寸（sizeNam）</option>
                 </select>
@@ -597,24 +605,19 @@
             <img src="" alt="">
         </div>
 
-
     </form>
+
     <!--上传-->
     <div id="shangchaunImg" class="tankuang" style="display: none;">
         <h3>上传图片</h3>
 
-        <div id="demo" class="zyupload"></div>
+        <div id="demo1" class="zyupload"></div>
 
     </div>
 
-    <!--翻译进度条-->
-    <!--<div v-if="jindutiaoFy" class="jindutiaoFy">-->
-        <!--<el-progress type="circle" :percentage="25"></el-progress>-->
-    <!--</div>-->
-
     <script src="${request.contextPath}/statics/kuajing/js/step/product/zyupload-1.0.0.js"></script>
-
-    <script src="${request.contextPath}/statics/kuajing/js/step/product/createPro.js?_${.now?long}"></script>
+    <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/demo.js"></script>-->
+    <script src="${request.contextPath}/statics/kuajing/js/step/product/detailsProduct2.js?_${.now?long}"></script>
     <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/move.js"></script>-->
     <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
     <script>

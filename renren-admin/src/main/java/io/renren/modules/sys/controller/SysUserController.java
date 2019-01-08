@@ -25,6 +25,10 @@ import io.renren.common.validator.Assert;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.common.validator.group.AddGroup;
 import io.renren.common.validator.group.UpdateGroup;
+import io.renren.modules.amazon.entity.AmazonGrantEntity;
+import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
+import io.renren.modules.amazon.service.AmazonGrantService;
+import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysDeptService;
@@ -43,7 +47,7 @@ import java.util.Map;
 
 /**
  * 系统用户
- * 
+ *
  * @author chenshun
  * @email sunlightcs@gmail.com
  * @date 2016年10月31日 上午10:40:10
@@ -51,156 +55,171 @@ import java.util.Map;
 @RestController
 @RequestMapping("/sys/user")
 public class SysUserController extends AbstractController {
-	@Autowired
-	private SysUserService sysUserService;
-	@Autowired
-	private SysUserRoleService sysUserRoleService;
-	@Autowired
-	private SysDeptService sysDeptService;
-	/**
-	 * 所有用户列表
-	 */
-	@RequestMapping("/list")
-	@RequiresPermissions("sys:user:list")
-	public R list(@RequestParam Map<String, Object> params){
-		PageUtils page = sysUserService.queryPage(params, getDeptId());
-		return R.ok().put("page", page);
-	}
-	/**
-	 * 下拉选择用户列表
-	 */
-	@RequestMapping("/getUserList")
-	public R list(@RequestParam Long deptId){
-		List<SysUserEntity> userList = new ArrayList<>();
-		if (getDeptId() == 1L){
-			if(deptId != null && deptId != 0L){
-				userList = sysUserService.selectUserList(deptId);
-				return R.ok().put("userList", userList);
-			}else{
-				return R.error("请先选择公司");
-			}
-		}else{
-			userList = sysUserService.selectUserList(getDeptId());
-			return R.ok().put("userList",userList);
-		}
-	}
-	/**
-	 * 总部员工列表
-	 */
-	@RequestMapping("/selectOneLevelUserList")
-	public R selectOneLevelUserList(){
-		List<SysUserEntity> userList = sysUserService.selectList(new EntityWrapper<SysUserEntity>().eq("dept_id",1));
-		return R.ok().put("userList",userList);
-	}
-	/**
-	 * 获取登录的用户信息
-	 */
-	@RequestMapping("/info")
-	public R info(){
-		return R.ok().put("user", getUser());
-	}
-	
-	/**
-	 * 修改登录用户密码
-	 */
-	@SysLog("修改密码")
-	@RequestMapping("/password")
-	public R password(String password, String newPassword){
-		Assert.isBlank(newPassword, "新密码不为能空");
+    @Autowired
+    private SysUserService sysUserService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
+    @Autowired
+    private SysDeptService sysDeptService;
+    @Autowired
+    private AmazonGrantShopService amazonGrantShopService;
+    @Autowired
+    private AmazonGrantService amazonGrantService;
 
-		//原密码
-		password = ShiroUtils.sha256(password, getUser().getSalt());
-		//新密码
-		newPassword = ShiroUtils.sha256(newPassword, getUser().getSalt());
-				
-		//更新密码
-		boolean flag = sysUserService.updatePassword(getUserId(), password, newPassword);
-		if(!flag){
-			return R.error("原密码不正确");
-		}
-		
-		return R.ok();
-	}
-	/**
-	 * 修改登录用户密码
-	 */
-	@SysLog("重置密码")
-	@RequestMapping("/resetPassword")
-	@RequiresPermissions("sys:user:reset")
-	public R resetPassword(@RequestBody Long[] userIds){
-		//更新密码
-		boolean flag = sysUserService.resetPassword(userIds);
-		if(!flag){
-			return R.error("重置失败");
-		}
-		return R.ok();
-	}
-	/**
-	 * 用户信息
-	 */
-	@RequestMapping("/info/{userId}")
-	@RequiresPermissions("sys:user:info")
-	public R info(@PathVariable("userId") Long userId){
-		SysUserEntity user = sysUserService.selectById(userId);
-		
-		//获取用户所属的角色列表
-		List<Long> roleIdList = sysUserRoleService.queryRoleIdList(userId);
-		user.setRoleIdList(roleIdList);
-		
-		return R.ok().put("user", user);
-	}
-	
-	/**
-	 * 保存用户
-	 */
-	@SysLog("保存用户")
-	@RequestMapping("/save")
-	@RequiresPermissions("sys:user:save")
-	public R save(@RequestBody SysUserEntity user){
-		//获取当前用户数量
-		int count = sysUserService.selectCount(new EntityWrapper<SysUserEntity>().eq("dept_id",user.getDeptId()));
-		//获取公司账户限制数量
-		int accountCount = sysDeptService.selectOne(new EntityWrapper<SysDeptEntity>().eq("dept_id",user.getDeptId())).getAccountCount();
-		if(count < accountCount){
+    /**
+     * 所有用户列表
+     */
+    @RequestMapping("/list")
+    @RequiresPermissions("sys:user:list")
+    public R list(@RequestParam Map<String, Object> params) {
+        PageUtils page = sysUserService.queryPage(params, getDeptId());
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 下拉选择用户列表
+     */
+    @RequestMapping("/getUserList")
+    public R list(@RequestParam Long deptId) {
+        List<SysUserEntity> userList = new ArrayList<>();
+        if (getDeptId() == 1L) {
+            if (deptId != null && deptId != 0L) {
+                userList = sysUserService.selectUserList(deptId);
+                return R.ok().put("userList", userList);
+            } else {
+                return R.error("请先选择公司");
+            }
+        } else {
+            userList = sysUserService.selectUserList(getDeptId());
+            return R.ok().put("userList", userList);
+        }
+    }
+
+    /**
+     * 总部员工列表
+     */
+    @RequestMapping("/selectOneLevelUserList")
+    public R selectOneLevelUserList() {
+        List<SysUserEntity> userList = sysUserService.selectList(new EntityWrapper<SysUserEntity>().eq("dept_id", 1));
+        return R.ok().put("userList", userList);
+    }
+
+    /**
+     * 获取登录的用户信息
+     */
+    @RequestMapping("/info")
+    public R info() {
+        return R.ok().put("user", getUser());
+    }
+
+    /**
+     * 修改登录用户密码
+     */
+    @SysLog("修改密码")
+    @RequestMapping("/password")
+    public R password(String password, String newPassword) {
+        Assert.isBlank(newPassword, "新密码不为能空");
+
+        //原密码
+        password = ShiroUtils.sha256(password, getUser().getSalt());
+        //新密码
+        newPassword = ShiroUtils.sha256(newPassword, getUser().getSalt());
+
+        //更新密码
+        boolean flag = sysUserService.updatePassword(getUserId(), password, newPassword);
+        if (!flag) {
+            return R.error("原密码不正确");
+        }
+
+        return R.ok();
+    }
+
+    /**
+     * 修改登录用户密码
+     */
+    @SysLog("重置密码")
+    @RequestMapping("/resetPassword")
+    @RequiresPermissions("sys:user:reset")
+    public R resetPassword(@RequestBody Long[] userIds) {
+        //更新密码
+        boolean flag = sysUserService.resetPassword(userIds);
+        if (!flag) {
+            return R.error("重置失败");
+        }
+        return R.ok();
+    }
+
+    /**
+     * 用户信息
+     */
+    @RequestMapping("/info/{userId}")
+    @RequiresPermissions("sys:user:info")
+    public R info(@PathVariable("userId") Long userId) {
+        SysUserEntity user = sysUserService.selectById(userId);
+
+        //获取用户所属的角色列表
+        List<Long> roleIdList = sysUserRoleService.queryRoleIdList(userId);
+        user.setRoleIdList(roleIdList);
+
+        return R.ok().put("user", user);
+    }
+
+    /**
+     * 保存用户
+     */
+    @SysLog("保存用户")
+    @RequestMapping("/save")
+    @RequiresPermissions("sys:user:save")
+    public R save(@RequestBody SysUserEntity user) {
+        //获取当前用户数量
+        int count = sysUserService.selectCount(new EntityWrapper<SysUserEntity>().eq("dept_id", user.getDeptId()));
+        //获取公司账户限制数量
+        int accountCount = sysDeptService.selectOne(new EntityWrapper<SysDeptEntity>().eq("dept_id", user.getDeptId())).getAccountCount();
+        if (count < accountCount) {
 //			//ValidatorUtils.validateEntity((user, AddGroup.class);
-			sysUserService.save(user);
-			return R.ok();
-		}else{
-			return R.error("账户数已达上限");
-		}
-	}
-	
-	/**
-	 * 修改用户
-	 */
-	@SysLog("修改用户")
-	@RequestMapping("/update")
+            sysUserService.save(user);
+            return R.ok();
+        } else {
+            return R.error("账户数已达上限");
+        }
+    }
+
+    /**
+     * 修改用户
+     */
+    @SysLog("修改用户")
+    @RequestMapping("/update")
 //	@RequiresPermissions("sys:user:update")
-	public R update(@RequestBody SysUserEntity user){
+    public R update(@RequestBody SysUserEntity user) {
 //		//ValidatorUtils.validateEntity((user, UpdateGroup.class);
 
-		sysUserService.update(user);
-		
-		return R.ok();
-	}
-	
-	/**
-	 * 删除用户
-	 */
-	@SysLog("删除用户")
-	@RequestMapping("/delete")
-	@RequiresPermissions("sys:user:delete")
-	public R delete(@RequestBody Long[] userIds){
-		if(ArrayUtils.contains(userIds, 1L)){
-			return R.error("系统管理员不能删除");
-		}
+        sysUserService.update(user);
 
-		if(ArrayUtils.contains(userIds, getUserId())){
-			return R.error("当前用户不能删除");
-		}
+        return R.ok();
+    }
 
-		sysUserService.deleteBatchIds(Arrays.asList(userIds));
-		
-		return R.ok();
-	}
+    /**
+     * 删除用户
+     */
+    @SysLog("删除用户")
+    @RequestMapping("/delete")
+    @RequiresPermissions("sys:user:delete")
+    public R delete(@RequestBody Long[] userIds) {
+        if (ArrayUtils.contains(userIds, 1L)) {
+            return R.error("系统管理员不能删除");
+        }
+
+        if (ArrayUtils.contains(userIds, getUserId())) {
+            return R.error("当前用户不能删除");
+        }
+
+        // 删除授权店铺
+        amazonGrantShopService.delete(new EntityWrapper<AmazonGrantShopEntity>().in("user_id", Arrays.asList(userIds)));
+        // 删除授权信息
+        amazonGrantService.delete(new EntityWrapper<AmazonGrantEntity>().in("user_id", Arrays.asList(userIds)));
+
+        sysUserService.deleteBatchIds(Arrays.asList(userIds));
+
+        return R.ok();
+    }
 }
