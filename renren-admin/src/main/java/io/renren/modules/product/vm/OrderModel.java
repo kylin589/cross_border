@@ -31,6 +31,8 @@ public class OrderModel {
     private String currencyCode;
     //国家
     private String country;
+    //标题
+    private String titlename;
 
     public String getCountry() {
         return country;
@@ -158,5 +160,13 @@ public class OrderModel {
 
     public void setOrderItemId(String orderItemId) {
         this.orderItemId = orderItemId;
+    }
+
+    public String getTitlename() {
+        return titlename;
+    }
+
+    public void setTitlename(String titlename) {
+        this.titlename = titlename;
     }
 }

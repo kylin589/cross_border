@@ -187,6 +187,8 @@ public class OrderTimer {
                             List<OrderModel> orderModelList = new ArrayList<OrderModel>();
                             if(orderItemResponseDtos.get(k) != null && orderItemResponseDtos.get(k).getOrderItems() != null && orderItemResponseDtos.get(k).getOrderItems().size() >0){
                                 for (int m = 0; m < orderItemResponseDtos.get(k).getOrderItems().size(); m++) {
+                                    String titlename = orderItemResponseDtos.get(k).getOrderItems().get(m).getTitle();
+                                    System.out.println("商品名称:"+titlename+"==================");
                                     String product_asin = orderItemResponseDtos.get(k).getOrderItems().get(m).getASIN();
                                     System.out.println("商品asin码:"+product_asin+"==================");
                                     String orderItemId = orderItemResponseDtos.get(k).getOrderItems().get(m).getOrderItemId();
@@ -243,6 +245,11 @@ public class OrderTimer {
                                     }else{
                                     orderModel.setCountry(country);
                                     }
+                                    if (titlename != null) {
+                                        orderModel.setTitlename(titlename);
+                                    } else {
+                                        orderModel.setTitlename("");
+                                    }
                                     if (product_asin != null) {
                                         orderModel.setProductAsin(product_asin);
                                     } else {
@@ -259,8 +266,15 @@ public class OrderTimer {
                                         orderModel.setProductSku("");
                                     }
                                     if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
-                                        String orderMoney = orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
+
+                                        String orderMoney = listOrdersResponseDtos.get(i).getOrders().get(j).getAmount();
                                         System.out.println("订单金额："+orderMoney+"============");
+                                        if (orderMoney != null) {
+                                            BigDecimal OrderMoney = new BigDecimal(orderMoney);
+                                            orderModel.setOrderMoney(OrderMoney);//订单总费用
+                                        } else {
+                                            orderModel.setOrderMoney(new BigDecimal(0));//订单总费用
+                                        }
                                         String CurrencyCode=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getCurrencyCode();
                                         System.out.println("货币代码："+CurrencyCode+"============");
                                         if (orderMoney != null) {

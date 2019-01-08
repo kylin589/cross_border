@@ -607,6 +607,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         }
                         orderEntity.setShopId(orderModel.getShopId());
                         orderEntity.setShopName(orderModel.getShopName());
+                        orderEntity.setProductTitle(orderModel.getTitlename());
                         orderEntity.setProductSku(orderModel.getProductSku());
                         orderEntity.setProductAsin(orderModel.getProductAsin());
                         ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));
@@ -672,6 +673,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                                     .eq("data_type","AMAZON_ORDER_STATE")
                                                     .eq("data_number",modelStatus)
                                     ).getDataContent();
+
                                     orderEntity.setOrderState(orderState);
                                     this.updateById(orderEntity);
                                     //新增/修改收货人信息
@@ -729,6 +731,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         }
                         orderEntity.setShopId(orderModel.getShopId());
                         orderEntity.setShopName(orderModel.getShopName());
+                        orderEntity.setProductTitle(orderModel.getTitlename());
                         orderEntity.setProductSku(orderModel.getProductSku());
                         orderEntity.setProductAsin(orderModel.getProductAsin());
                         ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));

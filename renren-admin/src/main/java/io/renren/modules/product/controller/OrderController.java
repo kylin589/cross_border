@@ -159,7 +159,9 @@ public class OrderController extends AbstractController{
         orderDTO.setProductId(orderEntity.getProductId());
         orderDTO.setProductSku(orderEntity.getProductSku());
         ProductsEntity productsEntity = productsService.selectById(orderEntity.getProductId());
-        if(productsEntity != null){
+        if(orderEntity.getProductTitle() != null){
+            orderDTO.setProductTitle(orderEntity.getProductTitle());
+        }else if(productsEntity != null){
             orderDTO.setProductTitle(productsEntity.getProductTitle());
         }
 
