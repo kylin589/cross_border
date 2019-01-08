@@ -8,10 +8,10 @@ import java.util.Date;
 
 /**
  * 亚马逊商品上传结果表
- * 
+ *
  * @author zjr
  * @email 1981763981@qq.com
- * @date 2018-12-24 07:26:40
+ * @date 2019-01-07 22:42:16
  */
 @TableName("amazon_result_xml")
 public class ResultXmlEntity implements Serializable {
@@ -21,7 +21,15 @@ public class ResultXmlEntity implements Serializable {
 	 * 主键id
 	 */
 	@TableId
-	private Long id;
+	private Long resultId;
+	/**
+	 * sku
+	 */
+	private String sku;
+	/**
+	 * 商品id
+	 */
+	private Long productId;
 	/**
 	 * 上传id
 	 */
@@ -35,9 +43,17 @@ public class ResultXmlEntity implements Serializable {
 	 */
 	private Integer state;
 	/**
-	 * 上传返回的xml结果
+	 * 错误结果
 	 */
-	private String xml;
+	private String result;
+	/**
+	 * 返回结果类型（Error，错误，Warning，警告）
+	 */
+	private String resultType;
+	/**
+	 * 上传返回的错误代码
+	 */
+	private String resultCode;
 	/**
 	 * 创建时间
 	 */
@@ -46,14 +62,38 @@ public class ResultXmlEntity implements Serializable {
 	/**
 	 * 设置：主键id
 	 */
-	public void setId(Long id) {
-		this.id = id;
+	public void setResultId(Long resultId) {
+		this.resultId = resultId;
 	}
 	/**
 	 * 获取：主键id
 	 */
-	public Long getId() {
-		return id;
+	public Long getResultId() {
+		return resultId;
+	}
+	/**
+	 * 设置：sku
+	 */
+	public void setSku(String sku) {
+		this.sku = sku;
+	}
+	/**
+	 * 获取：sku
+	 */
+	public String getSku() {
+		return sku;
+	}
+	/**
+	 * 设置：商品id
+	 */
+	public void setProductId(Long productId) {
+		this.productId = productId;
+	}
+	/**
+	 * 获取：商品id
+	 */
+	public Long getProductId() {
+		return productId;
 	}
 	/**
 	 * 设置：上传id
@@ -92,16 +132,40 @@ public class ResultXmlEntity implements Serializable {
 		return state;
 	}
 	/**
-	 * 设置：上传返回的xml结果
+	 * 设置：错误结果
 	 */
-	public void setXml(String xml) {
-		this.xml = xml;
+	public void setResult(String result) {
+		this.result = result;
 	}
 	/**
-	 * 获取：上传返回的xml结果
+	 * 获取：错误结果
 	 */
-	public String getXml() {
-		return xml;
+	public String getResult() {
+		return result;
+	}
+	/**
+	 * 设置：返回结果类型（Error，错误，Warning，警告）
+	 */
+	public void setResultType(String resultType) {
+		this.resultType = resultType;
+	}
+	/**
+	 * 获取：返回结果类型（Error，错误，Warning，警告）
+	 */
+	public String getResultType() {
+		return resultType;
+	}
+	/**
+	 * 设置：上传返回的错误代码
+	 */
+	public void setResultCode(String resultCode) {
+		this.resultCode = resultCode;
+	}
+	/**
+	 * 获取：上传返回的错误代码
+	 */
+	public String getResultCode() {
+		return resultCode;
 	}
 	/**
 	 * 设置：创建时间

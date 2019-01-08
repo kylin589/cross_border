@@ -173,4 +173,11 @@ public interface ProductsService extends IService<ProductsEntity> {
     //判断是否满足上传条件
     UploadProductDTO isNotCanUpload(List<Long> idList, Long userId);
 
+    /**
+     * 根据sku查询产品id
+     * @param sku
+     * @return
+     * @author zjr
+     */
+    Long queryIdBySku(String sku);
 }
