@@ -720,7 +720,8 @@ var vm = new Vue({
         // 保存相册
         saveXc:function(){
             var arr = [];
-            var el = $('.imgDiv>.imgAlbum');
+            var el = $('.imgDiv>div');
+            console.log($(".imgDiv>div"));
             for(var i = 0;i<el.length;i++){
                 var _index = el.eq(i).attr('data-index');
                 arr.push({
@@ -736,6 +737,11 @@ var vm = new Vue({
                     'uid':vm.proAlbum[_index].uid,
                 })
             }
+            console.log(arr);
+
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../product/imageaddress/locationsave',
                 type: 'post',
@@ -745,33 +751,38 @@ var vm = new Vue({
                 success: function (r) {
                     // console.log(r);
                     if (r.code === 0) {
-                        console.log('产品相册');
+                        console.log('产品相册保存');
                         console.log(r);
-                        vm.proAlbum = [];
-                        r.imageInfo.forEach(function (item,index) {
-                            vm.proAlbum.push({
-                                index:index,
-                                imgId:item.imageId,
-                                url:item.imageUrl,
-                                isDeleted:item.isDeleted,
-                                createUserId:item.createUserId,
-                                createTime:item.createTime,
-                                lastOperationTime:item.lastOperationTime,
-                                lastOperationUserId:item.lastOperationUserId,
-                                productId:item.productId,
-                                status:item.status,
-                                uid:item.uid
-
-                            })
-                        })
+                        layer.msg('保存成功');
+                        layer.close(index);
+                        vm.getProAlbum();
+                        // vm.proAlbum = [];
+                        // r.imageInfo.forEach(function (item,index) {
+                        //     vm.proAlbum.push({
+                        //         index:index,
+                        //         imgId:item.imageId,
+                        //         url:item.imageUrl,
+                        //         isDeleted:item.isDeleted,
+                        //         createUserId:item.createUserId,
+                        //         createTime:item.createTime,
+                        //         lastOperationTime:item.lastOperationTime,
+                        //         lastOperationUserId:item.lastOperationUserId,
+                        //         productId:item.productId,
+                        //         status:item.status,
+                        //         uid:item.uid
+                        //
+                        //     })
+                        // })
                         // vm.proAlbum = r.imageInfo;
 
                     } else {
                         layer.alert(r.msg);
+                        layer.close(index);
                     }
                 },
                 error: function () {
                     layer.msg("网络故障");
+                    layer.close(index);
                 }
             })
         },
