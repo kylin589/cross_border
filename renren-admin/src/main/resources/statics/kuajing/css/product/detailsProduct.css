@@ -145,7 +145,7 @@ form .item>div:nth-child(2) input[type=text] , form .item>div:nth-child(2) selec
 form .item>div:nth-child(2) textarea{
     width: 409px;
     height: 68px;
-    vertical-align: text-top;
+    vertical-align: top;
 }
 form .pro_inf span{
     display: inline-block;

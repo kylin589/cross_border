@@ -415,10 +415,10 @@ var vm = new Vue({
                 "profitRate": ""
             },
             "chinesePRE": {
-                "productTitle": ' ',
-                "keyWord": ' ',
-                "keyPoints": ' ',
-                "productDescription": ' '
+                "productTitle": '',
+                "keyWord": '',
+                "keyPoints": '',
+                "productDescription": ''
             },
             "britainPRE": {
                 "productTitle": 'null',
@@ -540,16 +540,10 @@ var vm = new Vue({
                     if (r.code === 0) {
                         console.log('原创成功');
                         console.log(r);
-
                         vm.proDetails = r.productsEntity;
                         vm.id = r.productsEntity.productId;
                         vm.getProStation();
                         vm.getProAlbum();
-
-
-
-
-
                     } else {
                         layer.alert(r.msg);
                     }
