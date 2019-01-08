@@ -907,9 +907,9 @@ public class ProductsController extends AbstractController {
             }
         }
         //产品标题
-        if (StringUtils.isNotBlank(chinesePRE.getProductTitle().trim())) {
+        if (StringUtils.isNotBlank(chinesePRE.getProductTitle())) {
             products.setProductTitle(chinesePRE.getProductTitle().trim());
-        } else if (StringUtils.isNotBlank(britainPRE.getProductTitle().trim())) {
+        } else if (StringUtils.isNotBlank(britainPRE.getProductTitle())) {
             products.setProductTitle(britainPRE.getProductTitle().trim());
         } else {
             products.setProductTitle("产品标题");
@@ -1177,9 +1177,9 @@ public class ProductsController extends AbstractController {
             }
         }
         //产品标题
-        if (StringUtils.isNotBlank(britainPRE.getProductTitle().trim())) {
+        if (StringUtils.isNotBlank(britainPRE.getProductTitle())) {
             products.setProductTitle(britainPRE.getProductTitle().trim());
-        } else if (StringUtils.isNotBlank(chinesePRE.getProductTitle().trim())) {
+        } else if (StringUtils.isNotBlank(chinesePRE.getProductTitle())) {
             products.setProductTitle(chinesePRE.getProductTitle().trim());
         } else {
             products.setProductTitle("产品标题");
