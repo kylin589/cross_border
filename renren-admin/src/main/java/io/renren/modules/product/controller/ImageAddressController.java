@@ -117,8 +117,7 @@ public class ImageAddressController extends AbstractController {
                 productsService.updateById(productsEntity);
             }
         }
-        List<ImageAddressEntity> imageInfo = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", images[0].getProductId()).eq("is_deleted", "0").orderBy("sort",true));
-        return R.ok().put("imageInfo", imageInfo);
+       return R.ok();
     }
 
     /**
