@@ -13,7 +13,9 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.modules.amazon.dto.ListOrderItemsByNextTokenResponseDto;
 import io.renren.modules.amazon.dto.ListOrdersResponseDto;
 import io.renren.modules.amazon.entity.AmazonGrantEntity;
+import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
+import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.order.component.OrderTimer;
 import io.renren.modules.product.entity.*;
@@ -83,6 +85,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private ProductsService productsService;
     @Autowired
     private AmazonGrantService amazonGrantService;
+    @Autowired
+    private AmazonGrantShopService amazonGrantShopService;
     @Override
     public Map<String, Object> queryMyPage(Map<String, Object> params, Long userId) {
         //店铺名称
@@ -1038,9 +1042,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     //根据订单id进行更新订单Amazon状态
     @Override
-    public OrderModel updateOrderAmazonStatus(String AmazonOrderId) {
-        List<AmazonGrantEntity> grantList = amazonGrantService.selectList(null);
-        for(AmazonGrantEntity grant:grantList) {
+    public OrderModel updateOrderAmazonStatus(String AmazonOrderId, OrderEntity orderEntity) {
+        AmazonGrantShopEntity amazonGrantShopEntity = amazonGrantShopService.selectOne(new EntityWrapper<AmazonGrantShopEntity>().eq("user_id",orderEntity.getUserId()).eq("country_code",orderEntity.getCountryCode()));
+        if(amazonGrantShopEntity != null && amazonGrantShopEntity.getGrantId() != null){
+            AmazonGrantEntity grant = amazonGrantService.selectById(amazonGrantShopEntity.getGrantId());
             String sellerId = grant.getMerchantId();//获得商家id
             String mwsAuthToken = grant.getGrantToken();//获得授权Token
             MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();

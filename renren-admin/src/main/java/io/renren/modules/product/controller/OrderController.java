@@ -594,7 +594,7 @@ public class OrderController extends AbstractController{
         String abStatus = orderEntity.getAbnormalStatus();
         String amazonOrderId = orderEntity.getAmazonOrderId();
         if(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING.equals(status) || ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED.equals(status)){
-            OrderModel orderModel = orderService.updateOrderAmazonStatus(amazonOrderId);
+            OrderModel orderModel = orderService.updateOrderAmazonStatus(amazonOrderId,orderEntity);
             if(orderModel != null){
                 //amazon状态更新
                 new RefreshAmazonStateThread(orderEntity,orderModel).start();
