@@ -685,6 +685,35 @@ var vm = new Vue({
                     layer.msg("网络故障");
                 }
             });
+        },
+        // 刷新
+        shuaxin:function (id) {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+            $.ajax({
+                url: '../../product/order/manualUpdateOrder',
+                type: 'post',
+                data: JSON.stringify({
+                    'orderId':id
+                }),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        layer.msg('刷新成功');
+                        layer.close(index);
+                    } else {
+                        layer.alert(r.msg);
+                        layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    layer.close(index);
+                }
+            });
         }
     },
     created:function () {
