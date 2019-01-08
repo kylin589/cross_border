@@ -717,6 +717,64 @@ var vm = new Vue({
                 }
             })
         },
+        // 保存相册
+        saveXc:function(){
+            var arr = [];
+            var el = $('.imgDiv>.imgAlbum');
+            for(var i = 0;i<el.length;i++){
+                var _index = el.eq(i).attr('data-index');
+                arr.push({
+                    'imageId':vm.proAlbum[_index].imgId,
+                    'imageUrl':vm.proAlbum[_index].url,
+                    'isDeleted':vm.proAlbum[_index].isDeleted,
+                    'createUserId':vm.proAlbum[_index].createUserId,
+                    'createTime':vm.proAlbum[_index].createTime,
+                    'lastOperationTime':vm.proAlbum[_index].lastOperationTime,
+                    'lastOperationUserId':vm.proAlbum[_index].lastOperationUserId,
+                    'productId':vm.proAlbum[_index].productId,
+                    'status':vm.proAlbum[_index].status,
+                    'uid':vm.proAlbum[_index].uid,
+                })
+            }
+            $.ajax({
+                url: '../../product/imageaddress/locationsave',
+                type: 'post',
+                data: JSON.stringify(arr),
+                // dataType: 'json',
+                contentType: "application/json",
+                success: function (r) {
+                    // console.log(r);
+                    if (r.code === 0) {
+                        console.log('产品相册');
+                        console.log(r);
+                        vm.proAlbum = [];
+                        r.imageInfo.forEach(function (item,index) {
+                            vm.proAlbum.push({
+                                index:index,
+                                imgId:item.imageId,
+                                url:item.imageUrl,
+                                isDeleted:item.isDeleted,
+                                createUserId:item.createUserId,
+                                createTime:item.createTime,
+                                lastOperationTime:item.lastOperationTime,
+                                lastOperationUserId:item.lastOperationUserId,
+                                productId:item.productId,
+                                status:item.status,
+                                uid:item.uid
+
+                            })
+                        })
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            })
+        },
         // 获取产品一级分类
         getProTypeOne:function () {
             $.ajax({
@@ -1895,6 +1953,245 @@ var vm = new Vue({
             }
 
         },
+        // 产品相册图片拖拽
+        drapImg1:function () {
+
+
+            // for(var nn = 0;nn<$('.ul1').length;nn++){
+                //      console.log(nn);
+                // var _index = nn;
+                var aLi = $(".imgDiv>.imgAlbum");
+                if(aLi.length != 0){
+                    console.log($(".imgDiv>.imgAlbum"));
+                    var aLiLast = $(".imgDiv").find('.imgAlbum:last-child');
+                    // console.log(aLiLast);
+                    var disX = 0;
+                    var disY = 0;
+                    var minZindex = 1;
+                    var aPos = [];
+                    for(var i = 0; i < aLi.length; i++) {
+                        var t = aLi[i].offsetTop;
+                        var l = aLi[i].offsetLeft;
+                        aLi[i].style.top = t + "px";
+                        aLi[i].style.left = l + "px";
+                        aPos[i] = {
+                            left: l,
+                            top: t
+                        };
+                        aLi[i].index = i;
+                    }
+                    for(var i = 0; i < aLi.length; i++) {
+                        console.log(i);
+                        aLi[i].style.position = "absolute";
+                        aLi[i].style.margin = 0;
+                        setDrag(aLi[i],aLi);
+                    }
+
+                    // if(aLi.length != 0){
+                    //     // var _height = aLiLast[0].offsetTop+60;
+                    //     var _height = aLiLast[0].offsetTop+60;
+                    //     aLiLast.parent().css('height',_height+'px');
+                    //     aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+                    // }
+                    var _height = aLiLast[0].offsetTop+140;
+                    aLiLast.parent().css('height',_height+'px');
+                    // aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+
+                    // console.log(_height);
+
+
+                    // aLi.mouseover(function () {
+                    //     $(this).find('i').css('display','inline-block');
+                    //     $(this).find('i').mouseover(function () {
+                    //         $(this).css('display','inline-block');
+                    //     })
+                    //     $(this).find('i').mouseout(function () {
+                    //         $(this).css('display','none');
+                    //     })
+                    // })
+                    // aLi.mouseout(function () {
+                    //     $(this).find('i').css('display','none');
+                    //     $(this).find('i').mouseover(function () {
+                    //         $(this).css('display','inline-block');
+                    //     })
+                    //     $(this).find('i').mouseout(function () {
+                    //         $(this).css('display','none');
+                    //     })
+                    // })
+                }
+
+            // }
+            //拖拽
+            function setDrag(obj,all) {
+                obj.onmouseover = function() {
+                    obj.style.cursor = "move";
+                }
+                obj.onmousedown = function(event) {
+//						获取滚动条位置
+                    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                    var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+//						设置当前拖拽元素位于最上方
+                    obj.style.zIndex = minZindex++;
+                    //当鼠标按下时计算鼠标与拖拽对象的距离
+                    disX = event.clientX + scrollLeft - obj.offsetLeft;
+                    disY = event.clientY + scrollTop - obj.offsetTop;
+                    document.onmousemove = function(event) {
+                        all.removeClass('active');
+                        //当鼠标拖动时计算div的位置
+                        var l = event.clientX - disX + scrollLeft;
+                        var t = event.clientY - disY + scrollTop;
+                        obj.style.left = l + "px";
+                        obj.style.top = t + "px";
+                        /*for(var i=0;i<aLi.length;i++){
+                            aLi[i].className = "";
+                            if(obj==aLi[i])continue;//如果是自己则跳过自己不加红色虚线
+                            if(colTest(obj,aLi[i])){
+                                aLi[i].className = "active";
+                            }
+                        }*/
+                        for(var i = 0; i < aLi.length; i++) {
+                            aLi[i].className = "";
+                        }
+//							找到距离最近的元素
+                        var oNear = findMin(obj,all);
+//							给距离最近的元素添加选中类名active
+                        if(oNear) {
+                            oNear.className = "active";
+                        }
+                    }
+                    document.onmouseup = function() {
+                        document.onmousemove = null; //当鼠标弹起时移出移动事件
+                        document.onmouseup = null; //移出up事件，清空内存
+                        //检测是否普碰上，在交换位置
+                        var oNear = findMin(obj,all);
+                        if(oNear) {
+                            oNear.className = "";
+                            oNear.style.zIndex = minZindex++;
+                            obj.style.zIndex = minZindex++;
+//								互换位置
+                            startMove(oNear, aPos[obj.index]);
+                            startMove(obj, aPos[oNear.index]);
+                            //交换index
+                            oNear.index += obj.index;
+                            obj.index = oNear.index - obj.index;
+                            oNear.index = oNear.index - obj.index;
+//								var _indexN = $(oNear).attr('data-index');
+                            var _indexN = oNear.getAttribute('data-index');
+//								var _index = $(obj).attr('data-index');
+                            var _index = obj.getAttribute('data-index');
+                            oNear.setAttribute('data-index',_index);
+//								$(oNear).attr('data-index',_index);
+                            obj.setAttribute('data-index',_indexN);
+//								$(obj).attr('data-index',_indexN);
+                        } else {
+//								没有选中的最近元素,则拖拽元素返回自己原本的位置
+                            startMove(obj, aPos[obj.index]);
+                        }
+                    }
+                    clearInterval(obj.timer);
+                    return false; //低版本出现禁止符号
+                }
+            }
+            //碰撞检测
+            function colTest(obj1, obj2) {
+                var t1 = obj1.offsetTop;
+                var r1 = obj1.offsetWidth + obj1.offsetLeft;
+                var b1 = obj1.offsetHeight + obj1.offsetTop;
+                var l1 = obj1.offsetLeft;
+
+                var t2 = obj2.offsetTop;
+                var r2 = obj2.offsetWidth + obj2.offsetLeft;
+                var b2 = obj2.offsetHeight + obj2.offsetTop;
+                var l2 = obj2.offsetLeft;
+
+                if(t1 > b2 || r1 < l2 || b1 < t2 || l1 > r2) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            //勾股定理求距离
+            function getDis(obj1, obj2) {
+                var a = obj1.offsetLeft - obj2.offsetLeft;
+                var b = obj1.offsetTop - obj2.offsetTop;
+                return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+            }
+            //找到距离最近的
+            function findMin(obj,all) {
+                var minDis = 999999999;
+                var minIndex = -1;
+                for(var i = 0; i < all.length; i++) {
+                    if(obj == all[i]) continue;
+                    if(colTest(obj, all[i])) {
+                        var dis = getDis(obj, all[i]);
+                        if(dis < minDis) {
+                            minDis = dis;
+                            minIndex = i;
+                        }
+                    }
+                }
+                if(minIndex == -1) {
+                    return null;
+                } else {
+                    return all[minIndex];
+                }
+            }
+
+            //通过class获取元素
+            function getClass(cls){
+                var ret = [];
+                var els = document.getElementsByTagName("*");
+                for (var i = 0; i < els.length; i++){
+                    //判断els[i]中是否存在cls这个className;.indexOf("cls")判断cls存在的下标，如果下标>=0则存在;
+                    if(els[i].className === cls || els[i].className.indexOf("cls")>=0 || els[i].className.indexOf(" cls")>=0 || els[i].className.indexOf(" cls ")>0){
+                        ret.push(els[i]);
+                    }
+                }
+                return ret;
+            }
+            function getStyle(obj,attr){//解决JS兼容问题获取正确的属性值
+                return obj.currentStyle?obj.currentStyle[attr]:getComputedStyle(obj,false)[attr];
+            }
+            function startMove(obj,json,fun){
+                clearInterval(obj.timer);
+
+                // console.log(11111);
+                obj.timer = setInterval(function(){
+                    var isStop = true;
+                    for(var attr in json){
+                        var iCur = 0;
+                        //判断运动的是不是透明度值
+                        if(attr=="opacity"){
+                            iCur = parseInt(parseFloat(getStyle(obj,attr))*100);
+                        }else{
+                            iCur = parseInt(getStyle(obj,attr));
+                        }
+                        var ispeed = (json[attr]-iCur)/3;
+                        //运动速度如果大于0则向下取整，如果小于0想上取整；
+                        ispeed = ispeed>0?Math.ceil(ispeed):Math.floor(ispeed);
+                        //判断所有运动是否全部完成
+                        if(iCur!=json[attr]){
+                            isStop = false;
+                        }
+                        //运动开始
+                        if(attr=="opacity"){
+                            obj.style.filter = "alpha:(opacity:"+(json[attr]+ispeed)+")";
+                            obj.style.opacity = (json[attr]+ispeed)/100;
+                        }else{
+                            obj.style[attr] = iCur+ispeed+"px";
+                        }
+                    }
+                    //判断是否全部完成
+                    if(isStop){
+                        clearInterval(obj.timer);
+                        if(fun){
+                            fun();
+                        }
+                    }
+                },30);
+            }
+
+        },
         // 获取变体参数列表
         getrecommendAll:function () {
             this.recommendAll = [];
@@ -2008,13 +2305,14 @@ var vm = new Vue({
                 layer.msg('厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
             }else {
 
-                if(vm.proDetails.chinesePRE.productTitle.length > 200){
+                // if(vm.proDetails.chinesePRE.productTitle)
+                if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
                     layer.msg('产品标题内容不能超过200个字符')
-                }else if(vm.proDetails.chinesePRE.keyWord.length > 250){
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 250){
                     layer.msg('关键字内容不能超过250个字符')
-                }else if(vm.proDetails.chinesePRE.keyPoints.length > 1000){
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyPoints).length > 1000){
                     layer.msg('重点说明内容不能超过1000个字符')
-                }else if(vm.proDetails.chinesePRE.productDescription.length > 2000){
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.productDescription).length > 2000){
                     layer.msg('产品描述内容不能超过2000个字符')
                 }else {
                     // if(vm.)
@@ -2715,11 +3013,89 @@ var vm = new Vue({
             var end = text.selectionEnd;
             // var ss = text.value.substring(start, end);
             // alert(ss);
-            console.log(start);
-            console.log(end);
-            text.value = text.value.slice(0, start) + '<b>' +text.value.slice(start, end) + '</b>' + text.value.slice(end);
-            console.log(vm.proDetails.chinesePRE.productDescription);
+            // console.log(start);
+            // console.log(end);
+            // text.value = text.value.slice(0, start) + '<b>' +text.value.slice(start, end) + '</b>' + text.value.slice(end);
+            // console.log(vm.proDetails.chinesePRE.productDescription);
             vm.proDetails.chinesePRE.productDescription = vm.proDetails.chinesePRE.productDescription.slice(0, start) + '<b>' + vm.proDetails.chinesePRE.productDescription.slice(start, end) + '</b>' + vm.proDetails.chinesePRE.productDescription.slice(end)
+        },
+        inserttag1:function (event) {
+            var text=$(event.target).prev()[0];
+            text.focus();
+            var start=text.selectionStart;
+            var end = text.selectionEnd;
+            // var ss = text.value.substring(start, end);
+            // alert(ss);
+            // console.log(start);
+            // console.log(end);
+            // text.value = text.value.slice(0, start) + '<b>' +text.value.slice(start, end) + '</b>' + text.value.slice(end);
+            // console.log(vm.proDetails.chinesePRE.productDescription);
+            vm.proDetails.britainPRE.productDescription = vm.proDetails.britainPRE.productDescription.slice(0, start) + '<b>' + vm.proDetails.britainPRE.productDescription.slice(start, end) + '</b>' + vm.proDetails.britainPRE.productDescription.slice(end)
+        },
+        inserttag2:function (event) {
+            var text=$(event.target).prev()[0];
+            text.focus();
+            var start=text.selectionStart;
+            var end = text.selectionEnd;
+            // var ss = text.value.substring(start, end);
+            // alert(ss);
+            // console.log(start);
+            // console.log(end);
+            // text.value = text.value.slice(0, start) + '<b>' +text.value.slice(start, end) + '</b>' + text.value.slice(end);
+            // console.log(vm.proDetails.chinesePRE.productDescription);
+            vm.proDetails.francePRE.productDescription = vm.proDetails.francePRE.productDescription.slice(0, start) + '<b>' + vm.proDetails.francePRE.productDescription.slice(start, end) + '</b>' + vm.proDetails.francePRE.productDescription.slice(end)
+        },
+        inserttag3:function (event) {
+            var text=$(event.target).prev()[0];
+            text.focus();
+            var start=text.selectionStart;
+            var end = text.selectionEnd;
+            // var ss = text.value.substring(start, end);
+            // alert(ss);
+            // console.log(start);
+            // console.log(end);
+            // text.value = text.value.slice(0, start) + '<b>' +text.value.slice(start, end) + '</b>' + text.value.slice(end);
+            // console.log(vm.proDetails.chinesePRE.productDescription);
+            vm.proDetails.italyPRE.productDescription = vm.proDetails.italyPRE.productDescription.slice(0, start) + '<b>' + vm.proDetails.italyPRE.productDescription.slice(start, end) + '</b>' + vm.proDetails.italyPRE.productDescription.slice(end)
+        },
+        inserttag4:function (event) {
+            var text=$(event.target).prev()[0];
+            text.focus();
+            var start=text.selectionStart;
+            var end = text.selectionEnd;
+            // var ss = text.value.substring(start, end);
+            // alert(ss);
+            // console.log(start);
+            // console.log(end);
+            // text.value = text.value.slice(0, start) + '<b>' +text.value.slice(start, end) + '</b>' + text.value.slice(end);
+            // console.log(vm.proDetails.chinesePRE.productDescription);
+            vm.proDetails.spainPRE.productDescription = vm.proDetails.spainPRE.productDescription.slice(0, start) + '<b>' + vm.proDetails.spainPRE.productDescription.slice(start, end) + '</b>' + vm.proDetails.spainPRE.productDescription.slice(end)
+        },
+        inserttag5:function (event) {
+            var text=$(event.target).prev()[0];
+            text.focus();
+            var start=text.selectionStart;
+            var end = text.selectionEnd;
+            // var ss = text.value.substring(start, end);
+            // alert(ss);
+            // console.log(start);
+            // console.log(end);
+            // text.value = text.value.slice(0, start) + '<b>' +text.value.slice(start, end) + '</b>' + text.value.slice(end);
+            // console.log(vm.proDetails.chinesePRE.productDescription);
+            vm.proDetails.germanyPRE.productDescription = vm.proDetails.germanyPRE.productDescription.slice(0, start) + '<b>' + vm.proDetails.germanyPRE.productDescription.slice(start, end) + '</b>' + vm.proDetails.germanyPRE.productDescription.slice(end)
+        },
+        inserttag6:function (event) {
+            var text=$(event.target).prev()[0];
+            text.focus();
+            var start=text.selectionStart;
+            var end = text.selectionEnd;
+            // var ss = text.value.substring(start, end);
+            // alert(ss);
+            // console.log(start);
+            // console.log(end);
+            // text.value = text.value.slice(0, start) + '<b>' +text.value.slice(start, end) + '</b>' + text.value.slice(end);
+            // console.log(vm.proDetails.chinesePRE.productDescription);
+            vm.proDetails.japanPRE.productDescription = vm.proDetails.japanPRE.productDescription.slice(0, start) + '<b>' + vm.proDetails.japanPRE.productDescription.slice(start, end) + '</b>' + vm.proDetails.japanPRE.productDescription.slice(end)
         }
 
     },
@@ -2754,6 +3130,7 @@ var vm = new Vue({
     },
     updated:function () {
         vm.drapImg();
+        vm.drapImg1();
 
     }
 

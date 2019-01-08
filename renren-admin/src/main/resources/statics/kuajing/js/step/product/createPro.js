@@ -901,6 +901,9 @@ var vm = new Vue({
             if($(event.target).val() == ''){
                 layer.msg('内容不能为空')
             }else {
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                 $.ajax({
                     type: 'post',
                     url: '../../product/products/costFreight',
@@ -922,10 +925,12 @@ var vm = new Vue({
                             vm.proDetails.japanFC = r.productsEntity.japanFC;
                             vm.proDetails.australiaFC = r.productsEntity.australiaFC;
                             // this.costFreight = r.categoryOneList;
+                            layer.close(index);
 
                             // console.log(vm.categoryOneList)
                         } else {
                             alert(r.msg);
+                            layer.close(index);
                         }
                     }
                 });
@@ -2173,52 +2178,73 @@ var vm = new Vue({
         },
         // 原创保存
         createSava:function () {
-            if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == ''){
-                layer.msg('厂商名称、品牌名称、库存数量、采购价格不能为空！！');
+            if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == '' || JSON.stringify(vm.proDetails.domesticFreight) == '' || JSON.stringify(vm.proDetails.productWeight) == '' || JSON.stringify(vm.proDetails.productLength) == '' || JSON.stringify(vm.proDetails.productWide) == '' || JSON.stringify(vm.proDetails.productHeight) == ''){
+                layer.msg('厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
             }else {
-                vm.recommendAll.forEach(function (t,i) {
-                    vm.proDetails.variantsInfos[i].variantId = i;
-                    vm.proDetails.variantsInfos[i].eanCode = t.code;
-                    vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
-                    vm.proDetails.variantsInfos[i].variantSku = t.sku;
-                    vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
-                })
-                console.log(vm.proDetails.variantsInfos);
 
-                $.ajax({
-                    type: 'get',
-                    url: '../../product/introduction/translate',
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        'productTitle':vm.proDetails.chinesePRE.productTitle,
-                        'keyWord':vm.proDetails.chinesePRE.keyWord,
-                        'keyPoints':vm.proDetails.chinesePRE.keyPoints,
-                        'productDescription':vm.proDetails.chinesePRE.productDescription,
-                    }),
-                    success: function (r) {
-                        console.log('保存产品');
-                        console.log(r);
-                        console.log(vm.proDetails);
-                        if (r.code == 0) {
-                            layer.close(index);
+                if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
+                    layer.msg('产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 250){
+                    layer.msg('关键字内容不能超过250个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyPoints).length > 1000){
+                    layer.msg('重点说明内容不能超过1000个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.productDescription).length > 2000){
+                    layer.msg('产品描述内容不能超过2000个字符')
+                }else {
 
-                            // window.location.href = document.referrer;
-
-                        } else {
-                            alert(r.msg);
+                    var u = $('.ul1');
+                    var shunx = [];
+                    for(var j = 0;j<u.length;j++){
+                        var arr = u.eq(j).find('li');
+                        shunx[j] = []
+                        for(var i = 0;i<arr.length;i++){
+                            shunx[j].push(arr.eq(i).attr('data-index'))
                         }
                     }
-                });
 
-                layer.confirm('确定保存吗？', function(index){
-                    var index = layer.load();
-                    var index = layer.load(1); //换了种风格
-                    var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                    // var arr = $('.ul1 li');
+                    // var shunx = [];
+                    // for(var i = 0;i<arr.length;i++){
+                    //     shunx.push(arr.eq(i).attr('data-index'))
+                    // }
+                    console.log(shunx);
+
+                    shunx.forEach(function (v,i) {
+                        var t = vm.recommendAll[i];
+                        console.log(t);
+                        var string = '';
+                        v.forEach(function (n) {
+                            string+=t.img[n]+','
+                        })
+                        console.log('11111111');
+                        // console.log(v.join(','));
+                        vm.proDetails.variantsInfos[i].variantId = i;
+                        vm.proDetails.variantsInfos[i].eanCode = t.code;
+                        vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
+                        vm.proDetails.variantsInfos[i].variantSku = t.sku;
+                        vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+                        vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
+                    })
+
+                    // vm.recommendAll.forEach(function (t,i) {
+                    //     vm.proDetails.variantsInfos[i].variantId = i;
+                    //     vm.proDetails.variantsInfos[i].eanCode = t.code;
+                    //     vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
+                    //     vm.proDetails.variantsInfos[i].variantSku = t.sku;
+                    //     vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+                    // })
+                    console.log(vm.proDetails.variantsInfos);
+
                     $.ajax({
-                        type: 'post',
-                        url: '../../product/products/originalproduct',
+                        type: 'get',
+                        url: '../../product/introduction/translate',
                         contentType: "application/json",
-                        data: JSON.stringify(vm.proDetails),
+                        data: JSON.stringify({
+                            'productTitle':vm.proDetails.chinesePRE.productTitle,
+                            'keyWord':vm.proDetails.chinesePRE.keyWord,
+                            'keyPoints':vm.proDetails.chinesePRE.keyPoints,
+                            'productDescription':vm.proDetails.chinesePRE.productDescription,
+                        }),
                         success: function (r) {
                             console.log('保存产品');
                             console.log(r);
@@ -2226,17 +2252,49 @@ var vm = new Vue({
                             if (r.code == 0) {
                                 layer.close(index);
 
-                                window.location.href = document.referrer;
+                                // window.location.href = document.referrer;
 
                             } else {
                                 alert(r.msg);
+                                layer.close(index);
                             }
                         }
                     });
 
+                    layer.confirm('确定保存吗？', function(index){
+                        var index = layer.load();
+                        var index = layer.load(1); //换了种风格
+                        var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                        $.ajax({
+                            type: 'post',
+                            url: '../../product/products/originalproduct',
+                            contentType: "application/json",
+                            data: JSON.stringify(vm.proDetails),
+                            success: function (r) {
+                                console.log('保存产品');
+                                console.log(r);
+                                console.log(vm.proDetails);
+                                if (r.code == 0) {
+                                    layer.close(index);
+
+                                    window.location.href = document.referrer;
+
+                                } else {
+                                    alert(r.msg);
+                                    layer.close(index);
+                                }
+                            }
+                        });
 
 
-                });
+
+                    });
+                }
+
+
+
+
+
             }
 
 

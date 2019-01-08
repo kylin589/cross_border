@@ -64,6 +64,7 @@
                 top:0;
                 left:0;
             }
+
         </style>
         </head>
 <body>
@@ -97,11 +98,11 @@
                 <div>
                     <!--图片区域-->
                     <div class="imgDiv">
-                        <div class="imgAlbum" v-for="(item,index) in proAlbum" :data-index="item.imgId">
+                        <div class="imgAlbum" v-for="(item,index) in proAlbum" :data-index="item.index">
                             <!--@mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)"-->
                             <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
                             <img :src="item.url" alt="" class="imgItem" :data-con="item" @click="clickActiveImg">
-                            <i class="layui-icon layui-icon-close-fill imgDel"></i>
+                            <!--<i class="layui-icon layui-icon-close-fill imgDel"></i>-->
                         </div>
 
 
@@ -121,6 +122,7 @@
                     <!--</el-dialog>-->
                     <!--<input type="file" id="upImg" value="选择文件" class="selImg">-->
 
+                    <input type="button" value="保存相册" id="upload1" @click="saveXc">
                     <input type="button" value="上传图片" id="upload" @click="shangchuan">
                     <input type="button" value="批量删除" id="" @click="proDel">
                     <input type="button" class="proStation" value="图片回收站" @click="prostation">
@@ -404,7 +406,7 @@
                             <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordZhtoOther"></label><textarea v-model="proDetails.chinesePRE.keyWord" @change="titleChange2">建议填写</textarea></span><br>
                             <span><label for="">重点说明：<input type="button" value="一键翻译" @click="keyPointZhtoOther"></label><textarea v-model="proDetails.chinesePRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
                             <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionZhtoOther"></label><textarea v-model="proDetails.chinesePRE.productDescription" @change="titleChange3">建议填写</textarea>
-                                <input type="button" value="加粗" @click="inserttag"></span><br>
+                                <input class="jiacu" type="button" value="加粗" @click="inserttag"></span><br>
                         </div>
                         <div class="layui-tab-content">
                             <!--<input type="button" value="一键翻译" @click="fanyiFunc">-->
@@ -412,37 +414,49 @@
                             <span><label for="">产品标题：<input type="button" value="一键翻译" @click="titleEntoOthers"></label><textarea v-model="proDetails.britainPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordEntoOthers"></label><textarea v-model="proDetails.britainPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">重点说明：<input type="button" value="一键翻译" @click="keyPointEntoOthers"></label><textarea v-model="proDetails.britainPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionEntoOthers"></label><textarea v-model="proDetails.britainPRE.productDescription" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionEntoOthers"></label><textarea v-model="proDetails.britainPRE.productDescription" @change="titleChange1">建议填写</textarea>
+                                <input class="jiacu" type="button" value="加粗" @click="inserttag1">
+                            </span><br>
                         </div>
                         <div class="layui-tab-content">
                             <span><label for="">产品标题：</label><textarea v-model="proDetails.francePRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">关键字：</label><textarea v-model="proDetails.francePRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.francePRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.francePRE.productDescription" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.francePRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag2">
+                            </span><br>
                         </div>
                         <div class="layui-tab-content">
                             <span><label for="">产品标题：</label><textarea v-model="proDetails.italyPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">关键字：</label><textarea v-model="proDetails.italyPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.italyPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.italyPRE.productDescription" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.italyPRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag3">
+                            </span><br>
                         </div>
                         <div class="layui-tab-content">
                             <span><label for="">产品标题：</label><textarea v-model="proDetails.spainPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">关键字：</label><textarea v-model="proDetails.spainPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.spainPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.spainPRE.productDescription" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.spainPRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag4">
+                            </span><br>
                         </div>
                         <div class="layui-tab-content">
                             <span><label for="">产品标题：</label><textarea v-model="proDetails.germanyPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">关键字：</label><textarea v-model="proDetails.germanyPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.germanyPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.germanyPRE.productDescription" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.germanyPRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag5">
+                            </span><br>
                         </div>
                         <div class="layui-tab-content">
                             <span><label for="">产品标题：</label><textarea v-model="proDetails.japanPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">关键字：</label><textarea v-model="proDetails.japanPRE.keyWord" @change="titleChange">建议填写</textarea></span><br>
                             <span><label for="">重点说明：</label><textarea v-model="proDetails.japanPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription" @change="titleChange1">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：</label><textarea v-model="proDetails.japanPRE.productDescription" @change="titleChange1">建议填写</textarea>
+                            <input class="jiacu" type="button" value="加粗" @click="inserttag6">
+                            </span><br>
                         </div>
 
                     </div>
