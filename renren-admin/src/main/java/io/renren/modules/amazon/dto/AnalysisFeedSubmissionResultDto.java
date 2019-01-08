@@ -1,5 +1,7 @@
 package io.renren.modules.amazon.dto;
 
+import java.util.List;
+
 public class AnalysisFeedSubmissionResultDto {
 
     private String feedSubmissionId;
@@ -12,7 +14,7 @@ public class AnalysisFeedSubmissionResultDto {
 
     private Integer messagesWithWarning;
 
-    private String MessageContent;
+    private List<ResultXMLDto> resultXMLDtoList;
 
     public String getFeedSubmissionId() {
         return feedSubmissionId;
@@ -54,11 +56,11 @@ public class AnalysisFeedSubmissionResultDto {
         this.messagesWithWarning = messagesWithWarning;
     }
 
-    public String getMessageContent() {
-        return MessageContent;
+    public List<ResultXMLDto> getResultXMLDtoList() {
+        return resultXMLDtoList;
     }
 
-    public void setMessageContent(String messageContent) {
-        MessageContent = messageContent;
+    public void setResultXMLDtoList(List<ResultXMLDto> resultXMLDtoList) {
+        this.resultXMLDtoList = resultXMLDtoList;
     }
 }

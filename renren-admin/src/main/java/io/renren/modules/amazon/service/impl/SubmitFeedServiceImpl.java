@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.modules.amazon.dto.AnalysisFeedSubmissionResultDto;
 import io.renren.modules.amazon.dto.FeedSubmissionInfoDto;
 import io.renren.modules.amazon.dto.FeedSubmissionResultDto;
+import io.renren.modules.amazon.dto.ResultXMLDto;
 import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.entity.ResultXmlEntity;
@@ -25,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -161,13 +163,13 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         }
 
         // 判断是否是单商品上传
-        if (productsEntityList.size()==1){
+        if (productsEntityList.size() == 1) {
             Long pId = productsEntityList.get(0).getProductId();
             List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", pId).orderBy(true, "variant_sort", true));
             if (variantsInfoEntityList.size() == 0) {
                 //没有变体，不生成关系XML
                 for (int i = 0; i < operateItemStr.length; i++) {
-                    if ("1".equals(operateItemStr[i])){
+                    if ("1".equals(operateItemStr[i])) {
                         operateItemStr[i] = "-1";
                     }
                 }
@@ -309,7 +311,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         // 获取报告
         List<FeedSubmissionResultDto> feedSubmissionResultDtos;
         while (true) {
-            feedSubmissionResultDtos = new ArrayList<>();
             feedSubmissionResultDtos = getFeedSubmissionResultAsync(uploadId, fileStoragePath, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionInfoDtoList);
 
             if (feedSubmissionResultDtos != null || feedSubmissionResultDtos.size() != feedSubmissionInfoDtoList.size()) {
@@ -325,89 +326,109 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         }
 
 
-        String tempPath;
-        List<Integer> typeStatus = new ArrayList();
+        Map<String, String> pathMap = new HashMap<>();
         for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
-            // 返回结果路径
-            tempPath = "";
             String submissionId = feedSubmissionInfoDtoList.get(i).getFeedSubmissionId();
             Calendar calendar = Calendar.getInstance();
             String year = calendar.get(Calendar.YEAR) + "/";
             String month = (calendar.get(Calendar.MONTH)) + 1 + "/";
-            tempPath = fileStoragePath + year + month + "FeedSubmissionResult/" + submissionId + "_SubmissionResult.xml";
+            // 返回结果路径
+            String tempPath = fileStoragePath + year + month + "FeedSubmissionResult/" + submissionId + "_SubmissionResult.xml";
 
             for (int j = 0; j < feedSubmissionResultDtos.size(); j++) {
                 if (submissionId.equals(feedSubmissionResultDtos.get(j).getFeedSubmissionId())) {
-
-                    // 解析xml
-                    AnalysisFeedSubmissionResultDto analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(tempPath);
-
-                    int tempStatus = judgementState(analysisFeedSubmissionResultDto);
-                    String tempResultXml = analysisFeedSubmissionResultDto.getMessageContent();
-                    typeStatus.add(tempStatus);
-
-                    ResultXmlEntity resultXmlEntity = new ResultXmlEntity();
-                    resultXmlEntity.setUploadId(uploadId);
-                    resultXmlEntity.setCreationTime(new Date());
-                    resultXmlEntity.setState(tempStatus);
-                    resultXmlEntity.setXml(tempResultXml);
-                    // 分辨上传类型，在不同的字段中插入xml结果
-                    ResultXmlEntity resultXmlEntity1;
                     switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
                         case "_POST_PRODUCT_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "基本信息");
-                            if (resultXmlEntity1 != null) {
-                                resultXmlEntity.setId(resultXmlEntity1.getId());
-                            }
-                            resultXmlEntity.setType("基本信息");
-                            updateUploadEntity.setProductsResultStatus(tempStatus);
+                            pathMap.put("基本信息", tempPath);
                             break;
                         case "_POST_PRODUCT_RELATIONSHIP_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "关系");
-                            if (resultXmlEntity1 != null) {
-                                resultXmlEntity.setId(resultXmlEntity1.getId());
-                            }
-                            resultXmlEntity.setType("关系");
-                            updateUploadEntity.setProductsResultStatus(tempStatus);
+                            pathMap.put("关系", tempPath);
                             break;
                         case "_POST_PRODUCT_IMAGE_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "图片");
-                            if (resultXmlEntity1 != null) {
-                                resultXmlEntity.setId(resultXmlEntity1.getId());
-                            }
-                            resultXmlEntity.setType("图片");
-                            updateUploadEntity.setProductsResultStatus(tempStatus);
+                            pathMap.put("图片", tempPath);
                             break;
                         case "_POST_INVENTORY_AVAILABILITY_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "库存");
-                            if (resultXmlEntity1 != null) {
-                                resultXmlEntity.setId(resultXmlEntity1.getId());
-                            }
-                            resultXmlEntity.setType("库存");
-                            updateUploadEntity.setProductsResultStatus(tempStatus);
+                            pathMap.put("库存", tempPath);
                             break;
                         case "_POST_PRODUCT_PRICING_DATA_":
-                            resultXmlEntity1 = isExist(uploadId, "价格");
-                            if (resultXmlEntity1 != null) {
-                                resultXmlEntity.setId(resultXmlEntity1.getId());
-                            }
-                            resultXmlEntity.setType("价格");
-                            updateUploadEntity.setProductsResultStatus(tempStatus);
+                            pathMap.put("价格", tempPath);
                             break;
                     }
-                    resultXmlService.insertOrUpdate(resultXmlEntity);
-                    feedSubmissionResultDtos.get(j).setResultXmlPath(tempPath);
-                    feedSubmissionResultDtos.get(j).setFeedType(feedSubmissionInfoDtoList.get(i).getFeedType());
                 }
             }
         }
 
+        // 解析xml
+        List<Integer> typeStatus = new ArrayList();
+        Iterator<Map.Entry<String, String>> it = pathMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, String> entry = it.next();
+            AnalysisFeedSubmissionResultDto analysisFeedSubmissionResultDto = null;
+            String type = null;
+            int tempStatus = 1;
+            switch (entry.getKey()) {
+                case "基本信息":
+                    type = "基本信息";
+                    analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("基本信息"));
+                    // 子状态判断
+                    tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                    updateUploadEntity.setProductsResultStatus(tempStatus);
+                    break;
+                case "关系":
+                    type = "关系";
+                    analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("关系"));
+                    // 子状态判断
+                    tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                    updateUploadEntity.setRelationshipsResultStatus(tempStatus);
+                    break;
+                case "图片":
+                    type = "图片";
+                    analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("图片"));
+                    // 子状态判断
+                    tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                    updateUploadEntity.setImagesResultStatus(tempStatus);
+                    break;
+                case "库存":
+                    type = "库存";
+                    analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("库存"));
+                    // 子状态判断
+                    tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                    updateUploadEntity.setInventoryResultStatus(tempStatus);
+                    break;
+                case "价格":
+                    type = "价格";
+                    analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("价格"));
+                    // 子状态判断
+                    tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                    updateUploadEntity.setPricesResultStatus(tempStatus);
+                    break;
+            }
+            typeStatus.add(tempStatus);
+            List<ResultXMLDto> resultXMLDtoList = analysisFeedSubmissionResultDto.getResultXMLDtoList();
+            if (resultXMLDtoList.size() != 0) {
+                for (int k = 0; k < resultXMLDtoList.size(); k++) {
+                    ResultXmlEntity resultXmlEntity = new ResultXmlEntity();
+                    resultXmlEntity.setSku(resultXMLDtoList.get(k).getSku());
+                    resultXmlEntity.setProductId(productsService.queryIdBySku(resultXMLDtoList.get(k).getSku()));
+                    resultXmlEntity.setUploadId(uploadId);
+                    resultXmlEntity.setType(type);
+                    resultXmlEntity.setState(tempStatus);
+                    resultXmlEntity.setResult(resultXMLDtoList.get(k).getResultDescription());
+                    resultXmlEntity.setResultType(resultXMLDtoList.get(k).getResultCode());
+                    resultXmlEntity.setResultCode(resultXMLDtoList.get(k).getResultMessageCode());
+                    resultXmlEntity.setCreationTime(new Date());
+
+                    resultXmlService.insert(resultXmlEntity);
+                }
+            } else {
+                continue;
+            }
+        }
         // 处理总状态
         updateUploadEntity.setUploadState(judgingTheTotalState(typeStatus));
 
         //保存xml结果，保存状态
         uploadService.updateById(updateUploadEntity);
-
     }
 
     @Override

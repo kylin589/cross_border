@@ -28,8 +28,7 @@ import java.util.*;
 public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity> implements ProductsService {
     @Autowired
     private VariantsInfoService variantsInfoService;
-    @Autowired
-    private ImageAddressService imageAddressService;
+
 
     /**
      * 我的产品列表
@@ -261,7 +260,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
      *
      * @param params url参数
      * @param userId 用户id
-     * @return Map<String                                                               ,                                                               Object>
+     * @return Map<String ,Object>
      * page 产品page
      * proCount 产品数量
      * approvedCount 审核通过
@@ -789,5 +788,20 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         }
         dto.setProductsList(productsList);
         return dto;
+    }
+
+    @Override
+    public Long queryIdBySku(String sku) {
+        VariantsInfoEntity variantsInfoEntity =variantsInfoService.selectOne(new EntityWrapper<VariantsInfoEntity>().eq("variant_sku",sku));
+        if (variantsInfoEntity!=null){
+            return variantsInfoEntity.getProductId();
+        }else{
+            // 变体表查不到，去商品表查
+            ProductsEntity productsEntity = this.selectOne(new EntityWrapper<ProductsEntity>().eq("product_sku",sku));
+            if (productsEntity!=null){
+                return productsEntity.getProductId();
+            }
+        }
+        return null;
     }
 }
