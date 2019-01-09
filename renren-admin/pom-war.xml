@@ -93,6 +93,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>amazon</groupId>
+			<artifactId>MWSProducts</artifactId>
+			<version>2011-10-01_v2017-03-22</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/lib/MWSProducts_2011-10-01_v2017-03-22.jar</systemPath>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/amazon/mws-orders -->
 		<dependency>
 			<groupId>amazon</groupId>
