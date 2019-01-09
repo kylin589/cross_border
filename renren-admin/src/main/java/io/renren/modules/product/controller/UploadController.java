@@ -368,8 +368,12 @@ public class UploadController extends AbstractController {
         // 删除xml报告和模板可选项
         Map<String, Object> map = new HashMap<>();
         map.put("upload_id", addUploadVM.getUploadId());
-        resultXmlService.deleteByMap(map);
-        fieldMiddleService.deleteByMap(map);
+        if (resultXmlService.selectByMap(map).size() != 0) {
+            resultXmlService.deleteByMap(map);
+        }
+        if (fieldMiddleService.selectByMap(map).size() != 0) {
+            fieldMiddleService.deleteByMap(map);
+        }
 
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(addUploadVM.getUploadId());
@@ -803,8 +807,12 @@ public class UploadController extends AbstractController {
         // 删除xml报告和模板可选项
         Map<String, Object> map = new HashMap<>();
         map.put("upload_id", addUploadVM.getUploadId());
-        resultXmlService.deleteByMap(map);
-        fieldMiddleService.deleteByMap(map);
+        if (resultXmlService.selectByMap(map).size() != 0) {
+            resultXmlService.deleteByMap(map);
+        }
+        if (fieldMiddleService.selectByMap(map).size() != 0) {
+            fieldMiddleService.deleteByMap(map);
+        }
 
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setStartId(addUploadVM.getStartId());
