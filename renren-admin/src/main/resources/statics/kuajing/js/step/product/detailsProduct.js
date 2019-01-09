@@ -1124,6 +1124,7 @@ var vm = new Vue({
                             layer.msg("请选择要恢复的图片");
                         }else {
                             layer.confirm('确定要恢复吗',function (index) {
+
                                 $.ajax({
                                     url: '../../product/imageaddress/recoverdelete',
                                     type: 'post',
@@ -1140,6 +1141,8 @@ var vm = new Vue({
                                             vm.getProAlbum();
                                             layer.close(index);
                                             layer.msg("恢复成功");
+
+                                            vm.drapImg1();
                                             // vm.proAlbum = r.imageInfo;
 
                                         } else {
@@ -1190,10 +1193,11 @@ var vm = new Vue({
             var elList = $('.imgAlbum.active');
             var arr = [];
             for(var i = 0;i<elList.length;i++){
-                arr.push(elList.eq(i).attr('data-index'));
+                arr.push(elList.eq(i).attr('data-id'));
             }
             console.log('删除图片id');
             console.log(arr);
+            console.log($('.imgAlbum.active'));
             if(arr.length == 0){
                 layer.msg('请选择要删除的图片');
             }else {
@@ -1213,8 +1217,9 @@ var vm = new Vue({
                             if (r.code == 0) {
                                 // 重新获取图片相册
                                 vm.getProAlbum();
-                                console.log('@@@@@@')
-                                console.log(vm.proAlbum)
+                                // console.log('@@@@@@')
+                                // console.log(vm.proAlbum);
+                                vm.getProStation();
                                 // vm.proDetails.productSku = r.SKU;
 
                                 // layer.close(index);
@@ -1989,6 +1994,14 @@ var vm = new Vue({
                 //      console.log(nn);
                 // var _index = nn;
                 var aLi = $(".imgDiv>.imgAlbum");
+                // for(var n 0)
+                $(".imgDiv>.imgAlbum").css({
+                    'position':'relative',
+                    'top':'0',
+                    'left':'0',
+                    'margin':'0 10px'
+                })
+
                 if(aLi.length != 0){
                     // console.log($(".imgDiv>.imgAlbum"));
                     var aLiLast = $(".imgDiv").find('.imgAlbum:last-child');
@@ -2304,8 +2317,8 @@ var vm = new Vue({
             }
         },
         titleChange1:function (event) {
-            if($(event.target).val().length > 1000){
-                layer.msg('内容不能超过1000个字符')
+            if($(event.target).val().length > 5000){
+                layer.msg('内容不能超过5000个字符')
             }
         },
         titleChange2:function (event) {
@@ -2314,8 +2327,8 @@ var vm = new Vue({
             }
         },
         titleChange3:function (event) {
-            if($(event.target).val().length > 2000){
-                layer.msg('内容不能超过2000个字符')
+            if($(event.target).val().length > 2500){
+                layer.msg('内容不能超过2500个字符')
             }
         },
         // 修改保存
@@ -2342,10 +2355,10 @@ var vm = new Vue({
                     layer.msg('产品标题内容不能超过200个字符')
                 }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 250){
                     layer.msg('关键字内容不能超过250个字符')
-                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyPoints).length > 1000){
-                    layer.msg('重点说明内容不能超过1000个字符')
-                }else if(JSON.stringify(vm.proDetails.chinesePRE.productDescription).length > 2000){
-                    layer.msg('产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyPoints).length > 5000){
+                    layer.msg('重点说明内容不能超过5000个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.productDescription).length > 2500){
+                    layer.msg('产品描述内容不能超过2500个字符')
                 }else {
                     // if(vm.)
                     objectKeyIsEmpty(vm.proDetails.francePRE);
