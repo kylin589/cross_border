@@ -28,6 +28,7 @@ var vm = new Vue({
         // 总页数
         totalCount:'',
         xml:'',
+        errorExplanation:""
     },
     methods:{
         // 分页器
@@ -94,7 +95,7 @@ var vm = new Vue({
                 title: false,
                 content: $('#xmlDiv'), //这里content是一个普通的String
                 skin: 'openClass',
-                area: ['530px', '430px'],
+                area: ['600px', '430px'],
                 shadeClose: true,
                 btn: [],
                 btn1: function (index) {
@@ -109,7 +110,7 @@ var vm = new Vue({
         errorTan:function (code) {
 
             $.ajax({
-                url: '../../amazon/resultxml/list',
+                url: '../../amazon/errorcode/explanation',
                 type: 'get',
                 data: {
                     'errorCode':code
@@ -117,8 +118,24 @@ var vm = new Vue({
                 dataType: 'json',
                 success: function (r) {
                     console.log(r);
+                    console.log(vm.errorExplanation);
                     if (r.code === 0) {
-                        vm.xmllist = r.data;
+                        if(r.data){
+                            vm.errorExplanation = r.data.errorExplanation;
+                            layer.open({
+                                type: 1,
+                                title: false,
+                                content: $('#xmlDiv1'), //这里content是一个普通的String
+                                skin: 'openClass',
+                                area: ['530px', '430px'],
+                                shadeClose: true,
+                                btn: [],
+
+                            });
+                        }else {
+                            layer.msg('暂无错误代码解释');
+                        }
+
                         // vm.totalCount = r.page.totalCount;
                     } else {
                         layer.alert(r.msg);
@@ -131,22 +148,7 @@ var vm = new Vue({
                 }
             });
 
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#xmlDiv'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['530px', '430px'],
-                shadeClose: true,
-                btn: [],
-                btn1: function (index) {
 
-                },
-                btn2: function (index) {
-
-
-                }
-            });
         }
 
     },

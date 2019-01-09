@@ -5,13 +5,13 @@ $(function () {
         colModel: [			
 			{ label: 'id', name: 'id', index: 'id', width: 50, key: true },
 			{ label: '错误代码', name: 'errorCode', index: 'error_code', width: 80 }, 			
-			{ label: '', name: 'errorExplanation', index: 'error_explanation', width: 80 }			
+			{ label: '错误代码解释', name: 'errorExplanation', index: 'error_explanation', width: 80 }
         ],
 		viewrecords: true,
-        height: 385,
+        height: 585,
         rowNum: 10,
 		rowList : [10,30,50],
-        rownumbers: true, 
+        rownumbers: false,
         rownumWidth: 25, 
         autowidth:true,
         multiselect: true,
@@ -37,9 +37,13 @@ $(function () {
 var vm = new Vue({
 	el:'#rrapp',
 	data:{
+		q:{
+            errorCodeS:''
+		},
 		showList: true,
 		title: null,
-		errorCode: {}
+		errorCode: {},
+        // errorCodeS:''
 	},
 	methods: {
 		query: function () {
@@ -109,9 +113,11 @@ var vm = new Vue({
 		},
 		reload: function (event) {
 			vm.showList = true;
+			// console.log(vm.q.errorCodeS);
 			var page = $("#jqGrid").jqGrid('getGridParam','page');
-			$("#jqGrid").jqGrid('setGridParam',{ 
-                page:page
+			$("#jqGrid").jqGrid('setGridParam',{
+                postData:{'errorCode': vm.q.errorCodeS},
+                page:page,
             }).trigger("reloadGrid");
 		}
 	}
