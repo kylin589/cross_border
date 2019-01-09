@@ -723,19 +723,26 @@ var vm = new Vue({
             var el = $('.imgDiv>div');
             console.log($(".imgDiv>div"));
             for(var i = 0;i<el.length;i++){
-                var _index = el.eq(i).attr('data-index');
-                arr.push({
-                    'imageId':vm.proAlbum[_index].imgId,
-                    'imageUrl':vm.proAlbum[_index].url,
-                    'isDeleted':vm.proAlbum[_index].isDeleted,
-                    'createUserId':vm.proAlbum[_index].createUserId,
-                    'createTime':vm.proAlbum[_index].createTime,
-                    'lastOperationTime':vm.proAlbum[_index].lastOperationTime,
-                    'lastOperationUserId':vm.proAlbum[_index].lastOperationUserId,
-                    'productId':vm.proAlbum[_index].productId,
-                    'status':vm.proAlbum[_index].status,
-                    'uid':vm.proAlbum[_index].uid,
-                })
+                for(var j = 0;j<el.length;j++){
+                    var _index = el.eq(j).attr('data-index');
+                    console.log(_index);
+                    if(_index == i){
+                        arr.push({
+                            'imageId':vm.proAlbum[j].imgId,
+                            'imageUrl':vm.proAlbum[j].url,
+                            'isDeleted':vm.proAlbum[j].isDeleted,
+                            'createUserId':vm.proAlbum[j].createUserId,
+                            'createTime':vm.proAlbum[j].createTime,
+                            'lastOperationTime':vm.proAlbum[j].lastOperationTime,
+                            'lastOperationUserId':vm.proAlbum[j].lastOperationUserId,
+                            'productId':vm.proAlbum[j].productId,
+                            'status':vm.proAlbum[j].status,
+                            'uid':vm.proAlbum[j].uid,
+                        })
+                    }
+                }
+
+
             }
             console.log(arr);
 

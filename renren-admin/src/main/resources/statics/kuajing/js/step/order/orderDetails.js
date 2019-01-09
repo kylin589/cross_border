@@ -51,32 +51,32 @@ window.onload = function (ev) {
         $('.layui-tab-content').eq(_index).addClass('action');
     })
 
-    $('a.logistics').mouseover(function () {
-        console.log(1111);
-        if($(this).attr('data-ok') == 'true'){
-            var _val = $(this).val();
-            var _top = $(this).offset().top;
-            var _left = $(this).offset().left - 130;
-            var _height = $(this).height();
-            var top = _top + _height-8;
-            $('.logisticsDiv').css({
-                'display':'inline-block',
-                'top':top+'px',
-                'left':_left+'px'
-            })
-        }
-
-    })
-
-    $('a.logistics').mouseout(function () {
-        console.log(444)
-        if($(this).attr('data-ok') == 'true'){
-            $('.logisticsDiv').css({
-                'display':'none',
-            })
-        }
-
-    })
+    // $('a.logistics').mouseover(function () {
+    //     console.log(1111);
+    //     if($(this).attr('data-ok') == 'true'){
+    //         var _val = $(this).val();
+    //         var _top = $(this).offset().top;
+    //         var _left = $(this).offset().left - 130;
+    //         var _height = $(this).height();
+    //         var top = _top + _height-8;
+    //         $('.logisticsDiv').css({
+    //             'display':'inline-block',
+    //             'top':top+'px',
+    //             'left':_left+'px'
+    //         })
+    //     }
+    //
+    // })
+    //
+    // $('a.logistics').mouseout(function () {
+    //     console.log(444)
+    //     if($(this).attr('data-ok') == 'true'){
+    //         $('.logisticsDiv').css({
+    //             'display':'none',
+    //         })
+    //     }
+    //
+    // })
 
     // // 添加国际运单
     // $('.addguojiyundan').click(function () {
@@ -155,7 +155,8 @@ var vm = new Vue({
         remark:'',
         remarkType:'',
         caigou:'',
-        wulDanh:''
+        wulDanh:'',
+        isLookWuliu:true,
 
     },
     methods:{
@@ -216,7 +217,7 @@ var vm = new Vue({
                         vm.orderDetails = r.orderDTO;
                         for (var i=0;i<vm.orderDetails.domesticLogisticsList.length;i++){
                             vm.waybill.push(vm.orderDetails.domesticLogisticsList[i].waybill);
-                            vm.price.push(vm.orderDetails.purchasePrice);
+                            vm.price.push(vm.orderDetails.domesticLogisticsList[i].price);
                         }
                     } else {
                         layer.alert(r.msg);
@@ -283,6 +284,7 @@ var vm = new Vue({
         edit:function (domesticLogisticsId,index,event) {
             console.log(index);
             if($(event.target).val() == '编辑'){
+                vm.isLookWuliu = false;
                 $(event.target).val('保存');
                 $(event.target).parent().parent().find('input').removeAttr("disabled");
                 $(event.target).parent().parent().find('textarea').removeAttr("disabled");
@@ -293,6 +295,7 @@ var vm = new Vue({
                 }
             }else {
                 $(event.target).val('编辑');
+                vm.isLookWuliu = true;
                 $(event.target).parent().parent().find('input[type=text]').attr('disabled','true');
                 $(event.target).parent().parent().find('textarea').attr('disabled','true');
                 $(event.target).parent().parent().find('input[type=text]').css('border','1px solid transparent');
@@ -347,7 +350,10 @@ var vm = new Vue({
             }
         },
         //取消修改
-        noedit:function (event) {
+        noedit:function (d,index,event) {
+            d = vm.orderDetails.domesticLogisticsList[index].waybill;
+            console.log(d);
+            $(event.target).parent().parent().find('.logistics').find('input').val(d);
             $(event.target).prev().val('编辑');
             $(event.target).parent().parent().find('input[type=text]').attr('disabled','true');
             $(event.target).parent().parent().find('textarea').attr('disabled','true');
@@ -357,37 +363,60 @@ var vm = new Vue({
                 $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
             }
         },
-        //物流信息
-        queryLogistic:function (waybill,event) {
-            console.log(waybill);
-            var index = layer.load();
-            var index = layer.load(1); //换了种风格
-            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+        // 删除国内物流
+        shanchuDel:function (item) {
             $.ajax({
-                // url: 'http://39.106.131.222:8000/domestic/queryLogistic',
-                url: 'http://www.threeee.cn/domestic/queryLogistic',
+                // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
+                url: '../../product/order/deleteLogistic',
                 type: 'get',
                 data: {
-                    waybill:waybill,
+                    domesticLogisticsId:item.domesticLogisticsId,
+
                 },
                 dataType: 'json',
                 success: function (r) {
                     console.log(r);
-                    if (r.code === 0) {
-                        vm.logistics = r.data;
-                        layer.close(index);
-                    } else {
-                        layer.alert(r.msg);
-                        layer.close(index);
-                    }
+                    vm.getOrderInfo();
                 },
                 error: function () {
-                    layer.msg("网络故障");
-                    layer.close(index);
+                    layer.msg("删除失败");
                 }
             });
-            if($(event.target).attr('data-ok') == 'true'){
-                console.log(111)
+        },
+        //物流信息
+        queryLogistic:function (waybill,event) {
+            console.log(waybill);
+            console.log($(event.target));
+            // console.log($(event.target).attr('data-ok'));
+            // console.log($(event.target).find('input').attr('disabled'));
+            if(vm.isLookWuliu == true && JSON.stringify(waybill) != 'null'){
+                console.log(waybill)
+                // var index = layer.load();
+                // var index = layer.load(1); //换了种风格
+                // var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                $.ajax({
+                    // url: 'http://39.106.131.222:8000/domestic/queryLogistic',
+                    url: 'http://www.threeee.cn/domestic/queryLogistic',
+                    type: 'get',
+                    data: {
+                        waybill:waybill,
+                    },
+                    dataType: 'json',
+                    success: function (r) {
+                        console.log(r);
+                        if (r.code === 0) {
+                            vm.logistics = r.data;
+                            // layer.close(index);
+                        } else {
+                            layer.alert(r.msg);
+                            // layer.close(index);
+                        }
+                    },
+                    error: function () {
+                        // layer.msg("网络故障");
+                        // layer.close(index);
+                    }
+                });
                 var _val = $(event.target).val();
                 var _top = $(event.target).offset().top;
                 var _left = $(event.target).offset().left - 130;
@@ -399,14 +428,29 @@ var vm = new Vue({
                     'left':_left+'px'
                 })
             }
+
+            // if($(event.target).attr('data-ok') == 'true'){
+            //     console.log(111)
+            //     var _val = $(event.target).val();
+            //     var _top = $(event.target).offset().top;
+            //     var _left = $(event.target).offset().left - 130;
+            //     var _height = $(event.target).height();
+            //     var top = _top + _height-8;
+            //     $('.logisticsDiv').css({
+            //         'display':'inline-block',
+            //         'top':top+'px',
+            //         'left':_left+'px'
+            //     })
+            // }
         },
         // 鼠标一处物流消失
         xiaoshiFcun:function (event) {
-            if($(event.target).attr('data-ok') == 'true'){
-                $('.logisticsDiv').css({
-                    'display':'none',
-                })
-            }
+            $('.logisticsDiv').css({
+                'display':'none',
+            })
+            // if($(event.target).attr('data-ok') == 'true'){
+            //
+            // }
         },
         // 添加国内物流
         addWuliuFunc:function () {
@@ -418,13 +462,13 @@ var vm = new Vue({
                 area: ['400px', '220px'],
                 shadeClose: true,
                 btn: ['添加','取消'],
-                btn1: function (index) {
+                btn1: function (index1) {
                     var index = layer.load();
                     var index = layer.load(1); //换了种风格
                     var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                     $.ajax({
                         // url: 'http://39.106.131.222:8000/domestic/getLogisticsCompany',
-                        url: 'http://www.threeee.cn/domestic/getLogisticsCompany',
+                        url: 'http://192.168.0.108:8000/domestic/getLogisticsCompany',
                         type: 'get',
                         data: {
                             orderId:vm.orderid,
@@ -447,7 +491,9 @@ var vm = new Vue({
                                         if (r.code === 0) {
                                             layer.msg("添加成功");
                                             layer.close(index);
-                                        } else {
+                                            layer.close(index1);
+                                            vm.getOrderInfo();
+;                                        } else {
                                             layer.alert(r.msg);
                                             layer.close(index);
                                         }
@@ -455,20 +501,23 @@ var vm = new Vue({
                                     error: function () {
                                         layer.msg("网络故障");
                                         layer.close(index);
+
                                     }
                                 });
                             } else {
                                 layer.alert(r.msg);
                                 layer.close(index);
+
                             }
                         },
                         error: function () {
                             layer.msg("网络故障");
                             layer.close(index);
+                            // layer.close(index1);
                         }
                     });
                 },
-                btn2: function (index) {
+                btn2: function (index1) {
 
 
                 }

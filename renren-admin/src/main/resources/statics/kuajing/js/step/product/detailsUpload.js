@@ -496,30 +496,38 @@ var vm = new Vue({
                 url: '../../product/amazoncategory/childCategoryList',
                 type: 'get',
                 data: {
-                    amazonCategoryId:list.amazonCategoryId
+                    amazonCategoryId:list.id
                 },
                 dataType: 'json',
                 success: function (r) {
+                    console.log(list.id);
                     console.log('子集分类')
                     console.log(r);
                     if (r.code === 0) {
                         if(r.amazonCategoryEntityChildList.length != 0){
                             vm.leven.push(r.amazonCategoryEntityChildList);
                             console.log(vm.leven);
-                            vm.amazonCategoryId = list.amazonCategoryId;
+                            vm.amazonCategoryId = list.id;
                             vm.amazonCategory = list.displayName;
                             vm.amazonAllArr.push(list.displayName);
+                            // vm.amazonAllArr.forEach(function (t) {
+                            //     vm.amazonAllCategory+=t+'/'
+                            // })
+                            // vm.amazonAllCategory.substr(0, vm.amazonAllCategory.length - 1);
                             console.log(vm.amazonAllArr);
                             vm.nodeId = list.nodeId;
                         }else {
-                            vm.amazonCategoryId = list.amazonCategoryId;
+                            vm.amazonCategoryId = list.id;
                             vm.amazonCategory = list.displayName;
                             // vm.amazonAllArr.push(list.displayName);
                             console.log(vm.amazonAllArr);
-                            vm.amazonAllArr.forEach(function (t) {
-                                vm.amazonAllCategory+=t+'/'
-                            })
-                            vm.amazonAllCategory+=list.displayName;
+                            vm.amazonAllCategory='',
+                                // vm.amazonAllArr.forEach(function (t) {
+                                //     vm.amazonAllCategory+=t+'/'
+                                // })
+                                // vm.amazonAllCategory+=list.displayName;
+                                vm.amazonAllArr.push(list.displayName)
+
                             console.log(vm.amazonAllCategory);
                             vm.nodeId = list.nodeId;
                             // amazonAllCategory =

@@ -59,14 +59,14 @@
                 </div>
                 <div class="pro_inf okEdit jijian">
                     <div>
-                        <span><label for="">收件人：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipName"></span>
-                        <span><label for="">TEL：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipTel"></span>
-                        <span><label for="">收件人国家：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipCountry"></span>
-                        <span><label for="">ZIP：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipZip"></span><br>
-                        <span><label for="" style="width: 64px">州：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipRegion"></span>
-                        <span><label for="" style="width: 47.8px">市：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipCity"></span>
-                        <span><label for="">街道：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipAddressLine1"></span><br>
-                        <span><label for="">详细地址：</label><textarea v-model="orderDetails.shipAddress.shipCity">
+                        <span><label for="">收件人：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipName" disabled></span>
+                        <span><label for="">TEL：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipTel" disabled></span>
+                        <span><label for="">收件人国家：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipCountry" disabled></span>
+                        <span><label for="">ZIP：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipZip" disabled></span><br>
+                        <span><label for="" style="width: 64px">州：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipRegion" disabled></span>
+                        <span><label for="" style="width: 47.8px">市：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipCity" disabled></span>
+                        <span><label for="">街道：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipAddressLine1" disabled></span><br>
+                        <span><label for="">详细地址：</label><textarea v-model="orderDetails.shipAddress.shipCity" disabled>
                             {{orderDetails.shipAddress.shipCity}}
                             {{orderDetails.shipAddress.shipCounty}}
                             {{orderDetails.shipAddress.shipDistrict}}
@@ -89,10 +89,10 @@
                     <!--<p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addWuliuFunc"></p>-->
                     <div v-for="(item,index) in orderDetails.domesticLogisticsList">
 
-                        <span><label for="">采购价(￥)：</label><input type="text" :placeholder="orderDetails.purchasePrice" v-model="price[index]"></span>
-                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(item.waybill)"><input class="" type="text"  :placeholder="item.waybill" v-model="waybill[index]"></a></span>
-                        <span><label for="">物流公司：</label><input class="" type="text" :placeholder="item.logisticsCompany"></span>
-                        <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="item.issuanceDate"></span>
+                        <span><label for="">采购价(￥)：</label><input type="text" :placeholder="orderDetails.purchasePrice" v-model="price[index]" disabled></span>
+                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(item.waybill,$event)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  placeholder="物流单号" v-model="waybill[index]" disabled></a></span>
+                        <span><label for="">物流公司：</label><input class="" type="text" :placeholder="item.logisticsCompany" disabled></span>
+                        <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="item.issuanceDate" disabled></span>
                         <!--<div class="fr" style="">-->
                             <!--<input class="edit" type="button" value="编辑" @click="edit(item.domesticLogisticsId,index)">-->
                             <!--<input class="noedit" type="button" value="取消" @click="noedit">-->
