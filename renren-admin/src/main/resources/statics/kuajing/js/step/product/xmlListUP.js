@@ -105,6 +105,48 @@ var vm = new Vue({
 
                 }
             });
+        },
+        errorTan:function (code) {
+
+            $.ajax({
+                url: '../../amazon/resultxml/list',
+                type: 'get',
+                data: {
+                    'errorCode':code
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.xmllist = r.data;
+                        // vm.totalCount = r.page.totalCount;
+                    } else {
+                        layer.alert(r.msg);
+                    }
+
+
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#xmlDiv'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['530px', '430px'],
+                shadeClose: true,
+                btn: [],
+                btn1: function (index) {
+
+                },
+                btn2: function (index) {
+
+
+                }
+            });
         }
 
     },

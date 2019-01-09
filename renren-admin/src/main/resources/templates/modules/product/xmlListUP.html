@@ -66,7 +66,8 @@
 
             </td>
             <td>
-                {{item.resultCode}}
+                <span style="color: #3776b4;cursor:pointer;" @click="errorTan(item.resultCode)">{{item.resultCode}}</span>
+
             </td>
             <td>{{ item.creationTime }}</td>
             <td>{{ item.sku }}</td>
@@ -79,6 +80,10 @@
 
 
     <div id="xmlDiv" style="display: none;padding: 20px 16px">
+        {{xml}}
+        <!--<h3></h3>-->
+    </div>
+    <div id="xmlDiv1" style="display: none;padding: 20px 16px">
         {{xml}}
         <!--<h3></h3>-->
     </div>
