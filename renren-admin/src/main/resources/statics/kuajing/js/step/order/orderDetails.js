@@ -597,10 +597,10 @@ var vm = new Vue({
             $.ajax({
                 url: '../../product/order/createAbroadWaybill',
                 type: 'post',
-                data: {
+                data: JSON.stringify({
                     orderId:this.orderid
-                },
-                dataType: 'json',
+                }),
+                contentType: "application/json",
                 success: function (r) {
                     console.log('订单详情');
                     console.log(r);

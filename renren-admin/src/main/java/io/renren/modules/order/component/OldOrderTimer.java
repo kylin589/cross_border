@@ -14,7 +14,6 @@ import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
-import io.renren.modules.amazon.util.XMLUtil;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.vm.OrderModel;
@@ -32,13 +31,11 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static io.renren.modules.amazon.util.XMLUtil.analysisListOrderItemsByNextTokenResponse;
-import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersByNextTokenResponse;
-import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersResponse;
+import static io.renren.modules.amazon.util.XMLUtil.*;
 
 
-@Component("OrderTimer")
-public class OrderTimer {
+@Component("OldOrderTimer")
+public class OldOrderTimer {
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
 
@@ -100,7 +97,7 @@ public class OrderTimer {
         request.setSellerId(sellerId);//卖家id
         request.setMWSAuthToken(mwsAuthToken);//授权令牌
         // 指定某一格式为 ISO 8601 的日期，用以选择最后更新日期为该日期之后（或当天）的订单。更新即为对订单状态进行更改，包括新订单的创建。包括亚马逊和卖家所进行的更新。必须不迟于两分钟，且在请求提交时间之前。
-        XMLGregorianCalendar lastUpdatedAfter = DateUtils.getTheDateNow10DaysShort();
+        XMLGregorianCalendar lastUpdatedAfter = DateUtils.getTheDateNowOneYearShort();
         request.setLastUpdatedAfter(lastUpdatedAfter);//最近更新日期
         request.setMarketplaceId(marketplaceId);//国家市场编码
         requestList.add(request);
@@ -160,6 +157,7 @@ public class OrderTimer {
                         ListOrderItemsRequest ListOrderItemsRequest = new ListOrderItemsRequest();
                         String AmazonOrderId = listOrdersResponseDtos.get(i).getOrders().get(j).getAmazonOrderId();
                         System.out.println("订单号:" + AmazonOrderId + "=================");
+                        System.out.println("订单状态：" + listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus());
                         ListOrderItemsRequest.setAmazonOrderId(AmazonOrderId);
                         ListOrderItemsRequest.setSellerId(sellerId);
                         ListOrderItemsRequest.setMWSAuthToken(mwsAuthToken);
@@ -226,7 +224,12 @@ public class OrderTimer {
                                     orderModel.setAmazonOrderId(AmazonOrderId);
                                     String buytime=listOrdersResponseDtos.get(i).getOrders().get(j).getPurchaseDate();
                                     String countrys=listOrdersResponseDtos.get(i).getOrders().get(j).getSalesChannel();
-                                    String country = countrys.substring(7,countrys.length()).toUpperCase();
+                                    String country = null;
+                                    if(countrys.contains("UK")){
+                                        country = "GB";
+                                    }else{
+                                        country = countrys.substring(7,countrys.length()).toUpperCase();
+                                    }
                                     buytime = buytime.replace("Z", " UTC");// UTC是本地时间
                                     SimpleDateFormat format = new SimpleDateFormat(
                                             "yyyy-MM-dd'T'HH:mm:ss.SSS Z");
@@ -236,7 +239,10 @@ public class OrderTimer {
                                     }catch (ParseException e){
                                         e.getStackTrace();
                                     }
-                                    Timestamp timeStamep = new Timestamp(d.getTime());
+                                    Timestamp timeStamep = null;
+                                    if(d != null){
+                                        timeStamep= new Timestamp(d.getTime());
+                                    }
                                     System.out.println("购买日期:"+timeStamep+"=================================");
                                     orderModel.setBuyDate(timeStamep);
                                     orderModel.setOrderStatus(listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus());
@@ -266,7 +272,6 @@ public class OrderTimer {
                                         orderModel.setProductSku("");
                                     }
                                     if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
-
                                         String orderMoney = listOrdersResponseDtos.get(i).getOrders().get(j).getAmount();
                                         System.out.println("订单金额："+orderMoney+"============");
                                         if (orderMoney != null) {
@@ -275,6 +280,7 @@ public class OrderTimer {
                                         } else {
                                             orderModel.setOrderMoney(new BigDecimal(0));//订单总费用
                                         }
+                                        System.out.println("订单金额："+orderMoney+"============");
                                         String CurrencyCode=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getCurrencyCode();
                                         System.out.println("货币代码："+CurrencyCode+"============");
                                         if (orderMoney != null) {
@@ -367,7 +373,7 @@ public class OrderTimer {
                                 if(orderModelList.size() > 0){
 //                                    orderService.updateOrder(orderModelList);
                                     System.out.println("执行更新");
-                                    new SaveOrUpdateOrderThread(orderModelList).start();
+                                    new SaveOrUpdateOldOrderThread(orderModelList).start();
                                 }
                             }
                         }
@@ -918,15 +924,15 @@ public class OrderTimer {
      * 更新订单线程
      * 定时获取到订单后执行
      */
-    class SaveOrUpdateOrderThread extends Thread   {
+    class SaveOrUpdateOldOrderThread extends Thread   {
         private List<OrderModel> list;
-        public SaveOrUpdateOrderThread(List<OrderModel> list) {
+        public SaveOrUpdateOldOrderThread(List<OrderModel> list) {
             this.list = list;
         }
 
         @Override
         public void run() {
-            orderService.updateOrder(list);
+            orderService.updateOldOrder(list);
         }
     }
 }

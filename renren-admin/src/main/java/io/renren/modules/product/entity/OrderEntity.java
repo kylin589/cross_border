@@ -68,6 +68,10 @@ public class OrderEntity implements Serializable {
 	 */
 	private Long productId;
 	/**
+	 * 产品标题
+	 */
+	private String productTitle;
+	/**
 	 * 产品sku
 	 */
 	private String productSku;
@@ -515,5 +519,13 @@ public class OrderEntity implements Serializable {
 
 	public void setIsOld(int isOld) {
 		this.isOld = isOld;
+	}
+
+	public String getProductTitle() {
+		return productTitle;
+	}
+
+	public void setProductTitle(String productTitle) {
+		this.productTitle = productTitle;
 	}
 }

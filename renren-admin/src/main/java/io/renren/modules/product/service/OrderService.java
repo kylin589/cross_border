@@ -101,6 +101,6 @@ public interface OrderService extends IService<OrderEntity> {
      * @param AmazonOrderId
      * @return
      */
-    OrderModel updateOrderAmazonStatus(String AmazonOrderId);
+    OrderModel updateOrderAmazonStatus(String AmazonOrderId, OrderEntity orderEntity);
 }
 

@@ -159,7 +159,9 @@ public class OrderController extends AbstractController{
         orderDTO.setProductId(orderEntity.getProductId());
         orderDTO.setProductSku(orderEntity.getProductSku());
         ProductsEntity productsEntity = productsService.selectById(orderEntity.getProductId());
-        if(productsEntity != null){
+        if(orderEntity.getProductTitle() != null){
+            orderDTO.setProductTitle(orderEntity.getProductTitle());
+        }else if(productsEntity != null){
             orderDTO.setProductTitle(productsEntity.getProductTitle());
         }
 
@@ -322,6 +324,42 @@ public class OrderController extends AbstractController{
         return R.ok();
     }
 
+    /**
+     * 删除国内物流
+     */
+    @RequestMapping("/deleteLogistic")
+    public R deleteLogistic(@RequestParam Long domesticLogisticsId){
+        DomesticLogisticsEntity logisticsEntity = domesticLogisticsService.selectById(domesticLogisticsId);
+        OrderEntity orderEntity = orderService.selectById(logisticsEntity.getOrderId());
+        domesticLogisticsService.deleteById(domesticLogisticsId);
+        List<DomesticLogisticsEntity> list = domesticLogisticsService.selectList(new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderEntity.getOrderId()));
+        BigDecimal purchasePrice = new BigDecimal(0.0);
+        if(list != null && list.size() > 0){
+            for(DomesticLogisticsEntity domestic : list){
+                purchasePrice = purchasePrice.add(domestic.getPrice());
+            }
+        }
+        orderEntity.setPurchasePrice(purchasePrice);
+        //已有利润
+        if(orderEntity.getProfitRate().compareTo(new BigDecimal(0.0)) != 0){
+            //利润率
+            //新利润
+            BigDecimal orderProfit = orderEntity.getOrderProfit().add(logisticsEntity.getPrice());
+            orderEntity.setOrderProfit(orderProfit);
+            BigDecimal profitRate = orderProfit.divide(orderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
+            orderEntity.setProfitRate(profitRate);
+            orderService.updateById(orderEntity);
+        }
+        orderService.updateById(orderEntity);
+        RemarkEntity remark = new RemarkEntity();
+        remark.setOrderId(orderEntity.getOrderId());
+        remark.setUserName(getUser().getDisplayName());
+        remark.setUserId(getUserId());
+        remark.setRemark("删除采购信息");
+        remark.setType("log");
+        remark.setUpdateTime(new Date());
+        return R.ok();
+    }
     /**
      * 修改订单状态
      */
@@ -592,7 +630,7 @@ public class OrderController extends AbstractController{
         String abStatus = orderEntity.getAbnormalStatus();
         String amazonOrderId = orderEntity.getAmazonOrderId();
         if(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING.equals(status) || ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED.equals(status)){
-            OrderModel orderModel = orderService.updateOrderAmazonStatus(amazonOrderId);
+            OrderModel orderModel = orderService.updateOrderAmazonStatus(amazonOrderId,orderEntity);
             if(orderModel != null){
                 //amazon状态更新
                 new RefreshAmazonStateThread(orderEntity,orderModel).start();

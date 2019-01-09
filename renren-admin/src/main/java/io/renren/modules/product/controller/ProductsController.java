@@ -1825,9 +1825,6 @@ public class ProductsController extends AbstractController {
             BigDecimal americanOptimization = americanFC.getOptimization();
             BigDecimal americanFinalPrice = americanFC.getFinalPrice();
             //最终
-            if(americanFinalPrice.compareTo(new BigDecimal(0.0)) == 0){
-
-            }
             americanFinalPrice = americanOptimization;
             americanFC.setFinalPrice(americanFinalPrice);
             //美国运费
