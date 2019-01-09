@@ -215,6 +215,8 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         vm.orderDetails = r.orderDTO;
+                        vm.price = [];
+                        vm.waybill = [];
                         for (var i=0;i<vm.orderDetails.domesticLogisticsList.length;i++){
                             vm.waybill.push(vm.orderDetails.domesticLogisticsList[i].waybill);
                             vm.price.push(vm.orderDetails.domesticLogisticsList[i].price);
@@ -365,6 +367,10 @@ var vm = new Vue({
         },
         // 删除国内物流
         shanchuDel:function (item) {
+            console.log(item);
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
                 url: '../../product/order/deleteLogistic',
@@ -377,9 +383,11 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     vm.getOrderInfo();
+                    layer.close(index);
                 },
                 error: function () {
                     layer.msg("删除失败");
+                    layer.close(index);
                 }
             });
         },

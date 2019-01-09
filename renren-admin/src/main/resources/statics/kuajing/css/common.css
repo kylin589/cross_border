@@ -122,3 +122,11 @@
     border-bottom-color: #fff;
 
 }
+
+.layui-breadcrumb1 a{
+    color: #666;
+    cursor: pointer;
+}
+.layui-breadcrumb1 a:nth-child(1){
+    color: #999;
+}
