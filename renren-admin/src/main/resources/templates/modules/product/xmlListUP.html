@@ -40,6 +40,7 @@
             <th>上传结果</th>
             <th>错误代码</th>
             <th>创建时间</th>
+            <th>sku</th>
             <th>操作</th>
         </tr>
         <tr v-for = '(item,index) in xmllist'>
@@ -68,8 +69,9 @@
                 {{item.resultCode}}
             </td>
             <td>{{ item.creationTime }}</td>
+            <td>{{ item.sku }}</td>
             <td>
-                <a :href="'detailsProduct2.html?id='+item.productId+'id1='+id" style="color: #3776b4">产品详情</a>
+                <a v-if="JSON.stringify(item.sku) != 'null'" :href="'detailsProduct2.html?id='+item.productId+'id1='+id" style="color: #3776b4">产品详情</a>
             </td>
 
         </tr>
