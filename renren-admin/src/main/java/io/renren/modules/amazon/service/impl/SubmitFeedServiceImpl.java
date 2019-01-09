@@ -223,10 +223,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             productFeedSubmissionInfoDto = submitProductFeed(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap.get("0"), filePathMap.get("0"), marketplaceIdList);
             //使用FeedSubmissionId获取的亚马逊对于xml的处理状态
 
-            // 处理总状态--正在上传
-            updateUploadEntity.setUploadState(1);
-            uploadService.updateById(updateUploadEntity);
-
             while (true) {
                 try {
                     List<String> feedSubmissionList = new ArrayList<>();
@@ -305,7 +301,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             }
         }
 
-        // 总状态改为正在上传
+        // 总状态改为正在上传,并改子状态
         updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
 
         // 获取报告

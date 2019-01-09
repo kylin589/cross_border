@@ -245,7 +245,7 @@ public class UploadController extends AbstractController {
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setStartId(addUploadVM.getStartId());
         uploadEntity.setEndId(addUploadVM.getEndId());
-        uploadEntity.setUploadState(0);
+        uploadEntity.setUploadState(1);
         uploadEntity.setUploadIds(StringUtils.join(addUploadVM.getUploadIds(), ","));
         //ret:要上传的产品列表
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
@@ -319,7 +319,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setUpdateTime(new Date());
         uploadEntity.setUserId(getUserId());
         uploadEntity.setDeptId(getDeptId());
-        uploadEntity.setUploadState(0);
+        uploadEntity.setUploadState(1);
         //添加到上传表
         uploadService.insert(uploadEntity);
 
@@ -368,14 +368,18 @@ public class UploadController extends AbstractController {
         // 删除xml报告和模板可选项
         Map<String, Object> map = new HashMap<>();
         map.put("upload_id", addUploadVM.getUploadId());
-        resultXmlService.deleteByMap(map);
-        fieldMiddleService.deleteByMap(map);
+        if (resultXmlService.selectByMap(map).size() != 0) {
+            resultXmlService.deleteByMap(map);
+        }
+        if (fieldMiddleService.selectByMap(map).size() != 0) {
+            fieldMiddleService.deleteByMap(map);
+        }
 
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(addUploadVM.getUploadId());
         uploadEntity.setStartId(addUploadVM.getStartId());
         uploadEntity.setEndId(addUploadVM.getEndId());
-        uploadEntity.setUploadState(0);
+        uploadEntity.setUploadState(1);
         uploadEntity.setUploadIds(StringUtils.join(addUploadVM.getUploadIds(), ","));
         //ret:要上传的产品列表
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
@@ -449,7 +453,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setUpdateTime(new Date());
         uploadEntity.setUserId(getUserId());
         uploadEntity.setDeptId(getDeptId());
-        uploadEntity.setUploadState(0);
+        uploadEntity.setUploadState(1);
         //添加到上传表
         uploadService.updateById(uploadEntity);
 
@@ -499,7 +503,7 @@ public class UploadController extends AbstractController {
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setUploadId(uploadId);
         uploadEntity = uploadService.selectById(uploadEntity);
-        uploadEntity.setUploadState(0);
+        uploadEntity.setUploadState(1);
         uploadService.updateById(uploadEntity);
         // 删除xml基本信息
         Map<String, Object> map = new HashMap<>();
@@ -619,7 +623,7 @@ public class UploadController extends AbstractController {
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setStartId(addUploadVM.getStartId());
         uploadEntity.setEndId(addUploadVM.getEndId());
-        uploadEntity.setUploadState(0);
+        uploadEntity.setUploadState(1);
         uploadEntity.setUploadIds(StringUtils.join(addUploadVM.getUploadIds(), ","));
 
         uploadEntity.setUploadProductsList(addUploadVM.getUploadProductsList());
@@ -660,7 +664,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setUpdateTime(new Date());
         uploadEntity.setUserId(addUploadVM.getUserId());
         uploadEntity.setDeptId(addUploadVM.getDeptId());
-        uploadEntity.setUploadState(0);
+        uploadEntity.setUploadState(1);
         //添加到上传表
         uploadService.insert(uploadEntity);
 
@@ -803,13 +807,17 @@ public class UploadController extends AbstractController {
         // 删除xml报告和模板可选项
         Map<String, Object> map = new HashMap<>();
         map.put("upload_id", addUploadVM.getUploadId());
-        resultXmlService.deleteByMap(map);
-        fieldMiddleService.deleteByMap(map);
+        if (resultXmlService.selectByMap(map).size() != 0) {
+            resultXmlService.deleteByMap(map);
+        }
+        if (fieldMiddleService.selectByMap(map).size() != 0) {
+            fieldMiddleService.deleteByMap(map);
+        }
 
         UploadEntity uploadEntity = new UploadEntity();
         uploadEntity.setStartId(addUploadVM.getStartId());
         uploadEntity.setEndId(addUploadVM.getEndId());
-        uploadEntity.setUploadState(0);
+        uploadEntity.setUploadState(1);
         uploadEntity.setUploadIds(StringUtils.join(addUploadVM.getUploadIds(), ","));
 
         uploadEntity.setUploadProductsList(addUploadVM.getUploadProductsList());
@@ -850,7 +858,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setUpdateTime(new Date());
         uploadEntity.setUserId(addUploadVM.getUserId());
         uploadEntity.setDeptId(addUploadVM.getDeptId());
-        uploadEntity.setUploadState(0);
+        uploadEntity.setUploadState(1);
         //添加到上传表
         uploadService.insert(uploadEntity);
 
