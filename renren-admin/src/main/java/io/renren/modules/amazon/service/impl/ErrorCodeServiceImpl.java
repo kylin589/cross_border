@@ -18,9 +18,10 @@ public class ErrorCodeServiceImpl extends ServiceImpl<ErrorCodeDao, ErrorCodeEnt
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        String errorCode = (String) params.get("errorCode");
         Page<ErrorCodeEntity> page = this.selectPage(
                 new Query<ErrorCodeEntity>(params).getPage(),
-                new EntityWrapper<ErrorCodeEntity>()
+                new EntityWrapper<ErrorCodeEntity>().like("error_code",errorCode)
         );
 
         return new PageUtils(page);
