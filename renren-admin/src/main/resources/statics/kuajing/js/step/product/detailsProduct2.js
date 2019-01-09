@@ -1181,7 +1181,7 @@ var vm = new Vue({
         },
         // 相册图片删除
         proDel:function () {
-            var elList = $('.imgAlbum.active');
+            var elList = $('.imgDiv>div.active');
             var arr = [];
             for(var i = 0;i<elList.length;i++){
                 arr.push(elList.eq(i).attr('data-index'));
