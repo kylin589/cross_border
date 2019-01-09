@@ -98,7 +98,7 @@
                 <div>
                     <!--图片区域-->
                     <div class="imgDiv">
-                        <div class="imgAlbum" v-for="(item,index) in proAlbum" :data-index="item.index">
+                        <div class="imgAlbum" v-for="(item,index) in proAlbum" :data-index="item.index" :data-id="item.imgId">
                             <!--@mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)"-->
                             <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
                             <img :src="item.url" alt="" class="imgItem" :data-con="item" @click="clickActiveImg">
