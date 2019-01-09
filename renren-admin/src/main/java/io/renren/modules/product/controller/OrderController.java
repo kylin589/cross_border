@@ -351,6 +351,13 @@ public class OrderController extends AbstractController{
             orderService.updateById(orderEntity);
         }
         orderService.updateById(orderEntity);
+        RemarkEntity remark = new RemarkEntity();
+        remark.setOrderId(orderEntity.getOrderId());
+        remark.setUserName(getUser().getDisplayName());
+        remark.setUserId(getUserId());
+        remark.setRemark("删除采购信息");
+        remark.setType("log");
+        remark.setUpdateTime(new Date());
         return R.ok();
     }
     /**
