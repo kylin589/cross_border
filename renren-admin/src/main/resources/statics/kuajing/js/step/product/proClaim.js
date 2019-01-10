@@ -170,19 +170,19 @@ var vm = new Vue({
         caijiProgressIf:false,
         // 所有员工
         allYUanG:[{
-            userId:'1-1',
+            userId:'--',
             displayName:'所有员工'
         }],
         // 所选员工的value
-        allYUanGValue:'1-1',
+        allYUanGValue:'--',
         allYUanGValue1:'',
         // 所有公司
         allGongsi:[{
-            deptId:'1-1',
+            deptId:'--',
             name:'全部'
         }],
         // 所选公司的value
-        allGongsiValue:'1-1',
+        allGongsiValue:'--',
         allGongsiValue1:''
 
     },
@@ -191,7 +191,7 @@ var vm = new Vue({
         getManList:function () {
             console.log('11111');
 
-            if(vm.allGongsiValue != '1-1'){
+            if(vm.allGongsiValue != '--'){
                 console.log('@@@@@@');
                 console.log(vm.allYUanGValue);
                 $.ajax({
@@ -208,7 +208,7 @@ var vm = new Vue({
                         if (r.code === 0) {
                             vm.allYUanG= r.userList;
                             vm.allYUanG.unshift({
-                                userId:'1-1',
+                                userId:'--',
                                 displayName:'所有员工'
                             })
                             // vm.getPage();
@@ -236,7 +236,7 @@ var vm = new Vue({
                         if (r.code === 0) {
                             vm.allYUanG= r.userList;
                             vm.allYUanG.unshift({
-                                userId:'1-1',
+                                userId:'--',
                                 username:'所有员工'
                             })
                             // vm.getPage();
@@ -256,10 +256,10 @@ var vm = new Vue({
         },
         // 获取员工列表1
         getManList1:function () {
-            console.log('11111');
-            if(vm.allGongsiValue1 != ''){
+            console.log(JSON.stringify(vm.allGongsiValue1));
+            if(vm.allGongsiValue1 != '--'){
                 console.log('@@@@@@');
-                console.log(vm.allYUanGValue);
+                console.log(vm.allYUanGValue1);
                 $.ajax({
                     url: '../../sys/user/getUserList',
                     type: 'get',
@@ -274,7 +274,7 @@ var vm = new Vue({
                         if (r.code === 0) {
                             vm.allYUanG= r.userList;
                             vm.allYUanG.unshift({
-                                userId:'1-1',
+                                userId:'--',
                                 displayName:'所有员工'
                             })
                             // vm.getPage();
@@ -302,7 +302,7 @@ var vm = new Vue({
                         if (r.code === 0) {
                             vm.allYUanG= r.userList;
                             vm.allYUanG.unshift({
-                                userId:'1-1',
+                                userId:'--',
                                 username:'所有员工'
                             })
                             // vm.getPage();
@@ -335,7 +335,7 @@ var vm = new Vue({
                         // layer.msg('操作成功');
                         vm.allGongsi = r.deptList;
                         vm.allGongsi.unshift({
-                            deptId:'1-1',
+                            deptId:'--',
                             name:'全部'
                         })
                         console.log(vm.allGongsi);
@@ -356,10 +356,10 @@ var vm = new Vue({
         // 选择公司后获取员工
         chanGongsiFunc:function () {
             vm.allYUanG = [{
-                userId:'1-1',
+                userId:'--',
                 displayName:'所有员工'
             }];
-            vm.allYUanGValue = '1-1';
+            vm.allYUanGValue = '--';
         },
         // 筛选
         // 审核状态筛选
@@ -477,13 +477,13 @@ var vm = new Vue({
             var Gongs='';
             var Yuang='';
 
-            if(this.allYUanGValue == '1-1'){
+            if(this.allYUanGValue == '--'){
                 Yuang='';
             }else {
                 Yuang=this.allYUanGValue;
             }
 
-            if(this.allGongsiValue == '1-1'){
+            if(this.allGongsiValue == '--'){
                 Gongs=''
             }else {
                 Gongs=this.allGongsiValue

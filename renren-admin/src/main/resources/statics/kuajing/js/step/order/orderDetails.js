@@ -610,10 +610,10 @@ var vm = new Vue({
                 }),
                 contentType: "application/json",
                 success: function (r) {
-                    console.log('订单详情');
+                    // console.log('订单详情');
                     console.log(r);
                     if (r.code === 0) {
-                        vm.orderDetails = r.orderDTO;
+                        // vm.orderDetails = r.orderDTO;
                         vm.orderDetails.shipAddress.abroadWaybill = r.abroadLogistics;
                         layer.msg('生成成功');
                         layer.close(index);
