@@ -449,7 +449,6 @@ public class UploadController extends AbstractController {
         //设置操作项
         uploadEntity.setOperateItem(operateItem);
         //设置常用属性
-        uploadEntity.setUploadTime(new Date());
         uploadEntity.setUpdateTime(new Date());
         uploadEntity.setUserId(getUserId());
         uploadEntity.setDeptId(getDeptId());
@@ -504,6 +503,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setUploadId(uploadId);
         uploadEntity = uploadService.selectById(uploadEntity);
         uploadEntity.setUploadState(1);
+        uploadEntity.setUpdateTime(new Date());
         uploadService.updateById(uploadEntity);
         // 删除xml基本信息
         Map<String, Object> map = new HashMap<>();
@@ -854,7 +854,6 @@ public class UploadController extends AbstractController {
         //设置操作项
         uploadEntity.setOperateItem(operateItem);
         //设置常用属性
-        uploadEntity.setUploadTime(new Date());
         uploadEntity.setUpdateTime(new Date());
         uploadEntity.setUserId(addUploadVM.getUserId());
         uploadEntity.setDeptId(addUploadVM.getDeptId());
