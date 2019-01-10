@@ -6,6 +6,13 @@ import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsyn
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConfig;
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersException;
 import com.amazonservices.mws.orders._2013_09_01.model.*;
+import com.amazonservices.mws.products.MarketplaceWebServiceProducts;
+import com.amazonservices.mws.products.MarketplaceWebServiceProductsAsyncClient;
+import com.amazonservices.mws.products.MarketplaceWebServiceProductsConfig;
+import com.amazonservices.mws.products.MarketplaceWebServiceProductsException;
+import com.amazonservices.mws.products.model.ASINListType;
+import com.amazonservices.mws.products.model.GetMatchingProductRequest;
+import com.amazonservices.mws.products.model.GetMatchingProductResponse;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.DateUtils;
 import io.renren.modules.amazon.dto.ListOrderItemsByNextTokenResponseDto;
@@ -16,7 +23,11 @@ import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.util.XMLUtil;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
+import io.renren.modules.product.entity.ProductsEntity;
+import io.renren.modules.product.entity.VariantsInfoEntity;
 import io.renren.modules.product.service.OrderService;
+import io.renren.modules.product.service.ProductsService;
+import io.renren.modules.product.service.VariantsInfoService;
 import io.renren.modules.product.vm.OrderModel;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +59,11 @@ public class OrderTimer {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private VariantsInfoService variantsInfoService;
+
+    @Autowired
+    private ProductsService productsService;
     /**
      * 获得店铺授权列表信息
      */
@@ -195,6 +211,8 @@ public class OrderTimer {
                                     String product_sku = orderItemResponseDtos.get(k).getOrderItems().get(m).getSellerSKU();
                                     System.out.println("商品sku:"+product_sku+"==================");
                                     int ordernumber = orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
+                                    //根据商品sku获取图片连接的url的方法
+                                    String img_url= this.getImageUrl(product_sku,product_asin,sellerId,mwsAuthToken,serviceURL,marketplaceId);
                                     System.out.println("订单配送数量："+ordernumber+"============");
                                     ProductShipAddressEntity addressEntity = new ProductShipAddressEntity();
                                     String shipname = listOrdersResponseDtos.get(i).getOrders().get(j).getName();
@@ -264,6 +282,11 @@ public class OrderTimer {
                                         orderModel.setProductSku(product_sku);
                                     } else {
                                         orderModel.setProductSku("");
+                                    }
+                                    if(img_url!=null){
+                                        orderModel.setProductImageUrl(img_url);
+                                    }else{
+                                        orderModel.setProductImageUrl("");
                                     }
                                     if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
 
@@ -378,7 +401,81 @@ public class OrderTimer {
 
     }
 
+    /**
+     * 根据商品sku来获取商品的image_url值
+     * @param product_sku
+     */
+    public String getImageUrl(String product_sku,String product_asin,String sellerld,String token,String sericeUrl,List marketplaceId){
+        String img_url =null;
+        //根据sku去新库的变体表中获取变体信息
+        VariantsInfoEntity skuInfo=variantsInfoService.selectOne(new EntityWrapper<VariantsInfoEntity>().eq("variant_sku",product_sku) );
+        if(skuInfo!=null) {
+          img_url = skuInfo.getImageUrl().split(",")[0];//获取图片url
+        }
+        //如果获取不到，则到产品实体类中查询获取
+        if(!StringUtils.isNotBlank(img_url)){
+            ProductsEntity productsEntity= productsService.selectOne(new EntityWrapper<ProductsEntity>().eq("main_image_url",product_sku));
+            if(productsEntity!=null){
+                img_url=productsEntity.getMainImageUrl();
+            }
+            if(!StringUtils.isNotBlank(img_url)){
+                //如果新库获取不到，就到旧库里获取，调用商品获取的接口
+                return getProductinfoTest(sellerld,token,product_asin,marketplaceId);
+            }
+        }
+        return null;
+    }
 
+
+    public String getProductinfoTest(String sellerld,String token,String product_asin,List marketplacedId) {
+        MarketplaceWebServiceProductsConfig config = new MarketplaceWebServiceProductsConfig();
+        config.setServiceURL("https://mws-eu.amazonservices.com");
+        MarketplaceWebServiceProductsAsyncClient client = new MarketplaceWebServiceProductsAsyncClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+                "mws_test", "1.0", config, null);
+        // Create a request.
+        GetMatchingProductRequest request = new GetMatchingProductRequest();
+
+        request.setSellerId(sellerld);
+        request.setMWSAuthToken(token);
+        request.setMarketplaceId(marketplacedId.get(0).toString());
+        ASINListType asinList = new ASINListType();
+        List<String> asins = new ArrayList<>();
+        asins.add(product_asin);
+        asinList.setASIN(asins);
+        request.setASINList(asinList);
+        return invokeGetMatchingProduct(client, request);
+
+    }
+
+    public static String invokeGetMatchingProduct(MarketplaceWebServiceProducts client, GetMatchingProductRequest request) {
+        com.amazonservices.mws.products.model.ResponseHeaderMetadata rhmd;
+        try {
+            GetMatchingProductResponse response = client.getMatchingProduct(request);
+            rhmd = response.getResponseHeaderMetadata();
+            System.out.println("Response:");
+            System.out.println("RequestId: " + rhmd.getRequestId());
+            System.out.println("Timestamp: " + rhmd.getTimestamp());
+            String responseXml = response.toXML();
+            //进行截取图片url
+            int a = responseXml.indexOf("<ns2:URL>");
+            int b = responseXml.indexOf("</ns2:URL>");
+            String imageURL = responseXml.substring(a + 9, b).replace("SL75", "SL500");
+            return imageURL;
+        } catch (MarketplaceWebServiceProductsException var5) {
+            System.out.println("Service Exception:");
+            rhmd = var5.getResponseHeaderMetadata();
+            if (rhmd != null) {
+                System.out.println("RequestId: " + rhmd.getRequestId());
+                System.out.println("Timestamp: " + rhmd.getTimestamp());
+            }
+
+            System.out.println("Message: " + var5.getMessage());
+            System.out.println("StatusCode: " + var5.getStatusCode());
+            System.out.println("ErrorCode: " + var5.getErrorCode());
+            System.out.println("ErrorType: " + var5.getErrorType());
+        }
+        return null;
+    }
 
     /**
      * 功能描述：发送订单请求，返回订单列表的响应数据
