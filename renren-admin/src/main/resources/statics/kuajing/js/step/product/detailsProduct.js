@@ -2597,10 +2597,17 @@ var vm = new Vue({
         },
         // 删除参数列表中已选图片
         delImgRecom:function (data,i) {
-            console.log(data);
-            console.log(i);
+            // console.log(data);
+            // console.log(i);
             data.img.splice(i,1);
-            console.log(data.img);
+            // console.log(data.img)
+            $('#imgBigDiv').css('display','none');
+            $('.ul1 li').css({
+                'position':'relative',
+                'top':'0px',
+                'left':'0px',
+                'margin':'10px'
+            });
         },
 
         // 返回
