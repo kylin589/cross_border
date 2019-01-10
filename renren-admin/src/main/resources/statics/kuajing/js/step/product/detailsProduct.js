@@ -599,18 +599,24 @@ var vm = new Vue({
                         console.log(JSON.stringify(vm.proDetails.colorVP) == 'null');
                         console.log(typeof(vm.proDetails.colorVP));
                         if(JSON.stringify(vm.proDetails.colorVP) != 'null'){
-                            vm.variantList.push({
-                                id:0,
-                                name:'颜色（color）',
-                                type:vm.proDetails.colorVP.paramsValue.split(',')
-                            })
+                            if(JSON.stringify(vm.proDetails.colorVP.paramsValue) != 'null'){
+                                vm.variantList.push({
+                                    id:0,
+                                    name:'颜色（color）',
+                                    type:vm.proDetails.colorVP.paramsValue.split(',')
+                                })
+                            }
+
                         }
                         if(JSON.stringify(vm.proDetails.sizeVP) != 'null'){
-                            vm.variantList.push({
-                                id:1,
-                                name:'尺寸（size）',
-                                type:vm.proDetails.sizeVP.paramsValue.split(',')
-                            })
+                            if(JSON.stringify(vm.proDetails.sizeVP.paramsValue) != 'null'){
+                                vm.variantList.push({
+                                    id:1,
+                                    name:'尺寸（size）',
+                                    type:vm.proDetails.sizeVP.paramsValue.split(',')
+                                })
+                            }
+
                         }
 
                         vm.proDetails.variantsInfos.forEach(function (t,i) {
@@ -1343,95 +1349,101 @@ var vm = new Vue({
                     var _name = $('#variantName option:selected').text();
                     var _typeName = $('#variantType').val();
                     var type = '';
+                    if(_typeName != ''){
+                        var reg = new RegExp( '，' , "g" )
+                        var str = _typeName.replace(reg,',');
+                        _typeName = str;
+                        console.log(_typeName == '');
+                        console.log(_typeName.split(','));
+                        // _typeName.join(',');
+                        if(_id == '0'){
+                            type = 'color'
+                        }else {
+                            type = 'size'
+                        }
 
-                    var reg = new RegExp( '，' , "g" )
-                    var str = _typeName.replace(reg,',');
-                    _typeName = str;
-                    console.log(_typeName);
-                    console.log(_typeName.split(','));
-                    // _typeName.join(',');
-                    if(_id == '0'){
-                        type = 'color'
-                    }else {
-                        type = 'size'
-                    }
+                        $.ajax({
+                            type: 'get',
+                            url: '../../product/variantparameter/save',
+                            contentType: "application/json",
+                            data: {
+                                'productId':vm.id,
+                                'paramsType':type,
+                                'paramsValue':_typeName
+                            },
+                            success: function (r) {
+                                console.log('添加变体');
+                                console.log(r)
+                                if (r.code == 0) {
+                                    // this.costFreight = r.categoryOneList;
 
-                    $.ajax({
-                        type: 'get',
-                        url: '../../product/variantparameter/save',
-                        contentType: "application/json",
-                        data: {
-                            'productId':vm.id,
-                            'paramsType':type,
-                            'paramsValue':_typeName
-                        },
-                        success: function (r) {
-                            console.log('添加变体');
-                            console.log(r)
-                            if (r.code == 0) {
-                                // this.costFreight = r.categoryOneList;
+                                    console.log(vm.variantList);
 
-                                console.log(vm.variantList);
-
-                                if(vm.variantList.length == 0){
-                                    vm.variantList.push({
-                                        id:_id,
-                                        name:_name,
-                                        type:_typeName.split(',')
-                                    })
-                                }else if(vm.variantList.length == 1){
-                                    if(vm.variantList[0].id == _id){
-                                        var arr = vm.variantList[0].type= _typeName.split(',');
-                                        // var arr = vm.variantList[0].type.concat(_typeName.split(','));
-                                        vm.variantList[0].type = arr;
-                                        // vm.variantList[i].type.push(_typeName.join(','))
-                                    }else {
+                                    if(vm.variantList.length == 0){
                                         vm.variantList.push({
                                             id:_id,
                                             name:_name,
                                             type:_typeName.split(',')
                                         })
-                                    }
-
-                                }else {
-                                    for(var i = 0;i<vm.variantList.length;i++){
-                                        if(vm.variantList[i].id == _id){
-                                            // var arr = vm.variantList[i].type.concat(_typeName.split(','));
-                                            var arr = vm.variantList[i].type= _typeName.split(',');
-                                            vm.variantList[i].type = arr;
+                                    }else if(vm.variantList.length == 1){
+                                        if(vm.variantList[0].id == _id){
+                                            var arr = vm.variantList[0].type= _typeName.split(',');
+                                            // var arr = vm.variantList[0].type.concat(_typeName.split(','));
+                                            vm.variantList[0].type = arr;
                                             // vm.variantList[i].type.push(_typeName.join(','))
+                                        }else {
+                                            vm.variantList.push({
+                                                id:_id,
+                                                name:_name,
+                                                type:_typeName.split(',')
+                                            })
+                                        }
+
+                                    }else {
+                                        for(var i = 0;i<vm.variantList.length;i++){
+                                            if(vm.variantList[i].id == _id){
+                                                // var arr = vm.variantList[i].type.concat(_typeName.split(','));
+                                                var arr = vm.variantList[i].type= _typeName.split(',');
+                                                vm.variantList[i].type = arr;
+                                                // vm.variantList[i].type.push(_typeName.join(','))
+                                            }
                                         }
                                     }
-                                }
 
-                                if(_id == '0'){
-                                    vm.proDetails.colorVP = {
-                                        paramsId:r.variantParameterId,
-                                        paramsType:'color',
-                                        paramsValue:_typeName
+                                    if(_id == '0'){
+                                        vm.proDetails.colorVP = {
+                                            paramsId:r.variantParameterId,
+                                            paramsType:'color',
+                                            paramsValue:_typeName
+                                        }
+                                    }else {
+                                        vm.proDetails.sizeVP = {
+                                            paramsId:r.variantParameterId,
+                                            paramsType:'color',
+                                            paramsValue:_typeName
+                                        }
                                     }
-                                }else {
-                                    vm.proDetails.sizeVP = {
-                                        paramsId:r.variantParameterId,
-                                        paramsType:'color',
-                                        paramsValue:_typeName
-                                    }
+
+                                    vm.getrecommendAll();
+
+
+                                    layer.msg("变体添加成功");
+                                } else {
+                                    alert(r.msg);
                                 }
-
-                                vm.getrecommendAll();
-
-
-                                layer.msg("变体添加成功");
-                            } else {
-                                alert(r.msg);
                             }
-                        }
-                    });
+                        });
+                        layer.close(index);
+                    }else {
+                        layer.msg('请选择参数属性');
+                    }
+
+
 
 
 
                     // console.log(vm.recommendAll);
-                    layer.close(index);
+
 
                 },
                 btn2: function (index) {
