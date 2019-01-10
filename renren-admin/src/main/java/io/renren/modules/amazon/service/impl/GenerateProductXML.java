@@ -266,6 +266,7 @@ public class GenerateProductXML {
                 parentage.addText("parent");
 
                 Element variationTheme = variationData.addElement("VariationTheme");
+                System.out.println(productsEntity.getProductId());
                 if (variantsInfoEntityList.get(0).getVariantCombination().contains("*")) {
                     variationThemeStr = "Size-Color";
                     variationTheme.addText(variationThemeStr);
@@ -820,6 +821,7 @@ public class GenerateProductXML {
                 Element message = root.addElement("Message");
                 Element messageID = message.addElement("MessageID");
                 messageID.addText(messageId + "");
+                messageId++;
                 Element operationType = message.addElement("OperationType");
                 operationType.addText("Update");
                 Element relationship = message.addElement("Relationship");
@@ -834,7 +836,7 @@ public class GenerateProductXML {
                 }
             } else {
                 // 没有变体
-                break;
+                continue;
             }
         }
 
@@ -1649,6 +1651,399 @@ public class GenerateProductXML {
                 itemLengthDescription.addText("null");
                 Element codabar = clothing.addElement("Codabar");
                 codabar.addText("null");
+            }
+
+        }
+        // 生成文件路径
+        String path = fileStoragePath;
+        String filePath = FileUtil.generateFilePath(path, "ProductByClothing");
+
+        try {
+            XMLUtil.writeXMLToFile(document, filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!FileUtil.judeFileExists(filePath)) {
+            return null;
+        }
+        return filePath;
+    }
+
+    /**
+     * 生成家居装修模板
+     *
+     * @param uploadId
+     * @param merchantIdentifierText
+     * @param productsList
+     * @param countryCode
+     * @return
+     */
+    public String generateProductXMLByHomeImprovement(Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode) {
+
+        /*
+            家居装修使用的是子分类建筑材料的模板，如果要增加家居装修的子分类，需要数据库表和判断模板的方法。
+         */
+
+        // 获取模板数据
+        EntityWrapper<FieldMiddleEntity> wrapper = new EntityWrapper<>();
+        wrapper.eq("upload_id", uploadId);
+        List<FieldMiddleEntity> fieldMiddleEntitieList = fieldMiddleService.selectList(wrapper);
+        Map<String, Object> valueMap = new HashMap<>();
+        for (int i = 0; i < fieldMiddleEntitieList.size(); i++) {
+            valueMap.put(fieldMiddleEntitieList.get(i).getFieldName(), fieldMiddleEntitieList.get(i).getValue());
+        }
+
+        // 获取上传数据
+        UploadEntity uploadEntity = uploadService.selectById(uploadId);
+
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("AmazonEnvelope");
+        root.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").addAttribute("xsi:noNamespaceSchemaLocation", "https://images-na.ssl-images-amazon.com/images/G/01/rainier/help/xsd/release_1_9/amzn-envelope.xsd");
+        Element header = root.addElement("Header");
+        Element documentVersion = header.addElement("DocumentVersion");
+        documentVersion.addText("1.01");
+        Element merchantIdentifier = header.addElement("MerchantIdentifier");
+        merchantIdentifier.addText(merchantIdentifierText);
+        Element messageType = root.addElement("MessageType");
+        messageType.addText("Product");
+        Element purgeAndReplace = root.addElement("PurgeAndReplace");
+        purgeAndReplace.addText("false");
+        int messageId = 1;
+        for (int i = 0; i < productsList.size(); i++) {
+            ProductsEntity productsEntity = productsList.get(i);
+
+            Element message = root.addElement("Message");
+            Element messageID = message.addElement("MessageID");
+            messageID.addText(messageId + "");
+            messageId++;
+            Element operationType = message.addElement("OperationType");
+            operationType.addText("Update");
+            Element product = message.addElement("Product");
+            if (productsEntity.getProductSku() != null) {
+                Element sku = product.addElement("SKU");
+                sku.addText(productsEntity.getProductSku());
+            }
+
+            List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productsEntity.getProductId()).orderBy(true, "variant_sort", true));
+
+            // 没有变体
+            boolean isVariant = false;
+            if (variantsInfoEntityList.size() == 0) {
+                if (StringUtils.isNotBlank(productsEntity.getEanCode())) {
+                    Element standardProductID = product.addElement("StandardProductID");
+                    Element type = standardProductID.addElement("Type");
+                    type.addText("EAN");
+                    Element value = standardProductID.addElement("Value");
+                    value.addText(productsEntity.getEanCode());
+                } else if (StringUtils.isNotBlank(productsEntity.getUpcCode())) {
+                    Element standardProductID = product.addElement("StandardProductID");
+                    Element type = standardProductID.addElement("Type");
+                    type.addText("UPC");
+                    Element value = standardProductID.addElement("Value");
+                    value.addText(productsEntity.getUpcCode());
+                }
+            } else {
+                // 有变体
+                isVariant = true;
+            }
+
+            Element productTaxCode = product.addElement("ProductTaxCode");
+            productTaxCode.addText("A_GEN_TAX");
+
+            Map<String, Object> countryMap = switchCountry(productsEntity, countryCode);
+            Long freightId = Long.valueOf(String.valueOf(countryMap.get("freightId")));
+            String money = String.valueOf(countryMap.get("money"));
+            IntroductionEntity introductionEntity = introductionService.selectById(Long.valueOf(String.valueOf(countryMap.get("freightId"))));
+
+            Element descriptionData = product.addElement("DescriptionData");
+
+            // Title-商品标题
+            String titleStr = "\\t";
+            Element title = descriptionData.addElement("Title");
+            if (introductionEntity.getProductTitle() != null) {
+                if (introductionEntity.getProductTitle().length() > 200) {
+                    titleStr = introductionEntity.getProductTitle().trim().substring(0, 200);
+                } else {
+                    titleStr = introductionEntity.getProductTitle();
+                }
+            }
+            title.addText(titleStr);
+
+            // Brand-品牌
+            String brandStr = "\\t";
+            Element brand = descriptionData.addElement("Brand");
+            if (productsEntity.getBrandName() != null) {
+                brandStr = productsEntity.getBrandName();
+            }
+            brand.addText(brandStr);
+
+            // Description-描述
+            String descriptionStr = "\\t";
+            Element description = descriptionData.addElement("Description");
+            if (introductionEntity.getProductDescription() != null) {
+                if (introductionEntity.getProductDescription().length() > 2000) {
+                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000);
+                } else {
+                    descriptionStr = introductionEntity.getProductDescription();
+                }
+            }
+            description.addText(descriptionStr);
+
+            // BulletPoint-重点，有可能需要多个，但最多5个
+            if (introductionEntity.getKeyPoints() != null) {
+                String[] kepPoints = introductionEntity.getKeyPoints().split("\n");
+                if (kepPoints.length <= 5) {
+                    for (int j = 0; j < kepPoints.length; j++) {
+                        String tempKepPoints;
+                        Element bulletPoint = descriptionData.addElement("BulletPoint");
+                        if (kepPoints[j].length() > 500) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 500);
+                        } else {
+                            tempKepPoints = kepPoints[j].trim();
+                        }
+                        bulletPoint.addText(tempKepPoints);
+                    }
+                } else {
+                    for (int j = 0; j < 4; j++) {
+                        String tempKepPoints;
+                        Element bulletPoint = descriptionData.addElement("BulletPoint");
+                        if (kepPoints[j].length() > 500) {
+                            tempKepPoints = kepPoints[j].trim().substring(0, 500);
+                        } else {
+                            tempKepPoints = kepPoints[j].trim();
+                        }
+                        bulletPoint.addText(tempKepPoints);
+                    }
+
+                }
+            } else {
+                Element bulletPoint = descriptionData.addElement("BulletPoint");
+                bulletPoint.addText("\\t");
+               /* for (int j = 0; j < 4; j++) {
+                    Element bulletPoint = descriptionData.addElement("BulletPoint");
+                    bulletPoint.addText("\\t");
+                }*/
+            }
+
+            // Manufacturer - 生产厂家
+            String manufacturerStr = "\\t";
+            Element manufacturer = descriptionData.addElement("Manufacturer");
+            if (productsEntity.getProducerName() != null) {
+                manufacturerStr = productsEntity.getProducerName();
+            }
+            manufacturer.addText(manufacturerStr);
+
+            // SearchTerms - 关键字
+            Element searchTerms = descriptionData.addElement("SearchTerms");
+            String searchTermsStr = "\\t";
+            if (introductionEntity.getKeyWord() != null) {
+                if (introductionEntity.getKeyWord().trim().length() > 250) {
+                    searchTermsStr = introductionEntity.getKeyWord().trim().substring(0, 250);
+                } else {
+                    searchTermsStr = introductionEntity.getKeyWord().trim();
+                }
+            }
+            searchTerms.addText(searchTermsStr);
+
+            // ItemType - 推荐节点
+            AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("id", uploadEntity.getAmazonCategoryId()));
+            String itemTypeStr = "\\t";
+            Element itemType = descriptionData.addElement("ItemType");
+            if (amazonCategoryEntity.getCategoryName() != null) {
+                itemTypeStr = amazonCategoryEntity.getCategoryName();
+            }
+            itemType.addText(itemTypeStr);
+
+            switch (countryCode) {
+                // 加拿大
+                case "CA":
+                    // 德国
+                case "DE":
+                    // 西班牙
+                case "ES":
+                    // 法国
+                case "FR":
+                    // 英国
+                case "GB":
+                    // 意大利
+                case "IT":
+                    // 日本
+                case "JP":
+                    // RecommendedBrowseNode - 浏览节点
+                    Element recommendedBrowseNode = descriptionData.addElement("RecommendedBrowseNode");
+                    recommendedBrowseNode.addText(uploadEntity.getAmazonCategoryNodeId());
+                    break;
+                default:
+            }
+
+            Element productData = product.addElement("ProductData");
+            Element homeImprovement = productData.addElement("HomeImprovement");
+
+
+            String variationThemeStr = "";
+            if (isVariant) {
+                // 有变体
+                Element productType = homeImprovement.addElement("ProductType");
+                Element buildingMaterials = productType.addElement("BuildingMaterials");
+                Element variationData = buildingMaterials.addElement("VariationData");
+                Element parentage = variationData.addElement("Parentage");
+                parentage.addText("parent");
+                Element variationTheme = variationData.addElement("VariationTheme");
+                if (variantsInfoEntityList.get(0).getVariantCombination().contains("*")) {
+                    variationThemeStr = "Size-Color";
+                    variationTheme.addText(variationThemeStr);
+                } else if (productsEntity.getColorId() != null) {
+                    variationThemeStr = "Color";
+                    variationTheme.addText(variationThemeStr);
+                } else if (productsEntity.getSizeId() != null) {
+                    variationThemeStr = "Size";
+                    variationTheme.addText(variationThemeStr);
+                }
+
+                // 后续部分
+                Element a = buildingMaterials.addElement("AccessoryConnectionType");
+                // TODO: 2019/1/10 写到这里
+                for (int j = 0; j < variantsInfoEntityList.size(); j++) {
+                    VariantsInfoEntity variantsInfoEntity = variantsInfoEntityList.get(j);
+                    Element vieMessage = root.addElement("Message");
+                    Element vieMessageID = vieMessage.addElement("MessageID");
+                    vieMessageID.addText(messageId + "");
+                    messageId++;
+                    Element vieOperationType = vieMessage.addElement("OperationType");
+                    vieOperationType.addText("Update");
+                    Element vieProduct = vieMessage.addElement("Product");
+                    Element vieSku = vieProduct.addElement("SKU");
+                    vieSku.addText(variantsInfoEntity.getVariantSku());
+
+                    Element standardProductID = vieProduct.addElement("StandardProductID");
+                    Element type = standardProductID.addElement("Type");
+                    type.addText("EAN");
+                    Element value = standardProductID.addElement("Value");
+                    value.addText(variantsInfoEntity.getEanCode());
+
+                    Element vieProductTaxCode = vieProduct.addElement("ProductTaxCode");
+                    vieProductTaxCode.addText("A_GEN_TAX");
+
+                    Element vieDescriptionData = vieProduct.addElement("DescriptionData");
+
+                    // Title-商品标题
+                    Element vieTitle = vieDescriptionData.addElement("Title");
+                    vieTitle.addText(titleStr);
+
+                    // Brand-品牌
+                    Element vieBrand = vieDescriptionData.addElement("Brand");
+                    vieBrand.addText(brandStr);
+
+                    // Description-描述
+                    Element vieDescription = vieDescriptionData.addElement("Description");
+                    vieDescription.addText(descriptionStr);
+
+                    // BulletPoint-重点，有可能需要多个，但最多5个
+                    if (introductionEntity.getKeyPoints() != null) {
+                        String[] kepPoints = introductionEntity.getKeyPoints().split("\n");
+                        if (kepPoints.length <= 5) {
+                            for (int z = 0; z < kepPoints.length; z++) {
+                                String tmep;
+                                Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
+                                if (kepPoints[z].length() > 500) {
+                                    tmep = kepPoints[z].trim().substring(0, 500);
+                                } else {
+                                    tmep = kepPoints[z];
+                                }
+                                vieDulletPoint.addText(tmep);
+                            }
+                        } else {
+                            for (int x = 0; x < 4; x++) {
+                                String tmep;
+                                Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
+                                if (kepPoints[x].length() > 500) {
+                                    tmep = kepPoints[x].trim().substring(0, 500);
+                                } else {
+                                    tmep = kepPoints[x];
+                                }
+                                vieDulletPoint.addText(tmep);
+                            }
+
+                        }
+                    } else {
+                        /*for (int x = 0; x < 4; x++) {
+                            Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
+                            vieDulletPoint.addText("\\t");
+                        }*/
+                        Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
+                        vieDulletPoint.addText("\\t");
+                    }
+
+                    // Manufacturer - 生产厂家
+                    Element vieManufacturer = vieDescriptionData.addElement("Manufacturer");
+                    vieManufacturer.addText(manufacturerStr);
+
+                    // SearchTerms - 关键字
+                    Element vieSearchTerms = vieDescriptionData.addElement("SearchTerms");
+                    vieSearchTerms.addText(searchTermsStr);
+
+                    // ItemType - 推荐节点
+                    Element vieItemType = vieDescriptionData.addElement("ItemType");
+                    vieItemType.addText(itemTypeStr);
+
+                    switch (countryCode) {
+                        // 加拿大
+                        case "CA":
+                            // 德国
+                        case "DE":
+                            // 西班牙
+                        case "ES":
+                            // 法国
+                        case "FR":
+                            // 英国
+                        case "GB":
+                            // 意大利
+                        case "IT":
+                            // 日本
+                        case "JP":
+                            // RecommendedBrowseNode - 浏览节点
+                            Element vieRecommendedBrowseNode = vieDescriptionData.addElement("RecommendedBrowseNode");
+                            vieRecommendedBrowseNode.addText(uploadEntity.getAmazonCategoryNodeId());
+                            break;
+                        default:
+                            break;
+                    }
+
+                    Element vieProductData = vieProduct.addElement("ProductData");
+                    Element vieClothing = vieProductData.addElement("Clothing");
+
+                    Element vieVariationData = vieClothing.addElement("VariationData");
+                    Element vieParentage = vieVariationData.addElement("Parentage");
+                    vieParentage.addText("child");
+
+                    switch (variationThemeStr) {
+                        case "Size-Color":
+                            Element vieSize = vieVariationData.addElement("Size");
+                            String[] str = variantsInfoEntity.getVariantCombination().split("\\*");
+                            // TODO: 2019/1/10 改，放在外面
+                            vieSize.addText(str[1]);
+                            Element vieColor = vieVariationData.addElement("Color");
+                            vieColor.addText(str[0]);
+                            break;
+                        case "Color":
+                            Element vieColor1 = vieVariationData.addElement("Color");
+                            vieColor1.addText(variantsInfoEntity.getVariantCombination());
+                            break;
+                        case "Size":
+                            Element vieSize2 = vieVariationData.addElement("Size");
+                            vieSize2.addText(variantsInfoEntity.getVariantCombination());
+                            break;
+                        default:
+                            break;
+                    }
+                    Element vieVariationTheme = vieVariationData.addElement("VariationTheme");
+                    vieVariationTheme.addText(variationThemeStr);
+
+                    // 后续部分
+                }
+            } else {
+                // 没有变体
+
             }
 
         }
