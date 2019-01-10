@@ -97,7 +97,7 @@
 }
 
 .pro_list{
-    display: none;
+    /*display: none;*/
 }
 
 .layui-tab-title1{
@@ -130,3 +130,5 @@
 .layui-breadcrumb1 a:nth-child(1){
     color: #999;
 }
+
+[v-cloak] {display: none;}

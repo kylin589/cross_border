@@ -21,7 +21,7 @@
         </style>
         </head>
 <body>
-<div class="box" id="step">
+<div class="box" id="step" v-cloak>
     <p>
         <span class="layui-breadcrumb" style="visibility: visible;">
           <a href="upProduct.html">上传产品 / </a>
@@ -66,7 +66,8 @@
 
             </td>
             <td>
-                {{item.resultCode}}
+                <span style="color: #3776b4;cursor:pointer;" @click="errorTan(item.resultCode)">{{item.resultCode}}</span>
+
             </td>
             <td>{{ item.creationTime }}</td>
             <td>{{ item.sku }}</td>
@@ -80,6 +81,13 @@
 
     <div id="xmlDiv" style="display: none;padding: 20px 16px">
         {{xml}}
+        <!--<h3></h3>-->
+    </div>
+    <div id="xmlDiv1" style="display: none;padding: 20px 16px">
+        <div style="white-space: pre-line;">
+            {{errorExplanation}}
+        </div>
+
         <!--<h3></h3>-->
     </div>
 
