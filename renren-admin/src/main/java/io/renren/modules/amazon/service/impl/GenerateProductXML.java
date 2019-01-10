@@ -209,6 +209,17 @@ public class GenerateProductXML {
             }
             manufacturer.addText(manufacturerStr);
 
+            // SearchTerms - 关键字
+            Element searchTerms = descriptionData.addElement("SearchTerms");
+            String searchTermsStr = "\\t";
+            if (introductionEntity.getKeyWord() != null) {
+                if (introductionEntity.getKeyWord().trim().length() > 250) {
+                    searchTermsStr = introductionEntity.getKeyWord().trim().substring(0, 250);
+                } else {
+                    searchTermsStr = introductionEntity.getKeyWord().trim();
+                }
+            }
+            searchTerms.addText(searchTermsStr);
 
             // ItemType - 推荐节点
             AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("id", uploadEntity.getAmazonCategoryId()));
@@ -345,6 +356,10 @@ public class GenerateProductXML {
                     // Manufacturer - 生产厂家
                     Element vieManufacturer = vieDescriptionData.addElement("Manufacturer");
                     vieManufacturer.addText(manufacturerStr);
+
+                    // SearchTerms - 关键字
+                    Element vieSearchTerms = vieDescriptionData.addElement("SearchTerms");
+                    vieSearchTerms.addText(searchTermsStr);
 
                     // ItemType - 推荐节点
                     Element vieItemType = vieDescriptionData.addElement("ItemType");
@@ -838,6 +853,15 @@ public class GenerateProductXML {
         return filePath;
     }
 
+    /**
+     * 生成衣服模板
+     *
+     * @param uploadId
+     * @param merchantIdentifierText
+     * @param productsList
+     * @param countryCode
+     * @return
+     */
     public String generateProductXMLByClothing(Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode) {
         // 获取模板数据
         EntityWrapper<FieldMiddleEntity> wrapper = new EntityWrapper<>();
@@ -988,6 +1012,17 @@ public class GenerateProductXML {
             }
             manufacturer.addText(manufacturerStr);
 
+            // SearchTerms - 关键字
+            Element searchTerms = descriptionData.addElement("SearchTerms");
+            String searchTermsStr = "\\t";
+            if (introductionEntity.getKeyWord() != null) {
+                if (introductionEntity.getKeyWord().trim().length() > 250) {
+                    searchTermsStr = introductionEntity.getKeyWord().trim().substring(0, 250);
+                } else {
+                    searchTermsStr = introductionEntity.getKeyWord().trim();
+                }
+            }
+            searchTerms.addText(searchTermsStr);
 
             // ItemType - 推荐节点
             AmazonCategoryEntity amazonCategoryEntity = amazonCategoryService.selectOne(new EntityWrapper<AmazonCategoryEntity>().eq("id", uploadEntity.getAmazonCategoryId()));
@@ -1262,6 +1297,10 @@ public class GenerateProductXML {
                     // Manufacturer - 生产厂家
                     Element vieManufacturer = vieDescriptionData.addElement("Manufacturer");
                     vieManufacturer.addText(manufacturerStr);
+
+                    // SearchTerms - 关键字
+                    Element vieSearchTerms = vieDescriptionData.addElement("SearchTerms");
+                    vieSearchTerms.addText(searchTermsStr);
 
                     // ItemType - 推荐节点
                     Element vieItemType = vieDescriptionData.addElement("ItemType");
