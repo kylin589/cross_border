@@ -23,7 +23,7 @@ public class UploadServiceImpl extends ServiceImpl<UploadDao, UploadEntity> impl
         Long userId = (Long) params.get("userId");
         Page<UploadEntity> page = this.selectPage(
                 new Query<UploadEntity>(params).getPage(),
-                new EntityWrapper<UploadEntity>().eq("user_id", userId).orderBy("upload_time", false)
+                new EntityWrapper<UploadEntity>().eq("user_id", userId).orderBy("update_time", false)
         );
 
         return new PageUtils(page);
@@ -34,7 +34,7 @@ public class UploadServiceImpl extends ServiceImpl<UploadDao, UploadEntity> impl
         Long deptId = (Long) params.get("userId");
         EntityWrapper<UploadEntity> wrapper = new EntityWrapper<UploadEntity>();
         if (deptId != 1) {
-            wrapper.eq("dept_id", deptId).orderBy("upload_time", false);
+            wrapper.eq("dept_id", deptId).orderBy("update_time", false);
         }
         Page<UploadEntity> page = this.selectPage(
                 new Query<UploadEntity>(params).getPage(),
