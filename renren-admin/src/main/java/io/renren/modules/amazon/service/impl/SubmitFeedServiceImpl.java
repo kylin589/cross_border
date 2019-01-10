@@ -221,8 +221,15 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         if (filePathMap.containsKey("0")) {
             // 产品信息上传
             productFeedSubmissionInfoDto = submitProductFeed(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap.get("0"), filePathMap.get("0"), marketplaceIdList);
-            //使用FeedSubmissionId获取的亚马逊对于xml的处理状态
+            if (productFeedSubmissionInfoDto==null){
+                updateUploadEntity.setUploadState(3);
 
+                // 失败状态，退出线程
+                uploadService.updateById(updateUploadEntity);
+                return;
+            }
+
+            //使用FeedSubmissionId获取的亚马逊对于xml的处理状态
             while (true) {
                 try {
                     List<String> feedSubmissionList = new ArrayList<>();
@@ -293,7 +300,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
                 if (feedSubmissionInfoDtoList.get(0).getFeedProcessingStatus() == 1) {
                     count++;
-                    if (count == 5) {
+                    if (count == feedSubmissionInfoDtoList.size()) {
                         b = true;
                         break;
                     }
@@ -430,6 +437,9 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     @Override
     public FeedSubmissionInfoDto submitProductFeed(Long uploadId, String serviceURL, String merchantId, String sellerDevAuthToken, String feedType, String filePath, List<String> marketplaceIdList) {
 
+        long startTime = System.currentTimeMillis();
+        long endTime;
+
         List<SubmitFeedRequest> submitFeedRequestList = new ArrayList<>();
 
         MarketplaceWebService service = getService(serviceURL);
@@ -458,7 +468,18 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         submitFeedRequestList.add(request);
         List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList = invokeSubmitFeedAsync(uploadId, service, submitFeedRequestList);
         while (feedSubmissionInfoDtoList.size() == 0) {
+            // 超过半小时就终断线程
+            endTime = System.currentTimeMillis();   //获取现在时间
+            if (endTime - startTime > 1800000) {
+                System.out.println("上传产品基本信息的程序已超过半小时，终止！");
+                return null;
+            }
             feedSubmissionInfoDtoList = invokeSubmitFeedAsync(uploadId, service, submitFeedRequestList);
+            try {
+                Thread.sleep(60*1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return feedSubmissionInfoDtoList.get(0);
     }
@@ -794,16 +815,13 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
     @Override
     public int judgementState(AnalysisFeedSubmissionResultDto analysisFeedSubmissionResultDto) {
-        int temp = 3;
-        if (!analysisFeedSubmissionResultDto.getMessagesWithError().equals(0)) {
+        int temp;
+        if (analysisFeedSubmissionResultDto.getMessagesWithError() != 0) {
             temp = 3;
         } else {
-            if (analysisFeedSubmissionResultDto.getMessagesProcessed().equals(analysisFeedSubmissionResultDto.getMessagesSuccessful())) {
-                if (!analysisFeedSubmissionResultDto.getMessagesWithWarning().equals(0)) {
-                    temp = 4;
-                } else if (!analysisFeedSubmissionResultDto.getMessagesWithWarning().equals(1)) {
-                    temp = 1;
-                }
+            if (analysisFeedSubmissionResultDto.getMessagesWithWarning() != 0) {
+                temp = 4;
+            } else {
                 temp = 2;
             }
         }
@@ -820,6 +838,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         } else if (substate.contains(1)) {
             temp = 1;
         } else if (substate.contains(0)) {
+            // 没有0-等待上传的状态了
             temp = 0;
         } else {
             temp = 2;
