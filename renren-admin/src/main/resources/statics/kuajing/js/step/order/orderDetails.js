@@ -157,6 +157,7 @@ var vm = new Vue({
         caigou:'',
         wulDanh:'',
         isLookWuliu:true,
+        quxiaoJijian:null,
 
     },
     methods:{
@@ -220,7 +221,10 @@ var vm = new Vue({
                         for (var i=0;i<vm.orderDetails.domesticLogisticsList.length;i++){
                             vm.waybill.push(vm.orderDetails.domesticLogisticsList[i].waybill);
                             vm.price.push(vm.orderDetails.domesticLogisticsList[i].price);
+
                         }
+                        // vm.quxiaoJijian = r.orderDTO.shipAddress;
+                        // console.log(vm.quxiaoJijian);
                     } else {
                         layer.alert(r.msg);
                     }
@@ -232,11 +236,11 @@ var vm = new Vue({
         },
         //编辑修改寄件信息
         editJijian:function (event) {
-            // console.log(index);
+            // vm.quxiaoJijian = vm.orderDetails.shipAddress;
             if($(event.target).val() == '编辑'){
                 $(event.target).val('保存');
                 $(event.target).parent().parent().find('input').removeAttr("disabled");
-                $(event.target).parent().parent().find('textarea').removeAttr("disabled");
+                // $(event.target).parent().parent().find('textarea').removeAttr("disabled");
                 $(event.target).parent().parent().find('input[type=text]').css('border','1px solid #d8dce5');
                 $(event.target).parent().parent().find('input.noedit').css('display','inline-block');
                 if($(event.target).parent().parent().find('.logistics').length!=0){
@@ -353,9 +357,33 @@ var vm = new Vue({
         },
         //取消修改
         noedit:function (d,index,event) {
-            d = vm.orderDetails.domesticLogisticsList[index].waybill;
-            console.log(d);
-            $(event.target).parent().parent().find('.logistics').find('input').val(d);
+            // d = vm.orderDetails.domesticLogisticsList[index].waybill;
+            // console.log(d);
+            // $(event.target).parent().parent().find('.logistics').find('input').val(d);
+            vm.getOrderInfo();
+            $(event.target).prev().val('编辑');
+            $(event.target).parent().parent().find('input[type=text]').attr('disabled','true');
+            $(event.target).parent().parent().find('textarea').attr('disabled','true');
+            $(event.target).parent().parent().find('input[type=text]').css('border','1px solid transparent');
+            $(event.target).parent().parent().find('input.noedit').css('display','none');
+            if($(event.target).parent().parent().find('.logistics').length!=0){
+                $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
+            }
+        },
+        noedit1:function (event) {
+            // d = vm.orderDetails.domesticLogisticsList[index].waybill;
+            // console.log(d);
+            // $(event.target).parent().parent().find('.logistics').find('input').val(d);
+            // vm.orderDetails.shipAddress = vm.quxiaoJijian;
+            // console.log(vm.quxiaoJijian);
+            vm.getOrderInfo();
+            // $(event.target).parent().parent().find('input[type=text]').eq(0).val(vm.orderDetails.shipAddress.shipName);
+            // $(event.target).parent().parent().find('input[type=text]').eq(1).val(vm.orderDetails.shipAddress.shipTel);
+            // $(event.target).parent().parent().find('input[type=text]').eq(2).val(vm.orderDetails.shipAddress.shipCountry);
+            // $(event.target).parent().parent().find('input[type=text]').eq(3).val(vm.orderDetails.shipAddress.shipZip);
+            // $(event.target).parent().parent().find('input[type=text]').eq(4).val(vm.orderDetails.shipAddress.shipRegion);
+            // $(event.target).parent().parent().find('input[type=text]').eq(5).val(vm.orderDetails.shipAddress.shipCity);
+            // $(event.target).parent().parent().find('input[type=text]').eq(6).val(vm.orderDetails.shipAddress.shipAddressLine1);
             $(event.target).prev().val('编辑');
             $(event.target).parent().parent().find('input[type=text]').attr('disabled','true');
             $(event.target).parent().parent().find('textarea').attr('disabled','true');
@@ -373,6 +401,7 @@ var vm = new Vue({
             var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             layer.close(index);
             layer.msg("暂无此功能");
+
             // $.ajax({
             //     // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
             //     url: '../../product/order/deleteLogistic',
@@ -674,6 +703,9 @@ var vm = new Vue({
             $(event.target).addClass('layui-this');
             $('.layui-tab-content').removeClass('action');
             $('.layui-tab-content').eq(_index).addClass('action');
+        },
+        returnFunc:function () {
+            window.location.href = 'myOrder.html';
         }
     },
     created:function () {

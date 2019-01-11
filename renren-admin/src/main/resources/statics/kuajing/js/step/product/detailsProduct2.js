@@ -808,9 +808,13 @@ var vm = new Vue({
         // 点击分类输入框展示一级分类
         typeClickINput:function (event) {
             // var _top = $(event.target)
+            var _top = $(event.target).offset().top;
+            var _height = $(event.target).height();
+            var top = _top+_height;
             console.log($('.sousuoArea'));
             $('.sousuoArea').css({
                 'display':'flex',
+                'top':top+'px'
             })
             vm.getProTypeOne();
 
@@ -2400,9 +2404,18 @@ var vm = new Vue({
                         var t = vm.recommendAll[i];
                         console.log(t);
                         var string = '';
-                        v.forEach(function (n) {
-                            string+=t.img[n]+','
-                        })
+                        for(var m = 0;m<v.length;m++){
+                            v.forEach(function (n,i) {
+                                console.log(m)
+                                console.log(n)
+                                console.log(m == n)
+                                if(m == n){
+                                    string+=t.img[i]+','
+                                }
+
+                            })
+                        }
+
                         console.log('11111111');
                         // console.log(v.join(','));
                         vm.proDetails.variantsInfos[i].variantId = i;
@@ -2468,6 +2481,7 @@ var vm = new Vue({
 
 
         },
+
         // 删除变体列表某条数据
         delVariantList:function (event) {
             layer.confirm('确定删除改组合信息吗？',function (index) {
@@ -2589,6 +2603,13 @@ var vm = new Vue({
             console.log(i);
             data.img.splice(i,1);
             console.log(data.img);
+            $('#imgBigDiv').css('display','none');
+            $('.ul1 li').css({
+                'position':'relative',
+                'top':'0px',
+                'left':'0px',
+                'margin':'10px'
+            });
         },
 
         // 返回

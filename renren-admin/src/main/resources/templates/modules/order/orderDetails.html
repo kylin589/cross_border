@@ -27,7 +27,7 @@
               <a><cite>订单详情</cite></a>
             </span>
 
-            <!--<button class="save">保存并提交</button>-->
+            <input type="button" class="return" @click="returnFunc" value="返回" />
         </p>
 
         <div class="form_item one">
@@ -41,6 +41,7 @@
                     <!--<p>sdkfjbsanklnsml;kdgfuasbjkdnlcxm </p>-->
                     <!--<p>{{ orderDetails.shipAddress }}</p>-->
 
+                    <span><label for="">订单ID：</label><span>{{ orderDetails.orderId }}</span></span>
                     <span><label for="">店铺：</label><span>{{ orderDetails.shopName }}</span></span><br>
                     <span><label for="">SKU：</label><span :lay-href="'modules/product/detailsProduct1.html?id='+orderDetails.productId" layadmin-event="message" lay-text="产品详情" style="color: #12ace8;cursor:pointer;">{{ orderDetails.productSku }}</span></span>
                     <span><label for="">ASIN：</label><span>{{ orderDetails.productAsin }}</span></span><br>
@@ -86,8 +87,8 @@
                             {{orderDetails.shipAddress.shipDistrict}}
                         </textarea></span>
                         <div class="fr" style="">
-                            <input class="edit" type="button" value="编辑" @click="editJijian(orderDetails.shipAddress.shipAddressId)">
-                            <input class="noedit" type="button" value="取消" @click="noedit">
+                            <input class="edit" type="button" value="编辑" @click="editJijian">
+                            <input class="noedit" type="button" value="取消" @click="noedit1">
                         </div>
                     </div>
 

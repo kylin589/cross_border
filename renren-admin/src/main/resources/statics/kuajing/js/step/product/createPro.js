@@ -842,10 +842,13 @@ var vm = new Vue({
         },
         // 点击分类输入框展示一级分类
         typeClickINput:function (event) {
-            // var _top = $(event.target)
+            var _top = $(event.target).offset().top;
+            var _height = $(event.target).height();
+            var top = _top+_height;
             console.log($('.sousuoArea'));
             $('.sousuoArea').css({
                 'display':'flex',
+                'top':top+'px'
             })
             vm.getProTypeOne();
 
