@@ -47,6 +47,8 @@ public class OrderModel {
     private Long deptId;
     private Long shopId;
 
+    private String productImageUrl;
+
     public Long getShopId() {
         return shopId;
     }
@@ -168,5 +170,13 @@ public class OrderModel {
 
     public void setTitlename(String titlename) {
         this.titlename = titlename;
+    }
+
+    public String getProductImageUrl() {
+        return productImageUrl;
+    }
+
+    public void setProductImageUrl(String productImageUrl) {
+        this.productImageUrl = productImageUrl;
     }
 }
