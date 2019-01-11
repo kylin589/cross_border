@@ -1901,8 +1901,126 @@ public class GenerateProductXML {
                 }
 
                 // 后续部分
-                Element a = buildingMaterials.addElement("AccessoryConnectionType");
-                // TODO: 2019/1/10 写到这里
+                Element accessoryConnectionType = buildingMaterials.addElement("AccessoryConnectionType");
+                accessoryConnectionType.addText("null");
+                /*Element bladeEdge = buildingMaterials.addElement("BladeEdge");
+                bladeEdge.addText("\\t");
+                Element bulbType = buildingMaterials.addElement("BulbType");
+                bulbType.addText("\\t");
+                Element compatibleDevices = buildingMaterials.addElement("CompatibleDevices");
+                compatibleDevices.addText("\\t");
+                Element compatibleFastenerRange = buildingMaterials.addElement("CompatibleFastenerRange");
+                compatibleFastenerRange.addText("\\t");
+                Element coolingMethod = buildingMaterials.addElement("CoolingMethod");
+                coolingMethod.addText("\\t");
+                Element environmentalDescription = buildingMaterials.addElement("EnvironmentalDescription");
+                environmentalDescription.addText("\\t");
+                Element externalTestingCertification = buildingMaterials.addElement("ExternalTestingCertification");
+                externalTestingCertification.addText("\\t");
+                Element coverage = buildingMaterials.addElement("Coverage");
+                coverage.addText("\\t");
+                Element cutType = buildingMaterials.addElement("CutType");
+                cutType.addText("\\t");
+                Element deviceType = buildingMaterials.addElement("DeviceType");
+                deviceType.addText("\\t");
+                Element displayStyle = buildingMaterials.addElement("DisplayStyle");
+                displayStyle.addText("\\t");
+                Element flushType = buildingMaterials.addElement("FlushType");
+                flushType.addText("\\t");
+                Element foldedKnifeSize = buildingMaterials.addElement("FoldedKnifeSize");
+                foldedKnifeSize.addText("\\t");
+                Element handleMaterial = buildingMaterials.addElement("HandleMaterial");
+                handleMaterial.addText("\\t");
+                Element headStyle = buildingMaterials.addElement("HeadStyle");
+                headStyle.addText("\\t");
+                Element laserBeamColor = buildingMaterials.addElement("LaserBeamColor");
+                laserBeamColor.addText("\\t");
+                Element measurementAccuracy = buildingMaterials.addElement("MeasurementAccuracy");
+                measurementAccuracy.addElement("\\t");
+                Element measurementSystem = buildingMaterials.addElement("MeasurementSystem");
+                measurementSystem.addText("\\t");
+                Element performanceDescription = buildingMaterials.addElement("PerformanceDescription");
+                performanceDescription.addText("\\t");
+
+                // PlugProfile - 插头类型
+                Element plugProfile = buildingMaterials.addElement("PlugProfile");
+                plugProfile.addText(String.valueOf(valueMap.get("PlugProfile")));
+
+                Element switchStyle = buildingMaterials.addElement("SwitchStyle");
+                switchStyle.addText("\\t");
+
+                // SwitchType - 开关类型
+                Element switchType = buildingMaterials.addElement("SwitchType");
+                switchType.addText(String.valueOf(valueMap.get("SwitchType")));
+
+                Element toolTipDescription = buildingMaterials.addElement("ToolTipDescription");
+                toolTipDescription.addText("\\t");
+                Element uVProtection = buildingMaterials.addElement("UVProtection");
+                uVProtection.addText("\\t");
+                Element viewingArea = buildingMaterials.addElement("ViewingArea");
+                viewingArea.addText("\\t");
+
+                // 尺寸
+                Element size = buildingMaterials.addElement("Size");
+                size.addText("\\t");
+                // 颜色
+                Element color = buildingMaterials.addElement("Color");
+                color.addText("\\t");
+                // 色系和颜色一样
+                Element colorMap = buildingMaterials.addElement("ColorMap");
+                colorMap.addText("\\t");
+
+                // Material - 材料
+                Element material = buildingMaterials.addElement("Material");
+                material.addText(String.valueOf(valueMap.get("Material")));
+
+                Element manufacturerWarrantyDescription = buildingMaterials.addElement("ManufacturerWarrantyDescription");
+                manufacturerWarrantyDescription.addText("\\t");
+
+                // PowerSource - 能量源
+                Element powerSource = buildingMaterials.addElement("PowerSource");
+                powerSource.addText(String.valueOf(valueMap.get("PowerSource")));
+
+                Element sellerWarrantyDescription = buildingMaterials.addElement("SellerWarrantyDescription");
+                sellerWarrantyDescription.addText("\\t");
+                Element customerPackageType = buildingMaterials.addElement("CustomerPackageType");
+                customerPackageType.addText("\\t");
+                Element bladeColor = buildingMaterials.addElement("BladeColor");
+                bladeColor.addText("\\t");
+                Element circuitBreakerType = buildingMaterials.addElement("CircuitBreakerType");
+                circuitBreakerType.addText("\\t");
+                Element efficiency = buildingMaterials.addElement("Efficiency");
+                efficiency.addText("\\t");
+                Element internationalProtectionRating = buildingMaterials.addElement("InternationalProtectionRating");
+                internationalProtectionRating.addText("\\t");
+                Element lightingMethod = buildingMaterials.addElement("LightingMethod");
+                lightingMethod.addText("\\t");
+                Element shadeMaterialType = buildingMaterials.addElement("ShadeMaterialType");
+                shadeMaterialType.addText("\\t");
+                Element shortProductDescription = buildingMaterials.addElement("ShortProductDescription");
+                shortProductDescription.addText("\\t");
+                Element startUpTimeDescription = buildingMaterials.addElement("StartUpTimeDescription");
+                startUpTimeDescription.addText("\\t");
+                Element strands = buildingMaterials.addElement("Strands");
+                strands.addText("\\t");
+                Element customerRestrictionType = buildingMaterials.addElement("CustomerRestrictionType");
+                customerRestrictionType.addText("\\t");
+                Element legalComplianceCertificationMetadata = buildingMaterials.addElement("LegalComplianceCertificationMetadata");
+                legalComplianceCertificationMetadata.addText("\\t");
+                Element legalComplianceCertificationDateOfIssue = buildingMaterials.addElement("LegalComplianceCertificationDateOfIssue");
+                legalComplianceCertificationDateOfIssue.addText("\\t");
+                Element legalComplianceCertificationExpirationDate = buildingMaterials.addElement("LegalComplianceCertificationExpirationDate");
+                legalComplianceCertificationExpirationDate.addText("\\t");
+
+                Element mfrWarrantyDescriptionLabor = homeImprovement.addElement("MfrWarrantyDescriptionLabor");
+                mfrWarrantyDescriptionLabor.addText("\\t");
+                Element mfrWarrantyDescriptionParts = homeImprovement.addElement("MfrWarrantyDescriptionParts");
+                mfrWarrantyDescriptionParts.addText("\\t");
+                Element mfrWarrantyDescriptionType = homeImprovement.addElement("MfrWarrantyDescriptionType");
+                mfrWarrantyDescriptionType.addText("\\t");
+                Element fabricType = homeImprovement.addElement("FabricType");
+                fabricType.addText("\\t");
+*/
                 for (int j = 0; j < variantsInfoEntityList.size(); j++) {
                     VariantsInfoEntity variantsInfoEntity = variantsInfoEntityList.get(j);
                     Element vieMessage = root.addElement("Message");
@@ -2010,46 +2128,301 @@ public class GenerateProductXML {
                     }
 
                     Element vieProductData = vieProduct.addElement("ProductData");
-                    Element vieClothing = vieProductData.addElement("Clothing");
+                    Element vieHomeImprovement = vieProductData.addElement("HomeImprovement");
 
-                    Element vieVariationData = vieClothing.addElement("VariationData");
+                    Element vieProductType = vieHomeImprovement.addElement("ProductType");
+                    Element vieBuildingMaterials = vieProductType.addElement("BuildingMaterials");
+                    Element vieVariationData = vieBuildingMaterials.addElement("VariationData");
                     Element vieParentage = vieVariationData.addElement("Parentage");
                     vieParentage.addText("child");
-
-                    switch (variationThemeStr) {
-                        case "Size-Color":
-                            Element vieSize = vieVariationData.addElement("Size");
-                            String[] str = variantsInfoEntity.getVariantCombination().split("\\*");
-                            // TODO: 2019/1/10 改，放在外面
-                            vieSize.addText(str[1]);
-                            Element vieColor = vieVariationData.addElement("Color");
-                            vieColor.addText(str[0]);
-                            break;
-                        case "Color":
-                            Element vieColor1 = vieVariationData.addElement("Color");
-                            vieColor1.addText(variantsInfoEntity.getVariantCombination());
-                            break;
-                        case "Size":
-                            Element vieSize2 = vieVariationData.addElement("Size");
-                            vieSize2.addText(variantsInfoEntity.getVariantCombination());
-                            break;
-                        default:
-                            break;
-                    }
                     Element vieVariationTheme = vieVariationData.addElement("VariationTheme");
                     vieVariationTheme.addText(variationThemeStr);
 
-                    // 后续部分
+
+                    /*Element vieAccessoryConnectionType = vieBuildingMaterials.addElement("AccessoryConnectionType");
+                    vieAccessoryConnectionType.addText("\\t");
+                    Element vieBladeEdge = vieBuildingMaterials.addElement("BladeEdge");
+                    vieBladeEdge.addText("\\t");
+                    Element vieBulbType = vieBuildingMaterials.addElement("BulbType");
+                    vieBulbType.addText("\\t");
+                    Element vieCompatibleDevices = vieBuildingMaterials.addElement("CompatibleDevices");
+                    vieCompatibleDevices.addText("\\t");
+                    Element vieCompatibleFastenerRange = vieBuildingMaterials.addElement("CompatibleFastenerRange");
+                    vieCompatibleFastenerRange.addText("\\t");
+                    Element vieCoolingMethod = vieBuildingMaterials.addElement("CoolingMethod");
+                    vieCoolingMethod.addText("\\t");
+                    Element vieEnvironmentalDescription = vieBuildingMaterials.addElement("EnvironmentalDescription");
+                    vieEnvironmentalDescription.addText("\\t");
+                    Element vieExternalTestingCertification = vieBuildingMaterials.addElement("ExternalTestingCertification");
+                    vieExternalTestingCertification.addText("\\t");
+                    Element vieCoverage = vieBuildingMaterials.addElement("Coverage");
+                    vieCoverage.addText("\\t");
+                    Element vieCutType = vieBuildingMaterials.addElement("CutType");
+                    vieCutType.addText("\\t");
+                    Element vieDeviceType = vieBuildingMaterials.addElement("DeviceType");
+                    vieDeviceType.addText("\\t");
+                    Element vieDisplayStyle = vieBuildingMaterials.addElement("DisplayStyle");
+                    vieDisplayStyle.addText("\\t");
+                    Element vieFlushType = vieBuildingMaterials.addElement("FlushType");
+                    vieFlushType.addText("\\t");
+                    Element vieFoldedKnifeSize = vieBuildingMaterials.addElement("FoldedKnifeSize");
+                    vieFoldedKnifeSize.addText("\\t");
+                    Element vieHandleMaterial = vieBuildingMaterials.addElement("HandleMaterial");
+                    vieHandleMaterial.addText("\\t");
+                    Element vieHeadStyle = vieBuildingMaterials.addElement("HeadStyle");
+                    vieHeadStyle.addText("\\t");
+                    Element vieLaserBeamColor = vieBuildingMaterials.addElement("LaserBeamColor");
+                    vieLaserBeamColor.addText("\\t");
+                    Element vieMeasurementAccuracy = vieBuildingMaterials.addElement("MeasurementAccuracy");
+                    vieMeasurementAccuracy.addElement("\\t");
+                    Element vieMeasurementSystem = vieBuildingMaterials.addElement("MeasurementSystem");
+                    vieMeasurementSystem.addText("\\t");
+                    Element viePerformanceDescription = vieBuildingMaterials.addElement("PerformanceDescription");
+                    viePerformanceDescription.addText("\\t");*/
+
+                    // PlugProfile - 插头类型
+                    Element viePlugProfile = vieBuildingMaterials.addElement("PlugProfile");
+                    viePlugProfile.addText(String.valueOf(valueMap.get("PlugProfile")));
+
+                    /*Element vieSwitchStyle = vieBuildingMaterials.addElement("SwitchStyle");
+                    vieSwitchStyle.addText("\\t");*/
+
+                    // SwitchType - 开关类型
+                    Element vieSwitchType = vieBuildingMaterials.addElement("SwitchType");
+                    vieSwitchType.addText(String.valueOf(valueMap.get("SwitchType")));
+
+                    /*Element vieToolTipDescription = vieBuildingMaterials.addElement("ToolTipDescription");
+                    vieToolTipDescription.addText("\\t");
+                    Element vieUVProtection = vieBuildingMaterials.addElement("UVProtection");
+                    vieUVProtection.addText("\\t");
+                    Element vieViewingArea = vieBuildingMaterials.addElement("ViewingArea");
+                    vieViewingArea.addText("\\t");*/
+
+                    switch (variationThemeStr) {
+                        case "Size-Color":
+                            String[] str = variantsInfoEntity.getVariantCombination().split("\\*");
+
+                            // 尺寸
+                            Element vieSize = vieBuildingMaterials.addElement("Size");
+                            vieSize.addText(str[1]);
+
+                            // 颜色
+                            Element vieColor = vieBuildingMaterials.addElement("Color");
+                            vieColor.addText(str[0]);
+
+                            // 色系和颜色一样
+                            /*Element vieColorMap = vieBuildingMaterials.addElement("ColorMap");
+                            vieColorMap.addText("\\t");*/
+                            break;
+                        case "Color":
+                            // 尺寸
+                           /* Element vieSize1 = vieBuildingMaterials.addElement("Size");
+                            vieSize1.addText("\\t");*/
+
+                            // 颜色
+                            Element vieColor1 = vieBuildingMaterials.addElement("Color");
+                            vieColor1.addText(variantsInfoEntity.getVariantCombination());
+
+                            // 色系和颜色一样
+                           /* Element vieColorMap1 = vieBuildingMaterials.addElement("ColorMap");
+                            vieColorMap1.addText("\\t");*/
+                            break;
+                        case "Size":
+                            // 尺寸
+                            Element vieSize2 = vieBuildingMaterials.addElement("Size");
+                            vieSize2.addText(variantsInfoEntity.getVariantCombination());
+
+                          /*  // 颜色
+                            Element vieColor2 = vieBuildingMaterials.addElement("Color");
+                            vieColor2.addText("\\t");
+
+                            // 色系和颜色一样
+                            Element vieColorMap2 = vieBuildingMaterials.addElement("ColorMap");
+                            vieColorMap2.addText("\\t");*/
+                            break;
+                        default:
+                    }
+
+                    // Material - 材料
+                    Element vieMaterial = vieBuildingMaterials.addElement("Material");
+                    vieMaterial.addText(String.valueOf(valueMap.get("Material")));
+
+                   /* Element vieManufacturerWarrantyDescription = vieBuildingMaterials.addElement("ManufacturerWarrantyDescription");
+                    vieManufacturerWarrantyDescription.addText("\\t");*/
+
+                    // PowerSource - 能量源
+                    Element viePowerSource = vieBuildingMaterials.addElement("PowerSource");
+                    viePowerSource.addText(String.valueOf(valueMap.get("PowerSource")));
+
+                   /* Element vieSellerWarrantyDescription = vieBuildingMaterials.addElement("SellerWarrantyDescription");
+                    vieSellerWarrantyDescription.addText("\\t");
+                    Element vieCustomerPackageType = vieBuildingMaterials.addElement("CustomerPackageType");
+                    vieCustomerPackageType.addText("\\t");
+                    Element vieBladeColor = vieBuildingMaterials.addElement("BladeColor");
+                    vieBladeColor.addText("\\t");
+                    Element vieCircuitBreakerType = vieBuildingMaterials.addElement("CircuitBreakerType");
+                    vieCircuitBreakerType.addText("\\t");
+                    Element vieEfficiency = vieBuildingMaterials.addElement("Efficiency");
+                    vieEfficiency.addText("\\t");
+                    Element vieInternationalProtectionRating = vieBuildingMaterials.addElement("InternationalProtectionRating");
+                    vieInternationalProtectionRating.addText("\\t");
+                    Element vieLightingMethod = vieBuildingMaterials.addElement("LightingMethod");
+                    vieLightingMethod.addText("\\t");
+                    Element vieShadeMaterialType = vieBuildingMaterials.addElement("ShadeMaterialType");
+                    vieShadeMaterialType.addText("\\t");
+                    Element vieShortProductDescription = vieBuildingMaterials.addElement("ShortProductDescription");
+                    vieShortProductDescription.addText("\\t");
+                    Element vieStartUpTimeDescription = vieBuildingMaterials.addElement("StartUpTimeDescription");
+                    vieStartUpTimeDescription.addText("\\t");
+                    Element vieStrands = vieBuildingMaterials.addElement("Strands");
+                    vieStrands.addText("\\t");
+                    Element vieCustomerRestrictionType = vieBuildingMaterials.addElement("CustomerRestrictionType");
+                    vieCustomerRestrictionType.addText("\\t");
+                    Element vieLegalComplianceCertificationMetadata = vieBuildingMaterials.addElement("LegalComplianceCertificationMetadata");
+                    vieLegalComplianceCertificationMetadata.addText("\\t");
+                    Element vieLegalComplianceCertificationDateOfIssue = vieBuildingMaterials.addElement("LegalComplianceCertificationDateOfIssue");
+                    vieLegalComplianceCertificationDateOfIssue.addText("\\t");
+                    Element vieLegalComplianceCertificationExpirationDate = vieBuildingMaterials.addElement("LegalComplianceCertificationExpirationDate");
+                    legalComplianceCertificationExpirationDate.addText("\\t");
+
+                    Element vieMfrWarrantyDescriptionLabor = vieHomeImprovement.addElement("MfrWarrantyDescriptionLabor");
+                    vieMfrWarrantyDescriptionLabor.addText("\\t");
+                    Element vieMfrWarrantyDescriptionParts = vieHomeImprovement.addElement("MfrWarrantyDescriptionParts");
+                    vieMfrWarrantyDescriptionParts.addText("\\t");
+                    Element vieMfrWarrantyDescriptionType = vieHomeImprovement.addElement("MfrWarrantyDescriptionType");
+                    vieMfrWarrantyDescriptionType.addText("\\t");
+                    Element vieFabricType = vieHomeImprovement.addElement("FabricType");
+                    vieFabricType.addText("\\t");*/
                 }
             } else {
-                // 没有变体
+                Element productType = homeImprovement.addElement("ProductType");
+                Element buildingMaterials = productType.addElement("BuildingMaterials");
+                Element accessoryConnectionType = buildingMaterials.addElement("AccessoryConnectionType");
+                accessoryConnectionType.addText("null");
+                /*Element bladeEdge = buildingMaterials.addElement("BladeEdge");
+                bladeEdge.addText("\\t");
+                Element bulbType = buildingMaterials.addElement("BulbType");
+                bulbType.addText("\\t");
+                Element compatibleDevices = buildingMaterials.addElement("CompatibleDevices");
+                compatibleDevices.addText("\\t");
+                Element compatibleFastenerRange = buildingMaterials.addElement("CompatibleFastenerRange");
+                compatibleFastenerRange.addText("\\t");
+                Element coolingMethod = buildingMaterials.addElement("CoolingMethod");
+                coolingMethod.addText("\\t");
+                Element environmentalDescription = buildingMaterials.addElement("EnvironmentalDescription");
+                environmentalDescription.addText("\\t");
+                Element externalTestingCertification = buildingMaterials.addElement("ExternalTestingCertification");
+                externalTestingCertification.addText("\\t");
+                Element coverage = buildingMaterials.addElement("Coverage");
+                coverage.addText("\\t");
+                Element cutType = buildingMaterials.addElement("CutType");
+                cutType.addText("\\t");
+                Element deviceType = buildingMaterials.addElement("DeviceType");
+                deviceType.addText("\\t");
+                Element displayStyle = buildingMaterials.addElement("DisplayStyle");
+                displayStyle.addText("\\t");
+                Element flushType = buildingMaterials.addElement("FlushType");
+                flushType.addText("\\t");
+                Element foldedKnifeSize = buildingMaterials.addElement("FoldedKnifeSize");
+                foldedKnifeSize.addText("\\t");
+                Element handleMaterial = buildingMaterials.addElement("HandleMaterial");
+                handleMaterial.addText("\\t");
+                Element headStyle = buildingMaterials.addElement("HeadStyle");
+                headStyle.addText("\\t");
+                Element laserBeamColor = buildingMaterials.addElement("LaserBeamColor");
+                laserBeamColor.addText("\\t");
+                Element measurementAccuracy = buildingMaterials.addElement("MeasurementAccuracy");
+                measurementAccuracy.addText("\\t");
+                Element measurementSystem = buildingMaterials.addElement("MeasurementSystem");
+                measurementSystem.addText("\\t");
+                Element performanceDescription = buildingMaterials.addElement("PerformanceDescription");
+                performanceDescription.addText("\\t");
 
+                */
+                // PlugProfile - 插头类型
+                Element plugProfile = buildingMaterials.addElement("PlugProfile");
+                plugProfile.addText(String.valueOf(valueMap.get("PlugProfile")));
+
+                /*Element switchStyle = buildingMaterials.addElement("SwitchStyle");
+                switchStyle.addText("\\t");*/
+
+                // SwitchType - 开关类型
+                Element switchType = buildingMaterials.addElement("SwitchType");
+                switchType.addText(String.valueOf(valueMap.get("SwitchType")));
+
+               /* Element toolTipDescription = buildingMaterials.addElement("ToolTipDescription");
+                toolTipDescription.addText("\\t");
+                Element uVProtection = buildingMaterials.addElement("UVProtection");
+                uVProtection.addText("\\t");
+                Element viewingArea = buildingMaterials.addElement("ViewingArea");
+                viewingArea.addText("\\t");*/
+
+              /*  // 尺寸
+                Element size = buildingMaterials.addElement("Size");
+                size.addText("\\t");
+                // 颜色
+                Element color = buildingMaterials.addElement("Color");
+                color.addText("\\t");
+                // 色系和颜色一样
+                Element colorMap = buildingMaterials.addElement("ColorMap");
+                colorMap.addText("\\t");*/
+
+                // Material - 材料
+                Element material = buildingMaterials.addElement("Material");
+                material.addText(String.valueOf(valueMap.get("Material")));
+
+                /*Element manufacturerWarrantyDescription = buildingMaterials.addElement("ManufacturerWarrantyDescription");
+                manufacturerWarrantyDescription.addText("\\t");*/
+
+                // PowerSource - 能量源
+                Element powerSource = buildingMaterials.addElement("PowerSource");
+                powerSource.addText(String.valueOf(valueMap.get("PowerSource")));
+
+               /* Element sellerWarrantyDescription = buildingMaterials.addElement("SellerWarrantyDescription");
+                sellerWarrantyDescription.addText("\\t");
+                Element customerPackageType = buildingMaterials.addElement("CustomerPackageType");
+                customerPackageType.addText("\\t");
+                Element bladeColor = buildingMaterials.addElement("BladeColor");
+                bladeColor.addText("\\t");
+                Element circuitBreakerType = buildingMaterials.addElement("CircuitBreakerType");
+                circuitBreakerType.addText("\\t");
+                Element efficiency = buildingMaterials.addElement("Efficiency");
+                efficiency.addText("\\t");
+                Element internationalProtectionRating = buildingMaterials.addElement("InternationalProtectionRating");
+                internationalProtectionRating.addText("\\t");
+                Element lightingMethod = buildingMaterials.addElement("LightingMethod");
+                lightingMethod.addText("\\t");
+                Element shadeMaterialType = buildingMaterials.addElement("ShadeMaterialType");
+                shadeMaterialType.addText("\\t");
+                Element shortProductDescription = buildingMaterials.addElement("ShortProductDescription");
+                shortProductDescription.addText("\\t");
+                Element startUpTimeDescription = buildingMaterials.addElement("StartUpTimeDescription");
+                startUpTimeDescription.addText("\\t");
+                Element strands = buildingMaterials.addElement("Strands");
+                strands.addText("\\t");
+                Element customerRestrictionType = buildingMaterials.addElement("CustomerRestrictionType");
+                customerRestrictionType.addText("\\t");
+                Element legalComplianceCertificationMetadata = buildingMaterials.addElement("LegalComplianceCertificationMetadata");
+                legalComplianceCertificationMetadata.addText("\\t");
+                Element legalComplianceCertificationDateOfIssue = buildingMaterials.addElement("LegalComplianceCertificationDateOfIssue");
+                legalComplianceCertificationDateOfIssue.addText("\\t");
+                Element legalComplianceCertificationExpirationDate = buildingMaterials.addElement("LegalComplianceCertificationExpirationDate");
+                legalComplianceCertificationExpirationDate.addText("\\t");*/
+
+                /*Element mfrWarrantyDescriptionLabor = homeImprovement.addElement("MfrWarrantyDescriptionLabor");
+                mfrWarrantyDescriptionLabor.addText("\\t");
+                Element mfrWarrantyDescriptionParts = homeImprovement.addElement("MfrWarrantyDescriptionParts");
+                mfrWarrantyDescriptionParts.addText("\\t");
+                Element mfrWarrantyDescriptionType = homeImprovement.addElement("MfrWarrantyDescriptionType");
+                mfrWarrantyDescriptionType.addText("\\t");
+                Element fabricType = homeImprovement.addElement("FabricType");
+                fabricType.addText("\\t");*/
             }
 
         }
         // 生成文件路径
         String path = fileStoragePath;
-        String filePath = FileUtil.generateFilePath(path, "ProductByClothing");
+        String filePath = FileUtil.generateFilePath(path, "ProductByHomeImprovement");
 
         try {
             XMLUtil.writeXMLToFile(document, filePath);
