@@ -19,7 +19,7 @@
 
     <table>
         <tr>
-            <th>序号</th>
+            <th>上传编号</th>
             <!--<th>图片</th>-->
             <th>授权账户</th>
             <th>AMAZON类目</th>
@@ -29,7 +29,7 @@
             <th style="text-align: left;width: 270px">操作</th>
         </tr>
         <tr v-for = '(item,index) in prolist'>
-            <td>{{ index+1 }}</td>
+            <td>{{ item.uploadId }}</td>
             <!--<td><img :src="item.mainUrl" alt=""></td>-->
             <td>{{ item.grantShop }}</td>
             <td>{{ item.amazonCategory }}</td>

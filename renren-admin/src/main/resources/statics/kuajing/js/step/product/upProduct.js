@@ -62,13 +62,15 @@ var vm = new Vue({
         },
         //上传列表
         getMyUploadList:function () {
+            console.log(this.proCurr);
+            console.log(this.pageLimit);
             $.ajax({
                 url: '../../product/upload/getMyUploadList',
                 type: 'post',
-                data: JSON.stringify({
+                data: {
                     page:this.proCurr,
                     limit:this.pageLimit
-                }),
+                },
                 dataType: 'json',
                 success: function (r) {
                     console.log(r);
@@ -88,13 +90,15 @@ var vm = new Vue({
             });
         },
         getMyUploadList1:function () {
+            console.log(vm.proCurr);
+            console.log(vm.pageLimit);
             $.ajax({
                 url: '../../product/upload/getMyUploadList',
                 type: 'post',
-                data: JSON.stringify({
-                    page:this.proCurr,
-                    limit:this.pageLimit
-                }),
+                data: {
+                    page:vm.proCurr,
+                    limit:vm.pageLimit
+                },
                 dataType: 'json',
                 success: function (r) {
                     console.log(r);
@@ -180,7 +184,6 @@ var vm = new Vue({
         }
     },
     created:function () {
-
         this.getMyUploadList();
 
     }
