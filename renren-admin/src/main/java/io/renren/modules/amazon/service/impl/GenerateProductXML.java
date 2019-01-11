@@ -1941,26 +1941,26 @@ public class GenerateProductXML {
                 measurementSystem.addText("\\t");
                 Element performanceDescription = buildingMaterials.addElement("PerformanceDescription");
                 performanceDescription.addText("\\t");
-
+            */
                 // PlugProfile - 插头类型
                 Element plugProfile = buildingMaterials.addElement("PlugProfile");
                 plugProfile.addText(String.valueOf(valueMap.get("PlugProfile")));
 
-                Element switchStyle = buildingMaterials.addElement("SwitchStyle");
-                switchStyle.addText("\\t");
+               /* Element switchStyle = buildingMaterials.addElement("SwitchStyle");
+                switchStyle.addText("\\t");*/
 
                 // SwitchType - 开关类型
                 Element switchType = buildingMaterials.addElement("SwitchType");
                 switchType.addText(String.valueOf(valueMap.get("SwitchType")));
 
-                Element toolTipDescription = buildingMaterials.addElement("ToolTipDescription");
+               /* Element toolTipDescription = buildingMaterials.addElement("ToolTipDescription");
                 toolTipDescription.addText("\\t");
                 Element uVProtection = buildingMaterials.addElement("UVProtection");
                 uVProtection.addText("\\t");
                 Element viewingArea = buildingMaterials.addElement("ViewingArea");
-                viewingArea.addText("\\t");
+                viewingArea.addText("\\t");*/
 
-                // 尺寸
+                /*// 尺寸
                 Element size = buildingMaterials.addElement("Size");
                 size.addText("\\t");
                 // 颜色
@@ -1968,20 +1968,20 @@ public class GenerateProductXML {
                 color.addText("\\t");
                 // 色系和颜色一样
                 Element colorMap = buildingMaterials.addElement("ColorMap");
-                colorMap.addText("\\t");
+                colorMap.addText("\\t");*/
 
                 // Material - 材料
                 Element material = buildingMaterials.addElement("Material");
                 material.addText(String.valueOf(valueMap.get("Material")));
 
-                Element manufacturerWarrantyDescription = buildingMaterials.addElement("ManufacturerWarrantyDescription");
-                manufacturerWarrantyDescription.addText("\\t");
+                /*Element manufacturerWarrantyDescription = buildingMaterials.addElement("ManufacturerWarrantyDescription");
+                manufacturerWarrantyDescription.addText("\\t");*/
 
                 // PowerSource - 能量源
                 Element powerSource = buildingMaterials.addElement("PowerSource");
                 powerSource.addText(String.valueOf(valueMap.get("PowerSource")));
 
-                Element sellerWarrantyDescription = buildingMaterials.addElement("SellerWarrantyDescription");
+             /*   Element sellerWarrantyDescription = buildingMaterials.addElement("SellerWarrantyDescription");
                 sellerWarrantyDescription.addText("\\t");
                 Element customerPackageType = buildingMaterials.addElement("CustomerPackageType");
                 customerPackageType.addText("\\t");

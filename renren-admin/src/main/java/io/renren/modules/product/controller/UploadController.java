@@ -504,6 +504,7 @@ public class UploadController extends AbstractController {
         uploadEntity = uploadService.selectById(uploadEntity);
         uploadEntity.setUploadState(1);
         uploadEntity.setUpdateTime(new Date());
+        uploadEntity.setUserId(getUserId());
         uploadService.updateById(uploadEntity);
         // 删除xml基本信息
         Map<String, Object> map = new HashMap<>();
