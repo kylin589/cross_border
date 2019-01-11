@@ -82,6 +82,8 @@ window.onload = function () {
 var vm = new Vue({
     el: '#step',
     data: {
+        // 用户id
+        userId:null,
         // 产品列表
         proList: [],
         // 当前页码
@@ -308,13 +310,14 @@ var vm = new Vue({
                 success: function (r) {
                     if (r.code === 0) {
                         console.log('订单列表');
-                        console.log(r)
+                        console.log(r);
                         vm.statistics.proNum = r.proNum;
                         vm.statistics.via = r.via;
                         vm.statistics.variant = r.variant;
                         vm.statistics.allVariant = r.allVariant;
                         vm.proList = r.page.list;
                         vm.totalCount = r.page.totalCount;
+                        vm.userId = r.userId;
                         console.log(vm.proList);
                         // vm.proCurr = r.page.currPage;
                         // vm.limit = r.page.pageSize;
@@ -999,12 +1002,14 @@ var vm = new Vue({
 
                     },1000);
                     layer.close(index);
+
                     $.ajax({
                         // url: 'http://39.106.131.222:8000/getCollectionInfo',
                         url: 'http://www.threeee.cn/getCollectionInfo',
                         type: 'post',
                         // data:vm.xiugaiData,
                         data:{
+                            userId:vm.userId,
                             url:vm.caijiUrl,
                             // category_three_id:vm.caijiThreeId
                         },

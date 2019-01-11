@@ -89,6 +89,7 @@ var vm = new Vue({
                 }
             });
         },
+
         getMyUploadList1:function () {
             console.log(vm.proCurr);
             console.log(vm.pageLimit);
@@ -181,7 +182,8 @@ var vm = new Vue({
         // xml列表
         xmlFunc:function (id) {
             window.location.href="xmlListUP.html?id="+id;
-        }
+        },
+
     },
     created:function () {
         this.getMyUploadList();
