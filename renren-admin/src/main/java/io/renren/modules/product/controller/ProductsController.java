@@ -95,7 +95,7 @@ public class ProductsController extends AbstractController {
     public R list(@RequestParam Map<String, Object> params) {
         //当前用户的产品列表
         Map<String, Object> map = productsService.queryMyPage(params, getUserId());
-        return R.ok().put("page", map.get("page")).put("proNum", map.get("proCount")).put("via", map.get("approvedCount")).put("variant", map.get("numberOfVariants")).put("allVariant", map.get("variantsCount"));
+        return R.ok().put("page", map.get("page")).put("proNum", map.get("proCount")).put("via", map.get("approvedCount")).put("variant", map.get("numberOfVariants")).put("allVariant", map.get("variantsCount")).put("userId",getUserId());
     }
 
     /**
