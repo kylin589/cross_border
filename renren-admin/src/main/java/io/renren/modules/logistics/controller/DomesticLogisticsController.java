@@ -36,7 +36,6 @@ public class DomesticLogisticsController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("logistics:domesticlogistics:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = domesticLogisticsService.queryPage(params);
 
@@ -48,7 +47,6 @@ public class DomesticLogisticsController {
      * 信息
      */
     @RequestMapping("/info/{domesticLogisticsId}")
-    @RequiresPermissions("logistics:domesticlogistics:info")
     public R info(@PathVariable("domesticLogisticsId") Long domesticLogisticsId){
         DomesticLogisticsEntity domesticLogistics = domesticLogisticsService.selectById(domesticLogisticsId);
 
@@ -59,7 +57,6 @@ public class DomesticLogisticsController {
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("logistics:domesticlogistics:save")
     public R save(@RequestBody DomesticLogisticsEntity domesticLogistics){
         domesticLogisticsService.insert(domesticLogistics);
 
@@ -70,7 +67,6 @@ public class DomesticLogisticsController {
      * 修改
      */
     @RequestMapping("/update")
-    @RequiresPermissions("logistics:domesticlogistics:update")
     public R update(@RequestBody DomesticLogisticsEntity domesticLogistics){
         //ValidatorUtils.validateEntity((domesticLogistics);
         domesticLogisticsService.updateAllColumnById(domesticLogistics);//全部更新
@@ -82,7 +78,6 @@ public class DomesticLogisticsController {
      * 删除
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("logistics:domesticlogistics:delete")
     public R delete(@RequestBody Long[] domesticLogisticsIds){
         domesticLogisticsService.deleteBatchIds(Arrays.asList(domesticLogisticsIds));
 

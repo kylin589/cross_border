@@ -329,13 +329,10 @@ public class OrderTimer {
                                     }
                                     if (shipaddress1 != null) {
                                         addressEntity.setShipAddressLine1(shipaddress1);
-                                    } else{
-                                        addressEntity.setShipAddressLine1("");
-                                    }
-                                    if (shipaddress2 != null){
-                                        addressEntity.setShipAddressLine2(shipaddress2);
+                                    } else if(shipaddress2 != null){
+                                        addressEntity.setShipAddressLine1(shipaddress2);
                                     }else{
-                                        addressEntity.setShipAddressLine2("");
+                                        addressEntity.setShipAddressLine1("无");
                                     }
                                     if (shipcity != null) {
                                         addressEntity.setShipCity(shipcity);

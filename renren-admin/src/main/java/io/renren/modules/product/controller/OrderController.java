@@ -365,6 +365,13 @@ public class OrderController extends AbstractController{
      */
     @RequestMapping("/updateState")
     public R updateState(@RequestBody OrderVM orderVM){
+        if("待签收".equals(orderVM.getOrderState())){
+            //推送订单
+            Map<String,String> result = orderService.pushOrder(orderVM.getOrderId());
+            if("false".equals(result.get("code"))){
+                return R.error("订单推送失败,错误原因：" + result.get("msg"));
+            }
+        }
         boolean flag = orderService.updateState(orderVM.getOrderId(),orderVM.getOrderState());
         if(flag){
             //添加操作日志
@@ -374,11 +381,6 @@ public class OrderController extends AbstractController{
             if("已采购".equals(orderVM.getOrderState())){
                 remark.setRemark("订单已采购");
             }else if("待签收".equals(orderVM.getOrderState())){
-                //推送订单
-                Map<String,String> result = orderService.pushOrder(orderVM.getOrderId());
-                if("false".equals(result.get("code"))){
-                    return R.error("订单推送失败,错误原因：" + result.get("msg"));
-                }
                 remark.setRemark("订单已发货");
             }else if("完成".equals(orderVM.getOrderState())){
                 remark.setRemark("订单已完成");

@@ -36,7 +36,6 @@ public class AbroadLogisticsController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("logistics:abroadlogistics:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = abroadLogisticsService.queryPage(params);
 
@@ -48,7 +47,6 @@ public class AbroadLogisticsController {
      * 信息
      */
     @RequestMapping("/info/{abroadLogisticsId}")
-    @RequiresPermissions("logistics:abroadlogistics:info")
     public R info(@PathVariable("abroadLogisticsId") Long abroadLogisticsId){
         AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectById(abroadLogisticsId);
 
@@ -59,7 +57,6 @@ public class AbroadLogisticsController {
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("logistics:abroadlogistics:save")
     public R save(@RequestBody AbroadLogisticsEntity abroadLogistics){
         abroadLogisticsService.insert(abroadLogistics);
 
@@ -70,7 +67,6 @@ public class AbroadLogisticsController {
      * 修改
      */
     @RequestMapping("/update")
-    @RequiresPermissions("logistics:abroadlogistics:update")
     public R update(@RequestBody AbroadLogisticsEntity abroadLogistics){
         //ValidatorUtils.validateEntity((abroadLogistics);
         abroadLogisticsService.updateAllColumnById(abroadLogistics);//全部更新
@@ -82,7 +78,6 @@ public class AbroadLogisticsController {
      * 删除
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("logistics:abroadlogistics:delete")
     public R delete(@RequestBody Long[] abroadLogisticsIds){
         abroadLogisticsService.deleteBatchIds(Arrays.asList(abroadLogisticsIds));
 

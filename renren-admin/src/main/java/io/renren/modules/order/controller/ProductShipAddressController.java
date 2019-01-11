@@ -36,7 +36,7 @@ public class ProductShipAddressController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("order:productshipaddress:list")
+//    @RequiresPermissions("order:productshipaddress:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = productShipAddressService.queryPage(params);
 
@@ -48,7 +48,7 @@ public class ProductShipAddressController {
      * 信息
      */
     @RequestMapping("/info/{shipAddressId}")
-    @RequiresPermissions("order:productshipaddress:info")
+//    @RequiresPermissions("order:productshipaddress:info")
     public R info(@PathVariable("shipAddressId") Long shipAddressId){
         ProductShipAddressEntity productShipAddress = productShipAddressService.selectById(shipAddressId);
 
@@ -59,7 +59,7 @@ public class ProductShipAddressController {
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("order:productshipaddress:save")
+//    @RequiresPermissions("order:productshipaddress:save")
     public R save(@RequestBody ProductShipAddressEntity productShipAddress){
         productShipAddressService.insert(productShipAddress);
 
@@ -70,7 +70,7 @@ public class ProductShipAddressController {
      * 修改
      */
     @RequestMapping("/update")
-    @RequiresPermissions("order:productshipaddress:update")
+//    @RequiresPermissions("order:productshipaddress:update")
     public R update(@RequestBody ProductShipAddressEntity productShipAddress){
         //ValidatorUtils.validateEntity((productShipAddress);
         productShipAddressService.updateAllColumnById(productShipAddress);//全部更新
@@ -82,7 +82,7 @@ public class ProductShipAddressController {
      * 删除
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("order:productshipaddress:delete")
+//    @RequiresPermissions("order:productshipaddress:delete")
     public R delete(@RequestBody Long[] shipAddressIds){
         productShipAddressService.deleteBatchIds(Arrays.asList(shipAddressIds));
 

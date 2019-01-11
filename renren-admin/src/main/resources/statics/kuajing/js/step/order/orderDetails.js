@@ -366,30 +366,32 @@ var vm = new Vue({
             }
         },
         // 删除国内物流
-        shanchuDel:function (item) {
+        synchronize:function (item) {
             console.log(item);
             var index = layer.load();
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-            $.ajax({
-                // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
-                url: '../../product/order/deleteLogistic',
-                type: 'get',
-                data: {
-                    domesticLogisticsId:item.domesticLogisticsId,
-
-                },
-                dataType: 'json',
-                success: function (r) {
-                    console.log(r);
-                    vm.getOrderInfo();
-                    layer.close(index);
-                },
-                error: function () {
-                    layer.msg("删除失败");
-                    layer.close(index);
-                }
-            });
+            layer.close(index);
+            layer.msg("暂无此功能");
+            // $.ajax({
+            //     // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
+            //     url: '../../product/order/deleteLogistic',
+            //     type: 'get',
+            //     data: {
+            //         domesticLogisticsId:item.domesticLogisticsId,
+            //
+            //     },
+            //     dataType: 'json',
+            //     success: function (r) {
+            //         console.log(r);
+            //         vm.getOrderInfo();
+            //         layer.close(index);
+            //     },
+            //     error: function () {
+            //         layer.msg("删除失败");
+            //         layer.close(index);
+            //     }
+            // });
         },
         //物流信息
         queryLogistic:function (waybill,event) {
@@ -476,7 +478,7 @@ var vm = new Vue({
                     var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                     $.ajax({
                         // url: 'http://39.106.131.222:8000/domestic/getLogisticsCompany',
-                        url: 'http://192.168.0.108:8000/domestic/getLogisticsCompany',
+                        url: 'http://www.threeee.cn/domestic/getLogisticsCompany',
                         type: 'get',
                         data: {
                             orderId:vm.orderid,
@@ -548,7 +550,11 @@ var vm = new Vue({
                     console.log('订单详情');
                     console.log(r);
                     if (r.code === 0) {
-                        layer.alert('修改成功');
+                        if(orderState == '待签收'){
+                            layer.alert('推送成功');
+                        }else{
+                            layer.alert('修改成功');
+                        }
                         vm.getOrderInfo();
                         layer.close(index);
                     } else {
