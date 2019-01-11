@@ -221,7 +221,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         if (filePathMap.containsKey("0")) {
             // 产品信息上传
             productFeedSubmissionInfoDto = submitProductFeed(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap.get("0"), filePathMap.get("0"), marketplaceIdList);
-            if (productFeedSubmissionInfoDto==null){
+            if (productFeedSubmissionInfoDto == null) {
                 updateUploadEntity.setUploadState(3);
 
                 // 失败状态，退出线程
@@ -476,7 +476,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             }
             feedSubmissionInfoDtoList = invokeSubmitFeedAsync(uploadId, service, submitFeedRequestList);
             try {
-                Thread.sleep(60*1000);
+                Thread.sleep(60 * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -859,6 +859,10 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     public String switchCountry(String templateName, Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode) {
         String filePath = "";
         switch (templateName) {
+            // 家居装修/HomeImprovement
+            case "HomeImprovement":
+                filePath = generateProductXML.generateProductXMLByHomeImprovement(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
             // 服装/ProductClothing
             case "ProductClothing":
                 filePath = generateProductXML.generateProductXMLByClothing(uploadId, merchantIdentifierText, productsList, countryCode);
@@ -901,10 +905,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
                 // 健康/Health
             case "Health":
-
-
-                // 家居装修/HomeImprovement
-            case "HomeImprovement":
 
 
                 // 食品服务和门卫，卫生与安全/FoodServiceAndJanSan
