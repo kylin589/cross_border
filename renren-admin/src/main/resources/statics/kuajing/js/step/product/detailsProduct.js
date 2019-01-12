@@ -2272,7 +2272,7 @@ var vm = new Vue({
                     for(var j = 0;j<recommend1.length;j++){
                         vm.recommendAll.push({
                             id:i+j,
-                            name:recommend[i]+'*'+recommend1[j],
+                            name:recommend[i]+' & '+recommend1[j],
                             img:[],
                             sku:'',
                             addPrice:'',
@@ -2284,7 +2284,7 @@ var vm = new Vue({
                             variantId:null,
                             productId:vm.id,
                             variantSort:i+j,
-                            variantCombination:recommend[i]+'*'+recommend1[j],
+                            variantCombination:recommend[i]+' & '+recommend1[j],
                             variantSku:'',
                             variantAddPrice:null,
                             variantStock:(Math.round(Math.random()*100) + 100),
@@ -2448,6 +2448,7 @@ var vm = new Vue({
                         vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
                         vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
                     })
+                    console.log(vm.proDetails.variantsInfos);
 
                     layer.confirm('确定修改吗？', function(index){
                         var index = layer.load();
