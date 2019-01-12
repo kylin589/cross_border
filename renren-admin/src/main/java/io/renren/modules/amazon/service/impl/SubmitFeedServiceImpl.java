@@ -85,10 +85,10 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     @Autowired
     private TemplateService templateService;
 
-    @Value(("${mws-config.access-key}"))
+    @Value(("${mws-config.eu-access-key}"))
     private String accessKey;
 
-    @Value(("${mws-config.secret-key}"))
+    @Value(("${mws-config.eu-secret-key}"))
     private String secretKey;
 
     @Value(("${mws-config.app-name}"))

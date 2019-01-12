@@ -27,11 +27,11 @@ import org.springframework.beans.factory.annotation.Value;
 public class MarketplaceWebServiceOrdersSampleConfig {
 
     /** Developer AWS access key. */
-    @Value(("${mws-config.access-key}"))
+    @Value(("${mws-config.eu-access-key}"))
     private static String accessKey;
 
     /** Developer AWS secret key. */
-    @Value(("${mws-config.secret-key}"))
+    @Value(("${mws-config.eu-secret-key}"))
     private static String secretKey;
 
     /** The client application name. */
