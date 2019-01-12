@@ -18,15 +18,11 @@ import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.service.ResultXmlService;
 import io.renren.modules.amazon.service.SubmitFeedService;
 import io.renren.modules.amazon.util.ContentMD5Util;
-import io.renren.modules.amazon.util.FileUtil;
 import io.renren.modules.amazon.util.XMLUtil;
-import io.renren.modules.product.entity.*;
+import io.renren.modules.product.entity.ProductsEntity;
+import io.renren.modules.product.entity.UploadEntity;
+import io.renren.modules.product.entity.VariantsInfoEntity;
 import io.renren.modules.product.service.*;
-import org.apache.commons.lang.StringUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -34,7 +30,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.Future;
@@ -44,13 +39,7 @@ import java.util.concurrent.Future;
 public class SubmitFeedServiceImpl implements SubmitFeedService {
 
     @Autowired
-    private ImageAddressService imageAddressService;
-
-    @Autowired
     private ProductsService productsService;
-
-    @Autowired
-    private IntroductionService introductionService;
 
     @Autowired
     private VariantsInfoService variantsInfoService;
@@ -62,22 +51,10 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     private AmazonGrantShopService amazonGrantShopService;
 
     @Autowired
-    private VariantParameterService variantParameterService;
-
-    @Autowired
     private UploadService uploadService;
 
     @Autowired
-    private FreightCostService freightCostService;
-
-    @Autowired
     private ResultXmlService resultXmlService;
-
-    @Autowired
-    private FieldMiddleService fieldMiddleService;
-
-    @Autowired
-    private AmazonCategoryService amazonCategoryService;
 
     @Autowired
     private GenerateProductXML generateProductXML;
@@ -85,11 +62,33 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
     @Autowired
     private TemplateService templateService;
 
+    // 欧洲
     @Value(("${mws-config.eu-access-key}"))
-    private String accessKey;
+    private String euAccessKey;
 
     @Value(("${mws-config.eu-secret-key}"))
-    private String secretKey;
+    private String euSecretKey;
+
+    // 日本
+    @Value(("${mws-config.jp-access-key}"))
+    private String jpAccessKey;
+
+    @Value(("${mws-config.jp-secret-key}"))
+    private String jpSecretKey;
+
+    // 北美
+    @Value(("${mws-config.na-access-key}"))
+    private String naAccessKey;
+
+    @Value(("${mws-config.na-secret-key}"))
+    private String naSecretKey;
+
+    // 澳大利亚
+    @Value(("${mws-config.au-access-key}"))
+    private String auAccessKey;
+
+    @Value(("${mws-config.au-secret-key}"))
+    private String auSecretKey;
 
     @Value(("${mws-config.app-name}"))
     private String appName;
@@ -126,13 +125,13 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         Long uploadId = uploadEntity.getUploadId();
 
         while (true) {
-            List<UploadEntity> list = uploadService.selectList(new EntityWrapper<UploadEntity>().eq("upload_state", 1).eq("user_id", uploadEntity.getUserId()).ne("upload_id",uploadId));
+            List<UploadEntity> list = uploadService.selectList(new EntityWrapper<UploadEntity>().eq("upload_state", 1).eq("user_id", uploadEntity.getUserId()).ne("upload_id", uploadId));
             if (list.size() == 0) {
                 break;
             } else {
                 try {
                     // 睡眠5分钟
-                    System.out.println("用户"+uploadEntity.getUserId()+"有上传项，submitFeed休眠中！");
+                    System.out.println("用户" + uploadEntity.getUserId() + "有上传项，submitFeed休眠中！");
                     Thread.sleep(5 * 60 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -827,7 +826,30 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         config.setServiceURL(serviceURL);
         config.setConnectionTimeout(120000);
         config.setSoTimeout(120000);
-        MarketplaceWebService service = new MarketplaceWebServiceClient(accessKey, secretKey, appName, appVersion, config);
+        MarketplaceWebService service = null;
+        switch (serviceURL) {
+            // 加拿大
+            case "https://mws.amazonservices.ca":
+                // 墨西哥
+            case "https://mws.amazonservices.com.mx":
+                // 美国
+            case "https://mws.amazonservices.com":
+                service = new MarketplaceWebServiceClient(naAccessKey, naSecretKey, appName, appVersion, config);
+                break;
+            // 欧洲
+            case "https://mws-eu.amazonservices.com":
+                service = new MarketplaceWebServiceClient(euAccessKey, euSecretKey, appName, appVersion, config);
+                break;
+            // 澳大利亚
+            case "https://mws.amazonservices.com.au":
+                service = new MarketplaceWebServiceClient(auAccessKey, auSecretKey, appName, appVersion, config);
+                break;
+            // 日本
+            case "https://mws.amazonservices.jp":
+                service = new MarketplaceWebServiceClient(jpAccessKey, jpSecretKey, appName, appVersion, config);
+                break;
+            default:
+        }
         return service;
     }
 
@@ -838,7 +860,30 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         config.setMaxAsyncThreads(35);
         config.setConnectionTimeout(120000);
         config.setSoTimeout(120000);
-        MarketplaceWebService service = new MarketplaceWebServiceClient(accessKey, secretKey, appName, appVersion, config);
+        MarketplaceWebService service = null;
+        switch (serviceURL) {
+            // 加拿大
+            case "https://mws.amazonservices.ca":
+            // 墨西哥
+            case "https://mws.amazonservices.com.mx":
+                // 美国
+            case "https://mws.amazonservices.com":
+                service = new MarketplaceWebServiceClient(naAccessKey, naSecretKey, appName, appVersion, config);
+                break;
+            // 欧洲
+            case "https://mws-eu.amazonservices.com":
+                service = new MarketplaceWebServiceClient(euAccessKey, euSecretKey, appName, appVersion, config);
+                break;
+            // 澳大利亚
+            case "https://mws.amazonservices.com.au":
+                service = new MarketplaceWebServiceClient(auAccessKey, auSecretKey, appName, appVersion, config);
+                break;
+            // 日本
+            case "https://mws.amazonservices.jp":
+                service = new MarketplaceWebServiceClient(jpAccessKey, jpSecretKey, appName, appVersion, config);
+                break;
+            default:
+        }
         return service;
     }
 

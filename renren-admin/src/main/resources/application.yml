@@ -81,7 +81,9 @@ logging:
 
 mws-config:
   # 欧洲
+  # AWS 访问密钥 ID
   eu-access-key: AKIAJPTOJEGMM7G4FJQA
+  # 客户端密钥
   eu-secret-key: 1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A
   # 日本
   jp-access-key: a
