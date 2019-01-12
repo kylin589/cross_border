@@ -125,6 +125,24 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         //上传id
         Long uploadId = uploadEntity.getUploadId();
 
+        while (true) {
+            List<UploadEntity> list = uploadService.selectList(new EntityWrapper<UploadEntity>().eq("upload_state", 1).eq("user_id", uploadEntity.getUserId()).ne("upload_id",uploadId));
+            if (list.size() == 0) {
+                break;
+            } else {
+                try {
+                    // 睡眠5分钟
+                    System.out.println("用户"+uploadEntity.getUserId()+"有上传项，submitFeed休眠中！");
+                    Thread.sleep(5 * 60 * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println("submitFeed执行！");
+        long startTime = System.currentTimeMillis();
+        long endTime;
+
         // 商品列表
         List<ProductsEntity> productsEntityList;
         if (uploadEntity.getUploadProductsList() != null) {
@@ -210,7 +228,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         }
 
         // 上传xml
-
         UploadEntity updateUploadEntity = new UploadEntity();
         updateUploadEntity.setUpdateTime(new Date());
         updateUploadEntity.setUploadId(uploadId);
@@ -223,7 +240,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             productFeedSubmissionInfoDto = submitProductFeed(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap.get("0"), filePathMap.get("0"), marketplaceIdList);
             if (productFeedSubmissionInfoDto == null) {
                 updateUploadEntity.setUploadState(3);
-
+                updateUploadEntity.setUpdateTime(new Date());
                 // 失败状态，退出线程
                 uploadService.updateById(updateUploadEntity);
                 return;
@@ -231,7 +248,21 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
             //使用FeedSubmissionId获取的亚马逊对于xml的处理状态
             while (true) {
+
+                // 超过半小时就终断线程
+                endTime = System.currentTimeMillis();   //获取现在时间
+                if (endTime - startTime > 1800000) {
+                    updateUploadEntity.setUploadState(3);
+                    updateUploadEntity.setUpdateTime(new Date());
+                    // 失败状态，退出线程
+                    uploadService.updateById(updateUploadEntity);
+                    return;
+                }
+
                 try {
+                    // 设置睡眠的时间 120 秒
+                    Thread.sleep(2 * 60 * 1000);
+
                     List<String> feedSubmissionList = new ArrayList<>();
                     feedSubmissionList.add(productFeedSubmissionInfoDto.getFeedSubmissionId());
                     productFeedSubmissionInfoDto = getFeedSubmissionListAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionList).get(0);
@@ -247,8 +278,6 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                         break;
                     }
 
-                    // 设置睡眠的时间 120 秒
-                    Thread.sleep(2 * 60 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -258,6 +287,17 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList;
         // 剩余xml的上传
         while (true) {
+
+            // 超过半小时就终断线程
+            endTime = System.currentTimeMillis();   //获取现在时间
+            if (endTime - startTime > 1800000) {
+                updateUploadEntity.setUploadState(3);
+                updateUploadEntity.setUpdateTime(new Date());
+                // 失败状态，退出线程
+                uploadService.updateById(updateUploadEntity);
+                return;
+            }
+
             feedSubmissionInfoDtoList = submitFeedAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap, filePathMap, marketplaceIdList);
 
             if (productFeedSubmissionInfoDto != null) {
@@ -288,6 +328,17 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         boolean b = false;
         int count;
         while (!b) {
+
+            // 超过半小时就终断线程
+            endTime = System.currentTimeMillis();   //获取现在时间
+            if (endTime - startTime > 1800000) {
+                updateUploadEntity.setUploadState(3);
+                updateUploadEntity.setUpdateTime(new Date());
+                // 失败状态，退出线程
+                uploadService.updateById(updateUploadEntity);
+                return;
+            }
+
             try {
                 // 设置睡眠的时间 2 分钟
                 Thread.sleep(2 * 60 * 1000);
@@ -311,18 +362,36 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         // 总状态改为正在上传,并改子状态
         updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
 
+        try {
+            // 设置睡眠的时间 5 分钟
+            Thread.sleep(5 * 60 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // 获取报告
         List<FeedSubmissionResultDto> feedSubmissionResultDtos;
         while (true) {
+
+            // 超过半小时就终断线程
+            endTime = System.currentTimeMillis();   //获取现在时间
+            if (endTime - startTime > 1800000) {
+                updateUploadEntity.setUploadState(3);
+                updateUploadEntity.setUpdateTime(new Date());
+                // 失败状态，退出线程
+                uploadService.updateById(updateUploadEntity);
+                return;
+            }
+
             feedSubmissionResultDtos = getFeedSubmissionResultAsync(uploadId, fileStoragePath, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionInfoDtoList);
 
-            if (feedSubmissionResultDtos != null || feedSubmissionResultDtos.size() != feedSubmissionInfoDtoList.size()) {
+            if (feedSubmissionResultDtos.size() == feedSubmissionInfoDtoList.size()) {
                 break;
             }
 
             try {
-                // 设置睡眠的时间 2 分钟
-                Thread.sleep(2 * 60 * 1000);
+                // 设置睡眠的时间 3 分钟
+                Thread.sleep(3 * 60 * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
