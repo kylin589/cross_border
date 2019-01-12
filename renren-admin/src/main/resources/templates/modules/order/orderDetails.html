@@ -265,8 +265,8 @@
                     <span>{{ logistics.expressNum }}</span>
                 </p>
                 <ul>
-                    <li v-if="logistics.length == 0"></li>
-                    <li v-for="item in logistics">
+                    <li v-if="logistics.length == 0">暂无物流</li>
+                    <li v-if="logistics.length != 0" v-for="item in logistics">
                         <p>{{ item.context }}</p>
                         <span>{{ item.time }}</span>
                     </li>
