@@ -115,6 +115,7 @@ public class OrderTimer {
             shoplist=amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("region",grant.getRegion()).eq("grant_id",grant.getGrantId()));
             for(AmazonGrantShopEntity shop:shoplist){
                 String shopName = shop.getShopName();
+                map.put("region",shop.getRegion());
                 map.put("sellerId",sellerId);
                 map.put("mwsAuthToken",mwsAuthToken);
                 map.put("shopname",shop.getShopName());
@@ -142,11 +143,27 @@ public class OrderTimer {
         Long shopId = (Long)map.get("shopId");
         Long userId = (Long)map.get("userId");
         Long deptId = (Long)map.get("deptId");
+        int region= (int) map.get("region");
+        String accessKey=null;
+        String secretKey=null;
+        if(region==0){//北美
+            accessKey=naAccessKey;
+            secretKey=naSecretKey;
+        }else if(region==1){//欧洲
+            accessKey=euAccessKey;
+            secretKey=euSecretKey;
+        }else if(region==2){//日本
+            accessKey=jpAccessKey;
+            secretKey=jpSecretKey;
+        }else if(region==3){//澳大利亚
+            accessKey=auAccessKey;
+            secretKey=auSecretKey;
+        }
         String serviceURL = (String) map.get("serviceURL");
         marketplaceId.add((String) map.get("marketplaceId"));
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
         config.setServiceURL(serviceURL);
-        MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+        MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
                 "my_test", "1.0", config, null);
         List<ListOrdersRequest> requestList = new ArrayList<ListOrdersRequest>();
         ListOrdersRequest request = new ListOrdersRequest();
