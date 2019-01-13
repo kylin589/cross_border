@@ -9,6 +9,7 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 
 import io.renren.modules.product.dto.BatchModifyDto;
+import io.renren.modules.product.dto.BatchTranslateDto;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
 import io.renren.modules.product.vm.ChangeAuditStatusVM;
@@ -436,6 +437,430 @@ public class ProductsController extends AbstractController {
      */
     @RequestMapping("/batchmodify")
     public R batchModify(@RequestBody BatchModifyDto batchModifyDto) {
+        //翻译标识
+        int[] translates = batchModifyDto.getTranslates();
+        //英文追加模型
+        BatchTranslateDto enTranslateDto = new BatchTranslateDto();
+        enTranslateDto.setCountryCode("EN");
+        //法语追加模型
+        BatchTranslateDto fraTranslateDto = new BatchTranslateDto();
+        fraTranslateDto.setCountryCode("FRA");
+        //德语追加模型
+        BatchTranslateDto deTranslateDto = new BatchTranslateDto();
+        deTranslateDto.setCountryCode("DE");
+        //意大利语追加模型
+        BatchTranslateDto itTranslateDto = new BatchTranslateDto();
+        itTranslateDto.setCountryCode("IT");
+        //西班牙语追加模型
+        BatchTranslateDto spaTranslateDto = new BatchTranslateDto();
+        spaTranslateDto.setCountryCode("SPA");
+        //日语追加模型
+        BatchTranslateDto jpTranslateDto = new BatchTranslateDto();
+        jpTranslateDto.setCountryCode("JP");
+        if (translates != null && translates.length > 0) {
+            Querier<AbstractTranslator> querierTrans = new Querier<>();
+            querierTrans.attach(new GoogleTranslator());
+            //标题前加
+            String productTitleQ = batchModifyDto.getProductTitleQ().trim();
+            //标题后加
+            String productTitleH = batchModifyDto.getProductTitleH().trim();
+            //关键字
+            String keyWord = batchModifyDto.getKeyWord().trim();
+            //要点说明
+            String keyPoints = batchModifyDto.getKeyPoints().trim();
+            //描述前加
+            String productDescriptionQ = batchModifyDto.getProductDescriptionQ().trim();
+            //描述后加
+            String productDescriptionH = batchModifyDto.getProductDescriptionH().trim();
+            //英文追加模型
+            enTranslateDto.setProductTitleQ(TranslateUtils.toUpperCase(productTitleQ));
+            enTranslateDto.setProductTitleH(TranslateUtils.toUpperCase(productTitleH));
+            enTranslateDto.setKeyWord(TranslateUtils.toUpperCase(keyWord));
+            enTranslateDto.setKeyPoints(keyPoints);
+            enTranslateDto.setProductDescriptionQ(productDescriptionQ);
+            enTranslateDto.setProductDescriptionH(productDescriptionH);
+            if(StringUtils.isNotBlank(productTitleQ)){
+                for (int q = 0; q < translates.length; q++) {
+                    switch (q) {
+                        case 1:
+                            querierTrans.setParams(LANG.EN, LANG.FRA, productTitleQ);
+                            //翻译
+                            List<String> resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0 && StringUtils.isNotBlank(resultList.get(0))) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                fraTranslateDto.setProductTitleQ(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 2:
+                            querierTrans.setParams(LANG.EN, LANG.IT, productTitleQ);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                itTranslateDto.setProductTitleQ(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 3:
+                            querierTrans.setParams(LANG.EN, LANG.SPA, productTitleQ);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                spaTranslateDto.setProductTitleQ(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 4:
+                            querierTrans.setParams(LANG.EN, LANG.DE, productTitleQ);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                deTranslateDto.setProductTitleQ(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 5:
+                            querierTrans.setParams(LANG.EN, LANG.JP, productTitleQ);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                jpTranslateDto.setProductTitleQ(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            if(StringUtils.isNotBlank(productTitleH)){
+                for (int q = 0; q < translates.length; q++) {
+                    switch (q) {
+                        case 1:
+                            querierTrans.setParams(LANG.EN, LANG.FRA, productTitleH);
+                            //翻译
+                            List<String> resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                fraTranslateDto.setProductTitleH(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 2:
+                            querierTrans.setParams(LANG.EN, LANG.IT, productTitleH);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                itTranslateDto.setProductTitleH(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 3:
+                            querierTrans.setParams(LANG.EN, LANG.SPA, productTitleH);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                spaTranslateDto.setProductTitleH(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 4:
+                            querierTrans.setParams(LANG.EN, LANG.DE, productTitleH);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                deTranslateDto.setProductTitleH(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 5:
+                            querierTrans.setParams(LANG.EN, LANG.JP, productTitleH);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String title = TranslateUtils.toUpperCase(resultList.get(0));
+                                jpTranslateDto.setProductTitleH(title);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            if(StringUtils.isNotBlank(keyWord)){
+                for (int q = 0; q < translates.length; q++) {
+                    switch (q) {
+                        case 1:
+                            querierTrans.setParams(LANG.EN, LANG.FRA, keyWord);
+                            //翻译
+                            List<String> resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String keyword = TranslateUtils.toUpperCase(resultList.get(0));
+                                fraTranslateDto.setKeyWord(keyword);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 2:
+                            querierTrans.setParams(LANG.EN, LANG.IT, keyWord);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String keyword = TranslateUtils.toUpperCase(resultList.get(0));
+                                itTranslateDto.setKeyWord(keyword);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 3:
+                            querierTrans.setParams(LANG.EN, LANG.SPA, keyWord);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String keyword = TranslateUtils.toUpperCase(resultList.get(0));
+                                spaTranslateDto.setKeyWord(keyword);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 4:
+                            querierTrans.setParams(LANG.EN, LANG.DE, keyWord);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String keyword = TranslateUtils.toUpperCase(resultList.get(0));
+                                deTranslateDto.setKeyWord(keyword);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 5:
+                            querierTrans.setParams(LANG.EN, LANG.JP, keyWord);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String keyword = TranslateUtils.toUpperCase(resultList.get(0));
+                                jpTranslateDto.setKeyWord(keyword);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            if(StringUtils.isNotBlank(keyPoints)){
+                String translateStr = keyPoints.replace("\r\n"," !! ").replace("\r"," !! ").replace("\n"," !! ");
+                for (int q = 0; q < translates.length; q++) {
+                    switch (q) {
+                        case 1:
+                            querierTrans.setParams(LANG.EN, LANG.FRA, translateStr);
+                            //翻译
+                            List<String> resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String point = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                fraTranslateDto.setKeyPoints(point);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 2:
+                            querierTrans.setParams(LANG.EN, LANG.IT, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String point = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                itTranslateDto.setKeyPoints(point);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 3:
+                            querierTrans.setParams(LANG.EN, LANG.SPA, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String point = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                spaTranslateDto.setKeyPoints(point);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 4:
+                            querierTrans.setParams(LANG.EN, LANG.DE, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String point = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                deTranslateDto.setKeyPoints(point);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 5:
+                            querierTrans.setParams(LANG.EN, LANG.JP, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String point = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                jpTranslateDto.setKeyPoints(point);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            if(StringUtils.isNotBlank(productDescriptionQ)){
+                String translateStr = productDescriptionQ.replace("\r\n"," !! ").replace("\r"," !! ").replace("\n"," !! ");
+                for (int q = 0; q < translates.length; q++) {
+                    switch (q) {
+                        case 1:
+                            querierTrans.setParams(LANG.EN, LANG.FRA, translateStr);
+                            //翻译
+                            List<String> resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                fraTranslateDto.setProductDescriptionQ(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 2:
+                            querierTrans.setParams(LANG.EN, LANG.IT, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                itTranslateDto.setProductDescriptionQ(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 3:
+                            querierTrans.setParams(LANG.EN, LANG.SPA, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                spaTranslateDto.setProductDescriptionQ(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 4:
+                            querierTrans.setParams(LANG.EN, LANG.DE, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                deTranslateDto.setProductDescriptionQ(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 5:
+                            querierTrans.setParams(LANG.EN, LANG.JP, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                jpTranslateDto.setProductDescriptionQ(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            if(StringUtils.isNotBlank(productDescriptionH)){
+                String translateStr = productDescriptionH.replace("\r\n"," !! ").replace("\r"," !! ").replace("\n"," !! ");
+                for (int q = 0; q < translates.length; q++) {
+                    switch (q) {
+                        case 1:
+                            querierTrans.setParams(LANG.EN, LANG.FRA, translateStr);
+                            //翻译
+                            List<String> resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                fraTranslateDto.setProductDescriptionH(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 2:
+                            querierTrans.setParams(LANG.EN, LANG.IT, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                itTranslateDto.setProductDescriptionH(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 3:
+                            querierTrans.setParams(LANG.EN, LANG.SPA, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                spaTranslateDto.setProductDescriptionH(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 4:
+                            querierTrans.setParams(LANG.EN, LANG.DE, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                deTranslateDto.setProductDescriptionH(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        case 5:
+                            querierTrans.setParams(LANG.EN, LANG.JP, translateStr);
+                            //翻译
+                            resultList = querierTrans.execute();
+                            if (resultList != null && resultList.size() > 0) {
+                                String description = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
+                                jpTranslateDto.setProductDescriptionH(description);
+                            } else {
+                                return R.error("翻译失败，请重新尝试");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
         Long[] productIds = batchModifyDto.getProductIds();
         //循环遍历出前台传入的产品id
         System.out.println(batchModifyDto);
@@ -461,128 +886,83 @@ public class ProductsController extends AbstractController {
             productsEntity.setProductWide(batchModifyDto.getProductWide());
             productsEntity.setProductHeight(batchModifyDto.getProductHeight());
 
-            //标题前加
-            String productTitleQ = batchModifyDto.getProductTitleQ();
-            //标题后加
-            String productTitleH = batchModifyDto.getProductTitleH();
-            //关键字
-            String keyWord = batchModifyDto.getKeyWord();
-            //要点说明
-            String keyPoints = batchModifyDto.getKeyPoints();
-            //描述前加
-            String productDescriptionQ = batchModifyDto.getProductDescriptionQ();
-            //描述后加
-            String productDescriptionH = batchModifyDto.getProductDescriptionH();
-            StringBuffer strBuf = new StringBuffer();
-            if (StringUtils.isNotBlank(productTitleQ)) {
-                strBuf.append(productTitleQ);
-                strBuf.append(" ===== ");
-            } else {
-                strBuf.append(" ===== ");
-            }
-            if (StringUtils.isNotBlank(productTitleH)) {
-                strBuf.append(productTitleH);
-                strBuf.append(" ===== ");
-            } else {
-                strBuf.append("  ===== ");
-            }
-            if (StringUtils.isNotBlank(keyWord)) {
-                strBuf.append(keyWord);
-                strBuf.append(" ===== ");
-            } else {
-                strBuf.append("  ===== ");
-            }
-            if (StringUtils.isNotBlank(keyPoints)) {
-                strBuf.append(keyPoints);
-                strBuf.append(" ===== ");
-            } else {
-                strBuf.append("  ===== ");
-            }
-            if (StringUtils.isNotBlank(productDescriptionQ)) {
-                strBuf.append(productDescriptionQ);
-                strBuf.append(" ===== ");
-            } else {
-                strBuf.append("  ===== ");
-            }
-            if (StringUtils.isNotBlank(productDescriptionH)) {
-                strBuf.append(productDescriptionH);
-            } else {
-                strBuf.append(" ");
-            }
-            String translate = strBuf.toString();
-            Querier<AbstractTranslator> querierTrans = new Querier<>();
-            querierTrans.attach(new GoogleTranslator());
             //翻译标识
-            int[] translates = batchModifyDto.getTranslates();
             if (translates != null && translates.length > 0) {
                 for (int q = 0; q < translates.length; q++) {
                     switch (q) {
                         case 0:
-                            IntroductionEntity enIntroduction = introductionService.selectById(productsEntity.getBritainIntroduction());
+                            IntroductionEntity enIntroduction = new IntroductionEntity();
+                            if(productsEntity.getBritainIntroduction() != null){
+                                enIntroduction = introductionService.selectById(productsEntity.getBritainIntroduction());
+                            }else{
+                                enIntroduction = new IntroductionEntity();
+                            }
                             enIntroduction.setCountry("EN");
-                            updateProductTranslate(translate, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), enIntroduction);
+                            enIntroduction = updateProductTranslate(enTranslateDto, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), enIntroduction);
+                            introductionService.insertOrUpdate(enIntroduction);
+                            productsEntity.setBritainIntroduction(enIntroduction.getIntroductionId());
                             break;
                         case 1:
-                            IntroductionEntity fraIntroduction = introductionService.selectById(productsEntity.getFranceIntroduction());
-                            fraIntroduction.setCountry("FRA");
-                            querierTrans.setParams(LANG.EN, LANG.FRA, translate);
-                            List<String> resultList1 = querierTrans.execute();
-                            if (resultList1 != null && resultList1.size() > 0) {
-                                if (resultList1.get(0) != null && resultList1.get(0) != "") {
-                                    String result = resultList1.get(0);
-                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), fraIntroduction);
-                                }
+                            IntroductionEntity fraIntroduction = new IntroductionEntity();
+                            if(productsEntity.getFranceIntroduction() != null){
+                                fraIntroduction = introductionService.selectById(productsEntity.getFranceIntroduction());
+                            }else{
+                                fraIntroduction = new IntroductionEntity();
                             }
+                            fraIntroduction.setCountry("FRA");
+                            fraIntroduction = updateProductTranslate(fraTranslateDto, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), fraIntroduction);
+                            introductionService.insertOrUpdate(fraIntroduction);
+                            productsEntity.setFranceIntroduction(fraIntroduction.getIntroductionId());
                             break;
                         case 2:
-                            IntroductionEntity itIntroduction = introductionService.selectById(productsEntity.getItalyIntroduction());
-                            itIntroduction.setCountry("IT");
-                            querierTrans.setParams(LANG.EN, LANG.IT, translate);
-                            List<String> resultList2 = querierTrans.execute();
-                            if (resultList2 != null && resultList2.size() > 0) {
-                                if (resultList2.get(0) != null && resultList2.get(0) != "") {
-                                    String result = resultList2.get(0);
-                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), itIntroduction);
-                                }
+                            IntroductionEntity itIntroduction = new IntroductionEntity();
+                            if(productsEntity.getItalyIntroduction() != null){
+                                itIntroduction = introductionService.selectById(productsEntity.getItalyIntroduction());
+                            }else{
+                                itIntroduction = new IntroductionEntity();
                             }
+                            itIntroduction.setCountry("IT");
+                            itIntroduction = updateProductTranslate(itTranslateDto, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), itIntroduction);
+                            introductionService.insertOrUpdate(itIntroduction);
+                            productsEntity.setItalyIntroduction(itIntroduction.getIntroductionId());
                             break;
                         case 3:
-                            IntroductionEntity spaIntroduction = introductionService.selectById(productsEntity.getSpainIntroduction());
-                            spaIntroduction.setCountry("SPA");
-                            querierTrans.setParams(LANG.EN, LANG.SPA, translate);
-                            List<String> resultList3 = querierTrans.execute();
-                            if (resultList3 != null && resultList3.size() > 0) {
-                                if (resultList3.get(0) != null && resultList3.get(0) != "") {
-                                    String result = resultList3.get(0);
-                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), spaIntroduction);
-                                }
+                            IntroductionEntity spaIntroduction = new IntroductionEntity();
+                            if(productsEntity.getSpainIntroduction() != null){
+                                spaIntroduction = introductionService.selectById(productsEntity.getSpainIntroduction());
+                            }else{
+                                spaIntroduction = new IntroductionEntity();
                             }
-                            updateProductTranslate(translate, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), spaIntroduction);
+                            spaIntroduction.setCountry("SPA");
+                            spaIntroduction = updateProductTranslate(spaTranslateDto, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), spaIntroduction);
+                            introductionService.insertOrUpdate(spaIntroduction);
+                            productsEntity.setSpainIntroduction(spaIntroduction.getIntroductionId());
                             break;
                         case 4:
-                            IntroductionEntity deIntroduction = introductionService.selectById(productsEntity.getGermanyIntroduction());
-                            deIntroduction.setCountry("DE");
-                            querierTrans.setParams(LANG.EN, LANG.DE, translate);
-                            List<String> resultList4 = querierTrans.execute();
-                            if (resultList4 != null && resultList4.size() > 0) {
-                                if (resultList4.get(0) != null && resultList4.get(0) != "") {
-                                    String result = resultList4.get(0);
-                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), deIntroduction);
-                                }
+                            IntroductionEntity deIntroduction = new IntroductionEntity();
+                            if(productsEntity.getGermanyIntroduction() != null){
+                                deIntroduction = introductionService.selectById(productsEntity.getGermanyIntroduction());
+                            }else{
+                                deIntroduction = new IntroductionEntity();
                             }
+                            deIntroduction.setCountry("DE");
+                            deIntroduction = updateProductTranslate(deTranslateDto, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), deIntroduction);
+                            introductionService.insertOrUpdate(deIntroduction);
+                            productsEntity.setGermanyIntroduction(deIntroduction.getIntroductionId());
                             break;
                         case 5:
-                            IntroductionEntity jpIntroduction = introductionService.selectById(productsEntity.getJapanIntroduction());
-                            jpIntroduction.setCountry("JP");
-                            querierTrans.setParams(LANG.EN, LANG.JP, translate);
-                            List<String> resultList5 = querierTrans.execute();
-                            if (resultList5 != null && resultList5.size() > 0) {
-                                if (resultList5.get(0) != null && resultList5.get(0) != "") {
-                                    String result = resultList5.get(0);
-                                    updateProductTranslate(result, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), jpIntroduction);
-                                }
+                            IntroductionEntity jpIntroduction = new IntroductionEntity();
+                            if(productsEntity.getJapanIntroduction() != null){
+                                jpIntroduction = introductionService.selectById(productsEntity.getJapanIntroduction());
+                            }else{
+                                jpIntroduction = new IntroductionEntity();
                             }
+                            jpIntroduction.setCountry("JP");
+                            jpIntroduction = updateProductTranslate(jpTranslateDto, batchModifyDto.getKeywordsadd(), batchModifyDto.getKeyPointsadd(), jpIntroduction);
+                            introductionService.insertOrUpdate(jpIntroduction);
+                            productsEntity.setJapanIntroduction(jpIntroduction.getIntroductionId());
                             break;
+
                         default:
                             break;
                     }
@@ -594,19 +974,17 @@ public class ProductsController extends AbstractController {
         }
         return R.ok();
     }
-
     /**
      * 批量修改——语言
      */
-    private void updateProductTranslate(String combination, boolean keywordsadd, boolean keyPointsadd, IntroductionEntity introductionEntity) {
-        String[] combinations = combination.split("=====");
-        String productTitleQ = TranslateUtils.toUpperCase(combinations[0].trim());
-        String productTitleH = TranslateUtils.toUpperCase(combinations[1].trim());
-        String keyWord = TranslateUtils.toUpperCase(combinations[2].trim());
-        String keyPoints = combinations[3].trim();
-        String productDescriptionQ = combinations[4].trim();
-        String productDescriptionH = combinations[5].trim();
-        String productTitle = introductionEntity.getProductTitle().trim();
+    private IntroductionEntity updateProductTranslate(BatchTranslateDto dto, boolean keywordsadd, boolean keyPointsadd, IntroductionEntity introductionEntity) {
+        String productTitleQ = dto.getProductTitleQ();
+        String productTitleH = dto.getProductTitleH();
+        String keyWord = dto.getKeyWord();
+        String keyPoints = dto.getKeyPoints();
+        String productDescriptionQ = dto.getProductDescriptionQ();
+        String productDescriptionH = dto.getProductDescriptionH();
+        String productTitle = introductionEntity.getProductTitle();
         if (StringUtils.isNotEmpty(productTitleQ) && StringUtils.isNotEmpty(productTitleH)) {
             //判断标题前加和后加不为空，进行标题拼接
             introductionEntity.setProductTitle(productTitleQ + " " + productTitle + " " + productTitleH);
@@ -655,7 +1033,7 @@ public class ProductsController extends AbstractController {
             //无需更新
             introductionEntity.setProductDescription(productDescription);
         }
-        introductionService.updateById(introductionEntity);
+        return introductionEntity;
     }
 
     /**
@@ -1169,6 +1547,7 @@ public class ProductsController extends AbstractController {
         //英文介绍
         IntroductionEntity britainPRE = products.getBritainPRE();
         if (britainPRE != null) {
+            System.out.println("英文描述：" + britainPRE.getProductDescription());
             if (britainPRE.getIntroductionId() != null) {
                 introductionService.updateById(britainPRE);
             } else {
