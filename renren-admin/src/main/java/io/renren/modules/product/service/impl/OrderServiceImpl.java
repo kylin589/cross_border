@@ -853,6 +853,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     //设置汇率
                     BigDecimal rate = new BigDecimal(0.00);
                     String rateCode = orderModel.getCurrencyCode();
+                    orderEntity.setRateCode(rateCode);
                     if(StringUtils.isNotBlank(rateCode)){
                         rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
                     }
@@ -1278,4 +1279,3 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
 }
-

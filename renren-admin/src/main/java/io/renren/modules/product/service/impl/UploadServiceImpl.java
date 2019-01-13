@@ -35,6 +35,8 @@ public class UploadServiceImpl extends ServiceImpl<UploadDao, UploadEntity> impl
         EntityWrapper<UploadEntity> wrapper = new EntityWrapper<UploadEntity>();
         if (deptId != 1) {
             wrapper.eq("dept_id", deptId).orderBy("update_time", false);
+        }else{
+            wrapper.orderBy("update_time", false);
         }
         Page<UploadEntity> page = this.selectPage(
                 new Query<UploadEntity>(params).getPage(),

@@ -5,7 +5,7 @@ spring:
     druid:
       first:  #数据源1
 #        url: jdbc:mysql://121.42.27.61:3306/cross_border?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
-        url: jdbc:mysql://39.106.131.222:3306/cross_border?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        url: jdbc:mysql://39.106.131.222:3306/cross_border?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=FALSE
         username: root
         password: admin
       second:  #数据源2

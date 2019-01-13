@@ -360,7 +360,7 @@ public class IntroductionController {
                 map.put("introduction",introductionEn);
                 map.put("tranEnStr",keyWord);
                 //判断标题
-                if(keyWord.length() >250){
+                if(keyWord.length() >200){
                     map.put("msg","翻译失败，英文关键字超过200字符");
                 }
                 return map;
@@ -412,7 +412,7 @@ public class IntroductionController {
         if (resultList != null && resultList.size() >0){
             String keyWord = TranslateUtils.toUpperCase(resultList.get(0));
             introduction.setKeyWord(keyWord);
-            if(keyWord.length() >250){
+            if(keyWord.length() >200){
                 introduction.setMsg(country + "关键字字符超过200");
             }
         }else{
@@ -684,8 +684,8 @@ public class IntroductionController {
             List<String> resultList = querierTrans.execute();
             if (StringUtils.isNotBlank(resultList.get(0))){
                 String productDescription = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
-                if(productDescription.length() >2500){
-                    introductionEn.setMsg("英文产品描述字符超出2500");
+                if(productDescription.length() >2000){
+                    introductionEn.setMsg("英文产品描述字符超出2000");
                 }
                 introductionEn.setProductDescription(productDescription);
                 introductionEn.setCountry("EN");
@@ -740,8 +740,8 @@ public class IntroductionController {
         List<String> resultList = querierTrans.execute();
         if (StringUtils.isNotBlank(resultList.get(0))){
             String productDescription = resultList.get(0).replace(" !! ","\n").replace("!! ","\n").replace("!!","\n").replace(" ! ","\n").replace("! ","\n").replace("!","\n");
-            if(productDescription.length() >2500){
-                introduction.setMsg(country + "产品描述字符超出2500");
+            if(productDescription.length() >2000){
+                introduction.setMsg(country + "产品描述字符超出2000");
             }
             introduction.setProductDescription(productDescription);
         }else{
@@ -949,8 +949,8 @@ public class IntroductionController {
         String description = introductionEn.getProductDescription();
         if(StringUtils.isNotBlank(description.trim())){
             String translateStr = description.replace("\r\n"," !! ").replace("\r"," !! ").replace("\n"," !! ");
-            if(translateStr.length() > 2500){
-                return R.error("英文产品描述字符超过2500");
+            if(translateStr.length() > 2000){
+                return R.error("英文产品描述字符超过2000");
             }
             introductionEn.setProductDescription(translateStr.replace(" !! ","\n"));
             IntroductionEntity introductionFra = descriptionEntoOther(querierTrans, translateStr, "FRA");
@@ -1222,7 +1222,7 @@ public class IntroductionController {
                     errorStr.append("翻译失败，英文标题超过200字符");
                     errorStr.append("\n");
                 }
-                if(keyWord.length() >250){
+                if(keyWord.length() >200){
                     errorStr.append("翻译失败，英文关键字超过250字符");
                     errorStr.append("\n");
                 }
@@ -1308,7 +1308,7 @@ public class IntroductionController {
                     errorStr.append(country + "标题超过200字符");
                     errorStr.append("\n");
                 }
-                if(keyWord.length() >250){
+                if(keyWord.length() >200){
                     errorStr.append(country + "关键字超过250字符");
                     errorStr.append("\n");
                 }
