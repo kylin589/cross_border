@@ -267,7 +267,7 @@ public class GenerateProductXML {
 
                 Element variationTheme = variationData.addElement("VariationTheme");
                 System.out.println(productsEntity.getProductId());
-                if (variantsInfoEntityList.get(0).getVariantCombination().contains("&")) {
+                if (variantsInfoEntityList.get(0).getVariantCombination().contains("-")) {
                     variationThemeStr = "Size-Color";
                     variationTheme.addText(variationThemeStr);
                 } else if (productsEntity.getColorId() != null) {
@@ -402,7 +402,7 @@ public class GenerateProductXML {
                     switch (variationThemeStr) {
                         case "Size-Color":
                             Element vieSize = vieVariationData.addElement("Size");
-                            String[] str = variantsInfoEntity.getVariantCombination().split("&");
+                            String[] str = variantsInfoEntity.getVariantCombination().split("-");
                             vieSize.addText(str[1]);
                             Element vieColor = vieVariationData.addElement("Color");
                             vieColor.addText(str[0]);
@@ -1069,7 +1069,7 @@ public class GenerateProductXML {
                 parentage.addText("parent");
 
                 Element variationTheme = variationData.addElement("VariationTheme");
-                if (variantsInfoEntityList.get(0).getVariantCombination().contains("&")) {
+                if (variantsInfoEntityList.get(0).getVariantCombination().contains("-")) {
                     variationThemeStr = "SizeColor";
                     variationTheme.addText(variationThemeStr);
                 } else if (productsEntity.getColorId() != null) {
@@ -1341,7 +1341,7 @@ public class GenerateProductXML {
                     switch (variationThemeStr) {
                         case "SizeColor":
                             Element vieSize = vieVariationData.addElement("Size");
-                            String[] str = variantsInfoEntity.getVariantCombination().split("&");
+                            String[] str = variantsInfoEntity.getVariantCombination().split("-");
                             vieSize.addText(str[1]);
                             Element vieColor = vieVariationData.addElement("Color");
                             vieColor.addText(str[0]);
@@ -1889,7 +1889,7 @@ public class GenerateProductXML {
                 Element parentage = variationData.addElement("Parentage");
                 parentage.addText("parent");
                 Element variationTheme = variationData.addElement("VariationTheme");
-                if (variantsInfoEntityList.get(0).getVariantCombination().contains("&")) {
+                if (variantsInfoEntityList.get(0).getVariantCombination().contains("-")) {
                     variationThemeStr = "Size-Color";
                     variationTheme.addText(variationThemeStr);
                 } else if (productsEntity.getColorId() != null) {
@@ -2200,7 +2200,7 @@ public class GenerateProductXML {
 
                     switch (variationThemeStr) {
                         case "Size-Color":
-                            String[] str = variantsInfoEntity.getVariantCombination().split("&");
+                            String[] str = variantsInfoEntity.getVariantCombination().split("-");
 
                             // 尺寸
                             Element vieSize = vieBuildingMaterials.addElement("Size");
