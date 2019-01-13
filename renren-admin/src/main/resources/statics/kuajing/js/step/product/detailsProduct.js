@@ -2272,7 +2272,7 @@ var vm = new Vue({
                     for(var j = 0;j<recommend1.length;j++){
                         vm.recommendAll.push({
                             id:i+j,
-                            name:recommend[i]+' & '+recommend1[j],
+                            name:recommend[i]+' - '+recommend1[j],
                             img:[],
                             sku:'',
                             addPrice:'',
@@ -2284,7 +2284,7 @@ var vm = new Vue({
                             variantId:null,
                             productId:vm.id,
                             variantSort:i+j,
-                            variantCombination:recommend[i]+' & '+recommend1[j],
+                            variantCombination:recommend[i]+' - '+recommend1[j],
                             variantSku:'',
                             variantAddPrice:null,
                             variantStock:(Math.round(Math.random()*100) + 100),
@@ -2367,13 +2367,47 @@ var vm = new Vue({
 
                 // if(vm.proDetails.chinesePRE.productTitle)
                 if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
-                    layer.msg('产品标题内容不能超过200个字符')
-                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 250){
-                    layer.msg('关键字内容不能超过250个字符')
-                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyPoints).length > 5000){
-                    layer.msg('重点说明内容不能超过5000个字符')
-                }else if(JSON.stringify(vm.proDetails.chinesePRE.productDescription).length > 2500){
-                    layer.msg('产品描述内容不能超过2500个字符')
+                    layer.msg('中文产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 200){
+                    layer.msg('中文关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.productDescription).length > 2000){
+                    layer.msg('中文产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.productTitle).length > 200){
+                    layer.msg('法语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.keyWord).length > 200){
+                    layer.msg('法语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.productDescription).length > 2000){
+                    layer.msg('法语产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.productTitle).length > 200){
+                    layer.msg('西班牙语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.keyWord).length > 200){
+                    layer.msg('西班牙语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.productDescription).length > 2000){
+                    layer.msg('西班牙语产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.productTitle).length > 200){
+                    layer.msg('德国产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.keyWord).length > 200){
+                    layer.msg('德国关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.productDescription).length > 2000){
+                    layer.msg('德国产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.productTitle).length > 200){
+                    layer.msg('意大利产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.keyWord).length > 200){
+                    layer.msg('意大利关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.productDescription).length > 2000){
+                    layer.msg('意大利产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.productTitle).length > 200){
+                    layer.msg('英语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.keyWord).length > 200){
+                    layer.msg('英语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.productDescription).length > 2000){
+                    layer.msg('英语产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.productTitle).length > 200){
+                    layer.msg('日语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.keyWord).length > 200){
+                    layer.msg('日语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.productDescription).length > 2000){
+                    layer.msg('日语产品描述内容不能超过2000个字符')
                 }else {
                     // if(vm.)
                     objectKeyIsEmpty(vm.proDetails.francePRE);
@@ -2421,7 +2455,7 @@ var vm = new Vue({
                     // for(var i = 0;i<arr.length;i++){
                     //     shunx.push(arr.eq(i).attr('data-index'))
                     // }
-                    console.log(shunx);
+                    console.log(vm.proDetails);
 
                     shunx.forEach(function (v,i) {
                         var t = vm.recommendAll[i];
@@ -2495,6 +2529,7 @@ var vm = new Vue({
                         obj[aa] = ' '
                         console.log(obj[aa]);
                     }
+                    obj[aa] = JSON.stringify(obj[aa]);
                 }
                 // console.log(obj);
                 // return empty;

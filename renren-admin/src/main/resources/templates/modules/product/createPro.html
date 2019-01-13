@@ -399,19 +399,19 @@
                         <div class="layui-tab-content active">
                             <!--<input type="button" value="一键翻译" @click="fanyiFunc1">-->
                             <!--<br><br>-->
-                            <span><label for="">产品标题：<input type="button" value="一键翻译" @click="titleZhtoOther"></label><textarea v-model="proDetails.chinesePRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
-                            <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordZhtoOther"></label><textarea v-model="proDetails.chinesePRE.keyWord" @change="titleChange2">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：<input type="button" value="一键翻译" @click="keyPointZhtoOther"></label><textarea v-model="proDetails.chinesePRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionZhtoOther"></label><textarea v-model="proDetails.chinesePRE.productDescription" @change="titleChange3">建议填写</textarea>
+                            <span><label for="">产品标题：<input type="button" value="一键翻译" @click="titleZhtoOther"></label><textarea v-model="proDetails.chinesePRE.productTitle" @change="">建议填写</textarea></span><br>
+                            <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordZhtoOther"></label><textarea v-model="proDetails.chinesePRE.keyWord" @change="">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：<input type="button" value="一键翻译" @click="keyPointZhtoOther"></label><textarea v-model="proDetails.chinesePRE.keyPoints" @change="">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionZhtoOther"></label><textarea v-model="proDetails.chinesePRE.productDescription" @change="">建议填写</textarea>
                                 <input class="jiacu" type="button" value="加粗" @click="inserttag"></span><br>
                         </div>
                         <div class="layui-tab-content">
                             <!--<input type="button" value="一键翻译" @click="fanyiFunc">-->
                             <!--<br><br>-->
-                            <span><label for="">产品标题：<input type="button" value="一键翻译" @click="titleEntoOthers"></label><textarea v-model="proDetails.britainPRE.productTitle" @change="titleChange">建议填写</textarea></span><br>
-                            <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordEntoOthers"></label><textarea v-model="proDetails.britainPRE.keyWord" @change="titleChange2">建议填写</textarea></span><br>
-                            <span><label for="">重点说明：<input type="button" value="一键翻译" @click="keyPointEntoOthers"></label><textarea v-model="proDetails.britainPRE.keyPoints" @change="titleChange1">建议填写</textarea></span><br>
-                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionEntoOthers"></label><textarea v-model="proDetails.britainPRE.productDescription" @change="titleChange3">建议填写</textarea>
+                            <span><label for="">产品标题：<input type="button" value="一键翻译" @click="titleEntoOthers"></label><textarea v-model="proDetails.britainPRE.productTitle" @change="">建议填写</textarea></span><br>
+                            <span><label for="">关键字：  <input type="button" value="一键翻译" @click="keyWordEntoOthers"></label><textarea v-model="proDetails.britainPRE.keyWord" @change="">建议填写</textarea></span><br>
+                            <span><label for="">重点说明：<input type="button" value="一键翻译" @click="keyPointEntoOthers"></label><textarea v-model="proDetails.britainPRE.keyPoints" @change="">建议填写</textarea></span><br>
+                            <span><label for="">产品描述：<input type="button" value="一键翻译" @click="descriptionEntoOthers"></label><textarea v-model="proDetails.britainPRE.productDescription" @change="">建议填写</textarea>
                                 <input class="jiacu" type="button" value="加粗" @click="inserttag1">
                             </span><br>
                         </div>
@@ -554,7 +554,7 @@
             <h3>添加变体</h3>
             <div>
                 <label for="">变体名称</label>
-                <select name="" id="variantName" v-model="selVar"  placeholder="变体名称">
+                <select name="" id="variantName" v-model="selVar"  placeholder="变体名称" @change="vChange">
                     <option value="0">颜色（color）</option>
                     <option value="1">尺寸（sizeNam）</option>
                 </select>
@@ -576,7 +576,7 @@
             <h3>添加变体</h3>
             <div>
                 <label for="">变体名称</label>
-                <select name="" id="variantName1" v-model="upVariantList.id"  placeholder="变体名称">
+                <select name="" id="variantName1" v-model="upVariantList.id"  placeholder="变体名称" disabled>
                     <option value="0">颜色（color）</option>
                     <option value="1">尺寸（sizeNam）</option>
                 </select>

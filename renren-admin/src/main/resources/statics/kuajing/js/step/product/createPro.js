@@ -1310,95 +1310,101 @@ var vm = new Vue({
                     var _name = $('#variantName option:selected').text();
                     var _typeName = $('#variantType').val();
                     var type = '';
+                    if(_typeName != ''){
+                        var reg = new RegExp( '，' , "g" )
+                        var str = _typeName.replace(reg,',');
+                        _typeName = str;
+                        console.log(_typeName == '');
+                        console.log(_typeName.split(','));
+                        // _typeName.join(',');
+                        if(_id == '0'){
+                            type = 'color'
+                        }else {
+                            type = 'size'
+                        }
 
-                    var reg = new RegExp( '，' , "g" )
-                    var str = _typeName.replace(reg,',');
-                    _typeName = str;
-                    console.log(_typeName);
-                    console.log(_typeName.split(','));
-                    // _typeName.join(',');
-                    if(_id == '0'){
-                        type = 'color'
-                    }else {
-                        type = 'size'
-                    }
+                        $.ajax({
+                            type: 'get',
+                            url: '../../product/variantparameter/save',
+                            contentType: "application/json",
+                            data: {
+                                'productId':vm.id,
+                                'paramsType':type,
+                                'paramsValue':_typeName
+                            },
+                            success: function (r) {
+                                console.log('添加变体');
+                                console.log(r)
+                                if (r.code == 0) {
+                                    // this.costFreight = r.categoryOneList;
 
-                    $.ajax({
-                        type: 'get',
-                        url: '../../product/variantparameter/save',
-                        contentType: "application/json",
-                        data: {
-                            'productId':vm.id,
-                            'paramsType':type,
-                            'paramsValue':_typeName
-                        },
-                        success: function (r) {
-                            console.log('添加变体');
-                            console.log(r)
-                            if (r.code == 0) {
-                                // this.costFreight = r.categoryOneList;
+                                    console.log(vm.variantList);
 
-                                console.log(vm.variantList);
-
-                                if(vm.variantList.length == 0){
-                                    vm.variantList.push({
-                                        id:_id,
-                                        name:_name,
-                                        type:_typeName.split(',')
-                                    })
-                                }else if(vm.variantList.length == 1){
-                                    if(vm.variantList[0].id == _id){
-                                        var arr = vm.variantList[0].type= _typeName.split(',');
-                                        // var arr = vm.variantList[0].type.concat(_typeName.split(','));
-                                        vm.variantList[0].type = arr;
-                                        // vm.variantList[i].type.push(_typeName.join(','))
-                                    }else {
+                                    if(vm.variantList.length == 0){
                                         vm.variantList.push({
                                             id:_id,
                                             name:_name,
                                             type:_typeName.split(',')
                                         })
-                                    }
-
-                                }else {
-                                    for(var i = 0;i<vm.variantList.length;i++){
-                                        if(vm.variantList[i].id == _id){
-                                            // var arr = vm.variantList[i].type.concat(_typeName.split(','));
-                                            var arr = vm.variantList[i].type= _typeName.split(',');
-                                            vm.variantList[i].type = arr;
+                                    }else if(vm.variantList.length == 1){
+                                        if(vm.variantList[0].id == _id){
+                                            var arr = vm.variantList[0].type= _typeName.split(',');
+                                            // var arr = vm.variantList[0].type.concat(_typeName.split(','));
+                                            vm.variantList[0].type = arr;
                                             // vm.variantList[i].type.push(_typeName.join(','))
+                                        }else {
+                                            vm.variantList.push({
+                                                id:_id,
+                                                name:_name,
+                                                type:_typeName.split(',')
+                                            })
+                                        }
+
+                                    }else {
+                                        for(var i = 0;i<vm.variantList.length;i++){
+                                            if(vm.variantList[i].id == _id){
+                                                // var arr = vm.variantList[i].type.concat(_typeName.split(','));
+                                                var arr = vm.variantList[i].type= _typeName.split(',');
+                                                vm.variantList[i].type = arr;
+                                                // vm.variantList[i].type.push(_typeName.join(','))
+                                            }
                                         }
                                     }
-                                }
 
-                                if(_id == '0'){
-                                    vm.proDetails.colorVP = {
-                                        paramsId:r.variantParameterId,
-                                        paramsType:'color',
-                                        paramsValue:_typeName
+                                    if(_id == '0'){
+                                        vm.proDetails.colorVP = {
+                                            paramsId:r.variantParameterId,
+                                            paramsType:'color',
+                                            paramsValue:_typeName
+                                        }
+                                    }else {
+                                        vm.proDetails.sizeVP = {
+                                            paramsId:r.variantParameterId,
+                                            paramsType:'color',
+                                            paramsValue:_typeName
+                                        }
                                     }
-                                }else {
-                                    vm.proDetails.sizeVP = {
-                                        paramsId:r.variantParameterId,
-                                        paramsType:'color',
-                                        paramsValue:_typeName
-                                    }
+
+                                    vm.getrecommendAll();
+
+
+                                    layer.msg("变体添加成功");
+                                } else {
+                                    alert(r.msg);
                                 }
-
-                                vm.getrecommendAll();
-
-
-                                layer.msg("变体添加成功");
-                            } else {
-                                alert(r.msg);
                             }
-                        }
-                    });
+                        });
+                        layer.close(index);
+                    }else {
+                        layer.msg('请选择参数属性');
+                    }
+
+
 
 
 
                     // console.log(vm.recommendAll);
-                    layer.close(index);
+
 
                 },
                 btn2: function (index) {
@@ -1406,6 +1412,9 @@ var vm = new Vue({
 
                 }
             });
+        },
+        vChange:function () {
+            $('#variantType').val('');
         },
         choicePro:function (i) {
             // if($('.proStationUl li').eq(i).attr('data-ok') == 'false'){
@@ -2216,7 +2225,7 @@ var vm = new Vue({
                     for(var j = 0;j<recommend1.length;j++){
                         vm.recommendAll.push({
                             id:i+j,
-                            name:recommend[i]+'*'+recommend1[j],
+                            name:recommend[i]+' - '+recommend1[j],
                             img:[],
                             sku:'',
                             addPrice:'',
@@ -2228,7 +2237,7 @@ var vm = new Vue({
                             variantId:null,
                             productId:vm.id,
                             variantSort:i+j,
-                            variantCombination:recommend[i]+'*'+recommend1[j],
+                            variantCombination:recommend[i]+' - '+recommend1[j],
                             variantSku:'',
                             variantAddPrice:null,
                             variantStock:(Math.round(Math.random()*10) + 60),
@@ -2494,14 +2503,76 @@ var vm = new Vue({
             }else {
 
                 if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
-                    layer.msg('产品标题内容不能超过200个字符')
-                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 250){
-                    layer.msg('关键字内容不能超过250个字符')
-                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyPoints).length > 1000){
-                    layer.msg('重点说明内容不能超过1000个字符')
+                    layer.msg('中文产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 200){
+                    layer.msg('中文关键字内容不能超过200个字符')
                 }else if(JSON.stringify(vm.proDetails.chinesePRE.productDescription).length > 2000){
-                    layer.msg('产品描述内容不能超过2000个字符')
+                    layer.msg('中文产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.productTitle).length > 200){
+                    layer.msg('法语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.keyWord).length > 200){
+                    layer.msg('法语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.productDescription).length > 2000){
+                    layer.msg('法语产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.productTitle).length > 200){
+                    layer.msg('西班牙语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.keyWord).length > 200){
+                    layer.msg('西班牙语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.productDescription).length > 2000){
+                    layer.msg('西班牙语产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.productTitle).length > 200){
+                    layer.msg('德国产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.keyWord).length > 200){
+                    layer.msg('德国关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.productDescription).length > 2000){
+                    layer.msg('德国产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.productTitle).length > 200){
+                    layer.msg('意大利产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.keyWord).length > 200){
+                    layer.msg('意大利关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.productDescription).length > 2000){
+                    layer.msg('意大利产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.productTitle).length > 200){
+                    layer.msg('英语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.keyWord).length > 200){
+                    layer.msg('英语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.productDescription).length > 2000){
+                    layer.msg('英语产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.productTitle).length > 200){
+                    layer.msg('日语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.keyWord).length > 200){
+                    layer.msg('日语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.productDescription).length > 2000){
+                    layer.msg('日语产品描述内容不能超过2000个字符')
                 }else {
+
+                    objectKeyIsEmpty(vm.proDetails.francePRE);
+                    objectKeyIsEmpty(vm.proDetails.spainPRE);
+                    objectKeyIsEmpty(vm.proDetails.germanyPRE);
+                    objectKeyIsEmpty(vm.proDetails.italyPRE);
+                    objectKeyIsEmpty(vm.proDetails.britainPRE);
+                    objectKeyIsEmpty(vm.proDetails.japanPRE);
+                    objectKeyIsEmpty(vm.proDetails.chinesePRE);
+
+
+                    // if(vm.proDetails.manufacturerNumber == ''){
+                    //     vm.proDetails.manufacturerNumber = ' ';
+                    // }
+                    // if(vm.proDetails.productSku == ''){
+                    //     vm.proDetails.productSku = ' ';
+                    // }
+                    // if(vm.proDetails.productSource == ''){
+                    //     vm.proDetails.productSource = ' ';
+                    // }
+                    // if(vm.proDetails.sellerLink == ''){
+                    //     vm.proDetails.sellerLink = ' ';
+                    // }
+                    // if(vm.proDetails.productRemark == ''){
+                    //     vm.proDetails.productRemark = ' ';
+                    // }
+                    // if(vm.proDetails.productAbbreviations == ''){
+                    //     vm.proDetails.productAbbreviations = ' ';
+                    // }
 
                     var u = $('.ul1');
                     var shunx = [];
@@ -2600,15 +2671,24 @@ var vm = new Vue({
 
 
                     });
+
                 }
-
-
-
-
 
             }
 
-
+            function objectKeyIsEmpty(obj) {
+                // console.log(obj);
+                // let empty = null;
+                for (var aa in obj) {
+                    if (obj[aa] == '') {
+                        obj[aa] = ' '
+                        console.log(obj[aa]);
+                    }
+                    obj[aa] = JSON.stringify(obj[aa]);
+                }
+                // console.log(obj);
+                // return empty;
+            }
 
 
 
