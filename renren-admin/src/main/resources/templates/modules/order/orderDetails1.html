@@ -36,7 +36,7 @@
                     <h4><a :href="orderDetails.amazonProductUrl" target="_blank">{{ orderDetails.productTitle }}</a></h4>
                     <!--<p>sdkfjbsanklnsml;kdgfuasbjkdnlcxm </p>-->
                     <!--<p>{{ orderDetails.shipAddress }}</p>-->
-
+                    <span><label for="">订单ID：</label><span>{{ orderDetails.orderId }}</span></span>
                     <span><label for="">店铺：</label><span>{{ orderDetails.shopName }}</span></span><br>
                     <span><label for="">SKU：</label><span :lay-href="'modules/product/detailsProduct1.html?id='+orderDetails.productId" layadmin-event="message" lay-text="产品详情" style="color: #12ace8;cursor:pointer;">{{ orderDetails.productSku }}</span></span>
                     <span><label for="">ASIN：</label><span>{{ orderDetails.productAsin }}</span></span><br>
