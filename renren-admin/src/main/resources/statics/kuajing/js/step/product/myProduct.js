@@ -638,6 +638,11 @@ var vm = new Vue({
                         console.log(vm.xiugaiData);
                         // console.log(vm.xiugaiData.productCategory);
                         layer.confirm('确定修改吗？',function (index1) {
+
+                            var index2 = layer.load();
+                            var index2 = layer.load(1); //换了种风格
+                            var index2 = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+
                             $.ajax({
                                 url: '../../product/products/batchmodify',
                                 type: 'post',
@@ -650,13 +655,16 @@ var vm = new Vue({
                                         layer.msg('修改成功');
                                         layer.close(index1);
                                         layer.close(index);
+                                        layer.close(index2);
 
                                     } else {
                                         layer.alert(r.msg);
+                                        layer.close(index2);
                                     }
                                 },
                                 error: function () {
                                     layer.msg("网络故障");
+                                    layer.close(index2);
                                 }
                             })
                         })
