@@ -343,7 +343,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
                     feedSubmissionResultDtos = getFeedSubmissionResultAsync(uploadId, fileStoragePath, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionInfoDtoList);
 
-                    if (feedSubmissionResultDtos.size() == feedSubmissionInfoDtoList.size()) {
+                    if (feedSubmissionResultDtos != null || feedSubmissionResultDtos.size() != feedSubmissionInfoDtoList.size()) {
                         break;
                     }
 
