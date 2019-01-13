@@ -611,9 +611,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED);
                             orderEntity.setOrderState("已付款");
                         }
-                        if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
-                            orderEntity.setCountryCode(orderModel.getCountry());
-                        }
+                        orderEntity.setCountryCode(orderModel.getCountry());
                         orderEntity.setShopId(orderModel.getShopId());
                         orderEntity.setShopName(orderModel.getShopName());
                         orderEntity.setProductTitle(orderModel.getTitlename());
@@ -680,6 +678,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
                     }
                     orderEntity.setProductTitle(orderModel.getTitlename());
+                    orderEntity.setCountryCode(orderModel.getCountry());
                     //设置汇率
                     BigDecimal rate = new BigDecimal(0.00);
                     String rateCode = orderModel.getCurrencyCode();
@@ -766,7 +765,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
                         orderEntity.setAmazonOrderId(amazonOrderId);
                         orderEntity.setOrderItemId(orderModel.getOrderItemId());
-                        orderEntity.setBuyDate(orderModel.getBuyDate());
+                        if(orderModel.getBuyDate() != null){
+                            orderEntity.setBuyDate(orderModel.getBuyDate());
+                        }else{
+                            orderEntity.setBuyDate(new Date());
+                        }
+
                         if("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)){
                             //未付款
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING);
@@ -776,9 +780,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED);
                             orderEntity.setOrderState("已付款");
                         }
-                        if(orderModel.getProductShipAddressEntity() != null && StringUtils.isNotBlank(orderModel.getProductShipAddressEntity().getShipCountry())){
-                            orderEntity.setCountryCode(orderModel.getCountry());
-                        }
+                        orderEntity.setCountryCode(orderModel.getCountry());
                         orderEntity.setShopId(orderModel.getShopId());
                         orderEntity.setShopName(orderModel.getShopName());
                         orderEntity.setProductTitle(orderModel.getTitlename());
@@ -808,6 +810,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         orderEntity.setMomentRate(rate);
                         //获取订单金额（外币）
                         BigDecimal orderMoney = orderModel.getOrderMoney();
+                        System.out.println("店铺id：：：：：" + orderModel.getShopId());
+                        System.out.println("订单id：：：：：" + orderModel.getAmazonOrderId());
+                        System.out.println("金额为:::::::::" + orderMoney);
                         if(orderMoney.compareTo(new BigDecimal("0.00")) != 0){
                             orderEntity.setOrderMoney(orderMoney);
                             orderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
@@ -820,6 +825,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             orderEntity.setAccountMoney(accountMoney);
                             orderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
                         }
+                        orderEntity.setIsOld(1);
                         this.insert(orderEntity);
                         //新增收货人信息
                         ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
@@ -841,6 +847,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     }else if(productsEntity != null){
                         orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
                     }
+                    orderEntity.setBuyDate(orderModel.getBuyDate());
+                    orderEntity.setCountryCode(orderModel.getCountry());
                     orderEntity.setProductTitle(orderModel.getTitlename());
                     //设置汇率
                     BigDecimal rate = new BigDecimal(0.00);
