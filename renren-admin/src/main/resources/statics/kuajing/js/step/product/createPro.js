@@ -2684,7 +2684,7 @@ var vm = new Vue({
                         obj[aa] = ' '
                         console.log(obj[aa]);
                     }
-                    obj[aa] = JSON.stringify(obj[aa]);
+                    // obj[aa] = JSON.stringify(obj[aa]);
                 }
                 // console.log(obj);
                 // return empty;
