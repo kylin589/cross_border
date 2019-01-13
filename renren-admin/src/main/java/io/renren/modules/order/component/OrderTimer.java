@@ -31,6 +31,7 @@ import io.renren.modules.product.service.VariantsInfoService;
 import io.renren.modules.product.vm.OrderModel;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +51,40 @@ import static io.renren.modules.amazon.util.XMLUtil.analysisListOrdersResponse;
 
 @Component("OrderTimer")
 public class OrderTimer {
+    // 欧洲
+    @Value(("${mws-config.eu-access-key}"))
+    private String euAccessKey;
+
+    @Value(("${mws-config.eu-secret-key}"))
+    private String euSecretKey;
+
+    // 日本
+    @Value(("${mws-config.jp-access-key}"))
+    private String jpAccessKey;
+
+    @Value(("${mws-config.jp-secret-key}"))
+    private String jpSecretKey;
+
+    // 北美
+    @Value(("${mws-config.na-access-key}"))
+    private String naAccessKey;
+
+    @Value(("${mws-config.na-secret-key}"))
+    private String naSecretKey;
+
+    // 澳大利亚
+    @Value(("${mws-config.au-access-key}"))
+    private String auAccessKey;
+
+    @Value(("${mws-config.au-secret-key}"))
+    private String auSecretKey;
+
+    @Value(("${mws-config.app-name}"))
+    private String appName;
+
+    @Value(("${mws-config.app-version}"))
+    private String appVersion;
+
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
 
