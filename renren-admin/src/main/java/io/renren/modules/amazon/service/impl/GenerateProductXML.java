@@ -158,9 +158,9 @@ public class GenerateProductXML {
             Element description = descriptionData.addElement("Description");
             if (introductionEntity.getProductDescription() != null) {
                 if (introductionEntity.getProductDescription().length() > 2000) {
-                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000);
+                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000).replace("\n","<br />");
                 } else {
-                    descriptionStr = introductionEntity.getProductDescription();
+                    descriptionStr = introductionEntity.getProductDescription().replace("\n","<br />");
                 }
             }
             description.addText(descriptionStr);
@@ -963,9 +963,9 @@ public class GenerateProductXML {
             Element description = descriptionData.addElement("Description");
             if (introductionEntity.getProductDescription() != null) {
                 if (introductionEntity.getProductDescription().length() > 2000) {
-                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000);
+                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000).replace("\n","<br />");
                 } else {
-                    descriptionStr = introductionEntity.getProductDescription();
+                    descriptionStr = introductionEntity.getProductDescription().replace("\n","<br />");
                 }
             }
             description.addText(descriptionStr);
@@ -1782,9 +1782,9 @@ public class GenerateProductXML {
             Element description = descriptionData.addElement("Description");
             if (introductionEntity.getProductDescription() != null) {
                 if (introductionEntity.getProductDescription().length() > 2000) {
-                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000);
+                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000).replace("\n","<br />");
                 } else {
-                    descriptionStr = introductionEntity.getProductDescription();
+                    descriptionStr = introductionEntity.getProductDescription().replace("\n","<br />");
                 }
             }
             description.addText(descriptionStr);
