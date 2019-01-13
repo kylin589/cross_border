@@ -192,7 +192,7 @@ public class OrderController extends AbstractController{
         //设置amazon产品链接
 //        amazonProductUrl
         AmazonMarketplaceEntity amazonMarketplaceEntity = amazonMarketplaceService.selectOne(new EntityWrapper<AmazonMarketplaceEntity>().eq("country_code",orderEntity.getCountryCode()));
-        String amazonProductUrl = amazonMarketplaceEntity.getMwsPoint() + "/gp/product/" + orderEntity.getProductAsin();
+        String amazonProductUrl = amazonMarketplaceEntity.getAmazonSite() + "/gp/product/" + orderEntity.getProductAsin();
         orderDTO.setAmazonProductUrl(amazonProductUrl);
         orderDTO.setProductImageUrl(orderEntity.getProductImageUrl());
         orderDTO.setMomentRate(momentRate);

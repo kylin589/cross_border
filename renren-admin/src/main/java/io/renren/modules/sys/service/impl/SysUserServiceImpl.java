@@ -63,8 +63,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 	@DataFilter(subDept = true, user = false)
 	public PageUtils queryPage(Map<String, Object> params, Long deptId) {
 		String username = (String)params.get("username");
+		String displayName = (String)params.get("displayName");
 		EntityWrapper<SysUserEntity> wrapper = new EntityWrapper<SysUserEntity>();
 		wrapper.like(StringUtils.isNotBlank(username),"username", username)
+				.like(StringUtils.isNotBlank(displayName),"display_name",displayName)
 				.eq(deptId != 1L,"dept_id",deptId)
 				.addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String)params.get(Constant.SQL_FILTER));
 		Page<SysUserEntity> page = this.selectPage(

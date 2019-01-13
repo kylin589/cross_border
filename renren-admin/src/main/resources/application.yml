@@ -80,8 +80,20 @@ logging:
   file: admin.log
 
 mws-config:
-  access-key: AKIAJPTOJEGMM7G4FJQA
-  secret-key: 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
+  # 欧洲
+  # AWS 访问密钥 ID
+  eu-access-key: AKIAJPTOJEGMM7G4FJQA
+  # 客户端密钥
+  eu-secret-key: 1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A
+  # 日本
+  jp-access-key: a
+  jp-secret-key: a
+  # 北美
+  na-access-key: AKIAIO5CV5QBRA4CCOZQ
+  na-secret-key: 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
+  # 澳大利亚
+  au-access-key: a
+  au-secret-key: a
   app-name: CrossBorder
   app-version: 1.0
 

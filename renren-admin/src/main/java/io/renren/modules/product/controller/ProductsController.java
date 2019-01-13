@@ -422,7 +422,7 @@ public class ProductsController extends AbstractController {
         }
         //通过产品id查出变体信息
         List<VariantsInfoEntity> variantsInfos = new ArrayList<VariantsInfoEntity>();
-        variantsInfos = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId).orderBy("variant_sort"));
+        variantsInfos = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId).orderBy("variant_id"));
         productsEntity.setVariantsInfos(variantsInfos);
         return R.ok().put("productsEntity", productsEntity);
     }
