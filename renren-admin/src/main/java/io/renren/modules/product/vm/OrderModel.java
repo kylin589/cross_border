@@ -22,7 +22,7 @@ public class OrderModel {
 
     private  String productAsin;//产品asin
 
-    private BigDecimal orderMoney;//订单金额
+    private BigDecimal orderMoney = new BigDecimal(0.00);//订单金额
 
     private int orderNumber;//订单总量
     //店铺名称

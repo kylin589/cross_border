@@ -31,7 +31,7 @@ public class UploadServiceImpl extends ServiceImpl<UploadDao, UploadEntity> impl
 
     @Override
     public PageUtils queryAllUploadPage(Map<String, Object> params) {
-        Long deptId = (Long) params.get("userId");
+        Long deptId = (Long) params.get("deptId");
         EntityWrapper<UploadEntity> wrapper = new EntityWrapper<UploadEntity>();
         if (deptId != 1) {
             wrapper.eq("dept_id", deptId).orderBy("update_time", false);

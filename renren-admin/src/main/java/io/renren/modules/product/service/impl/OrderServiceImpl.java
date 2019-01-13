@@ -596,7 +596,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
                         orderEntity.setAmazonOrderId(amazonOrderId);
                         orderEntity.setOrderItemId(orderModel.getOrderItemId());
-                        orderEntity.setBuyDate(orderModel.getBuyDate());
+                        if(orderModel.getBuyDate() != null){
+                            orderEntity.setBuyDate(orderModel.getBuyDate());
+                        }else{
+                            orderEntity.setBuyDate(new Date());
+                        }
+
                         if("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)){
                             //未付款
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING);
@@ -638,6 +643,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         orderEntity.setMomentRate(rate);
                         //获取订单金额（外币）
                         BigDecimal orderMoney = orderModel.getOrderMoney();
+                        System.out.println("店铺id：：：：：" + orderModel.getShopId());
+                        System.out.println("订单id：：：：：" + orderModel.getAmazonOrderId());
+                        System.out.println("金额为:::::::::" + orderMoney);
                         if(orderMoney.compareTo(new BigDecimal("0.00")) != 0){
                             orderEntity.setOrderMoney(orderMoney);
                             orderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));

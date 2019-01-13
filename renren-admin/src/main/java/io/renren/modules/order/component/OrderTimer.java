@@ -64,6 +64,7 @@ public class OrderTimer {
 
     @Autowired
     private ProductsService productsService;
+
     /**
      * 获得店铺授权列表信息
      */
@@ -82,6 +83,7 @@ public class OrderTimer {
                 map.put("sellerId",sellerId);
                 map.put("mwsAuthToken",mwsAuthToken);
                 map.put("shopname",shop.getShopName());
+                map.put("countryCode",shop.getCountryCode());
                 map.put("serviceURL",shop.getMwsPoint());
                 map.put("marketplaceId",shop.getMarketplaceId());
                 map.put("shopId",shop.getGrantShopId());
@@ -203,6 +205,7 @@ public class OrderTimer {
                             List<OrderModel> orderModelList = new ArrayList<OrderModel>();
                             if(orderItemResponseDtos.get(k) != null && orderItemResponseDtos.get(k).getOrderItems() != null && orderItemResponseDtos.get(k).getOrderItems().size() >0){
                                 for (int m = 0; m < orderItemResponseDtos.get(k).getOrderItems().size(); m++) {
+                                    System.out.println("店铺id===================" + shopId);
                                     String titlename = orderItemResponseDtos.get(k).getOrderItems().get(m).getTitle();
                                     System.out.println("商品名称:"+titlename+"==================");
                                     String product_asin = orderItemResponseDtos.get(k).getOrderItems().get(m).getASIN();
@@ -243,8 +246,7 @@ public class OrderTimer {
 
                                     orderModel.setAmazonOrderId(AmazonOrderId);
                                     String buytime=listOrdersResponseDtos.get(i).getOrders().get(j).getPurchaseDate();
-                                    String countrys=listOrdersResponseDtos.get(i).getOrders().get(j).getSalesChannel();
-                                    String country = countrys.substring(7,countrys.length()).toUpperCase();
+                                    orderModel.setCountry((String) map.get("countryCode"));
                                     buytime = buytime.replace("Z", " UTC");// UTC是本地时间
                                     SimpleDateFormat format = new SimpleDateFormat(
                                             "yyyy-MM-dd'T'HH:mm:ss.SSS Z");
@@ -258,11 +260,6 @@ public class OrderTimer {
                                     System.out.println("购买日期:"+timeStamep+"=================================");
                                     orderModel.setBuyDate(timeStamep);
                                     orderModel.setOrderStatus(listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus());
-                                    if(country!=null){
-                                        orderModel.setCountry(country);
-                                    }else{
-                                    orderModel.setCountry(country);
-                                    }
                                     if (titlename != null) {
                                         orderModel.setTitlename(titlename);
                                     } else {
@@ -289,7 +286,6 @@ public class OrderTimer {
                                         orderModel.setProductImageUrl("");
                                     }
                                     if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
-
                                         String orderMoney = listOrdersResponseDtos.get(i).getOrders().get(j).getAmount();
                                         System.out.println("订单金额："+orderMoney+"============");
                                         if (orderMoney != null) {
@@ -300,12 +296,6 @@ public class OrderTimer {
                                         }
                                         String CurrencyCode=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getCurrencyCode();
                                         System.out.println("货币代码："+CurrencyCode+"============");
-                                        if (orderMoney != null) {
-                                            BigDecimal OrderMoney = new BigDecimal(orderMoney);
-                                            orderModel.setOrderMoney(OrderMoney);//订单总费用
-                                        } else {
-                                            orderModel.setOrderMoney(new BigDecimal(0));//订单总费用
-                                        }
                                         if(CurrencyCode!=null){
                                             orderModel.setCurrencyCode(CurrencyCode);
                                         }else{
@@ -452,12 +442,16 @@ public class OrderTimer {
             System.out.println("Response:");
             System.out.println("RequestId: " + rhmd.getRequestId());
             System.out.println("Timestamp: " + rhmd.getTimestamp());
+
             String responseXml = response.toXML();
-            //进行截取图片url
+            System.out.println("商品xml：：：：：：：：：：：：：：：：：：：：：：/n" + responseXml );
             int a = responseXml.indexOf("<ns2:URL>");
             int b = responseXml.indexOf("</ns2:URL>");
-            String imageURL = responseXml.substring(a + 9, b).replace("SL75", "SL500");
-            return imageURL;
+            //进行截取图片url
+            if(a != b){
+                String imageURL = responseXml.substring(a + 9, b).replace("SL75", "SL500");
+                return imageURL;
+            }
         } catch (MarketplaceWebServiceProductsException var5) {
             System.out.println("Service Exception:");
             rhmd = var5.getResponseHeaderMetadata();
