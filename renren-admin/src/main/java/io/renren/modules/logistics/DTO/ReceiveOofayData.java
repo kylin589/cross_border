@@ -11,8 +11,8 @@ public class ReceiveOofayData implements Serializable {
 
     //订单状态 1备货；2缺货；4问题；3发货；5退款；6妥投；7代发；10物流问题
     public String statusStr = "1";
-    //OmsOrderDetailext.warehousing_record_list 如果有，并且storage_time不为null表示入库了
-    //是否入库
+    //OmsOrderDetailext.warehousing_record_list 如果有，并且storage_time不为null表示仓库已入库了
+    //是否仓库已入库
     public boolean isWarehousing = false;
     //运费
     public String interFreight;

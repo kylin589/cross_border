@@ -376,16 +376,16 @@ var vm = new Vue({
                             if(r.orderStateList[i].dataContent == "虚发货"){
                                 r.orderStateList[i].color = 'org';
                             }
-                            if(r.orderStateList[i].dataContent == "已采购"){
+                            if(r.orderStateList[i].dataContent == "国内物流已采购"){
                                 r.orderStateList[i].color = 'blue';
                             }
-                            if(r.orderStateList[i].dataContent == "待发货"){
+                            if(r.orderStateList[i].dataContent == "国内物流待发货"){
                                 r.orderStateList[i].color = 'blue';
                             }
-                            if(r.orderStateList[i].dataContent == "待签收"){
+                            if(r.orderStateList[i].dataContent == "物流仓库未签收"){
                                 r.orderStateList[i].color = 'green';
                             }
-                            if(r.orderStateList[i].dataContent == "入库"){
+                            if(r.orderStateList[i].dataContent == "仓库已入库"){
                                 r.orderStateList[i].color = 'blue';
                             }
                             if(r.orderStateList[i].dataContent == "国际已发货"){

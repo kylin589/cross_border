@@ -93,7 +93,7 @@ var vm = new Vue({
 			};
             /*var data1 = {
                 "orderIds" : "1",
-                "orderState": "待签收"
+                "orderState": "物流仓库未签收"
             };*/
 			confirm('确定要删除选中的记录？', function(){
 				$.ajax({

@@ -266,10 +266,10 @@
                 <span v-if="item.orderState == '取消'||item.orderState == '退货'||item.orderState == '问题'" class="red">
                     {{ item.orderState }}
                 </span>
-                <span v-if="item.orderState == '已付款'||item.orderState == '已采购'||item.orderState == '待发货'||item.orderState == '入库'||item.orderState == '国际已发货'" class="bule">
+                <span v-if="item.orderState == '已付款'||item.orderState == '国内物流已采购'||item.orderState == '国内物流待发货'||item.orderState == '仓库已入库'||item.orderState == '国际已发货'" class="bule">
                     {{ item.orderState }}
                 </span>
-                <span v-if="item.orderState == '待签收'||item.orderState == '补发'" class="bule1">
+                <span v-if="item.orderState == '物流仓库未签收'||item.orderState == '补发'" class="bule1">
                     {{ item.orderState }}
                 </span>
             </td>

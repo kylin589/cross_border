@@ -579,7 +579,7 @@ var vm = new Vue({
                     console.log('订单详情');
                     console.log(r);
                     if (r.code === 0) {
-                        if(orderState == '待签收'){
+                        if(orderState == '物流仓库未签收'){
                             layer.alert('推送成功');
                         }else{
                             layer.alert('修改成功');
