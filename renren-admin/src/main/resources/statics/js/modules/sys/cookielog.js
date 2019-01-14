@@ -1,14 +1,13 @@
 $(function () {
     $("#jqGrid").jqGrid({
-        url: baseURL + 'product/introduction/list',
+        url: baseURL + 'sys/cookielog/list',
         datatype: "json",
         colModel: [			
-			{ label: 'introductionId', name: 'introductionId', index: 'introduction_id', width: 50, key: true },
-			{ label: '国家代码', name: 'country', index: 'country', width: 80 }, 			
-			{ label: '产品标题', name: 'productTitle', index: 'product_title', width: 80 }, 			
-			{ label: '关键词', name: 'keyWord', index: 'key_word', width: 80 }, 			
-			{ label: '要点说明', name: 'keyPoints', index: 'key_points', width: 80 }, 			
-			{ label: '产品描述', name: 'productDescription', index: 'product_description', width: 80 }			
+			{ label: 'cookieId', name: 'cookieId', index: 'cookie_id', width: 50, key: true },
+			{ label: '用户id', name: 'userId', index: 'user_id', width: 80 }, 			
+			{ label: 'cookie', name: 'cookie', index: 'cookie', width: 80 }, 			
+			{ label: 'cookie类型', name: 'type', index: 'type', width: 80 }, 			
+			{ label: '更新时间', name: 'updateTime', index: 'update_time', width: 80 }			
         ],
 		viewrecords: true,
         height: 385,
@@ -42,7 +41,7 @@ var vm = new Vue({
 	data:{
 		showList: true,
 		title: null,
-		introduction: {}
+		cookieLog: {}
 	},
 	methods: {
 		query: function () {
@@ -51,25 +50,25 @@ var vm = new Vue({
 		add: function(){
 			vm.showList = false;
 			vm.title = "新增";
-			vm.introduction = {};
+			vm.cookieLog = {};
 		},
 		update: function (event) {
-			var introductionId = getSelectedRow();
-			if(introductionId == null){
+			var cookieId = getSelectedRow();
+			if(cookieId == null){
 				return ;
 			}
 			vm.showList = false;
             vm.title = "修改";
             
-            vm.getInfo(introductionId)
+            vm.getInfo(cookieId)
 		},
 		saveOrUpdate: function (event) {
-			var url = vm.introduction.introductionId == null ? "product/introduction/save" : "product/introduction/update";
+			var url = vm.cookieLog.cookieId == null ? "sys/cookielog/save" : "sys/cookielog/update";
 			$.ajax({
 				type: "POST",
 			    url: baseURL + url,
                 contentType: "application/json",
-			    data: JSON.stringify(vm.introduction),
+			    data: JSON.stringify(vm.cookieLog),
 			    success: function(r){
 			    	if(r.code === 0){
 						alert('操作成功', function(index){
@@ -82,26 +81,17 @@ var vm = new Vue({
 			});
 		},
 		del: function (event) {
-			var introductionIds = getSelectedRows();
-			if(introductionIds == null){
+			var cookieIds = getSelectedRows();
+			if(cookieIds == null){
 				return ;
 			}
-			var data1 = {
-				"orderIds" : ["1","2"],
-                "abnormalStatus": "Normal",
-                "abnormalState": "正常"
-			};
-            /*var data1 = {
-                "orderIds" : "1",
-                "orderState": "物流仓库未签收"
-            };*/
+			
 			confirm('确定要删除选中的记录？', function(){
 				$.ajax({
 					type: "POST",
-				    url: baseURL + "product/order/updateAbnormalState",
+				    url: baseURL + "sys/cookielog/delete",
                     contentType: "application/json",
-				    data: JSON.stringify(data1),
-				    // data: data1,
+				    data: JSON.stringify(cookieIds),
 				    success: function(r){
 						if(r.code == 0){
 							alert('操作成功', function(index){
@@ -114,9 +104,9 @@ var vm = new Vue({
 				});
 			});
 		},
-		getInfo: function(introductionId){
-			$.get(baseURL + "product/introduction/info/"+introductionId, function(r){
-                vm.introduction = r.introduction;
+		getInfo: function(cookieId){
+			$.get(baseURL + "sys/cookielog/info/"+cookieId, function(r){
+                vm.cookieLog = r.cookieLog;
             });
 		},
 		reload: function (event) {

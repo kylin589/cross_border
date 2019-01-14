@@ -21,19 +21,19 @@ public interface ConstantDictionary {
          */
         String ORDER_STATE_SHIPPED = "Shipped";
         /**
-         * 已采购
+         * 国内物流已采购
          */
         String ORDER_STATE_PURCHASED = "Purchased";
         /**
-         * 待发货
+         * 国内物流待发货
          */
         String ORDER_STATE_TOBESHIPPED = "ToBeShipped";
         /**
-         * 待签收
+         * 物流仓库未签收
          */
         String ORDER_STATE_WAITINGRECEIPT = "WaitingReceipt";
         /**
-         * 入库
+         * 仓库已入库
          */
         String ORDER_STATE_WAREHOUSING = "Warehousing";
         /**
@@ -78,7 +78,7 @@ public interface ConstantDictionary {
         };
         /**
          * 未结算状态
-         * 虚发货、已采购、待发货、待签收、入库
+         * 虚发货、国内物流已采购、国内物流待发货、物流仓库未签收、仓库已入库
          */
         String[] UNLIQUIDATED_ORDER_STATE = {
                 ORDER_STATE_SHIPPED, ORDER_STATE_PURCHASED, ORDER_STATE_TOBESHIPPED, ORDER_STATE_WAITINGRECEIPT, ORDER_STATE_WAREHOUSING

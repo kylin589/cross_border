@@ -51,17 +51,17 @@
                     <span><label for="">亚马逊单号：</label><span>{{ orderDetails.amazonOrderId }}</span></span>
                     <span><label for="">购买日期：</label><span>{{ orderDetails.buyDate }}</span></span>
                     <!--<input v-if="orderDetails.orderState == '待付款'" class="yiCaigou" type="button" value="待付款">-->
-                    <input v-if="orderDetails.orderState == '虚发货'" class="yiFahuo" type="button" value="已采购" @click="updateState('已采购')">
+                    <input v-if="orderDetails.orderState == '虚发货'" class="yiFahuo" type="button" value="国内物流已采购" @click="updateState('国内物流已采购')">
                     <!--<input v-if="orderDetails.orderState == '缺货'" class="yiCaigou" type="button" value="缺货">-->
                     <!--<input v-if="orderDetails.orderState == '取消'" class="yiFahuo" type="button" value="取消">-->
                     <!--<input v-if="orderDetails.orderState == '退货'" class="yiCaigou" type="button" value="退货">-->
                     <!--<input v-if="orderDetails.orderState == '问题'" class="yiFahuo" type="button" value="问题">-->
                     <!--<input v-if="orderDetails.orderState == '已付款'" class="yiCaigou" type="button" value="已付款">-->
-                    <!--<input v-if="orderDetails.orderState == '已采购'" class="yiFahuo" type="button" value="已采购">-->
-                    <input v-if="orderDetails.orderState == '待发货'" class="yiCaigou" type="button" value="已发货" @click="updateState('待签收')">
-                    <!--<input v-if="orderDetails.orderState == '入库'" class="yiFahuo" type="button" value="入库">-->
+                    <!--<input v-if="orderDetails.orderState == '国内物流已采购'" class="yiFahuo" type="button" value="国内物流已采购">-->
+                    <input v-if="orderDetails.orderState == '国内物流待发货'" class="yiCaigou" type="button" value="通知仓库已发货" @click="updateState('物流仓库未签收')">
+                    <!--<input v-if="orderDetails.orderState == '仓库已入库'" class="yiFahuo" type="button" value="仓库已入库">-->
                     <input v-if="orderDetails.orderState == '国际已发货'" class="yiCaigou" type="button" value="已完成" @click="updateState('完成')">
-                    <!--<input v-if="orderDetails.orderState == '待签收'" class="yiFahuo" type="button" value="待签收">-->
+                    <!--<input v-if="orderDetails.orderState == '物流仓库未签收'" class="yiFahuo" type="button" value="物流仓库未签收">-->
                     <!--<input v-if="orderDetails.orderState == '补发'" class="yiCaigou" type="button" value="补发">-->
                 </div>
             </div>
@@ -149,7 +149,7 @@
                             <p>
                                 <a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>
                                 <template v-if="orderDetails.abroadLogistics.isSynchronization == 0">
-                                    <a v-if="orderDetails.orderState == '虚发货' || orderDetails.orderState == '入库' || orderDetails.orderState == '国际已发货'" href="javascript:;" @click="tongbu">同步</a>
+                                    <a v-if="orderDetails.orderState == '虚发货' || orderDetails.orderState == '仓库已入库' || orderDetails.orderState == '国际已发货'" href="javascript:;" @click="tongbu">同步</a>
                                 </template>
 
                                 <span v-if="orderDetails.abroadLogistics.isSynchronization == 1" href="javascript:;" >已同步</span>

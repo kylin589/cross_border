@@ -131,7 +131,7 @@ public class AbroadLogisticsUtil {
                 receiveOofayData.setStatusStr(omsOrderDetailext.getString("status"));
                 //获取运费
                 receiveOofayData.setInterFreight(omsOrder.getString("feedamount"));
-                //获取是否有入库信息
+                //获取是否有仓库已入库信息
                 JSONArray recordList = omsOrderDetailext.getJSONArray("warehousing_record_list");
                 if(recordList.size() > 0 && recordList.getJSONObject(0).getString("storage_time") != null){
                     receiveOofayData.setWarehousing(true);

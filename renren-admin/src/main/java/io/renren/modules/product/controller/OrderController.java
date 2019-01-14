@@ -365,7 +365,7 @@ public class OrderController extends AbstractController{
      */
     @RequestMapping("/updateState")
     public R updateState(@RequestBody OrderVM orderVM){
-        if("待签收".equals(orderVM.getOrderState())){
+        if("物流仓库未签收".equals(orderVM.getOrderState())){
             //推送订单
             Map<String,String> result = orderService.pushOrder(orderVM.getOrderId());
             if("false".equals(result.get("code"))){
@@ -378,9 +378,9 @@ public class OrderController extends AbstractController{
             RemarkEntity remark = new RemarkEntity();
             remark.setOrderId(orderVM.getOrderId());
             remark.setType("log");
-            if("已采购".equals(orderVM.getOrderState())){
-                remark.setRemark("订单已采购");
-            }else if("待签收".equals(orderVM.getOrderState())){
+            if("国内物流已采购".equals(orderVM.getOrderState())){
+                remark.setRemark("订单国内物流已采购");
+            }else if("物流仓库未签收".equals(orderVM.getOrderState())){
                 remark.setRemark("订单已发货");
             }else if("完成".equals(orderVM.getOrderState())){
                 remark.setRemark("订单已完成");
@@ -725,7 +725,7 @@ public class OrderController extends AbstractController{
             BigDecimal momentRate = orderEntity.getMomentRate();
             //不属于退货
             if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
-                //如果订单状态在待签收和入库时，更新订单的国际物流信息
+                //如果订单状态在物流仓库未签收和仓库已入库时，更新订单的国际物流信息
                 if(ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus) || ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING.equals(orderStatus)){
                     Map<String,Object> map = AbroadLogisticsUtil.getOrderDetail(amazonOrderId);
                     int status = 0;
@@ -805,11 +805,11 @@ public class OrderController extends AbstractController{
                             orderEntity.setProfitRate(profitRate);
                             orderService.updateById(orderEntity);
                         }
-                        //状态转变为入库
+                        //状态转变为仓库已入库
                         if(receiveOofayData.isWarehousing && ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus)){
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING);
-                            orderEntity.setOrderState("入库");
-                            abroadLogisticsEntity.setState("入库");
+                            orderEntity.setOrderState("仓库已入库");
+                            abroadLogisticsEntity.setState("仓库已入库");
                         }else{
                             if(StringUtils.isNotBlank(receiveOofayData.getStatusStr())){
                                 status = Integer.parseInt(receiveOofayData.getStatusStr());
