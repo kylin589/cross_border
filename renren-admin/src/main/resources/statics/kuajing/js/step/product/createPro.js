@@ -753,6 +753,48 @@ var vm = new Vue({
                 }
             })
         },
+        getProAlbum1:function () {
+            $.ajax({
+                url: '../../product/imageaddress/imageinfo',
+                type: 'get',
+                data: {
+                    'productId': this.id
+                },
+                dataType: 'json',
+                success: function (r) {
+                    // console.log(r);
+                    if (r.code === 0) {
+                        console.log('产品相册');
+                        console.log(r);
+                        vm.proAlbum = [];
+                        r.imageInfo.forEach(function (item,index) {
+                            vm.proAlbum.push({
+                                index:index,
+                                imgId:item.imageId,
+                                url:item.imageUrl,
+                                isDeleted:item.isDeleted,
+                                createUserId:item.createUserId,
+                                createTime:item.createTime,
+                                lastOperationTime:item.lastOperationTime,
+                                lastOperationUserId:item.lastOperationUserId,
+                                productId:item.productId,
+                                status:item.status,
+                                uid:item.uid
+
+                            })
+                        })
+                        vm.saveXc();
+                        // vm.proAlbum = r.imageInfo;
+
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            })
+        },
         // 保存相册
         saveXc:function(){
             var arr = [];
@@ -2455,8 +2497,7 @@ var vm = new Vue({
                     onComplete: function(response){
                         // alert("1111："+file.name);
                         layer.msg('上传成功');
-                        vm.getProAlbum();
-                        vm.saveXc();
+                        vm.getProAlbum1();
                     }
                 });
                 vm.isUP = false;
