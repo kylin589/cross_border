@@ -244,6 +244,18 @@ td span.bule{
     background: #32ace9;
 }
 td span.bule1{
+    background: #00d3e3;
+}
+td span.bule2{
+    background: #03bbec;
+}
+td span.bule3{
+    background: #0385ec;
+}
+td span.bule4{
+    background: #05bdd6;
+}
+td span.green{
     background: #2ecfd8;
 }
 td a{
@@ -265,6 +277,9 @@ tr td:nth-child(4) span.brSpan img{
 span.red{
     color: orangered;
 }
+span.ok{
+    color: #9373e8;
+}
 
 .screen li{
     color: #9373e8;
@@ -280,8 +295,17 @@ li.org{
     padding: 2px 4px;
     border-radius: 2px;
 }
+li.org1{
+    color: #ff7922;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
 li.org:hover , li.org.action{
     background: #ffa552;
+    color: #fff!important;
+}
+li.org1:hover , li.org1.action{
+    background: #ff7922;
     color: #fff!important;
 }
 li.blue{
@@ -291,6 +315,42 @@ li.blue{
 }
 li.blue:hover , li.blue.action{
     background: #00a3e8;
+    color: #fff!important;
+}
+li.blue1{
+    color: #00d3e3;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+li.blue1:hover , li.blue1.action{
+    background: #00d3e3;
+    color: #fff!important;
+}
+li.blue2{
+    color: #03bbec;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+li.blue2:hover , li.blue2.action{
+    background: #03bbec;
+    color: #fff!important;
+}
+li.blue3{
+    color: #0385ec;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+li.blue3:hover , li.blue3.action{
+    background: #0385ec;
+    color: #fff!important;
+}
+li.blue4{
+    color: #05bdd6;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+li.blue4:hover , li.blue4.action{
+    background: #05bdd6;
     color: #fff!important;
 }
 li.green{
@@ -303,12 +363,21 @@ li.green:hover , li.green.action{
     color: #fff!important;
 }
 li.red{
-    color: #e7535a;
+    color: #f9242e;
     padding: 2px 4px;
     border-radius: 2px;
 }
 li.red:hover , li.red.action{
-    background: #e7535a;
+    background: #f9242e;
+    color: #fff!important;
+}
+li.red1{
+    color: #fb5d48;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+li.red1:hover , li.red1.action{
+    background: #fb5d48;
     color: #fff!important;
 }
 

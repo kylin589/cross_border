@@ -2345,44 +2345,44 @@ var vm = new Vue({
                 // if(vm.proDetails.chinesePRE.productTitle)
                 if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
                     layer.msg('中文产品标题内容不能超过200个字符')
-                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 200){
-                    layer.msg('中文关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 250){
+                    layer.msg('中文关键字内容不能超过250个字符')
                 }else if(JSON.stringify(vm.proDetails.chinesePRE.productDescription).length > 2000){
                     layer.msg('中文产品描述内容不能超过2000个字符')
                 }else if(JSON.stringify(vm.proDetails.francePRE.productTitle).length > 200){
                     layer.msg('法语产品标题内容不能超过200个字符')
-                }else if(JSON.stringify(vm.proDetails.francePRE.keyWord).length > 200){
-                    layer.msg('法语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.keyWord).length > 250){
+                    layer.msg('法语关键字内容不能超过250个字符')
                 }else if(JSON.stringify(vm.proDetails.francePRE.productDescription).length > 2000){
                     layer.msg('法语产品描述内容不能超过2000个字符')
                 }else if(JSON.stringify(vm.proDetails.spainPRE.productTitle).length > 200){
                     layer.msg('西班牙语产品标题内容不能超过200个字符')
-                }else if(JSON.stringify(vm.proDetails.spainPRE.keyWord).length > 200){
-                    layer.msg('西班牙语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.keyWord).length > 250){
+                    layer.msg('西班牙语关键字内容不能超过250个字符')
                 }else if(JSON.stringify(vm.proDetails.spainPRE.productDescription).length > 2000){
                     layer.msg('西班牙语产品描述内容不能超过2000个字符')
                 }else if(JSON.stringify(vm.proDetails.germanyPRE.productTitle).length > 200){
                     layer.msg('德国产品标题内容不能超过200个字符')
-                }else if(JSON.stringify(vm.proDetails.germanyPRE.keyWord).length > 200){
-                    layer.msg('德国关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.keyWord).length > 250){
+                    layer.msg('德国关键字内容不能超过250个字符')
                 }else if(JSON.stringify(vm.proDetails.germanyPRE.productDescription).length > 2000){
                     layer.msg('德国产品描述内容不能超过2000个字符')
                 }else if(JSON.stringify(vm.proDetails.italyPRE.productTitle).length > 200){
                     layer.msg('意大利产品标题内容不能超过200个字符')
-                }else if(JSON.stringify(vm.proDetails.italyPRE.keyWord).length > 200){
-                    layer.msg('意大利关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.keyWord).length > 250){
+                    layer.msg('意大利关键字内容不能超过250个字符')
                 }else if(JSON.stringify(vm.proDetails.italyPRE.productDescription).length > 2000){
                     layer.msg('意大利产品描述内容不能超过2000个字符')
                 }else if(JSON.stringify(vm.proDetails.britainPRE.productTitle).length > 200){
                     layer.msg('英语产品标题内容不能超过200个字符')
-                }else if(JSON.stringify(vm.proDetails.britainPRE.keyWord).length > 200){
-                    layer.msg('英语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.keyWord).length > 250){
+                    layer.msg('英语关键字内容不能超过250个字符')
                 }else if(JSON.stringify(vm.proDetails.britainPRE.productDescription).length > 2000){
                     layer.msg('英语产品描述内容不能超过2000个字符')
                 }else if(JSON.stringify(vm.proDetails.japanPRE.productTitle).length > 200){
                     layer.msg('日语产品标题内容不能超过200个字符')
-                }else if(JSON.stringify(vm.proDetails.japanPRE.keyWord).length > 200){
-                    layer.msg('日语关键字内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.keyWord).length > 250){
+                    layer.msg('日语关键字内容不能超过250个字符')
                 }else if(JSON.stringify(vm.proDetails.japanPRE.productDescription).length > 2000){
                     layer.msg('日语产品描述内容不能超过2000个字符')
                 }else {

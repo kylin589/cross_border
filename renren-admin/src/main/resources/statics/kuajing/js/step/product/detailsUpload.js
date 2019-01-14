@@ -229,9 +229,9 @@ var vm = new Vue({
                                     type: 'post',
                                     data: JSON.stringify({
                                         'uploadId':vm.id,
-                                        'startId': vm.startId,
-                                        'endId': vm.endId,
-                                        'uploadIds': vm.uploadIds,
+                                        'startId': parseInt(vm.upProDetails.uploadEntity.startId),
+                                        'endId': parseInt(vm.upProDetails.uploadEntity.endId),
+                                        'uploadIds': vm.upProDetails.uploadEntity.uploadIds,
                                         'grantShopId': parseInt(vm.shopinfo),
                                         'isAttribute': vm.isAttribute,
                                         'grantShop':grantShop,

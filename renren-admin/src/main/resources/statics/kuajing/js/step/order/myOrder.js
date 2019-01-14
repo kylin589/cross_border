@@ -368,25 +368,25 @@ var vm = new Vue({
                         // })
                         for (var i=0;i<r.orderStateList.length;i++){
                             if(r.orderStateList[i].dataContent == "待付款"){
-                                r.orderStateList[i].color = 'org';
+                                r.orderStateList[i].color = 'org1';
                             }
                             if(r.orderStateList[i].dataContent == "已付款"){
-                                r.orderStateList[i].color = 'blue';
+                                r.orderStateList[i].color = 'blue1';
                             }
                             if(r.orderStateList[i].dataContent == "虚发货"){
                                 r.orderStateList[i].color = 'org';
                             }
                             if(r.orderStateList[i].dataContent == "国内物流已采购"){
-                                r.orderStateList[i].color = 'blue';
+                                r.orderStateList[i].color = 'blue2';
                             }
                             if(r.orderStateList[i].dataContent == "国内物流待发货"){
-                                r.orderStateList[i].color = 'blue';
+                                r.orderStateList[i].color = 'blue3';
                             }
                             if(r.orderStateList[i].dataContent == "物流仓库未签收"){
                                 r.orderStateList[i].color = 'green';
                             }
                             if(r.orderStateList[i].dataContent == "仓库已入库"){
-                                r.orderStateList[i].color = 'blue';
+                                r.orderStateList[i].color = 'blue4';
                             }
                             if(r.orderStateList[i].dataContent == "国际已发货"){
                                 r.orderStateList[i].color = 'blue';
@@ -395,10 +395,10 @@ var vm = new Vue({
                                 r.orderStateList[i].color = 'red';
                             }
                             if(r.orderStateList[i].dataContent == "缺货"){
-                                r.orderStateList[i].color = 'org';
+                                r.orderStateList[i].color = 'org1';
                             }
                             if(r.orderStateList[i].dataContent == "退货"){
-                                r.orderStateList[i].color = 'red';
+                                r.orderStateList[i].color = 'red1';
                             }
                             if(r.orderStateList[i].dataContent == "补发"){
                                 r.orderStateList[i].color = 'green';
