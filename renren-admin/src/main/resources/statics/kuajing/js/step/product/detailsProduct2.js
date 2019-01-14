@@ -1188,7 +1188,7 @@ var vm = new Vue({
             var elList = $('.imgDiv>div.active');
             var arr = [];
             for(var i = 0;i<elList.length;i++){
-                arr.push(elList.eq(i).attr('data-index'));
+                arr.push(elList.eq(i).attr('data-id'));
             }
             console.log('删除图片id');
             console.log(arr);
@@ -1987,8 +1987,8 @@ var vm = new Vue({
             // for(var nn = 0;nn<$('.ul1').length;nn++){
             //      console.log(nn);
             // var _index = nn;
-            var aLi = $(".imgDiv>.imgAlbum");
-            $(".imgDiv>.imgAlbum").css({
+            var aLi = $(".imgDiv>div");
+            $(".imgDiv>div").css({
                 'position':'relative',
                 'top':'0',
                 'left':'0',
@@ -1996,7 +1996,7 @@ var vm = new Vue({
             })
             if(aLi.length != 0){
                 // console.log($(".imgDiv>.imgAlbum"));
-                var aLiLast = $(".imgDiv").find('.imgAlbum:last-child');
+                var aLiLast = $(".imgDiv").find('div:last-child');
                 // console.log(aLiLast);
                 var disX = 0;
                 var disY = 0;
