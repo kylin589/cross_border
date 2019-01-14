@@ -167,6 +167,7 @@ var vm = new Vue({
 
                             layer.close(index);
                             layer.msg('重新上传成功');
+                            vm.getMyUploadList();
                         } else {
                             layer.alert(r.msg);
                         }

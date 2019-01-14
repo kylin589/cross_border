@@ -313,6 +313,7 @@ var vm = new Vue({
             if(vm.shopinfo == '' || vm.inputche.length == 0 || vm.nodeId == '' || vm.amazonCategory == '' || vm.flModleValue == ''){
                 layer.msg('授权店铺、更新选项、分类节点、分类节点id、分类模版不能为空！！')
             }else {
+                console.log(vm.upProDetails);
                 layer.confirm('确定上传吗？',function (index1) {
 
 
@@ -320,10 +321,10 @@ var vm = new Vue({
                     var index = layer.load(1); //换了种风格
                     var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
 
-                    console.log(vm.shopinfo);
+                    // console.log(vm.shopinfo);
                     // vm.uploadIds = vm.uploadIdsstr;
                     vm.uploadIds = vm.uploadIdsstr.split(',');
-                    console.log(vm.uploadIds);
+                    // console.log(vm.uploadIds);
                     // if (vm.inputche[0]==true){
                     //
                     //     vm.operateItem = [0,1,2,3,4];
@@ -335,7 +336,7 @@ var vm = new Vue({
                     //         }
                     //     }
                     // }
-                    console.log(vm.shopinfo);
+                    // console.log(vm.shopinfo);
 
                     var grantShop = '';
                     vm.marketplace.forEach(function (t) {
@@ -351,8 +352,11 @@ var vm = new Vue({
                             templateDisplayName = t.templateDisplayName;
                         }
                     })
-                    console.log(vm.flModleValue);
-                    console.log(templateDisplayName);
+                    // console.log(vm.id);
+                    // console.log(vm.startId);
+                    // console.log(vm.endId);
+                    // console.log(vm.uploadIds);
+                    // console.log(templateDisplayName);
 
                     // vm.grantShopId = vm.shopinfo.grantShopId;
                     // vm.grantShop = vm.shopinfo.shopName;
@@ -362,9 +366,9 @@ var vm = new Vue({
                         type: 'post',
                         data: JSON.stringify({
                             'uploadId':parseInt(vm.id),
-                            'startId': parseInt(vm.startId),
-                            'endId': parseInt(vm.endId),
-                            'uploadIds': vm.uploadIds,
+                            'startId': parseInt(vm.upProDetails.uploadEntity.startId),
+                            'endId': parseInt(vm.upProDetails.uploadEntity.endId),
+                            'uploadIds': vm.upProDetails.uploadEntity.uploadIds,
                             'grantShopId': parseInt(vm.shopinfo),
                             // 'grantShopId': parseInt(vm.grantShopId),
                             'isAttribute': '',
