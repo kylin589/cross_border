@@ -255,9 +255,9 @@
                     <span><label for="">采购价格(￥)：</label><input type="text" placeholder="采购价格(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>
                     <span><label for="">国内运费(￥)：</label><input type="text" placeholder="国内运费(￥)" v-model="proDetails.domesticFreight" @change="getcostFreight"></span>
                     <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="包装毛重(kg)" v-model="proDetails.productWeight" @change="getcostFreight"></span><br>
-                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength" @change="getcostFreight"> * <input class="size_input" type="text" placeholder="宽" v-model="proDetails.productWide" @change="getcostFreight"> * <input class="size_input" type="text" placeholder="高" v-model="proDetails.productHeight" @change="getcostFreight"></span>
-                    <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" v-model="proDetails.stock" @change="getcostFreight"></span>
-                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" v-model="proDetails.pretreatmentDate" @change="getcostFreight"></span>
+                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength"> * <input class="size_input" type="text" placeholder="宽" v-model="proDetails.productWide"> * <input class="size_input" type="text" placeholder="高" v-model="proDetails.productHeight"></span>
+                    <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" v-model="proDetails.stock"></span>
+                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" v-model="proDetails.pretreatmentDate"></span>
                     <!--<span><label for="">销售价格(￥)：</label><input type="text" placeholder="销售价格(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>-->
                     <!--<span><label for="">国际运费(￥)：</label><input type="text" placeholder="国际运费(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>-->
                     <!--<span><label class="">产品有电池：</label><input type="checkbox" name="" style="" @change="getcostFreight"> </span><br>-->
@@ -278,16 +278,26 @@
                         </tr>
                         <tr>
                             <th>运费（￥）</th>
-                            <td>{{ proDetails.americanFC.freight }} （{{proDetails.americanFC.type}}）</td>
-                            <td>{{ proDetails.canadaFC.freight }} （{{proDetails.canadaFC.type}}）</td>
-                            <td>{{ proDetails.mexicoFC.freight }} （{{proDetails.mexicoFC.type}}）</td>
-                            <td>{{ proDetails.britainFC.freight }} （{{proDetails.britainFC.type}}）</td>
-                            <td>{{ proDetails.franceFC.freight }} （{{proDetails.franceFC.type}}）</td>
-                            <td>{{ proDetails.germanyFC.freight }} （{{proDetails.germanyFC.type}}）</td>
-                            <td>{{ proDetails.italyFC.freight }} （{{proDetails.italyFC.type}}）</td>
-                            <td>{{ proDetails.spainFC.freight }} （{{proDetails.spainFC.type}}）</td>
-                            <td>{{ proDetails.japanFC.freight }} （{{proDetails.japanFC.type}}）</td>
-                            <td>{{ proDetails.australiaFC.freight }} （{{proDetails.australiaFC.type}}）</td>
+                            <td>{{ proDetails.americanFC.freight }}</td>
+                            <td>{{ proDetails.canadaFC.freight }}</td>
+                            <td>{{ proDetails.mexicoFC.freight }}</td>
+                            <td>{{ proDetails.britainFC.freight }}</td>
+                            <td>{{ proDetails.franceFC.freight }}</td>
+                            <td>{{ proDetails.germanyFC.freight }}</td>
+                            <td>{{ proDetails.italyFC.freight }}</td>
+                            <td>{{ proDetails.spainFC.freight }}</td>
+                            <td>{{ proDetails.japanFC.freight }}</td>
+                            <td>{{ proDetails.australiaFC.freight }}</td>
+                            <!--<td>{{ proDetails.americanFC.freight }} （{{proDetails.americanFC.type}}）</td>-->
+                            <!--<td>{{ proDetails.canadaFC.freight }} （{{proDetails.canadaFC.type}}）</td>-->
+                            <!--<td>{{ proDetails.mexicoFC.freight }} （{{proDetails.mexicoFC.type}}）</td>-->
+                            <!--<td>{{ proDetails.britainFC.freight }} （{{proDetails.britainFC.type}}）</td>-->
+                            <!--<td>{{ proDetails.franceFC.freight }} （{{proDetails.franceFC.type}}）</td>-->
+                            <!--<td>{{ proDetails.germanyFC.freight }} （{{proDetails.germanyFC.type}}）</td>-->
+                            <!--<td>{{ proDetails.italyFC.freight }} （{{proDetails.italyFC.type}}）</td>-->
+                            <!--<td>{{ proDetails.spainFC.freight }} （{{proDetails.spainFC.type}}）</td>-->
+                            <!--<td>{{ proDetails.japanFC.freight }} （{{proDetails.japanFC.type}}）</td>-->
+                            <!--<td>{{ proDetails.australiaFC.freight }} （{{proDetails.australiaFC.type}}）</td>-->
 
                         </tr>
                         <tr>
@@ -479,7 +489,7 @@
                         <span>{{ item.name }}</span>
                         <a href="javascript:;" v-for="list in item.type">{{ list }}</a>
                     </p>
-
+                    <p v-if="recommendAll.length != 0" style="color: #ea9a9a;font-size: 13px;text-align: right">注：在调整变体图片时正确的操作是先删除不需要的图片，再进行移动。</p>
                     <table class="tableV" v-if="recommendAll.length != 0">
                         <tr>
                             <th>序号</th>

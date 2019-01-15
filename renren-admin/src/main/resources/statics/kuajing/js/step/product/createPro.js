@@ -1014,6 +1014,8 @@ var vm = new Vue({
         getcostFreight:function () {
             if($(event.target).val() == ''){
                 layer.msg('内容不能为空')
+            }else if($(event.target).val() == 0){
+
             }else {
                 var index = layer.load();
                 var index = layer.load(1); //换了种风格

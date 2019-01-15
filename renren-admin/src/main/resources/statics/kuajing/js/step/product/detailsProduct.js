@@ -953,6 +953,8 @@ var vm = new Vue({
             if($(event.target).val() == ''){
                 layer.msg('内容不能为空');
                 $(event.target).val('');
+            }else if($(event.target).val() == 0){
+
             }else {
                 var index = layer.load();
                 var index = layer.load(1); //换了种风格
