@@ -88,8 +88,6 @@ public interface SubmitFeedService {
      */
     List<FeedSubmissionInfoDto> getFeedSubmissionListAsync(Long uploadId, String serviceURL, String merchantId, String sellerDevAuthToken, List<String> feedSubmissionIdList);
 
-    List<FeedSubmissionInfoDto> invokeGetFeedSubmissionList(Long uploadId, MarketplaceWebService service, List<GetFeedSubmissionListRequest> requests);
-
     /**
      * 请求商品上传报告
      *
@@ -102,8 +100,6 @@ public interface SubmitFeedService {
      * @return List<FeedSubmissionResultDto>
      */
     List<FeedSubmissionResultDto> getFeedSubmissionResultAsync(Long uploadId, String path, String serviceURL, String merchantId, String sellerDevAuthToken, List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList);
-
-    List<FeedSubmissionResultDto> invokeGetFeedSubmissionResult(Long uploadId, MarketplaceWebService service, List<GetFeedSubmissionResultRequest> requests);
 
     /**
      * 子分类状态判断
@@ -121,9 +117,48 @@ public interface SubmitFeedService {
      */
     int judgingTheTotalState(List<Integer> substate);
 
+    /**
+     * 请求亚马逊上传产品接口
+     *
+     * @param uploadId
+     * @param service
+     * @param requests
+     * @return
+     */
     List<FeedSubmissionInfoDto> invokeSubmitFeedAsync(Long uploadId, MarketplaceWebService service, List<SubmitFeedRequest> requests);
 
+    /**
+     * 请求亚马逊返回上传结果请求
+     *
+     * @param uploadId
+     * @param service
+     * @param requests
+     * @return
+     */
+    List<FeedSubmissionResultDto> invokeGetFeedSubmissionResult(Long uploadId, MarketplaceWebService service, List<GetFeedSubmissionResultRequest> requests);
+
+    /**
+     * 请求亚马逊上传处理进度接口
+     *
+     * @param uploadId
+     * @param service
+     * @param requests
+     * @return
+     */
+    List<FeedSubmissionInfoDto> invokeGetFeedSubmissionList(Long uploadId, MarketplaceWebService service, List<GetFeedSubmissionListRequest> requests);
+
+    //没有用
     ResultXmlEntity isExist(Long uploadId, String tpye);
 
+    /**
+     * 根据模板生成模板文件
+     *
+     * @param templateName
+     * @param uploadId
+     * @param merchantIdentifierText
+     * @param productsList
+     * @param countryCode
+     * @return
+     */
     String switchCountry(String templateName, Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode);
 }

@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- *
+ * 生成xml
  */
 @Component("generateProductXML")
 public class GenerateProductXML {
@@ -158,9 +158,9 @@ public class GenerateProductXML {
             Element description = descriptionData.addElement("Description");
             if (introductionEntity.getProductDescription() != null) {
                 if (introductionEntity.getProductDescription().length() > 2000) {
-                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000).replace("\n","<br />");
+                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000).replace("\n", "<br />");
                 } else {
-                    descriptionStr = introductionEntity.getProductDescription().replace("\n","<br />");
+                    descriptionStr = introductionEntity.getProductDescription().replace("\n", "<br />");
                 }
             }
             description.addText(descriptionStr);
@@ -963,9 +963,9 @@ public class GenerateProductXML {
             Element description = descriptionData.addElement("Description");
             if (introductionEntity.getProductDescription() != null) {
                 if (introductionEntity.getProductDescription().length() > 2000) {
-                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000).replace("\n","<br />");
+                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000).replace("\n", "<br />");
                 } else {
-                    descriptionStr = introductionEntity.getProductDescription().replace("\n","<br />");
+                    descriptionStr = introductionEntity.getProductDescription().replace("\n", "<br />");
                 }
             }
             description.addText(descriptionStr);
@@ -1782,9 +1782,9 @@ public class GenerateProductXML {
             Element description = descriptionData.addElement("Description");
             if (introductionEntity.getProductDescription() != null) {
                 if (introductionEntity.getProductDescription().length() > 2000) {
-                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000).replace("\n","<br />");
+                    descriptionStr = introductionEntity.getProductDescription().trim().substring(0, 2000).replace("\n", "<br />");
                 } else {
-                    descriptionStr = introductionEntity.getProductDescription().replace("\n","<br />");
+                    descriptionStr = introductionEntity.getProductDescription().replace("\n", "<br />");
                 }
             }
             description.addText(descriptionStr);
@@ -2435,6 +2435,13 @@ public class GenerateProductXML {
         return filePath;
     }
 
+    /**
+     * 根据国家代码判断货币
+     *
+     * @param productsEntity
+     * @param countryCode
+     * @return
+     */
     public Map<String, Object> switchCountry(ProductsEntity productsEntity, String countryCode) {
         Map<String, Object> map = new HashMap<>();
         String money = "";
