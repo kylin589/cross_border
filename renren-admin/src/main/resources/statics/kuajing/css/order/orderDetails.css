@@ -88,7 +88,7 @@ form .item>div:nth-child(2){
 }
 form .item>div:nth-child(2)>div{
     position: relative;
-    padding-right: 40px;
+    padding-right: 390px;
     margin-bottom: 16px;
 }
 form .item>div:nth-child(2)>div>span{
@@ -166,7 +166,8 @@ form div.addorder .pro_inf>span{
 form .pro_inf span span{
     display: inline-block;
     margin-bottom: 0;
-    width: 130px;
+    min-width: 30px;
+    margin-right: 10px;
 }
 form .pro_inf label{
     display: inline-block;
