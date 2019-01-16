@@ -77,7 +77,7 @@
                     <div class="imgDiv">
                         <div v-for="(item,index) in proAlbum" :data-index="index">
                             <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
-                            <img :src="item.url" alt="" class="imgItem">
+                            <img :src="item.url" alt="" class="imgItem" :data-url="item.url" @mouseover="imgBig1" @mouseout="imgBigS">
                             <i class="layui-icon layui-icon-close-fill imgDel"></i>
                         </div>
 
@@ -446,7 +446,7 @@
                             <td>
                                 <ul class="ul1">
                                     <li v-for="img in item.img">
-                                        <img :src="img" alt="">
+                                        <img :src="img" :data-url="img" alt="" @mouseover="imgBig" @mouseout="imgBigS">
                                         <i class="layui-icon layui-icon-close-fill"></i>
                                     </li>
                                 </ul>
@@ -496,6 +496,10 @@
                 <br>
                 <span v-for="item in recommend1">{{ item }}</span>
             </div>
+        </div>
+
+        <div id="imgBigDiv" style="display: none">
+            <img src="" alt="">
         </div>
     </form>
 

@@ -1063,6 +1063,35 @@ var vm = new Vue({
             }
 
         },
+        // 图片放大
+        imgBig:function (event){
+            var top = $(event.target).offset().top - 428;
+            var left = $(event.target).offset().left - 350;
+            // console.log(right);
+            $('#imgBigDiv').css({
+                'display':'inline-block',
+                'top':top+'px',
+                'left':left+'px'
+            })
+            $('#imgBigDiv img').attr('src',$(event.target).attr('data-url'));
+
+        },
+        imgBig1:function (event){
+            var top = $(event.target).offset().top + 140;
+            var left = $(event.target).offset().left - 150;
+
+            // console.log(right);
+            $('#imgBigDiv').css({
+                'display':'inline-block',
+                'top':top+'px',
+                'left':left+'px'
+            })
+            $('#imgBigDiv img').attr('src',$(event.target).attr('data-url'));
+
+        },
+        imgBigS:function () {
+            $('#imgBigDiv').css('display','none')
+        },
         // 修改变体参数
         upVariant:function () {
             layer.open({
