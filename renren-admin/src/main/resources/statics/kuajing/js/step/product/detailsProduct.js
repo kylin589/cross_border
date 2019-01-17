@@ -953,7 +953,7 @@ var vm = new Vue({
             if($(event.target).val() == ''){
                 layer.msg('内容不能为空');
                 $(event.target).val('');
-            }else if($(event.target).val() == 0){
+            }else if(vm.proDetails.productWeight == 0){
 
             }else {
                 var index = layer.load();
@@ -2645,6 +2645,20 @@ var vm = new Vue({
         imgBig:function (event){
             var top = $(event.target).offset().top - 428;
             var left = $(event.target).offset().left - 350;
+            // console.log(right);
+            $('#imgBigDiv').css({
+                'display':'inline-block',
+                'top':top+'px',
+                'left':left+'px'
+            })
+            $('#imgBigDiv img').attr('src',$(event.target).attr('data-url'));
+
+        },
+        // 图片放大
+        imgBig1:function (event){
+            var top = $(event.target).offset().top + 140;
+            var left = $(event.target).offset().left - 150;
+
             // console.log(right);
             $('#imgBigDiv').css({
                 'display':'inline-block',

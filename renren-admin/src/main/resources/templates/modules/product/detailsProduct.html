@@ -101,7 +101,7 @@
                         <div class="imgAlbum" v-for="(item,index) in proAlbum" :data-index="item.index" :data-id="item.imgId">
                             <!--@mouseover="imgItem(index)" @mouseout="imgItemmouseout(index)"-->
                             <!--<img src="http://132.232.22.202/images/2018/12/pdf.jpg" alt="" class="imgItem">-->
-                            <img :src="item.url" alt="" class="imgItem" :data-con="item" @click="clickActiveImg">
+                            <img :src="item.url" :data-url="item.url" alt="" class="imgItem" :data-con="item" @click="clickActiveImg" @mouseover="imgBig1" @mouseout="imgBigS">
                             <!--<i class="layui-icon layui-icon-close-fill imgDel"></i>-->
                         </div>
 
@@ -518,7 +518,7 @@
                             <td><input type="button" class="chan" value="选择图片" @click="selImgCFcun(item)"> <input type="button" class="all" value="一键添加" @click="yijianAddFunc(item)"></td>
                             <td>
                                 <ul class="ul1">
-                                    <li v-for="(img,i) in item.img" @mouseover="imgBig" :data-url="img" :data-index="i" @mouseout="imgBigS">
+                                    <li v-for="(img,i) in item.img" :data-url="img" :data-index="i" @mouseover="imgBig" @mouseout="imgBigS">
                                         <img :src="img" alt="" :data-url="img">
                                         <i class="layui-icon layui-icon-close-fill" @click="delImgRecom(item,i)"></i>
                                     </li>
