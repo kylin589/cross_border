@@ -736,6 +736,7 @@ var vm = new Vue({
                     'productId':vm.proAlbum[_index].productId,
                     'status':vm.proAlbum[_index].status,
                     'uid':vm.proAlbum[_index].uid,
+                    'sort':_index
                 })
             }
             console.log(arr);
