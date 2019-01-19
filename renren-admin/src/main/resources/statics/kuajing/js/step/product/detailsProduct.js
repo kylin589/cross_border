@@ -2606,7 +2606,7 @@ var vm = new Vue({
                         // alert("1111："+file.name);
                         layer.msg('上传成功');
                         vm.getProAlbum();
-                        vm.saveXc();
+                        // vm.saveXc();
                     }
                 });
                 vm.isUP = false;
