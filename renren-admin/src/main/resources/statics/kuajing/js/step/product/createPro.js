@@ -813,6 +813,7 @@ var vm = new Vue({
                     'productId':vm.proAlbum[_index].productId,
                     'status':vm.proAlbum[_index].status,
                     'uid':vm.proAlbum[_index].uid,
+                    'sort':_index
                 })
             }
             console.log(arr);
@@ -1211,7 +1212,7 @@ var vm = new Vue({
         },
         // 相册图片删除
         proDel:function () {
-            var elList = $('.imgAlbum.active');
+            var elList = $('.imgDiv>div.active');
             var arr = [];
             for(var i = 0;i<elList.length;i++){
                 arr.push(elList.eq(i).attr('data-id'));

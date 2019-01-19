@@ -744,6 +744,7 @@ var vm = new Vue({
                             'productId':vm.proAlbum[j].productId,
                             'status':vm.proAlbum[j].status,
                             'uid':vm.proAlbum[j].uid,
+                            'sort':_index
                         })
                     }
                 }
@@ -768,25 +769,7 @@ var vm = new Vue({
                         console.log(r);
                         layer.msg('保存成功');
                         layer.close(index);
-                        // vm.getProAlbum();
-                        // vm.proAlbum = [];
-                        // r.imageInfo.forEach(function (item,index) {
-                        //     vm.proAlbum.push({
-                        //         index:index,
-                        //         imgId:item.imageId,
-                        //         url:item.imageUrl,
-                        //         isDeleted:item.isDeleted,
-                        //         createUserId:item.createUserId,
-                        //         createTime:item.createTime,
-                        //         lastOperationTime:item.lastOperationTime,
-                        //         lastOperationUserId:item.lastOperationUserId,
-                        //         productId:item.productId,
-                        //         status:item.status,
-                        //         uid:item.uid
-                        //
-                        //     })
-                        // })
-                        // vm.proAlbum = r.imageInfo;
+
 
                     } else {
                         layer.alert(r.msg);
