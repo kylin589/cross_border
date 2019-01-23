@@ -139,7 +139,8 @@ var vm = new Vue({
         }],
         addyundanhao:'123424',
         addzhuizonghao:'34564',
-        logistics:[{
+        logistics:[
+           /* {
                 context:'客户已签收',
                 time:'2018-11-10 10:00:00'
             },
@@ -150,7 +151,11 @@ var vm = new Vue({
             {
                 context:'客户已签收',
                 time:'2018-11-10 10:00:00'
-            }
+            }*/
+            // {
+            //     context:'暂无物流信息',
+            //     time:new Date()
+            // }
 
         ],
         remark:'',
@@ -394,34 +399,31 @@ var vm = new Vue({
                 $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
             }
         },
-        // 删除国内物流
+        // 同步国内物流单号
         synchronize:function (item) {
             console.log(item);
             var index = layer.load();
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-            layer.close(index);
-            layer.msg("暂无此功能");
+            $.ajax({
+                // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
+                url: '../../product/order/synchronizeWaybill',
+                type: 'get',
+                data: {
+                    orderId:vm.orderid,
 
-            // $.ajax({
-            //     // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
-            //     url: '../../product/order/deleteLogistic',
-            //     type: 'get',
-            //     data: {
-            //         domesticLogisticsId:item.domesticLogisticsId,
-            //
-            //     },
-            //     dataType: 'json',
-            //     success: function (r) {
-            //         console.log(r);
-            //         vm.getOrderInfo();
-            //         layer.close(index);
-            //     },
-            //     error: function () {
-            //         layer.msg("删除失败");
-            //         layer.close(index);
-            //     }
-            // });
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    vm.getOrderInfo();
+                    layer.close(index);
+                },
+                error: function () {
+                    layer.msg("同步失败");
+                    layer.close(index);
+                }
+            });
         },
         //物流信息
         queryLogistic:function (waybill,event) {
@@ -436,10 +438,11 @@ var vm = new Vue({
                 // var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                 $.ajax({
                     // url: 'http://39.106.131.222:8000/domestic/queryLogistic',
-                    url: 'http://www.threeee.cn/domestic/queryLogistic',
+                    // url: 'http://www.threeee.cn/domestic/queryLogistic',
+                    url: 'http://127.0.0.1:8000/domestic/queryLogistic',
                     type: 'get',
                     data: {
-                        waybill:waybill,
+                        waybill:$.trim(waybill),
                     },
                     dataType: 'json',
                     success: function (r) {
