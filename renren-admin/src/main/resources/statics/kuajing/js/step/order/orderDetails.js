@@ -138,7 +138,8 @@ var vm = new Vue({
         }],
         addyundanhao:'123424',
         addzhuizonghao:'34564',
-        logistics:[{
+        logistics:[
+           /* {
                 context:'客户已签收',
                 time:'2018-11-10 10:00:00'
             },
@@ -149,7 +150,11 @@ var vm = new Vue({
             {
                 context:'客户已签收',
                 time:'2018-11-10 10:00:00'
-            }
+            }*/
+            // {
+            //     context:'暂无物流信息',
+            //     time:new Date()
+            // }
 
         ],
         remark:'',
@@ -432,10 +437,11 @@ var vm = new Vue({
                 // var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                 $.ajax({
                     // url: 'http://39.106.131.222:8000/domestic/queryLogistic',
-                    url: 'http://www.threeee.cn/domestic/queryLogistic',
+                    // url: 'http://www.threeee.cn/domestic/queryLogistic',
+                    url: 'http://127.0.0.1:8000/domestic/queryLogistic',
                     type: 'get',
                     data: {
-                        waybill:waybill,
+                        waybill:$.trim(waybill),
                     },
                     dataType: 'json',
                     success: function (r) {
