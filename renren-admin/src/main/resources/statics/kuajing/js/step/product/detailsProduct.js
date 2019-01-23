@@ -301,6 +301,7 @@ var vm = new Vue({
     data: {
         // 产品id
         id:null,
+        page:null,
         // 产品详情
         proDetails:{
             "americanFC": {
@@ -2484,7 +2485,7 @@ var vm = new Vue({
                                 if (r.code == 0) {
                                     layer.close(index);
 
-                                    window.location.href = 'myProduct.html';
+                                    window.location.href = 'myProduct.html'+vm.page;
 
                                 } else {
                                     layer.close(index);
@@ -2672,7 +2673,7 @@ var vm = new Vue({
         // 返回
         returnFunc:function () {
             layer.confirm('确定返回吗？',function () {
-                window.location.href = 'myProduct.html';
+                window.location.href = 'myProduct.html?page='+vm.page;
             })
         },
         // 中文标题翻译
@@ -3222,8 +3223,11 @@ var vm = new Vue({
 
         var url = decodeURI(window.location.href);
         var argsIndex = url.split("?id=");
-        var id = argsIndex[1];
-        // console.log(id)
+        var con = argsIndex[1].split('page=');
+        var id = con[0];
+        var page1 = con[1]
+        console.log(page1);
+        this.page = page1;
         this.id = parseInt(id);
         // console.log(this.id);
         this.getProDetails();

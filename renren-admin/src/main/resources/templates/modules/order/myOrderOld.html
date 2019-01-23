@@ -189,7 +189,7 @@
                 </span></td>
             <td class="imgtd" v-if="item.productImageUrl"><img :src="item.productImageUrl" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
             <td class="imgtd" v-if="!item.productImageUrl"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
-            <td><a :href="'orderDetails1.html?orderid='+item.orderId">{{ item.amazonOrderId }}</a> <br/>
+            <td><a :href="'orderDetails3.html?orderid='+item.orderId+'page='+proCurr">{{ item.amazonOrderId }}</a> <br/>
                 <span class="brSpan">
                     <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
                     {{ item.shopName }}

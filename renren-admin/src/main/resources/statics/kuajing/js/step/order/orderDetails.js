@@ -95,6 +95,7 @@ var vm = new Vue({
     el:'#step',
     data:{
         orderid:null,
+        page:null,
         orderDetails:{
             shipAddress:{},
             abroadLogistics:{}
@@ -705,15 +706,16 @@ var vm = new Vue({
             $('.layui-tab-content').eq(_index).addClass('action');
         },
         returnFunc:function () {
-            window.location.href = 'myOrder.html';
+            window.location.href = 'myOrder.html?page='+vm.page;
         }
     },
     created:function () {
         var url = decodeURI(window.location.href);
         var argsIndex = url.split("?orderid=");
-        var orderid = argsIndex[1];
-        this.orderid = parseInt(orderid);
-        console.log(this.orderid);
+        var orderid = argsIndex[1].split('page=');
+        this.orderid = parseInt(orderid[0]);
+        this.page = orderid[1];
+        console.log(this.page);
         this.getOrderInfo();
     }
 })

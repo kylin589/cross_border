@@ -263,6 +263,7 @@ var vm = new Vue({
                     prev: '<i class="layui-icon layui-icon-left"></i>',
                     next: '<i class="layui-icon layui-icon-right"></i>',
                     limits: [12, 24, 30],
+                    curr:vm.proCurr,
                     limit: 12,
                     layout: ['prev', 'page', 'next', 'limit', 'skip'],
                     jump: function (obj, first) {
@@ -717,6 +718,13 @@ var vm = new Vue({
         }
     },
     created:function () {
+        var url = decodeURI(window.location.href);
+        var argsIndex = url.split("?page=");
+        if(argsIndex[1]){
+            this.proCurr = argsIndex[1];
+            console.log(argsIndex[1]);
+        }
+
         this.getOrderlist('');
         // this.laypage();
         this.getOrderStatenum();

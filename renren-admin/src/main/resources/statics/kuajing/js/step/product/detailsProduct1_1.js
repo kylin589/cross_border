@@ -1588,7 +1588,7 @@ var vm = new Vue({
         // 返回
         returnFunc:function () {
             layer.confirm('确定返回吗？',function () {
-                window.location.href = 'allProduct.html?page='+vm.page;
+                window.location.href = 'proRecycle.html?page='+vm.page;
             })
         }
     },

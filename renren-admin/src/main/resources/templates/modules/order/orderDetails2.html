@@ -9,10 +9,6 @@
         .layui-col-md3{
             width: 20%;
         }
-        form .pro_inf span span{
-            width: auto;
-            min-width: 30px;
-        }
     </style>
 
 </head>
@@ -23,11 +19,11 @@
     <form>
         <p>
             <span class="layui-breadcrumb1" style="visibility: visible;">
-              <a href="javascript:window.location.href = 'myOrder.html?page='+page;">订单列表 / </a>
+              <a :href="'allOrderOld.html?page='+page">订单列表 / </a>
               <a><cite>订单详情</cite></a>
             </span>
-
-            <input type="button" class="return" @click="returnFunc" value="返回" />
+            <input type="button" class="return" @click="javascript:window.location.href = 'allOrderOld.html?page='+page;" value="返回" />
+            <!--<button class="save">保存并提交</button>-->
         </p>
 
         <div class="form_item one">
@@ -40,7 +36,6 @@
                     <h4><a :href="orderDetails.amazonProductUrl" target="_blank">{{ orderDetails.productTitle }}</a></h4>
                     <!--<p>sdkfjbsanklnsml;kdgfuasbjkdnlcxm </p>-->
                     <!--<p>{{ orderDetails.shipAddress }}</p>-->
-
                     <span><label for="">订单ID：</label><span>{{ orderDetails.orderId }}</span></span>
                     <span><label for="">店铺：</label><span>{{ orderDetails.shopName }}</span></span><br>
                     <span><label for="">SKU：</label><span :lay-href="'modules/product/detailsProduct1.html?id='+orderDetails.productId" layadmin-event="message" lay-text="产品详情" style="color: #12ace8;cursor:pointer;">{{ orderDetails.productSku }}</span></span>
@@ -50,19 +45,9 @@
                     <span><label for="">订单状态：</label><span>{{ orderDetails.orderState }}</span></span>
                     <span><label for="">亚马逊单号：</label><span>{{ orderDetails.amazonOrderId }}</span></span>
                     <span><label for="">购买日期：</label><span>{{ orderDetails.buyDate }}</span></span>
-                    <!--<input v-if="orderDetails.orderState == '待付款'" class="yiCaigou" type="button" value="待付款">-->
-                    <input v-if="orderDetails.orderState == '虚发货'" class="yiFahuo" type="button" value="国内物流已采购" @click="updateState('国内物流已采购')">
-                    <!--<input v-if="orderDetails.orderState == '缺货'" class="yiCaigou" type="button" value="缺货">-->
-                    <!--<input v-if="orderDetails.orderState == '取消'" class="yiFahuo" type="button" value="取消">-->
-                    <!--<input v-if="orderDetails.orderState == '退货'" class="yiCaigou" type="button" value="退货">-->
-                    <!--<input v-if="orderDetails.orderState == '问题'" class="yiFahuo" type="button" value="问题">-->
-                    <!--<input v-if="orderDetails.orderState == '已付款'" class="yiCaigou" type="button" value="已付款">-->
-                    <!--<input v-if="orderDetails.orderState == '国内物流已采购'" class="yiFahuo" type="button" value="国内物流已采购">-->
-                    <input v-if="orderDetails.orderState == '国内物流待发货'" class="yiCaigou" type="button" value="通知仓库已发货" @click="updateState('物流仓库未签收')">
-                    <!--<input v-if="orderDetails.orderState == '仓库已入库'" class="yiFahuo" type="button" value="仓库已入库">-->
-                    <input v-if="orderDetails.orderState == '国际已发货'" class="yiCaigou" type="button" value="已完成" @click="updateState('完成')">
-                    <!--<input v-if="orderDetails.orderState == '物流仓库未签收'" class="yiFahuo" type="button" value="物流仓库未签收">-->
-                    <!--<input v-if="orderDetails.orderState == '补发'" class="yiCaigou" type="button" value="补发">-->
+                    <!--<input v-if="orderDetails.orderState == '虚发货'" class="yiFahuo" type="button" value="国内物流已采购" @click="updateState('国内物流已采购')">-->
+                    <!--<input v-if="orderDetails.orderState == '国内物流待发货'" class="yiCaigou" type="button" value="已发货" @click="updateState('物流仓库未签收')">-->
+                    <!--<input v-if="orderDetails.orderState == '国际已发货'" class="yiCaigou" type="button" value="已完成" @click="updateState('完成')">-->
                 </div>
             </div>
             
@@ -86,10 +71,10 @@
                             {{orderDetails.shipAddress.shipCounty}}
                             {{orderDetails.shipAddress.shipDistrict}}
                         </textarea></span>
-                        <div class="fr" style="">
-                            <input class="edit" type="button" value="编辑" @click="editJijian">
-                            <input class="noedit" type="button" value="取消" @click="noedit1">
-                        </div>
+                        <!--<div class="fr" style="">-->
+                            <!--<input class="edit" type="button" value="编辑" @click="editJijian">-->
+                            <!--<input class="noedit" type="button" value="取消" @click="noedit">-->
+                        <!--</div>-->
                     </div>
 
                 </div>
@@ -101,19 +86,21 @@
                     <h4>国内物流</h4>
                 </div>
                 <div class="pro_inf chengben okEdit">
-                    <p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addWuliuFunc"></p>
+                    <!--<p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addWuliuFunc"></p>-->
                     <div v-for="(item,index) in orderDetails.domesticLogisticsList">
 
                         <span><label for="">采购价(￥)：</label><input type="text" :placeholder="orderDetails.purchasePrice" v-model="price[index]" disabled></span>
                         <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(item.waybill,$event)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  placeholder="物流单号" v-model="waybill[index]" disabled></a></span>
                         <span><label for="">物流公司：</label><input class="" type="text" :placeholder="item.logisticsCompany" disabled></span>
                         <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="item.issuanceDate" disabled></span>
-                        <div class="fr" style="">
-                            <input class="edit" type="button" value="编辑" @click="edit(item.domesticLogisticsId,index,$event)">
-                            <input class="noedit" type="button" value="取消" @click="noedit(waybill[index],index,$event)">
-                            <input class="edit" type="button" value="同步" @click="synchronize(item)">
-                        </div>
+                        <!--<div class="fr" style="">-->
+                            <!--<input class="edit" type="button" value="编辑" @click="edit(item.domesticLogisticsId,index)">-->
+                            <!--<input class="noedit" type="button" value="取消" @click="noedit">-->
+                        <!--</div>-->
                     </div>
+
+
+
                 </div>
             </div>
             <div class="item">
@@ -121,12 +108,7 @@
                     <h4>国际物流</h4>
                 </div>
                 <div class="pro_inf chengben">
-                    <!--<p style="margin-bottom: 10px">-->
-                        <!--<input v-if="orderDetails.orderState == '已付款'" class="addguojiyundan" type="button" value="生成国际运单号" @click="getorderID">-->
-                        <!--<input v-if="orderDetails.abroadLogistics.isSynchronization == 0" class="addguojiyundan" type="button" value="同步" @click="tongbu">-->
-                        <!--&lt;!&ndash;<input class="addguojiyundan" type="button" value="刷新" @click="getOrderInfo">&ndash;&gt;-->
-                    <!--</p>-->
-                    <!--<div>-->
+                    <!--<p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addorder"></p>-->
                     <div>
                         <span><label for="" style="width: 106px">国际物流单号：</label><span>{{ orderDetails.abroadLogistics.abroadWaybill }}</span></span>
                         <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ orderDetails.abroadLogistics.trackWaybill }}</span></span>
@@ -139,29 +121,13 @@
                         <span><label for="">服务查询网址：</label><span>{{ orderDetails.abroadLogistics.serviceQueryUrl }}</span></span>
                         <span><label for="">联系电话：</label><span>{{ orderDetails.abroadLogistics.mobile }}</span></span>
                         <span><label for="">目的地查询网址：</label><span>{{ orderDetails.abroadLogistics.destQueryUrl }}</span></span>
-
                         <div class="fr">
                             <span v-if="orderDetails.abroadLogistics.state">物流状态：{{orderDetails.abroadLogistics.state}}</span>
                             <span v-if="!orderDetails.abroadLogistics.state" style="margin-right: 10px">物流状态：暂无状态</span>
-
                             <!--<span>{{ orderDetails.abroadLogistics.state }}</span>-->
                             <span>{{ orderDetails.abroadLogistics.shipTime }}</span>
-                            <p>
-                                <a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>
-                                <template v-if="orderDetails.abroadLogistics.isSynchronization == 0">
-                                    <a v-if="orderDetails.orderState == '虚发货' || orderDetails.orderState == '仓库已入库' || orderDetails.orderState == '国际已发货'" href="javascript:;" @click="tongbu">同步</a>
-                                </template>
-
-                                <span v-if="orderDetails.abroadLogistics.isSynchronization == 1" href="javascript:;" >已同步</span>
-                                <!--<a href="javascript:;" class="detailsOrderA">明细</a>-->
-                            </p>
                         </div>
                     </div>
-                    <!--<div v-if="!orderDetails.abroadLogistics.abroadWaybill" style="color: #666">-->
-                        <!--暂无物流状态-->
-                    <!--</div>-->
-
-
 
                 </div>
             </div>
@@ -209,6 +175,28 @@
                             <td>{{ orderDetails.profitRate }}</td>
                             <td>{{ orderDetails.returnCost }}</td>
                         </tr>
+                        <!--<tr class="two">-->
+                            <!--<th>国际币种</th>-->
+                            <!--<td>{{ orderDetails.orderMoneyForeign }}</td>-->
+                            <!--<td>{{ orderDetails.amazonCommissionForeign }}</td>-->
+                            <!--<td>{{ orderDetails.accountMoneyForeign }}</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                            <!--<td>&#45;&#45;</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<th>人民币</th>-->
+                            <!--<td>{{ orderDetails.orderMoney }}</td>-->
+                            <!--<td>{{ orderDetails.amazonCommission }}</td>-->
+                            <!--<td>{{ orderDetails.accountMoney }}</td>-->
+                            <!--<td>{{ orderDetails.purchasePrice }}</td>-->
+                            <!--<td>{{ orderDetails.interFreight }}</td>-->
+                            <!--<td>{{ orderDetails.platformCommissions }}</td>-->
+                            <!--<td>{{ orderDetails.orderProfit }}</td>-->
+                            <!--<td>{{ orderDetails.returnCost }}</td>-->
+                        <!--</tr>-->
 
                     </table>
                 </div>
@@ -231,17 +219,16 @@
                                 <li v-if="orderDetails.remarkList.length==0" style="color: #666">暂无备注</li>
                                 <li v-if="orderDetails.remarkList.length!=0" v-for="item in orderDetails.remarkList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark }}</span></li>
                             </ul>
-                            <textarea placeholder="留言备注" style="margin-bottom: 10px" v-model="remark"></textarea>
-                            <br>
-                            <select id="remark_type" name="remark_type" class="form-control" v-model="remarkType">
-                                <option value="" selected="selected">选择备注类型</option>
-                                <option value="内部备注" selected="selected">内部备注</option>
-                                <option value="收件人地址异常">收件人地址异常</option>
-                                <option value="采购异常">采购异常</option>
-                                <option value="国内快递异常">国内快递异常</option>
-                                <option value="国际物流异常">国际物流异常</option>
-                            </select>
-                            <input type="button" value="添加备注说明" @click="Addnotes">
+                            <!--<textarea placeholder="留言备注" style="margin-bottom: 10px" v-model="remark"></textarea>-->
+                            <!--<br>-->
+                            <!--<select id="remark_type" name="remark_type" class="form-control" v-model="remarkType">-->
+                                <!--<option value="" selected="selected">内部备注</option>-->
+                                <!--<option value="收件人地址异常">收件人地址异常</option>-->
+                                <!--<option value="采购异常">采购异常</option>-->
+                                <!--<option value="国内快递异常">国内快递异常</option>-->
+                                <!--<option value="国际物流异常">国际物流异常</option>-->
+                            <!--</select>-->
+                            <!--<input type="button" value="添加备注说明" @click="Addnotes">-->
                         </div>
                         <div class="layui-tab-content">
                             <ul class="operationLog">
@@ -261,7 +248,7 @@
             <span class="jiantou"></span>
             <div>
                 <p>
-                    <span>{{ logistics.express }}</span>
+                    <span>{{ logistics.express }}</span>:
                     <span>{{ logistics.expressNum }}</span>
                 </p>
                 <ul>
@@ -404,12 +391,12 @@
             <h3>添加国内物流</h3>
             <span>
                 <label for="">采购价</label>
-                <input type="text" placeholder="采购价" v-model="caigou">
+                <input type="text" placeholder="采购价">
             </span>
             <br>
             <span>
             <label for="">物流单号</label>
-            <input type="text" placeholder="物流单号" v-model="wulDanh">
+            <input type="text" placeholder="物流单号">
         </span>
         </div>
     </form>
