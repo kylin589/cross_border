@@ -2485,7 +2485,7 @@ var vm = new Vue({
                                 if (r.code == 0) {
                                     layer.close(index);
 
-                                    window.location.href = 'myProduct.html'+vm.page;
+                                    window.location.href = 'myProduct.html?page='+vm.page;
 
                                 } else {
                                     layer.close(index);
