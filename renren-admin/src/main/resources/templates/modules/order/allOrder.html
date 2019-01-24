@@ -300,8 +300,8 @@
             <!--<td>{{item.accountMoneyCny}}</td>-->
             <td style="width: 100px;color: #999;">{{ item.buyDate }}</td>
             <td style="width: 130px;">
-                <span style="font-size: 13px;color: #666">店铺名店铺名店铺名</span><br>
-                <span style="font-size: 13px;color: #666">操作人:人人名名</span>
+                <span style="font-size: 13px;color: #666">{{item.deptName}}</span><br>
+                <span style="font-size: 13px;color: #666">操作人:{{item.userName}}</span>
             </td>
             <td>
                 <span style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="shuaxin(item.orderId)">手动刷新</span>

@@ -143,8 +143,8 @@
             <h3 v-if="item.productTitle == ' ' "><a :href="'detailsProduct1.html?id='+item.productId+'page='+proCurr">产品标题</a></h3>
             <div class="footer">
                 <p style="overflow:hidden;color: #7799b9;">
-                    <span>店铺店铺名名</span>
-                    <span style="float: right;">人名人名</span>
+                    <span>{{item.deptName}}</span>
+                    <span style="float: right;">{{item.userName}}</span>
                 </p>
                 <p>时间：{{ item.createTime }}</p>
                 <p>编号：{{ item.productId }}</p>
