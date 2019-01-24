@@ -222,7 +222,7 @@ var vm = new Vue({
 
                                 vm.operateItem = [];
                                 // console.log(vm.inputche)
-                                vm.uploadIds = vm.uploadIdsstr.split(',');
+                                vm.uploadIds = vm.upProDetails.uploadEntity.uploadIds.split(',');
 
                                 $.ajax({
                                     url: '../../product/upload/renewTimingUpload',
@@ -231,7 +231,7 @@ var vm = new Vue({
                                         'uploadId':vm.id,
                                         'startId': parseInt(vm.upProDetails.uploadEntity.startId),
                                         'endId': parseInt(vm.upProDetails.uploadEntity.endId),
-                                        'uploadIds': vm.upProDetails.uploadEntity.uploadIds,
+                                        'uploadIds': vm.uploadIds,
                                         'grantShopId': parseInt(vm.shopinfo),
                                         'isAttribute': vm.isAttribute,
                                         'grantShop':grantShop,
@@ -323,8 +323,8 @@ var vm = new Vue({
 
                     // console.log(vm.shopinfo);
                     // vm.uploadIds = vm.uploadIdsstr;
-                    vm.uploadIds = vm.uploadIdsstr.split(',');
-                    // console.log(vm.uploadIds);
+                    vm.uploadIds = vm.upProDetails.uploadEntity.uploadIds.split(',');
+                    console.log(vm.uploadIds);
                     // if (vm.inputche[0]==true){
                     //
                     //     vm.operateItem = [0,1,2,3,4];
@@ -368,7 +368,7 @@ var vm = new Vue({
                             'uploadId':parseInt(vm.id),
                             'startId': parseInt(vm.upProDetails.uploadEntity.startId),
                             'endId': parseInt(vm.upProDetails.uploadEntity.endId),
-                            'uploadIds': vm.upProDetails.uploadEntity.uploadIds,
+                            'uploadIds': vm.uploadIds,
                             'grantShopId': parseInt(vm.shopinfo),
                             // 'grantShopId': parseInt(vm.grantShopId),
                             'isAttribute': '',

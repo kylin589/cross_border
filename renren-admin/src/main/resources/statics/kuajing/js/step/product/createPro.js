@@ -285,6 +285,7 @@ var vm = new Vue({
     data: {
         // 产品id
         id:null,
+        page:null,
         // 产品详情
         proDetails:{
             "productId": 0,
@@ -2723,7 +2724,7 @@ var vm = new Vue({
                                 if (r.code == 0) {
                                     layer.close(index);
 
-                                    window.location.href = document.referrer;
+                                    window.location.href = 'myProduct.html';
 
                                 } else {
                                     alert(r.msg);
@@ -2779,7 +2780,7 @@ var vm = new Vue({
                             layer.msg('取消成功');
                             layer.close(index);
                             // vm.getPage();
-                            window.location.href = 'myProduct.html';
+                            window.location.href = 'myProduct.html?page='+vm.page;
 
                         } else {
                             layer.alert(r.msg);
@@ -3351,11 +3352,11 @@ var vm = new Vue({
         // console.log(this.recommend1);
         // this.getRecommendAll();
 
-        // var url = decodeURI(window.location.href);
-        // var argsIndex = url.split("?id=");
-        // var id = argsIndex[1];
-        // // console.log(id)
-        // this.id = parseInt(id);
+        var url = decodeURI(window.location.href);
+        var argsIndex = url.split("?page=");
+        var page = argsIndex[1];
+        console.log(page);
+        this.page = page;
         // console.log(this.id);
         this.getProId();
         // this.getcostFreight();
