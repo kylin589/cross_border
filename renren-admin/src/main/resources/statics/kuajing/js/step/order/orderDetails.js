@@ -438,8 +438,8 @@ var vm = new Vue({
                 // var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                 $.ajax({
                     // url: 'http://39.106.131.222:8000/domestic/queryLogistic',
-                    // url: 'http://www.threeee.cn/domestic/queryLogistic',
-                    url: 'http://127.0.0.1:8000/domestic/queryLogistic',
+                    url: 'http://www.threeee.cn/domestic/queryLogistic',
+                    // url: 'http://127.0.0.1:8000/domestic/queryLogistic',
                     type: 'get',
                     data: {
                         waybill:$.trim(waybill),

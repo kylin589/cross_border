@@ -98,6 +98,7 @@
         <span class="stateBtn" v-if="yichangListValue!=''" @click="updateAbnormalState" style="">确定</span>
         <!--统计-->
         <div class="statistics">
+            订单数: <span>{{ statistics.orderCount }}</span>
             核算订单数: <span>{{ statistics.orderCounts }}</span>
             总金额: <span>{{ statistics.orderMoney }}</span>
             利润: <span>{{ statistics.orderProfit }}</span>
