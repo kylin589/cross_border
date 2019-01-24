@@ -360,8 +360,8 @@ public class IntroductionController {
                 map.put("introduction",introductionEn);
                 map.put("tranEnStr",keyWord);
                 //判断标题
-                if(keyWord.length() >200){
-                    map.put("msg","翻译失败，英文关键字超过200字符");
+                if(keyWord.length() >250){
+                    map.put("msg","翻译失败，英文关键字超过250字符");
                 }
                 return map;
             }else{
@@ -412,8 +412,8 @@ public class IntroductionController {
         if (resultList != null && resultList.size() >0){
             String keyWord = TranslateUtils.toUpperCase(resultList.get(0));
             introduction.setKeyWord(keyWord);
-            if(keyWord.length() >200){
-                introduction.setMsg(country + "关键字字符超过200");
+            if(keyWord.length() >250){
+                introduction.setMsg(country + "关键字字符超过250");
             }
         }else{
             introduction.setMsg(country + "语言翻译失败,请调试");

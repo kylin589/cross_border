@@ -356,6 +356,10 @@ public class UploadController extends AbstractController {
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
         submitFeedService.submitFeed(uploadEntity);
+        for(ProductsEntity productsEntity : ret){
+            productsEntity.setIsUpload(1);
+        }
+        productsService.updateBatchById(ret);
         return R.ok();
     }
 
@@ -626,7 +630,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setEndId(addUploadVM.getEndId());
         uploadEntity.setUploadState(0);
         uploadEntity.setUploadIds(StringUtils.join(addUploadVM.getUploadIds(), ","));
-
+        List<ProductsEntity> ret = addUploadVM.getUploadProductsList();
         uploadEntity.setUploadProductsList(addUploadVM.getUploadProductsList());
         uploadEntity.setUploadProductsIds(addUploadVM.getUploadProductsIds());
         //获取分类对象
@@ -702,6 +706,10 @@ public class UploadController extends AbstractController {
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
         submitFeedService.submitFeed(uploadEntity);
+        for(ProductsEntity productsEntity : ret){
+            productsEntity.setIsUpload(1);
+        }
+        productsService.updateBatchById(ret);
         return R.ok();
     }
 

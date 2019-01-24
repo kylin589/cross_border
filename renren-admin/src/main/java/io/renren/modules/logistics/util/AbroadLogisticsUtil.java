@@ -2,10 +2,16 @@ package io.renren.modules.logistics.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.swjtu.lang.LANG;
+import io.renren.common.utils.R;
 import io.renren.modules.logistics.DTO.ReceiveOofayData;
+import io.renren.modules.logistics.DTO.SalePriceDetail;
+import io.renren.modules.util.TranslateUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -23,14 +29,26 @@ public class AbroadLogisticsUtil {
     //用户标识
     public final static Long userdean = 238370684928L;
 
+    //测试接口地址：http://test.oofay.trylose.cn:60254/
+    //正式接口地址：http://oofay.trylose.cn:60254/
+
     public final static String pushUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/GetOrderDataFromOtherPlatform";
 
     public final static String detailUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/GetOrderDetailByOrderSn";
 
     public final static String updateUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/UpdateOrderDetailStatusByOrderSn";
 
+    public final static String salePriceUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/CalculateAllCountryPrice";
+
+    public final static String updateWaybillUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/UpdateOrderDetailSupplyExpressNoByOrderSn";
+
+    public final static String updateRemarkUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/UpdateOrderRemarkBySn";
+
     public final static String testUrl = "http://oofay.trylose.cn:60254/renren-api/api/test";
 
+    //测试key
+//    public final static String key = "5c0d54e1d5184c36921d7f08fa10dcae";
+    //正式key
     public final static String key = "8e44b19aeb154ab0befce731e08eb469";
 
     public final static Base64.Decoder decoder = Base64.getDecoder();
@@ -41,9 +59,15 @@ public class AbroadLogisticsUtil {
         //推送订单
 //        pushOrder("1");
         //获取订单国际物流状态
-        getOrderDetail("20181214");
+        getOrderDetail("305-8612849-0465910");
+        //获取物流价格
+//        getSaleDetail(1L);
         //修改订单国际物流状态
 //        updateOrder(20181214L,4);
+        //修改订单国内跟踪号
+//        updateOrderWaybill("302-7660577-9242718","666666,88888888");
+        //修改订单备注
+//        updateOrderRemark("302-7660577-9242718","订单中途遇到了问题1");
 //        String orderData = "{\"order\":{\"order_sn\":\"20181214\",\"order_currency\":\"null\",\"order_date\":\"null\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
 //        System.out.println(orderData);
     }
@@ -64,11 +88,11 @@ public class AbroadLogisticsUtil {
         paramsMap.put("oofayOrderData",orderData);
         String oofayOrderData = null;
         try {
-                oofayOrderData = URLEncoder.encode(orderData, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                }
-                paramList.put("oofayOrderData", oofayOrderData);
+            oofayOrderData = URLEncoder.encode(orderData, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        paramList.put("oofayOrderData", oofayOrderData);
         String asin = null;
         String result = null;
         //参数根据ASCII码排序并加密得到签名
@@ -84,7 +108,7 @@ public class AbroadLogisticsUtil {
                 String data = obj.getString("data");
                 if(data != null && data != ""){
                     String data1 = new String(decoder.decode(data), "UTF-8");
-                    //System.out.println("data1:" + data1);
+                    System.out.println("data1:" + data1);
                     JSONObject j = JSONObject.parseObject(data1);
                     map.put("code",j.getString("isSuccess"));
                     map.put("msg",j.getString("errorMsg"));
@@ -125,12 +149,20 @@ public class AbroadLogisticsUtil {
                 JSONObject a = JSONObject.parseObject(data1);
                 ReceiveOofayData receiveOofayData = new ReceiveOofayData();
                 JSONObject omsOrder = a.getJSONObject("oms_order");
+
                 JSONObject omsOrderDetailext = a.getJSONArray("OmsOrderDetailext").getJSONObject(0);
+                System.out.println("omsOrder:" + omsOrder.toString());
+                System.out.println("omsOrderDetailext:" + omsOrderDetailext.toString());
                 JSONArray omsExpressList = a.getJSONArray("oms_Express");
+                System.out.println("oms_Express:" + omsExpressList);
                 //获取状态码
+                String status = omsOrderDetailext.getString("status");
                 receiveOofayData.setStatusStr(omsOrderDetailext.getString("status"));
                 //获取运费
+                String feedamount = omsOrder.getString("feedamount");
+                System.out.println("运费：" + feedamount);
                 receiveOofayData.setInterFreight(omsOrder.getString("feedamount"));
+
                 //获取是否有仓库已入库信息
                 JSONArray recordList = omsOrderDetailext.getJSONArray("warehousing_record_list");
                 if(recordList.size() > 0 && recordList.getJSONObject(0).getString("storage_time") != null){
@@ -138,7 +170,8 @@ public class AbroadLogisticsUtil {
                 }else{
                     receiveOofayData.setWarehousing(false);
                 }
-                JSONObject destInfo = omsOrderDetailext.getJSONObject("ChannelQueryInfo");
+                JSONObject destInfo = a.getJSONObject("ChannelQueryInfo");
+                System.out.println("destInfo:" + destInfo.toString());
                 if(destInfo != null){
                     //国际物流公司
                     receiveOofayData.setDestTransportCompany(destInfo.getString("dest_transport_company"));
@@ -150,10 +183,10 @@ public class AbroadLogisticsUtil {
                     receiveOofayData.setServiceQueryUrl(destInfo.getString("service_query_url"));
                     //联系电话
                     receiveOofayData.setMobile(destInfo.getString("mobile"));
+                    //获取国内跟踪号
+                    receiveOofayData.setDomesticTrackWaybill(omsOrderDetailext.getString("deliveryexpressno"));
                 }
                 if(omsExpressList.size() >0 ){
-                    //获取国内跟踪号
-                    receiveOofayData.setDomesticTrackWaybill(omsOrderDetailext.getString("supply_express_no"));
                     //国际跟踪单号
                     receiveOofayData.setTrackWaybill(omsExpressList.getJSONObject(0).getString("transfer_number"));
                     //发货时间
@@ -202,6 +235,149 @@ public class AbroadLogisticsUtil {
             e.printStackTrace();
         }
     }
+
+    /**
+     *
+     * @param amazonOrderId
+     * @param waybill
+     * 修改订单国内跟踪号
+     */
+    public static void updateOrderWaybill(String amazonOrderId, String waybill){
+        //传输参数
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("userdean", String.valueOf(userdean));
+        paramList.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
+        paramList.put("orderSn",amazonOrderId);
+        paramList.put("supplyExpressNo",waybill);
+        String asin = null;
+        String result = null;
+        //参数根据ASCII码排序并加密得到签名
+        try {
+            asin = getSign(paramList);
+            if(asin != null && asin != ""){
+                paramList.put("asin",asin);
+                String params = proData(paramList);
+                //开始推送数据
+                result = sendPost(updateWaybillUrl,params);
+                System.out.println("result:" + result);
+                JSONObject obj = JSONObject.parseObject(result);
+                String data = obj.getString("data");
+                String data1 = new String(decoder.decode(data), "UTF-8");
+                System.out.println("data1:" + data1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     *
+     * @param amazonOrderId
+     * @param remark
+     * 修改订单备注
+     */
+    public static void updateOrderRemark(String amazonOrderId, String remark){
+        //传输参数
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("userdean", String.valueOf(userdean));
+        paramList.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
+        paramList.put("orderSn",amazonOrderId);
+        paramList.put("memo",remark);
+        String asin = null;
+        String result = null;
+        //参数根据ASCII码排序并加密得到签名
+        try {
+            asin = getSign(paramList);
+            if(asin != null && asin != ""){
+                paramList.put("asin",asin);
+                String params = proData(paramList);
+                //开始推送数据
+                result = sendPost(updateRemarkUrl,params);
+                System.out.println("result:" + result);
+                JSONObject obj = JSONObject.parseObject(result);
+                String data = obj.getString("data");
+                String data1 = new String(decoder.decode(data), "UTF-8");
+                System.out.println("data1:" + data1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Map<String,String> getSaleDetail(BigDecimal weight){
+        Map<String,String> map = new HashMap<>();
+        //传输参数
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("userdean", String.valueOf(userdean));
+        paramList.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
+        SalePriceDetail salePriceDetail = new SalePriceDetail();
+        salePriceDetail.setItem_weight(weight);
+        net.sf.json.JSONObject salePriceJson = net.sf.json.JSONObject.fromObject(salePriceDetail);
+        System.out.println("1111111" + salePriceJson.toString());
+        paramList.put("priceParam",salePriceJson.toString());
+        String asin = null;
+        String result = null;
+        //参数根据ASCII码排序并加密得到签名
+        try {
+            asin = getSign(paramList);
+            if(asin != null && asin != ""){
+                paramList.put("asin",asin);
+                String params = proData(paramList);
+                //开始推送数据
+                result = sendPost(salePriceUrl,params);
+                System.out.println("result:" + result);
+                JSONObject obj = JSONObject.parseObject(result);
+                String data = obj.getString("data");
+                String data1 = new String(decoder.decode(data), "UTF-8");
+                JSONObject a = JSONObject.parseObject(data1);
+                JSONArray array = a.getJSONArray("otherData");
+                for(int i = 0; i < array.size(); i++){
+                    JSONObject o = array.getJSONObject(i);
+                    String country = o.getString("CountryName");
+                    String freight = o.getString("DeliveryCost");
+                    switch (country){
+                        case "美国":
+                            map.put("americanFreight",freight);
+                            break;
+                        case "加拿大":
+                            map.put("canadaFreight",freight);
+                            break;
+                        case "墨西哥":
+                            map.put("mexicoFreight",freight);
+                            break;
+                        case "英国":
+                            map.put("britainFreight",freight);
+                            break;
+                        case "法国":
+                            map.put("franceFreight",freight);
+                            break;
+                        case "德国":
+                            map.put("germanyFreight",freight);
+                            break;
+                        case "意大利":
+                            map.put("italyFreight",freight);
+                            break;
+                        case "西班牙":
+                            map.put("spainFreight",freight);
+                            break;
+                        case "日本":
+                            map.put("japanFreight",freight);
+                            break;
+                        case "澳大利亚":
+                            map.put("australiaFreight",freight);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                map.put("code","true");
+            }
+        } catch (Exception e) {
+            map.put("code","false");
+            map.put("msg","网络故障，请重试。");
+        }
+        return map;
+    }
+
     /**
      * 获取UTC时间戳
      * @return

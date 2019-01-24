@@ -8,6 +8,8 @@ import java.math.BigDecimal;
  * @Description:
  */
 public class OrderStatisticsEntity {
+    //订单数
+    private int orderCount = 0;
     //核算订单数量
     private int orderCounts = 0;
     //总金额
@@ -22,6 +24,14 @@ public class OrderStatisticsEntity {
     private BigDecimal purchasePrice = new BigDecimal(0.00);;
     //运费
     private BigDecimal orderFreight = new BigDecimal(0.00);;
+
+    public int getOrderCount() {
+        return orderCount;
+    }
+
+    public void setOrderCount(int orderCount) {
+        this.orderCount = orderCount;
+    }
 
     public int getOrderCounts() {
         return orderCounts;

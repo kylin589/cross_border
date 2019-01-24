@@ -18,15 +18,15 @@ public class OmsShippingAddr {
     /**
     * 销售国家
     */
-    public String custcountry  = "无";;
+    public String custcountry;;
     /**
     * 州名
     */
-    public String custstate  = "无";;
+    public String custstate;;
     /**
     * 城市
     */
-    public String custcity  = "无";;
+    public String custcity;
     /**
     * 邮编
     */
@@ -38,10 +38,10 @@ public class OmsShippingAddr {
     /**
     * 详细地址
     */
-    public String custaddress  = "无";;
-    public String address_line1 = "无";
-    public String address_line2 = null;
-    public String address_line3 = null;
+    public String custaddress;
+    public String address_line1;
+    public String address_line2;
+    public String address_line3;
 
     public String getCustomer() {
         return customer;

@@ -3,8 +3,11 @@ package io.renren.modules.order.controller;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.logistics.util.AbroadLogisticsUtil;
 import io.renren.modules.order.entity.RemarkEntity;
 import io.renren.modules.order.service.RemarkService;
+import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.product.service.OrderService;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,8 @@ import java.util.Map;
 public class RemarkController extends AbstractController{
     @Autowired
     private RemarkService remarkService;
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 添加 添加国内物流操作记录
@@ -93,6 +98,17 @@ public class RemarkController extends AbstractController{
         remark.setUserName(getUser().getDisplayName());
         remark.setUpdateTime(new Date());
         remarkService.insert(remark);
+        OrderEntity orderEntity = orderService.selectById(remark.getOrderId());
+        String remarkStr = remark.getRemarkType() + "：" + remark.getRemark();
+        AbroadLogisticsUtil.updateOrderRemark(orderEntity.getAmazonOrderId(),remarkStr);
+
+        RemarkEntity log = new RemarkEntity();
+        log.setOrderId(orderEntity.getOrderId());
+        log.setUserName(getUser().getDisplayName());
+        log.setUserId(getUserId());
+        log.setRemark("添加订单备注信息");
+        log.setType("log");
+        log.setUpdateTime(new Date());
         return R.ok();
     }
 

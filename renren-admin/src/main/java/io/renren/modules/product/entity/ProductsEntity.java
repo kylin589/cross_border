@@ -220,7 +220,7 @@ public class ProductsEntity implements Serializable {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Date createTime = new Date();
     /**
      * 创建用户id
      */
@@ -389,6 +389,22 @@ public class ProductsEntity implements Serializable {
      */
     private String mainImageUrl;
 
+    /**
+     * 是否上传
+     */
+    private int isUpload = 0;
+
+    /**
+     * 用户名
+     */
+    @TableField(exist = false)
+    private String userName;
+
+    /*
+     * 公司名称
+     */
+    @TableField(exist = false)
+    private String deptName;
 
     public String getMainImageUrl() {
         return mainImageUrl;
@@ -1306,6 +1322,30 @@ public class ProductsEntity implements Serializable {
      */
     public Long getLastOperationUserId() {
         return lastOperationUserId;
+    }
+
+    public int getIsUpload() {
+        return isUpload;
+    }
+
+    public void setIsUpload(int isUpload) {
+        this.isUpload = isUpload;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
     }
 
     @Override

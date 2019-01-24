@@ -308,9 +308,11 @@ public class OrderTimer {
                                     }catch (ParseException e){
                                         e.getStackTrace();
                                     }
-                                    Timestamp timeStamep = new Timestamp(d.getTime());
-                                    System.out.println("购买日期:"+timeStamep+"=================================");
-                                    orderModel.setBuyDate(timeStamep);
+                                    if(d != null){
+                                        Timestamp timeStamep = new Timestamp(d.getTime());
+                                        System.out.println("购买日期:"+timeStamep+"=================================");
+                                        orderModel.setBuyDate(timeStamep);
+                                    }
                                     orderModel.setOrderStatus(listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus());
                                     if (titlename != null) {
                                         orderModel.setTitlename(titlename);
@@ -374,7 +376,7 @@ public class OrderTimer {
                                     } else if(shipaddress2 != null){
                                         addressEntity.setShipAddressLine1(shipaddress2);
                                     }else{
-                                        addressEntity.setShipAddressLine1("无");
+                                        addressEntity.setShipAddressLine1("");
                                     }
                                     if (shipcity != null) {
                                         addressEntity.setShipCity(shipcity);

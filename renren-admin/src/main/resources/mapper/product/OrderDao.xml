@@ -17,6 +17,9 @@
             <if test="params.endDate != null">
                 and buy_date <![CDATA[<= ]]> #{params.endDate}
             </if>
+            <if test="params.isOld != null">
+                and is_old =#{params.isOld}
+            </if>
                 and 1 = 1
         </where>
     </sql>

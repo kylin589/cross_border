@@ -418,19 +418,20 @@ public class GenerateProductXML {
                         default:
                             break;
                     }
-                    Element vieUnitCount = vieMeautyMisc.addElement("UnitCount");
+                    /*Element vieUnitCount = vieMeautyMisc.addElement("UnitCount");
                     vieUnitCount.addAttribute("unitOfMeasure", "oz");
                     vieUnitCount.addText("0.1");
                     Element vieDirections = vieMeautyMisc.addElement("Directions");
-                    vieDirections.addText("\\t");
+                    vieDirections.addText("\\t");*/
                 }
-            } else {
+            }
+            /*else {
                 Element unitCount = meautyMisc.addElement("UnitCount");
                 unitCount.addAttribute("unitOfMeasure", "oz");
                 unitCount.addText("0.1");
                 Element directions = meautyMisc.addElement("Directions");
                 directions.addText("\\t");
-            }
+            }*/
 
         }
         // 生成文件路径
@@ -494,7 +495,7 @@ public class GenerateProductXML {
             }
 
             // 主产品图片
-            List<ImageAddressEntity> imageAddressEntityList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productsEntity.getProductId()).eq("is_deleted", "0"));
+            List<ImageAddressEntity> imageAddressEntityList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productsEntity.getProductId()).eq("is_deleted", "0").orderBy("sort",true));
             if (imageAddressEntityList != null || imageAddressEntityList.size() != 0) {
                 int temp = imageAddressEntityList.size();
                 if (temp > 8) {
@@ -1751,8 +1752,8 @@ public class GenerateProductXML {
             productTaxCode.addText("A_GEN_TAX");
 
             Map<String, Object> countryMap = switchCountry(productsEntity, countryCode);
-            Long freightId = Long.valueOf(String.valueOf(countryMap.get("freightId")));
-            String money = String.valueOf(countryMap.get("money"));
+//            Long freightId = Long.valueOf(String.valueOf(countryMap.get("freightId")));
+//            String money = String.valueOf(countryMap.get("money"));
             IntroductionEntity introductionEntity = introductionService.selectById(Long.valueOf(String.valueOf(countryMap.get("freightId"))));
 
             Element descriptionData = product.addElement("DescriptionData");

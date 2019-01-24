@@ -246,11 +246,17 @@ public class OldOrderTimer {
                                     buytime = buytime.replace("Z", " UTC");// UTC是本地时间
                                     SimpleDateFormat format = new SimpleDateFormat(
                                             "yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+                                    SimpleDateFormat format1 = new SimpleDateFormat(
+                                            "yyyy-MM-dd'T'HH:mm:ss Z");
                                     Date d=null;
                                     try{
                                         d=format.parse(buytime);
                                     }catch (ParseException e){
-                                        e.getStackTrace();
+                                        try {
+                                            d=format1.parse(buytime);
+                                        } catch (ParseException e1) {
+                                            e1.printStackTrace();
+                                        }
                                     }
                                     Timestamp timeStamep = new Timestamp(d.getTime());
                                     System.out.println("购买日期:"+timeStamep+"=================================");
@@ -318,7 +324,7 @@ public class OldOrderTimer {
                                     } else if(shipaddress2 != null){
                                         addressEntity.setShipAddressLine1(shipaddress2);
                                     }else{
-                                        addressEntity.setShipAddressLine1("无");
+                                        addressEntity.setShipAddressLine1("");
                                     }
                                     if (shipcity != null) {
                                         addressEntity.setShipCity(shipcity);

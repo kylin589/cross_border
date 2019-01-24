@@ -16,6 +16,7 @@ import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
+import io.renren.modules.logistics.DTO.Image;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.order.component.OrderTimer;
 import io.renren.modules.product.entity.*;
@@ -136,24 +137,35 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
                 .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                 .eq("user_id",userId)
-                .eq("is_old",0);
+                .eq("is_old",0)
+                .orderBy("buy_date",false);
 
         Page<OrderEntity> page = this.selectPage(
                 new Query<OrderEntity>(params).getPage(),
                 wrapper
         );
         PageUtils pageUtils = new PageUtils(page);
-        Map<String, Object> condition = new HashMap<>(1);
+        Map<String, Object> condition = new HashMap<>(2);
         condition.put("userId",userId);
+        condition.put("isOld",0);
         OrderStatisticsEntity orderCounts = baseMapper.statisticsOrderCounts(condition);
+
         if(orderCounts == null){
             orderCounts = new OrderStatisticsEntity();
         }
+        //订单数
+        int orderCount = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("is_old",0));
+        orderCounts.setOrderCount(orderCount);
         //核算订单数
-        int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).eq("is_old",0));
+        int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("is_old",0).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
         orderCounts.setOrderCounts(completeCounts);
+        //总金额
+        String orderMoney = baseMapper.salesVolumeStatistics(condition);
+        if(StringUtils.isNotBlank(orderMoney)){
+            orderCounts.setOrderMoney(new BigDecimal(orderMoney));
+        }
         //退货数
-        int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN).eq("is_old",0));
+        int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("is_old",0).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
         orderCounts.setReturnCounts(returnCounts);
         Map<String, Object> map = new HashMap<>(2);
         map.put("page",pageUtils);
@@ -206,24 +218,34 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
                 .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                 .eq("user_id",userId)
-                .eq("is_old",1);
+                .eq("is_old",1)
+                .orderBy("buy_date",false);
 
         Page<OrderEntity> page = this.selectPage(
                 new Query<OrderEntity>(params).getPage(),
                 wrapper
         );
         PageUtils pageUtils = new PageUtils(page);
-        Map<String, Object> condition = new HashMap<>(1);
+        Map<String, Object> condition = new HashMap<>(2);
         condition.put("userId",userId);
+        condition.put("isOld",1);
         OrderStatisticsEntity orderCounts = baseMapper.statisticsOrderCounts(condition);
         if(orderCounts == null){
             orderCounts = new OrderStatisticsEntity();
         }
+        //订单数
+        int orderCount = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("is_old",1));
+        orderCounts.setOrderCount(orderCount);
         //核算订单数
-        int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).eq("is_old",1));
+        int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("is_old",1).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
         orderCounts.setOrderCounts(completeCounts);
+        //总金额
+        String orderMoney = baseMapper.salesVolumeStatistics(condition);
+        if(StringUtils.isNotBlank(orderMoney)){
+            orderCounts.setOrderMoney(new BigDecimal(orderMoney));
+        }
         //退货数
-        int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN).eq("is_old",1));
+        int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("user_id",userId).eq("is_old",1).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
         orderCounts.setReturnCounts(returnCounts);
         Map<String, Object> map = new HashMap<>(2);
         map.put("page",pageUtils);
@@ -282,7 +304,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                     .eq(StringUtils.isNotBlank(userId),"user_id",userId)
                     .eq(StringUtils.isNotBlank(qDeptId),"dept_id",qDeptId)
-                    .eq("is_old",1);
+                    .eq("is_old",1)
+                    .orderBy("buy_date",false);
         }else{
             wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
                     .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
@@ -297,7 +320,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                     .eq(StringUtils.isNotBlank(userId),"user_id",userId)
                     .eq("dept_id",deptId)
-                    .eq("is_old",1);
+                    .eq("is_old",1)
+                    .orderBy("buy_date",false);
         }
 
 
@@ -305,19 +329,35 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 new Query<OrderEntity>(params).getPage(),
                 wrapper
         );
+        List<OrderEntity> orderEntityList = page.getRecords();
+        for(OrderEntity orderEntity : orderEntityList){
+            SysUserEntity sysUserEntity = userService.selectById(orderEntity.getUserId());
+            SysDeptEntity sysDeptEntity = deptService.selectById(orderEntity.getDeptId());
+            orderEntity.setUserName(sysUserEntity.getDisplayName());
+            orderEntity.setDeptName(sysDeptEntity.getName());
+        }
         PageUtils pageUtils = new PageUtils(page);
         OrderStatisticsEntity orderCounts = new OrderStatisticsEntity();
-        Map<String, Object> condition = new HashMap<>(1);
+        Map<String, Object> condition = new HashMap<>(2);
+        condition.put("isOld",1);
         if(deptId == 1L){
             //总公司
             if(baseMapper.statisticsOrderCounts(condition) != null){
                 orderCounts = baseMapper.statisticsOrderCounts(condition);
             }
+            //订单数
+            int orderCount = this.selectCount(new EntityWrapper<OrderEntity>().eq("is_old",1));
+            orderCounts.setOrderCount(orderCount);
             //核算订单数
-            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).eq("is_old",1));
+            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("is_old",1).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
             orderCounts.setOrderCounts(completeCounts);
+            //总金额
+            String orderMoney = baseMapper.salesVolumeStatistics(condition);
+            if(StringUtils.isNotBlank(orderMoney)){
+                orderCounts.setOrderMoney(new BigDecimal(orderMoney));
+            }
             //退货数
-            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN).eq("is_old",1));
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("is_old",1).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
             orderCounts.setReturnCounts(returnCounts);
         }else{
             //加盟商
@@ -325,11 +365,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             if(baseMapper.statisticsOrderCounts(condition) != null){
                 orderCounts = baseMapper.statisticsOrderCounts(condition);
             }
+            //订单数
+            int orderCount = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("is_old",1));
+            orderCounts.setOrderCount(orderCount);
             //核算订单数
-            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).eq("is_old",1));
+            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("is_old",1).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
             orderCounts.setOrderCounts(completeCounts);
+            //总金额
+            String orderMoney = baseMapper.salesVolumeStatistics(condition);
+            if(StringUtils.isNotBlank(orderMoney)){
+                orderCounts.setOrderMoney(new BigDecimal(orderMoney));
+            }
             //退货数
-            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN).eq("is_old",1));
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("is_old",1).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
             orderCounts.setReturnCounts(returnCounts);
         }
 
@@ -393,7 +441,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                     .eq(StringUtils.isNotBlank(userId),"user_id",userId)
                     .eq(StringUtils.isNotBlank(qDeptId),"dept_id",qDeptId)
-                    .eq("is_old",0);
+                    .eq("is_old",0)
+                    .orderBy("buy_date",false);
         }else{
             wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
                     .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
@@ -408,7 +457,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                     .eq(StringUtils.isNotBlank(userId),"user_id",userId)
                     .eq("dept_id",deptId)
-                    .eq("is_old",0);
+                    .eq("is_old",0)
+                    .orderBy("buy_date",false);
         }
 
 
@@ -416,19 +466,35 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 new Query<OrderEntity>(params).getPage(),
                 wrapper
         );
+        List<OrderEntity> orderEntityList = page.getRecords();
+        for(OrderEntity orderEntity : orderEntityList){
+            SysUserEntity sysUserEntity = userService.selectById(orderEntity.getUserId());
+            SysDeptEntity sysDeptEntity = deptService.selectById(orderEntity.getDeptId());
+            orderEntity.setUserName(sysUserEntity.getDisplayName());
+            orderEntity.setDeptName(sysDeptEntity.getName());
+        }
         PageUtils pageUtils = new PageUtils(page);
         OrderStatisticsEntity orderCounts = new OrderStatisticsEntity();
-        Map<String, Object> condition = new HashMap<>(1);
+        Map<String, Object> condition = new HashMap<>(2);
+        condition.put("isOld",0);
         if(deptId == 1L){
             //总公司
             if(baseMapper.statisticsOrderCounts(condition) != null){
                 orderCounts = baseMapper.statisticsOrderCounts(condition);
             }
+            //订单数
+            int orderCount = this.selectCount(new EntityWrapper<OrderEntity>().eq("is_old",0));
+            orderCounts.setOrderCount(orderCount);
             //核算订单数
-            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).eq("is_old",0));
+            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("is_old",0).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
             orderCounts.setOrderCounts(completeCounts);
+            //总金额
+            String orderMoney = baseMapper.salesVolumeStatistics(condition);
+            if(StringUtils.isNotBlank(orderMoney)){
+                orderCounts.setOrderMoney(new BigDecimal(orderMoney));
+            }
             //退货数
-            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN).eq("is_old",0));
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("is_old",0).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
             orderCounts.setReturnCounts(returnCounts);
         }else{
             //加盟商
@@ -436,11 +502,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             if(baseMapper.statisticsOrderCounts(condition) != null){
                 orderCounts = baseMapper.statisticsOrderCounts(condition);
             }
+            //订单数
+            int orderCount = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("is_old",0));
+            orderCounts.setOrderCount(orderCount);
             //核算订单数
-            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).eq("is_old",0));
+            int completeCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("is_old",0).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
             orderCounts.setOrderCounts(completeCounts);
+            //总金额
+            String orderMoney = baseMapper.salesVolumeStatistics(condition);
+            if(StringUtils.isNotBlank(orderMoney)){
+                orderCounts.setOrderMoney(new BigDecimal(orderMoney));
+            }
             //退货数
-            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN).eq("is_old",0));
+            int returnCounts = this.selectCount(new EntityWrapper<OrderEntity>().eq("dept_id",deptId).eq("is_old",0).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
             orderCounts.setReturnCounts(returnCounts);
         }
 
@@ -471,9 +545,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         //推送--订单基本信息
         OmsOrder omsOrder = new OmsOrder();
         omsOrder.setOrder_sn(orderEntity.getAmazonOrderId());
-        String deanname = domesticLogisticsService.selectOne(new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderId)).getLogisticsCompany();
-        if(StringUtils.isNotBlank(deanname)){
-            omsOrder.setDelivery_deanname(deanname);
+        List<DomesticLogisticsEntity> domesticLogisticsEntitys = domesticLogisticsService.selectList(new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderId));
+        StringBuffer deanname = new StringBuffer("");
+        StringBuffer supplyexpressno = new StringBuffer("");
+        for(int i = 0; i < domesticLogisticsEntitys.size(); i++){
+            if(StringUtils.isNotBlank(domesticLogisticsEntitys.get(i).getLogisticsCompany())){
+                deanname.append(domesticLogisticsEntitys.get(i).getLogisticsCompany());
+                deanname.append(",");
+            }
+            if(StringUtils.isNotBlank(domesticLogisticsEntitys.get(i).getWaybill())){
+                supplyexpressno.append(domesticLogisticsEntitys.get(i).getWaybill());
+                supplyexpressno.append(",");
+            }
+        }
+        if(StringUtils.isNotBlank(deanname.toString())){
+            omsOrder.setDelivery_deanname(deanname.substring(0,deanname.length()-1));
         }
         omsOrder.setOrder_currency(orderEntity.getRateCode());
         //设置时间
@@ -484,7 +570,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         OmsOrderDetail omsOrderDetail = new OmsOrderDetail();
         omsOrderDetail.setProduct_id(orderEntity.getProductSku());
         omsOrderDetail.setQuantity(orderEntity.getOrderNumber());
-        omsOrderDetail.setSupplyexpressno(orderEntity.getDomesticWaybill());
+        if(StringUtils.isNotBlank(supplyexpressno.toString())){
+            omsOrderDetail.setSupplyexpressno(supplyexpressno.substring(0,supplyexpressno.length()-1));
+        }
         //推送—收货人信息
         OmsShippingAddr omsShippingAddr = new OmsShippingAddr();
         omsShippingAddr.setAddress_line1(shipAddressEntity.getShipAddressLine1());
@@ -498,13 +586,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         omsShippingAddr.setCustphone(shipAddressEntity.getShipTel());
         omsShippingAddr.setCuststate(shipAddressEntity.getShipRegion());
         omsShippingAddr.setCustzipcode(shipAddressEntity.getShipZip());
+        Image image = new Image();
+        image.setSellersku(orderEntity.getProductSku());
+        image.setTitle(orderEntity.getProductTitle());
+        image.setPic(orderEntity.getProductImageUrl());
         JSONObject orderDataJson = new JSONObject();
         JSONObject omsOrderJson = JSONObject.fromObject(omsOrder);
         JSONArray orderDetailListJson = JSONArray.fromObject(omsOrderDetail);
         JSONObject omsShippingAddrJson = JSONObject.fromObject(omsShippingAddr);
+        JSONArray imageJson = JSONArray.fromObject(image);
         orderDataJson.put("order",omsOrderJson);
         orderDataJson.put("orderDetailList",orderDetailListJson);
         orderDataJson.put("address",omsShippingAddrJson);
+        orderDataJson.put("image",imageJson);
         Map<String,String> result = AbroadLogisticsUtil.pushOrder(orderDataJson.toString());
         return result;
     }
@@ -703,12 +797,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
                         orderEntity.setOrderState("取消");
                     }else{
+                        String orderStatus = orderEntity.getOrderStatus();
                         //获取当前订单状态判断是否为待付款、已付款、虚发货
-                        if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(orderEntity.getOrderState())){
+                        List amazonStateList = Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE);
+                        if(amazonStateList.contains(orderStatus)){
                             //获取返回状态判断是否为待付款、已付款、虚发货
-                            if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(modelStatus)){
+                            if(amazonStateList.contains(modelStatus)){
                                 //判断两个状态不想等时更改状态
-                                if(!modelStatus.equals(orderEntity.getOrderState())){
+                                if(!modelStatus.equals(orderStatus)){
                                     orderEntity.setOrderStatus(modelStatus);
                                     String orderState = dataDictionaryService.selectOne(
                                             new EntityWrapper<DataDictionaryEntity>()
@@ -841,17 +937,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     }
                 }else{
                     //更新订单
-                    ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));
+//                    ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));
                     if(StringUtils.isNotBlank(orderModel.getProductImageUrl())){
                         orderEntity.setProductImageUrl(orderModel.getProductImageUrl());
-                    }else if(productsEntity != null){
-                        orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
                     }
+//                    else if(productsEntity != null){
+//                        orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
+//                    }
                     orderEntity.setBuyDate(orderModel.getBuyDate());
-                    orderEntity.setCountryCode(orderModel.getCountry());
+//                    orderEntity.setCountryCode(orderModel.getCountry());
                     orderEntity.setProductTitle(orderModel.getTitlename());
+                    this.updateById(orderEntity);
                     //设置汇率
-                    BigDecimal rate = new BigDecimal(0.00);
+                    /*BigDecimal rate = new BigDecimal(0.00);
                     String rateCode = orderModel.getCurrencyCode();
                     orderEntity.setRateCode(rateCode);
                     if(StringUtils.isNotBlank(rateCode)){
@@ -869,18 +967,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
                         orderEntity.setAccountMoney(accountMoney);
                         orderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
-                    }
+                    }*/
                     //获取状态判断是否为取消
-                    if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)){
+                    /*if(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)){
                         orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
                         orderEntity.setOrderState("取消");
                     }else{
+                        String orderStatus = orderEntity.getOrderStatus();
                         //获取当前订单状态判断是否为待付款、已付款、虚发货
-                        if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(orderEntity.getOrderState())){
+                        List amazonStateList = Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE);
+                        if(amazonStateList.contains(orderStatus)){
                             //获取返回状态判断是否为待付款、已付款、虚发货
-                            if(Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(modelStatus)){
+                            if(amazonStateList.contains(modelStatus)){
                                 //判断两个状态不想等时更改状态
-                                if(!modelStatus.equals(orderEntity.getOrderState())){
+                                if(!modelStatus.equals(orderStatus)){
                                     orderEntity.setOrderStatus(modelStatus);
                                     String orderState = dataDictionaryService.selectOne(
                                             new EntityWrapper<DataDictionaryEntity>()
@@ -891,7 +991,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                     orderEntity.setOrderState(orderState);
                                     this.updateById(orderEntity);
                                     //新增/修改收货人信息
-                                    ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
+                                    *//*ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
                                     if(productShipAddressEntity != null){//判断返回值是否有收件人信息
                                         ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
                                                 new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
@@ -904,11 +1004,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                             productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
                                             productShipAddressService.updateById(productShipAddressEntity);
                                         }
-                                    }
+                                    }*//*
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
 
             }
@@ -918,7 +1018,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public void internationalShipments(OrderEntity order) {
         order.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED);
         order.setOrderState("国际已发货");
-        deduction(order);
     }
 
     /**

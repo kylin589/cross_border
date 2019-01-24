@@ -17,7 +17,7 @@ public class OmsOrder {
     /**
      * 物流公司
      */
-    public String delivery_deanname = null;
+    public String delivery_deanname;
     /**
      * 币种单位：EUR,USD,CAD,JPY
      */

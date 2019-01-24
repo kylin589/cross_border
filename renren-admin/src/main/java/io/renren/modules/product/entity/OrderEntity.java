@@ -1,5 +1,6 @@
 package io.renren.modules.product.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
@@ -162,6 +163,19 @@ public class OrderEntity implements Serializable {
 	 * 是否为旧数剧(0：新，1：旧)
 	 */
 	private int isOld = 0;
+
+	/**
+	 * 用户名
+	 */
+	@TableField(exist = false)
+	private String userName;
+
+	/*
+     * 公司名称
+     */
+	@TableField(exist = false)
+	private String deptName;
+
 	/**
 	 * 国内物流
 	 */
@@ -527,5 +541,21 @@ public class OrderEntity implements Serializable {
 
 	public void setProductTitle(String productTitle) {
 		this.productTitle = productTitle;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getDeptName() {
+		return deptName;
+	}
+
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
 	}
 }

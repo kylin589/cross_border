@@ -41,9 +41,9 @@ public interface ConstantDictionary {
          */
         String ORDER_STATE_INTLSHIPPED = "IntlShipped";
         /**
-         * 国际已发货
+         * 完成
          */
-        String ORDER_STATE_FINISH = "IntlShipped";
+        String ORDER_STATE_FINISH = "Finish";
         /**
          * 取消订单
          */

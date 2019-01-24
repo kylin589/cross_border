@@ -3,9 +3,14 @@ package io.renren.modules.product.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.R;
 import io.renren.modules.product.dto.UploadProductDTO;
+import io.renren.modules.product.entity.FreightCostEntity;
 import io.renren.modules.product.entity.ProductsEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -180,4 +185,21 @@ public interface ProductsService extends IService<ProductsEntity> {
      * @author zjr
      */
     Long queryIdBySku(String sku);
+
+    /**
+     * 成本运费
+     */
+    ProductsEntity costFreight(@RequestBody ProductsEntity productsEntity);
+    /**
+     * 成本运费(保存)
+     */
+    ProductsEntity costFreightSave(@RequestBody ProductsEntity productsEntity);
+    /**
+     * 刷新利润
+     */
+    ProductsEntity refresh(@RequestBody ProductsEntity productsEntity);
+    /**
+     * 刷新利润(保存)
+     */
+    ProductsEntity refreshSave(@RequestBody ProductsEntity productsEntity);
 }

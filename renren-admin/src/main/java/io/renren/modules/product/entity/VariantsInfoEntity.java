@@ -53,7 +53,6 @@ public class VariantsInfoEntity implements Serializable {
      */
     private String imageUrl;
 
-
     /**
      * 获取：产品ID
      */

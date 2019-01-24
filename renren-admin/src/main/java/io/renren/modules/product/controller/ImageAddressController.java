@@ -105,15 +105,25 @@ public class ImageAddressController extends AbstractController {
     @RequestMapping("/locationsave")
     //@RequiresPermissions("product:imageaddress:locationsave")
     public R locationSave(@RequestBody ImageAddressEntity[] images) {
-        for (int i = 0; i < images.length; i++) {
+        /*for (int i = 0; i < images.length; i++) {
             ImageAddressEntity imageAddressEntity = images[i];
-            imageAddressEntity.setSort(i);
             imageAddressService.updateById(imageAddressEntity);
             if (i == 0) {
                 ProductsEntity productsEntity = new ProductsEntity();
                 productsEntity.setProductId(images[i].getProductId());
                 productsEntity.setMainImageUrl(images[i].getImageUrl());
                 productsEntity.setMainImageId(imageAddressEntity.getImageId());
+                productsService.updateById(productsEntity);
+            }
+        }*/
+        for (ImageAddressEntity image : images) {
+            int sort = image.getSort();
+            imageAddressService.updateById(image);
+            if (sort == 0) {
+                ProductsEntity productsEntity = new ProductsEntity();
+                productsEntity.setProductId(image.getProductId());
+                productsEntity.setMainImageUrl(image.getImageUrl());
+                productsEntity.setMainImageId(image.getImageId());
                 productsService.updateById(productsEntity);
             }
         }
@@ -193,6 +203,7 @@ public class ImageAddressController extends AbstractController {
             //调用FtpUtil的方法，连接ftp服务器，并把图片上传到服务器上
             Boolean flag = FtpUtil.uploadFile(fileNameFTP, input, filePathFTP);
             if (flag == true) {
+                int count = imageAddressService.selectCount(new EntityWrapper<ImageAddressEntity>().eq("product_id",productId));
                 ImageAddressEntity imageAddressEntity = new ImageAddressEntity();
                 //保存到数据库的地址
                 String url = "images/" + year + "/" + month + "/" + date + "/" + productId + "/" + fileNameFTP;
@@ -204,6 +215,7 @@ public class ImageAddressController extends AbstractController {
                 imageAddressEntity.setCreateUserId(getUserId());
                 imageAddressEntity.setLastOperationUserId(getUserId());
                 imageAddressEntity.setLastOperationTime(new Date());
+                imageAddressEntity.setSort(count);
                 imageAddressService.insert(imageAddressEntity);
                 Long id = imageAddressEntity.getImageId();
                 return R.ok().put("url", urlOne).put("id", id);
