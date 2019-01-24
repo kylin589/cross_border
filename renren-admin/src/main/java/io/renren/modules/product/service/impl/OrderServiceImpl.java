@@ -333,8 +333,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         for(OrderEntity orderEntity : orderEntityList){
             SysUserEntity sysUserEntity = userService.selectById(orderEntity.getUserId());
             SysDeptEntity sysDeptEntity = deptService.selectById(orderEntity.getDeptId());
-            orderEntity.setUserName(sysUserEntity.getDisplayName());
-            orderEntity.setDeptName(sysDeptEntity.getName());
+            if(sysDeptEntity != null){
+                orderEntity.setDeptName(sysDeptEntity.getName());
+            }
+            if(sysUserEntity != null){
+                orderEntity.setUserName(sysUserEntity.getDisplayName());
+            }
         }
         PageUtils pageUtils = new PageUtils(page);
         OrderStatisticsEntity orderCounts = new OrderStatisticsEntity();

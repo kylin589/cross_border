@@ -179,8 +179,12 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         for(ProductsEntity productsEntity : productList){
             SysUserEntity sysUserEntity = sysUserService.selectById(productsEntity.getCreateUserId());
             SysDeptEntity sysDeptEntity = sysDeptService.selectById(productsEntity.getDeptId());
-            productsEntity.setUserName(sysUserEntity.getDisplayName());
-            productsEntity.setDeptName(sysDeptEntity.getName());
+            if(sysDeptEntity != null){
+                productsEntity.setDeptName(sysDeptEntity.getName());
+            }
+            if(sysUserEntity != null){
+                productsEntity.setUserName(sysUserEntity.getDisplayName());
+            }
         }
         // 产品数量
         int proCount = this.selectCount(wrapper);
@@ -272,8 +276,12 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         for(ProductsEntity productsEntity : productList){
             SysUserEntity sysUserEntity = sysUserService.selectById(productsEntity.getCreateUserId());
             SysDeptEntity sysDeptEntity = sysDeptService.selectById(productsEntity.getDeptId());
-            productsEntity.setUserName(sysUserEntity.getDisplayName());
-            productsEntity.setDeptName(sysDeptEntity.getName());
+            if(sysDeptEntity != null){
+                productsEntity.setDeptName(sysDeptEntity.getName());
+            }
+            if(sysUserEntity != null){
+                productsEntity.setUserName(sysUserEntity.getDisplayName());
+            }
         }
         return new PageUtils(page);
     }
