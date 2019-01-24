@@ -986,6 +986,7 @@ var vm = new Vue({
         },
         // 采集产品弹框
         caijiProFunc:function () {
+            vm.caijiUrl = '';
             layer.open({
                 type: 1,
                 title: false,
@@ -1047,6 +1048,7 @@ var vm = new Vue({
                                             console.log(r);
                                             layer.alert('操作成功');
                                             vm.getPage();
+                                            // vm.caijiUrl = '';
                                             // layer.close(index);
                                         } else {
 
@@ -1086,7 +1088,7 @@ var vm = new Vue({
         },
         // 原创
         createPro:function () {
-            window.location.href="createPro.html";
+            window.location.href="createPro.html?page="+vm.proCurr;
         },
         // 批量修改全选
         quanxuanFunc:function () {
