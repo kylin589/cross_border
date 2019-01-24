@@ -161,6 +161,7 @@
             <th>异常状态</th>
             <!--<th>退货费用</th>-->
             <th style="width: 100px">下单时间</th>
+            <th style="width: 130px;">公司名</th>
             <th>操作</th>
         </tr>
         <tr v-for = '(item,index) in prolist'>
@@ -297,6 +298,10 @@
             </td>
             <!--<td>{{item.accountMoneyCny}}</td>-->
             <td style="width: 100px;color: #999;">{{ item.buyDate }}</td>
+            <td style="width: 130px;">
+                <span style="font-size: 13px;color: #666">店铺名店铺名店铺名</span><br>
+                <span style="font-size: 13px;color: #666">操作人:人人名名</span>
+            </td>
             <td>
                 <span style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="shuaxin(item.orderId)">手动刷新</span>
             </td>

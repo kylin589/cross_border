@@ -393,7 +393,7 @@ var vm = new Vue({
             vm.showList1 = true;
             var page = $("#jqGrid").jqGrid('getGridParam','page');
             $("#jqGrid").jqGrid('setGridParam',{
-                postData:{'username': vm.q.username},
+                postData:{'username': vm.q.username,'displayName':vm.q.displayName},
                 page:page
             }).trigger("reloadGrid");
         }
