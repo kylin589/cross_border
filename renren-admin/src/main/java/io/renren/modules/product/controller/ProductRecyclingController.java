@@ -60,12 +60,13 @@ public class ProductRecyclingController extends AbstractController {
     public R restore(@RequestBody ProductIdsVM productIdsVM) {
         Long[] productIds = productIdsVM.getProductIds();
         for (int i = 0; i < productIds.length; i++) {
-            ProductsEntity entity = new ProductsEntity();
-            entity.setProductId(productIds[i]);
-            entity.setIsDeleted(0);
-            entity.setLastOperationTime(new Date());
-            entity.setLastOperationUserId(getUserId());
-            productsService.updateById(entity);
+            ProductsEntity entity = productsService.selectById(productIds[i]);
+            if(entity != null){
+                entity.setIsDeleted(0);
+                entity.setLastOperationTime(new Date());
+                entity.setLastOperationUserId(getUserId());
+                productsService.updateById(entity);
+            }
         }
         return R.ok();
     }

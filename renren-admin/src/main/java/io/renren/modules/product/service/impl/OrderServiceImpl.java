@@ -683,7 +683,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Override
     public void updateOrder(List<OrderModel> orderModelList) {
         for(OrderModel orderModel : orderModelList ){
-            //获取亚马逊订单id
+            //获取亚马逊订单id 304-1285160-0433937
             String amazonOrderId = orderModel.getAmazonOrderId();
             if(StringUtils.isNotBlank(amazonOrderId)){
                 //判断该订单是否存在
@@ -786,6 +786,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     String rateCode = orderModel.getCurrencyCode();
                     if(StringUtils.isNotBlank(rateCode)){
                         rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
+                        orderEntity.setRateCode(rateCode);
+                        orderEntity.setMomentRate(rate);
                     }
                     BigDecimal orderMoney = orderModel.getOrderMoney();
                     if(orderMoney.compareTo(new BigDecimal("0.00")) != 0){

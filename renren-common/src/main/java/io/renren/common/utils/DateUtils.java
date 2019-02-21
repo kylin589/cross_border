@@ -279,8 +279,20 @@ public class DateUtils {
      */
     public static XMLGregorianCalendar getTheDateNow10DaysShort() {
         Date currentTime = new Date();
-        currentTime = addDateDays(currentTime,-3);
+        currentTime = addDateDays(currentTime,-7);
         return xmlToDate(currentTime);
+    }
+    /**
+     * 获取现在时间减1月
+     *
+     * @return 返回时间格式 yyyy-mm-dd  HH:mm:ss
+     * @author zjr
+     * @date 2018-11-19 14:54:47
+     */
+    public static Date getTheDateNow1MonthsShort() {
+        Date currentTime = new Date();
+        currentTime = addDateMonths(currentTime,-1);
+        return currentTime;
     }
     /**
      * 获取现在时间减10天

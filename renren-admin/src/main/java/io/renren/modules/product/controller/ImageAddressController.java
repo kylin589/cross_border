@@ -120,11 +120,12 @@ public class ImageAddressController extends AbstractController {
             int sort = image.getSort();
             imageAddressService.updateById(image);
             if (sort == 0) {
-                ProductsEntity productsEntity = new ProductsEntity();
-                productsEntity.setProductId(image.getProductId());
-                productsEntity.setMainImageUrl(image.getImageUrl());
-                productsEntity.setMainImageId(image.getImageId());
-                productsService.updateById(productsEntity);
+                ProductsEntity productsEntity = productsService.selectById(image.getProductId());
+                if(productsEntity != null){
+                    productsEntity.setMainImageUrl(image.getImageUrl());
+                    productsEntity.setMainImageId(image.getImageId());
+                    productsService.updateById(productsEntity);
+                }
             }
         }
        return R.ok();
