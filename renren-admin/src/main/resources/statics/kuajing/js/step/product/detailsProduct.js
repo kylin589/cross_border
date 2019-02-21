@@ -716,6 +716,7 @@ var vm = new Vue({
                             })
                         })
                         // vm.proAlbum = r.imageInfo;
+                        // vm.drapImg1();
 
                     } else {
                         layer.alert(r.msg);
@@ -754,7 +755,7 @@ var vm = new Vue({
 
 
             }
-            // console.log(arr);
+            console.log(arr);
 
             var index = layer.load();
             var index = layer.load(1); //换了种风格
@@ -770,7 +771,9 @@ var vm = new Vue({
                     if (r.code === 0) {
                         // console.log('产品相册保存');
                         // console.log(r);
+                        $('.imgDiv>div').removeClass('active');
                         vm.getProAlbum();
+                        // location=location;
                         layer.msg('保存成功');
                         layer.close(index);
 
@@ -2016,6 +2019,7 @@ var vm = new Vue({
                     for(var i = 0; i < aLi.length; i++) {
                         var t = aLi[i].offsetTop;
                         var l = aLi[i].offsetLeft;
+                        aLi.eq(i).attr('data-index',i);
                         aLi[i].style.top = t + "px";
                         aLi[i].style.left = l + "px";
                         aPos[i] = {
@@ -3292,6 +3296,7 @@ var vm = new Vue({
             }
 
         }
+        // vm.getProAlbum();
         vm.drapImg1();
 
     }
