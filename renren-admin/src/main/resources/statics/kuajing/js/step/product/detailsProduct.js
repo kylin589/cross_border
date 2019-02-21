@@ -3283,7 +3283,7 @@ var vm = new Vue({
                 // for(var i = 0; i < aLi.length; i++) {
                 //     aLi[i].style.position = "absolute";
                 //     aLi[i].style.margin = 0;
-                //     setDrag(aLi[i],aLi);
+                //     // setDrag(aLi[i],aLi);
                 // }
 
 
@@ -3292,6 +3292,24 @@ var vm = new Vue({
                 aLiLast.parent().parent().siblings().css('line-height',_height+'px')
 
                 // console.log(_height);
+                aLi.mouseover(function () {
+                    $(this).find('i').css('display','inline-block');
+                    $(this).find('i').mouseover(function () {
+                        $(this).css('display','inline-block');
+                    })
+                    $(this).find('i').mouseout(function () {
+                        $(this).css('display','none');
+                    })
+                })
+                aLi.mouseout(function () {
+                    $(this).find('i').css('display','none');
+                    $(this).find('i').mouseover(function () {
+                        $(this).css('display','inline-block');
+                    })
+                    $(this).find('i').mouseout(function () {
+                        $(this).css('display','none');
+                    })
+                })
 
             }
 
