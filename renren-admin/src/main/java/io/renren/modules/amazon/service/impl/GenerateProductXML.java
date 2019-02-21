@@ -114,7 +114,8 @@ public class GenerateProductXML {
                 } else if (StringUtils.isNotBlank(productsEntity.getUpcCode())) {
                     Element standardProductID = product.addElement("StandardProductID");
                     Element type = standardProductID.addElement("Type");
-                    type.addText("UPC");
+//                    type.addText("UPC");
+                    type.addText("EAN");
                     Element value = standardProductID.addElement("Value");
                     value.addText(productsEntity.getUpcCode());
                 }
@@ -920,7 +921,8 @@ public class GenerateProductXML {
                 } else if (StringUtils.isNotBlank(productsEntity.getUpcCode())) {
                     Element standardProductID = product.addElement("StandardProductID");
                     Element type = standardProductID.addElement("Type");
-                    type.addText("UPC");
+//                    type.addText("UPC");
+                    type.addText("EAN");
                     Element value = standardProductID.addElement("Value");
                     value.addText(productsEntity.getUpcCode());
                 }
@@ -1739,7 +1741,8 @@ public class GenerateProductXML {
                 } else if (StringUtils.isNotBlank(productsEntity.getUpcCode())) {
                     Element standardProductID = product.addElement("StandardProductID");
                     Element type = standardProductID.addElement("Type");
-                    type.addText("UPC");
+//                    type.addText("UPC");
+                    type.addText("EAN");
                     Element value = standardProductID.addElement("Value");
                     value.addText(productsEntity.getUpcCode());
                 }

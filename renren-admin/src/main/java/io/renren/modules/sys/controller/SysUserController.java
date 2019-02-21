@@ -185,6 +185,19 @@ public class SysUserController extends AbstractController {
     }
 
     /**
+     * 修改用户基本信息
+     */
+    @SysLog("修改用户基本信息")
+    @RequestMapping("/updateUser")
+//	@RequiresPermissions("sys:user:update")
+    public R updateUser(@RequestBody SysUserEntity user) {
+
+        sysUserService.updateById(user);
+
+        return R.ok();
+    }
+
+    /**
      * 修改用户
      */
     @SysLog("修改用户")

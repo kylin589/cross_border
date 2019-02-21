@@ -119,7 +119,8 @@ public class EanUpcController {
                 eanUpcEntities.add(eanUpcEntity);
             }else {
                 EanUpcEntity eanUpcEntity = new EanUpcEntity();
-                eanUpcEntity.setType("UPC");
+//                eanUpcEntity.setType("UPC");
+                eanUpcEntity.setType("EAN");
                 eanUpcEntity.setCode(codeString[i]);
                 eanUpcEntity.setState(0);
                 eanUpcEntity.setCreateTime(new Date());

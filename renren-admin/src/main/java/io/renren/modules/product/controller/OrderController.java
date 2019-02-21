@@ -148,7 +148,8 @@ public class OrderController extends AbstractController{
         BigDecimal momentRate = orderEntity.getMomentRate();
         String orderStatus = orderEntity.getOrderStatus();
         String abnormalStatus = orderEntity.getAbnormalStatus();
-        new RefreshOrderThread(orderId).start();
+        //更新订单物流等信息
+//        new RefreshOrderThread(orderId).start();
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setOrderId(orderId);
         orderDTO.setAmazonOrderId(orderEntity.getAmazonOrderId());
@@ -568,7 +569,7 @@ public class OrderController extends AbstractController{
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         String orderItemId = orderEntity.getOrderItemId();
         String amazonOrderId = orderEntity.getAmazonOrderId();
-        String abroadWaybill = abroadLogisticsEntity.getAbroadWaybill();
+        String trackWaybill = abroadLogisticsEntity.getTrackWaybill();
         Date date = abroadLogisticsEntity.getShipTime();
         Shipping u1 = new Shipping();
         u1.setMessageType("OrderFulfillment");
@@ -583,7 +584,7 @@ public class OrderController extends AbstractController{
         FulfillmentData fd=new FulfillmentData();
         fd.setCarrierName(abroadLogisticsEntity.getDestTransportCompany());
         fd.setShippingMethod(abroadLogisticsEntity.getDestChannel());//<ShippingMethod>根据自己的需求可以有可以没有
-        fd.setShipperTrackingNumber(abroadWaybill);
+        fd.setShipperTrackingNumber(trackWaybill);
         Item item=new Item();
         item.setAmazonOrderItemCode(orderItemId);
         item.setQuantity(orderEntity.getOrderNumber().toString());
@@ -843,17 +844,17 @@ public class OrderController extends AbstractController{
                         if(StringUtils.isNotBlank(receiveOofayData.getDestTransportCompany())){
                             abroadLogisticsEntity.setDestTransportCompany(receiveOofayData.getDestTransportCompany());
                         }
-                        //设置国际物流跟踪号(虚发货时已生成物流跟踪号，所以肯定不为空)
-                        if(StringUtils.isNotBlank(receiveOofayData.getTrackWaybill()) && !abroadLogisticsEntity.getTrackWaybill().equals(receiveOofayData.getTrackWaybill())){
-                            abroadLogisticsEntity.setTrackWaybill(receiveOofayData.getTrackWaybill());
-                            abroadLogisticsEntity.setIsSynchronization(0);
-                            NoticeEntity noticeEntity = new NoticeEntity();
-                            noticeEntity.setCreateTime(new Date());
-                            noticeEntity.setNoticeContent("订单编号：" + orderId + "的物流跟踪号发生变化，请尽快同步。");
-                            noticeEntity.setUserId(orderEntity.getUserId());
-                            noticeEntity.setDeptId(orderEntity.getDeptId());
-                            noticeService.insert(noticeEntity);
-                        }
+                        //设置国际物流跟踪号
+//                        if(StringUtils.isNotBlank(receiveOofayData.getTrackWaybill()) && !abroadLogisticsEntity.getTrackWaybill().equals(receiveOofayData.getTrackWaybill())){
+//                            abroadLogisticsEntity.setTrackWaybill(receiveOofayData.getTrackWaybill());
+//                            abroadLogisticsEntity.setIsSynchronization(0);
+//                            NoticeEntity noticeEntity = new NoticeEntity();
+//                            noticeEntity.setCreateTime(new Date());
+//                            noticeEntity.setNoticeContent("订单编号：" + orderId + "的物流跟踪号发生变化，请尽快同步。");
+//                            noticeEntity.setUserId(orderEntity.getUserId());
+//                            noticeEntity.setDeptId(orderEntity.getDeptId());
+//                            noticeService.insert(noticeEntity);
+//                        }
                         //设置国内跟踪号
                         if(StringUtils.isNotBlank(receiveOofayData.getDomesticTrackWaybill())){
                             abroadLogisticsEntity.setDomesticTrackWaybill(receiveOofayData.getDomesticTrackWaybill());
@@ -949,17 +950,6 @@ public class OrderController extends AbstractController{
                                 orderEntity.setProfitRate(profitRate);
                                 orderService.deduction(orderEntity);
                             }
-                        }
-                        //设置国际物流跟踪号(虚发货时已生成物流跟踪号，所以肯定不为空)
-                        if(StringUtils.isNotBlank(receiveOofayData.getTrackWaybill()) && !abroadLogisticsEntity.getTrackWaybill().equals(receiveOofayData.getTrackWaybill())){
-                            abroadLogisticsEntity.setTrackWaybill(receiveOofayData.getTrackWaybill());
-                            abroadLogisticsEntity.setIsSynchronization(0);
-                            NoticeEntity noticeEntity = new NoticeEntity();
-                            noticeEntity.setCreateTime(new Date());
-                            noticeEntity.setNoticeContent("订单编号：" + orderId + "的物流跟踪号发生变化，请尽快同步。");
-                            noticeEntity.setUserId(orderEntity.getUserId());
-                            noticeEntity.setDeptId(orderEntity.getDeptId());
-                            noticeService.insert(noticeEntity);
                         }
                     }
                     abroadLogisticsService.updateById(abroadLogisticsEntity);

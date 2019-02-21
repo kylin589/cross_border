@@ -30,7 +30,7 @@ public class EanUpcServiceImpl extends ServiceImpl<EanUpcDao, EanUpcEntity> impl
 
     @Override
     public List<EanUpcEntity> selectByLimit(EanUpcEntity eanUpcEntity) {
-        List<EanUpcEntity>eanUpcEntityList= baseMapper.selectByLimit(eanUpcEntity);
+        List<EanUpcEntity> eanUpcEntityList= baseMapper.selectByLimit(eanUpcEntity);
         return eanUpcEntityList;
     }
 

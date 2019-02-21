@@ -44,6 +44,8 @@ public class AbroadLogisticsUtil {
 
     public final static String updateRemarkUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/UpdateOrderRemarkBySn";
 
+    public final static String trackWaybillUrl = "http://oofay.trylose.cn:60254/api/ExpressAccess/GetTrackNumberByOrderSn";
+
     public final static String testUrl = "http://oofay.trylose.cn:60254/renren-api/api/test";
 
     //测试key
@@ -59,7 +61,7 @@ public class AbroadLogisticsUtil {
         //推送订单
 //        pushOrder("1");
         //获取订单国际物流状态
-        getOrderDetail("305-8612849-0465910");
+//        getOrderDetail("305-8612849-0465910");
         //获取物流价格
 //        getSaleDetail(1L);
         //修改订单国际物流状态
@@ -68,6 +70,8 @@ public class AbroadLogisticsUtil {
 //        updateOrderWaybill("302-7660577-9242718","666666,88888888");
         //修改订单备注
 //        updateOrderRemark("302-7660577-9242718","订单中途遇到了问题1");
+        //获取转单号
+        getTrackWaybill("305-1302253-6227547");
 //        String orderData = "{\"order\":{\"order_sn\":\"20181214\",\"order_currency\":\"null\",\"order_date\":\"null\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
 //        System.out.println(orderData);
     }
@@ -187,8 +191,6 @@ public class AbroadLogisticsUtil {
                     receiveOofayData.setDomesticTrackWaybill(omsOrderDetailext.getString("deliveryexpressno"));
                 }
                 if(omsExpressList.size() >0 ){
-                    //国际跟踪单号
-                    receiveOofayData.setTrackWaybill(omsExpressList.getJSONObject(0).getString("transfer_number"));
                     //发货时间
                     receiveOofayData.setShipTime(omsExpressList.getJSONObject(0).getString("expressdate"));
                 }
@@ -369,6 +371,38 @@ public class AbroadLogisticsUtil {
                             break;
                     }
                 }
+                map.put("code","true");
+            }
+        } catch (Exception e) {
+            map.put("code","false");
+            map.put("msg","网络故障，请重试。");
+        }
+        return map;
+    }
+
+    public static Map<String,String> getTrackWaybill(String amazonOrderId){
+        Map<String,String> map = new HashMap<>();
+        //传输参数
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("userdean", String.valueOf(userdean));
+        paramList.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
+        paramList.put("orderSn",amazonOrderId);
+        String asin = null;
+        String result = null;
+        //参数根据ASCII码排序并加密得到签名
+        try {
+            asin = getSign(paramList);
+            if(asin != null && asin != ""){
+                paramList.put("asin",asin);
+                String params = proData(paramList);
+                //开始推送数据
+                result = sendPost(trackWaybillUrl,params);
+                System.out.println("result:" + result);
+                JSONObject obj = JSONObject.parseObject(result);
+                String data = obj.getString("data");
+                String data1 = new String(decoder.decode(data), "UTF-8");
+                System.out.println("data1:" + data1);
+                JSONObject a = JSONObject.parseObject(data1);
                 map.put("code","true");
             }
         } catch (Exception e) {

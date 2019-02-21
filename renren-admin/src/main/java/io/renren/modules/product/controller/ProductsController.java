@@ -216,6 +216,7 @@ public class ProductsController extends AbstractController {
     public R getProductId() {
         ProductsEntity productsEntity = productsService.getNewProductId(getUserId());
         productsEntity.setCreateUserId(getUserId());
+        productsEntity.setDeptId(getDeptId());
         productsEntity.setLastOperationUserId(getUserId());
         productsEntity.setLastOperationTime(new Date());
         //生成SKU

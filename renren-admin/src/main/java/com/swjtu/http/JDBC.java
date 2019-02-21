@@ -21,7 +21,7 @@ public class JDBC {
 //        String url = "jdbc:mysql://121.42.27.61:3306/cross_border";
         String url = "jdbc:mysql://39.106.131.222:3306/cross_border";
         String username = "root";
-        String password = "admin";
+        String password = "chuangtao2019";
         Connection conn = null;
         try {
             Class.forName(driver); //classLoader,加载对应驱动

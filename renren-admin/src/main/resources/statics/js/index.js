@@ -129,7 +129,7 @@ var vm = new Vue({
                 btn1: function (index) {
                     $.ajax({
                         type: "POST",
-                        url: "sys/user/update",
+                        url: "sys/user/updateUser",
                         data: JSON.stringify(vm.user),
                         contentType: "application/json",
                         success: function(result){
