@@ -601,6 +601,7 @@ table.tableY tr th,table.tableY tr td{
     position: absolute;
     width: 400px;
     height: 400px;
+    overflow: hidden;
     padding: 10px;
     background: #fff;
     box-shadow: 0 0 10px #ccc;

@@ -281,7 +281,7 @@ window.onload = function() {
 //             }
 //         },30);
 //     };
-    vm.drapImg();
+//     vm.drapImg();
 
     $('.selImg').change(function(){
         console.log($('.selImg')[0].files)
@@ -590,6 +590,8 @@ var vm = new Vue({
                 success: function (r) {
                     // console.log(r);
                     if (r.code === 0) {
+                        vm.recommendAll = [];
+                        vm.variantList = [];
 
                         vm.proDetails = r.productsEntity;
                         console.log('产品详情');
@@ -639,10 +641,10 @@ var vm = new Vue({
                             // vm.drapImg();
                         })
                         // vm.drapImg();
-                        setTimeout(function(){ vm.drapImg(); }, 1000);
+                        // setTimeout(function(){ vm.drapImg(); }, 1000);
 
-                        console.log('运费')
-                        console.log(vm.proDetails.americanFC.freight)
+                        // console.log('运费')
+                        // console.log(vm.proDetails.americanFC.freight)
 
                         // console.log(this.proDetails.chinesePRE);
                         // console.log(this.proDetails.chinesePRE.productTitle);
@@ -728,11 +730,11 @@ var vm = new Vue({
         saveXc:function(){
             var arr = [];
             var el = $('.imgDiv>div');
-            console.log($(".imgDiv>div"));
+            // console.log($(".imgDiv>div"));
             for(var i = 0;i<el.length;i++){
                 for(var j = 0;j<el.length;j++){
                     var _index = el.eq(j).attr('data-index');
-                    console.log(_index);
+                    // console.log(_index);
                     if(_index == i){
                         arr.push({
                             'imageId':vm.proAlbum[j].imgId,
@@ -752,7 +754,7 @@ var vm = new Vue({
 
 
             }
-            console.log(arr);
+            // console.log(arr);
 
             var index = layer.load();
             var index = layer.load(1); //换了种风格
@@ -766,8 +768,9 @@ var vm = new Vue({
                 success: function (r) {
                     // console.log(r);
                     if (r.code === 0) {
-                        console.log('产品相册保存');
-                        console.log(r);
+                        // console.log('产品相册保存');
+                        // console.log(r);
+                        vm.getProAlbum();
                         layer.msg('保存成功');
                         layer.close(index);
 
@@ -2469,7 +2472,7 @@ var vm = new Vue({
                     })
                     console.log(vm.proDetails.variantsInfos);
 
-                    layer.confirm('确定修改吗？', function(index){
+                    layer.confirm('确定修改吗？', function(index1){
                         var index = layer.load();
                         var index = layer.load(1); //换了种风格
                         var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
@@ -2484,8 +2487,10 @@ var vm = new Vue({
                                 console.log(vm.proDetails);
                                 if (r.code == 0) {
                                     layer.close(index);
+                                    layer.close(index1);
+                                    vm.getProDetails();
 
-                                    window.location.href = 'myProduct.html?page='+vm.page;
+                                    // window.location.href = 'myProduct.html?page='+vm.page;
 
                                 } else {
                                     layer.close(index);
@@ -3248,7 +3253,45 @@ var vm = new Vue({
 
     },
     updated:function () {
-        vm.drapImg();
+        // vm.drapImg();
+        for(var nn = 0;nn<$('.ul1').length;nn++){
+            //      console.log(nn);
+            var _index = nn;
+            var aLi = $(".ul1").eq(_index).find('li');
+            if(aLi.length != 0){
+                var aLiLast = $(".ul1").eq(_index).find('li:last-child');
+                // console.log(aLiLast);
+                var disX = 0;
+                var disY = 0;
+                var minZindex = 1;
+                var aPos = [];
+                // for(var i = 0; i < aLi.length; i++) {
+                //     var t = aLi[i].offsetTop;
+                //     var l = aLi[i].offsetLeft;
+                //     aLi[i].style.top = t + "px";
+                //     aLi[i].style.left = l + "px";
+                //     aPos[i] = {
+                //         left: l,
+                //         top: t
+                //     };
+                //     aLi[i].index = i;
+                // }
+                // for(var i = 0; i < aLi.length; i++) {
+                //     aLi[i].style.position = "absolute";
+                //     aLi[i].style.margin = 0;
+                //     setDrag(aLi[i],aLi);
+                // }
+
+
+                var _height = aLiLast[0].offsetTop+60;
+                aLiLast.parent().css('height',_height+'px');
+                aLiLast.parent().parent().siblings().css('line-height',_height+'px')
+
+                // console.log(_height);
+
+            }
+
+        }
         vm.drapImg1();
 
     }

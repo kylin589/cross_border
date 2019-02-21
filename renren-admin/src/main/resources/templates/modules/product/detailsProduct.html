@@ -21,6 +21,7 @@
                 width: 50px;
                 height: 50px;
                 float: left;
+                overflow: hidden;
                 list-style: none;
                 margin: 10px;
             }
@@ -484,7 +485,7 @@
                 <div class="pro_inf">
                     <span><label for="">变体参数：</label><input type="button" value="添加" @click="addVariant"></span>
                     <div class="variantName">
-                        <span v-for="(item,index) in variantList">
+                        <span v-for="(item,index) in variantList" style="margin-bottom: 0">
                             <a @click="upVariant(index)" href="javascript:;" :data-id="item.id" @mouseover="variantName" @mouseout="variantNamenone">{{ item.name }}</a><i @click="delvariantName(index)" class="layui-icon layui-icon-close-fill"></i>
                         </span>
                     </div>
@@ -494,7 +495,7 @@
                         <a href="javascript:;" v-for="list in item.type">{{ list }}</a>
                     </p>
 
-                    <p v-if="recommendAll.length != 0" style="color: #ea9a9a;font-size: 13px;text-align: right">注：在调整变体图片时正确的操作是先删除不需要的图片，再进行移动。</p>
+                    <!--<p v-if="recommendAll.length != 0" style="color: #ea9a9a;font-size: 13px;text-align: right">注：在调整变体图片时正确的操作是先删除不需要的图片，再进行移动。</p>-->
                     <table class="tableV" v-if="recommendAll.length != 0">
                         <tr>
                             <th>序号</th>

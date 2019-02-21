@@ -98,7 +98,10 @@ var vm = new Vue({
         page:null,
         orderDetails:{
             shipAddress:{},
-            abroadLogistics:{}
+            abroadLogistics:{},
+            domesticLogisticsList:[],
+            logList:[],
+            remarkList:[]
         },
         waybill:[],
         domesticLogisticsId:null,
