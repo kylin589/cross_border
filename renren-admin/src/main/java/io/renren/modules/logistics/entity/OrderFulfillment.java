@@ -1,5 +1,8 @@
 package io.renren.modules.logistics.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Auther: wdh
  * @Date: 2018/12/29 14:26
@@ -10,7 +13,7 @@ public class OrderFulfillment {
 
     private String fulfillmentDate;//完成日期
     private FulfillmentData fulfillmentData;//完成数据
-    private Item item;//商品
+    private List<Item> items=new ArrayList<>();//商品
     public String getAmazonOrderID() {
         return amazonOrderID;
     }
@@ -33,12 +36,12 @@ public class OrderFulfillment {
         this.fulfillmentData = fulfillmentData;
     }
 
-    public Item getItem() {
-        return item;
+    public List<Item> getItems() {
+        return items;
     }
 
-    public void setItem(Item item) {
-        this.item = item;
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 
     public OrderFulfillment() {

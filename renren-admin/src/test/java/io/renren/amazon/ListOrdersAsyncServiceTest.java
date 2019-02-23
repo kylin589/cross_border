@@ -1,6 +1,9 @@
 package io.renren.amazon;
 
 
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsyncClient;
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConfig;
+import com.amazonservices.mws.orders._2013_09_01.model.*;
 import io.renren.common.utils.DateUtils;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
@@ -16,14 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import com.amazonservices.mws.orders._2013_09_01.*;
-import com.amazonservices.mws.orders._2013_09_01.model.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -78,11 +81,15 @@ public class ListOrdersAsyncServiceTest {
         fd.setCarrierName("Yun Express");
         fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
         fd.setShipperTrackingNumber("YT1836121208000624");
+        List<Item> items=new ArrayList<>();
         Item item=new Item();
         item.setAmazonOrderItemCode("56799397374259");
         item.setQuantity("1");
+        Item item2=new Item();
+        item.setAmazonOrderItemCode("26799397374254");
+        item.setQuantity("2");
         orderful.setFulfillmentData(fd);
-        orderful.setItem(item);
+        orderful.setItems(items);
         message.setOrderFulfillment(orderful);
         u1.setHeader(header);
         u1.setMessage(message);

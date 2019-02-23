@@ -4,6 +4,7 @@ import io.renren.modules.order.entity.ProductShipAddressEntity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 订单实体类
@@ -18,9 +19,9 @@ public class OrderModel {
 
     private  String orderStatus;//订单状态
 
-    private  String productSku;//产品sku
+    /*private  String productSku;//产品sku
 
-    private  String productAsin;//产品asin
+    private  String productAsin;//产品asin*/
 
     private BigDecimal orderMoney = new BigDecimal(0.00);//订单金额
 
@@ -32,7 +33,7 @@ public class OrderModel {
     //国家
     private String country;
     //标题
-    private String titlename;
+   /* private String titlename;*/
 
     public String getCountry() {
         return country;
@@ -47,7 +48,16 @@ public class OrderModel {
     private Long deptId;
     private Long shopId;
 
+
     private String productImageUrl;
+
+    public String getProductImageUrl() {
+        return productImageUrl;
+    }
+
+    public void setProductImageUrl(String productImageUrl) {
+        this.productImageUrl = productImageUrl;
+    }
 
     public Long getShopId() {
         return shopId;
@@ -58,6 +68,16 @@ public class OrderModel {
     }
 
     private ProductShipAddressEntity productShipAddressEntity;//地址信息
+
+    private List<OrderItemModel> orderItemModels;//订单商品信息列表
+
+    public List<OrderItemModel> getOrderItemModels() {
+        return orderItemModels;
+    }
+
+    public void setOrderItemModels(List<OrderItemModel> orderItemModels) {
+        this.orderItemModels = orderItemModels;
+    }
 
     public String getAmazonOrderId() {
         return amazonOrderId;
@@ -76,7 +96,7 @@ public class OrderModel {
         this.orderStatus = orderStatus;
     }
 
-    public String getProductSku() {
+   /* public String getProductSku() {
         return productSku;
     }
 
@@ -91,7 +111,7 @@ public class OrderModel {
     public void setProductAsin(String productAsin) {
         this.productAsin = productAsin;
     }
-
+*/
     public ProductShipAddressEntity getProductShipAddressEntity() {
         return productShipAddressEntity;
     }
@@ -164,7 +184,7 @@ public class OrderModel {
         this.orderItemId = orderItemId;
     }
 
-    public String getTitlename() {
+    /*public String getTitlename() {
         return titlename;
     }
 
@@ -178,5 +198,5 @@ public class OrderModel {
 
     public void setProductImageUrl(String productImageUrl) {
         this.productImageUrl = productImageUrl;
-    }
+    }*/
 }

@@ -8,10 +8,10 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     #MySQL配置
-    driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://121.42.27.61:3306/cross_border?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cross_border?useUnicode=true&characterEncoding=UTF-8&useSSL=FALSE&serverTimezone=GMT
     username: root
-    password: admin
+    password: root
     #oracle配置
 #    driverClassName: oracle.jdbc.OracleDriver
 #    url: jdbc:oracle:thin:@192.168.10.10:1521:helowin
@@ -23,7 +23,7 @@ spring:
 #    username: sa
 #    password: 123456
     #PostgreSQL配置
-#    driverClassName: org.postgresql.Driver
+  #    driverClassName: org.postgresql.Driver
 #    url: jdbc:postgresql://192.168.10.10:5432/renren_security
 #    username: postgres
 #    password: 123456

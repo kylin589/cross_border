@@ -31,8 +31,8 @@
         <result property="amazonOrderState" column="amazon_order_state"/>
         <result property="orderStatus" column="order_status"/>
         <result property="shopName" column="shop_name"/>
-        <result property="productSku" column="product_sku"/>
-        <result property="productAsin" column="product_asin"/>
+        <!--<result property="productSku" column="product_sku"/>
+        <result property="productAsin" column="product_asin"/>-->
         <result property="orderNumber" column="order_number"/>
         <result property="orderMoney" column="order_money"/>
         <result property="amazonCommission" column="amazon_commission"/>

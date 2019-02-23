@@ -28,10 +28,7 @@ public class OrderEntity implements Serializable {
 	 * 亚马逊订单id
 	 */
 	private String amazonOrderId;
-	/**
-	 * 订单商品编号
-	 */
-	private String orderItemId;
+
 	/**
 	 * 购买日期
 	 */
@@ -66,20 +63,20 @@ public class OrderEntity implements Serializable {
 	private String shopName;
 	/**
 	 * 关联产品id
-	 */
+	 *//*
 	private Long productId;
-	/**
+	*//**
 	 * 产品标题
-	 */
+	 *//*
 	private String productTitle;
-	/**
+	*//**
 	 * 产品sku
-	 */
+	 *//*
 	private String productSku;
-	/**
+	*//**
 	 * 产品asin码
-	 */
-	private String productAsin;
+	 *//*
+	private String productAsin;*/
 	/**
 	 * 订单数量
 	 */
@@ -155,6 +152,15 @@ public class OrderEntity implements Serializable {
 	 * 主图片url
 	 */
 	private String productImageUrl;
+
+	public String getProductImageUrl() {
+		return productImageUrl;
+	}
+
+	public void setProductImageUrl(String productImageUrl) {
+		this.productImageUrl = productImageUrl;
+	}
+
 	/**
 	 * 利润率
 	 */
@@ -213,13 +219,13 @@ public class OrderEntity implements Serializable {
 		this.buyDate = buyDate;
 	}
 
-	public String getOrderItemId() {
+	/*public String getOrderItemId() {
 		return orderItemId;
 	}
 
 	public void setOrderItemId(String orderItemId) {
 		this.orderItemId = orderItemId;
-	}
+	}*/
 
 	/**
 	 * 获取：购买日期
@@ -285,7 +291,7 @@ public class OrderEntity implements Serializable {
 		return shopName;
 	}
 
-	public Long getProductId() {
+	/*public Long getProductId() {
 		return productId;
 	}
 
@@ -293,30 +299,30 @@ public class OrderEntity implements Serializable {
 		this.productId = productId;
 	}
 
-	/**
+	*//**
 	 * 设置：产品sku
-	 */
+	 *//*
 	public void setProductSku(String productSku) {
 		this.productSku = productSku;
 	}
-	/**
+	*//**
 	 * 获取：产品sku
-	 */
+	 *//*
 	public String getProductSku() {
 		return productSku;
 	}
-	/**
+	*//**
 	 * 设置：产品asin码
-	 */
+	 *//*
 	public void setProductAsin(String productAsin) {
 		this.productAsin = productAsin;
 	}
-	/**
+	*//**
 	 * 获取：产品asin码
-	 */
+	 *//*
 	public String getProductAsin() {
 		return productAsin;
-	}
+	}*/
 	/**
 	 * 设置：订单数量
 	 */
@@ -503,14 +509,14 @@ public class OrderEntity implements Serializable {
 		this.accountMoneyCny = accountMoneyCny;
 	}
 
-	public String getProductImageUrl() {
+	/*public String getProductImageUrl() {
 		return productImageUrl;
 	}
 
 	public void setProductImageUrl(String productImageUrl) {
 		this.productImageUrl = productImageUrl;
 	}
-
+*/
 	public BigDecimal getProfitRate() {
 		return profitRate;
 	}
@@ -535,13 +541,13 @@ public class OrderEntity implements Serializable {
 		this.isOld = isOld;
 	}
 
-	public String getProductTitle() {
+	/*public String getProductTitle() {
 		return productTitle;
 	}
 
 	public void setProductTitle(String productTitle) {
 		this.productTitle = productTitle;
-	}
+	}*/
 
 	public String getUserName() {
 		return userName;

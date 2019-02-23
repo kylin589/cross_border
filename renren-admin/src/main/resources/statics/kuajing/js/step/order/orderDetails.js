@@ -678,7 +678,7 @@ var vm = new Vue({
             var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../product/order/synchronization',
-                type: 'post',
+                type: 'get',
                 data: {
                     orderId:this.orderid
                 },

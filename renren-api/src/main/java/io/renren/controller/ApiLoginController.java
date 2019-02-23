@@ -30,17 +30,16 @@ public class ApiLoginController {
     private UserService userService;
     @Autowired
     private TokenService tokenService;
-
+//    @Autowired
+//    private AmazonGrantShopService amazonGrantShopService;
 
     @PostMapping("login")
     @ApiOperation("登录")
     public R login(@RequestBody LoginForm form){
         //表单校验
         ValidatorUtils.validateEntity(form);
-
         //用户登录
         Map<String, Object> map = userService.login(form);
-
         return R.ok(map);
     }
 
@@ -61,6 +60,17 @@ public class ApiLoginController {
         System.out.println("userdean:" + userdean);
         System.out.println("timestamp:" + timestamp);
         System.out.println("asin:" + asin);
+
         return R.ok();
     }
+
+    /**
+     * 测试接口1
+     */
+    /*@PostMapping("/test1")
+    public R test1(){
+        List<AmazonGrantShopEntity> a = amazonGrantShopService.selectList(null);
+        System.out.println("a:" + a.size());
+        return R.ok();
+    }*/
 }

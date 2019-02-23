@@ -27,6 +27,7 @@ import io.renren.modules.product.entity.VariantsInfoEntity;
 import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.service.VariantsInfoService;
+import io.renren.modules.product.vm.OrderItemModel;
 import io.renren.modules.product.vm.OrderModel;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,183 +200,200 @@ public class OldOrderTimer {
                         orderItemResponseDtos.add(orderItemResponseDto);
                         for (int k = 0; k < orderItemResponseDtos.size(); k++) {
                             List<OrderModel> orderModelList = new ArrayList<OrderModel>();
-                            if(orderItemResponseDtos.get(k) != null && orderItemResponseDtos.get(k).getOrderItems() != null && orderItemResponseDtos.get(k).getOrderItems().size() >0){
+                            if(orderItemResponseDtos.get(k) != null && orderItemResponseDtos.get(k).getOrderItems() != null && orderItemResponseDtos.get(k).getOrderItems().size() >0) {
+                                OrderModel orderModel = new OrderModel();
+                                List<OrderItemModel> orderItemModels=new ArrayList<>();
+                                orderModel.setAmazonOrderId(AmazonOrderId);
+                                ProductShipAddressEntity addressEntity = new ProductShipAddressEntity();
+                                String shipname = listOrdersResponseDtos.get(i).getOrders().get(j).getName();
+                                System.out.println("收件人姓名:" + shipname + "==========");
+                                String shipaddress1 = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
+                                String shipaddress2 = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine2();
+                                System.out.println("收件地址1：" + shipaddress1 + "===============");
+                                System.out.println("收件地址2：" + shipaddress2 + "===============");
+                                String shipcity = listOrdersResponseDtos.get(i).getOrders().get(j).getCity();
+                                System.out.println("收件人城市:" + shipcity + "====================");
+                                String shipCounty = listOrdersResponseDtos.get(i).getOrders().get(j).getCounty();
+                                System.out.println("收件人县:" + shipCounty + "====================");
+                                String shipCountry = listOrdersResponseDtos.get(i).getOrders().get(j).getCountryCode();
+                                System.out.println("收件人国家:" + shipCountry + "====================");
+                                String shipdistrict = listOrdersResponseDtos.get(i).getOrders().get(j).getDistrict();
+                                System.out.println("收件人区:" + shipdistrict + "====================");
+                                String shipregion = listOrdersResponseDtos.get(i).getOrders().get(j).getStateOrRegion();
+                                System.out.println("收件人区域:" + shipregion + "====================");
+                                String shiptel = listOrdersResponseDtos.get(i).getOrders().get(j).getPhone();
+                                System.out.println("收件人电话:" + shiptel + "====================");
+                                String shipzip = listOrdersResponseDtos.get(i).getOrders().get(j).getPostalCode();
+                                System.out.println("收件人邮编:" + shipzip + "====================");
+                                String buytime = listOrdersResponseDtos.get(i).getOrders().get(j).getPurchaseDate();
+                                orderModel.setCountry((String) map.get("countryCode"));
+                                buytime = buytime.replace("Z", " UTC");// UTC是本地时间
+                                SimpleDateFormat format = new SimpleDateFormat(
+                                        "yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+                                Date d = null;
+                                try {
+                                    d = format.parse(buytime);
+                                } catch (ParseException e) {
+                                    e.getStackTrace();
+                                }
+                                if (d != null) {
+                                    Timestamp timeStamep = new Timestamp(d.getTime());
+                                    System.out.println("购买日期:" + timeStamep + "=================================");
+                                    orderModel.setBuyDate(timeStamep);
+                                }
+                                String orderStatus=listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus();
+                                orderModel.setOrderStatus(orderStatus);
+                                //订单总量
+                                int ordernumber=Integer.parseInt(listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsShipped()+listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsUnshipped());
+                                orderModel.setOrderNumber(ordernumber);
+                                //订单总金额
+                                String orderMoney = listOrdersResponseDtos.get(i).getOrders().get(j).getAmount();
+                                if (orderMoney != null) {
+                                    BigDecimal OrderMoney = new BigDecimal(orderMoney);
+                                    orderModel.setOrderMoney(OrderMoney);//订单总费用
+                                } else {
+                                    orderModel.setOrderMoney(new BigDecimal(0));//订单总费用
+                                }
+                                //货币代码
+                                String CurrencyCode = listOrdersResponseDtos.get(i).getOrders().get(j).getCurrencyCode();
+                                if (CurrencyCode != null) {
+                                    orderModel.setCurrencyCode(CurrencyCode);
+                                } else {
+                                    orderModel.setCurrencyCode("");
+                                }
+                                if (shopName != null) {
+                                    orderModel.setShopName(shopName);
+                                } else {
+                                    orderModel.setShopName("");
+                                }
+
+                                orderModel.setShopId(shopId);
+                                orderModel.setUserId(userId);
+                                orderModel.setDeptId(deptId);
+                                if (shipname != null) {
+                                    addressEntity.setShipName(shipname);
+                                } else {
+                                    addressEntity.setShipName("");
+                                }
+                                if (shipaddress1 != null) {
+                                    addressEntity.setShipAddressLine1(shipaddress1);
+                                } else if (shipaddress2 != null) {
+                                    addressEntity.setShipAddressLine1(shipaddress2);
+                                } else {
+                                    addressEntity.setShipAddressLine1("");
+                                }
+                                if (shipcity != null) {
+                                    addressEntity.setShipCity(shipcity);
+
+                                } else {
+                                    addressEntity.setShipCity("");
+
+                                }
+                                /**
+                                 * 国家
+                                 */
+                                if (shipCountry != null) {
+                                    addressEntity.setShipCountry(shipCountry);
+                                } else {
+                                    addressEntity.setShipCountry("");
+                                }
+                                /**
+                                 * 县
+                                 */
+                                if (shipCounty != null) {
+                                    addressEntity.setShipCounty(shipCounty);
+                                } else {
+                                    addressEntity.setShipCounty("");
+                                }
+                                if (shipdistrict != null) {
+                                    addressEntity.setShipDistrict(shipdistrict);
+
+                                } else {
+                                    addressEntity.setShipDistrict("");
+
+                                }
+                                if (shipregion != null) {
+                                    addressEntity.setShipRegion(shipregion);
+                                } else {
+                                    addressEntity.setShipRegion("");
+                                }
+                                if (shiptel != null) {
+                                    addressEntity.setShipTel(shiptel);
+                                } else {
+                                    addressEntity.setShipTel("");
+                                }
+                                if (shipzip != null) {
+                                    addressEntity.setShipZip(shipzip);
+                                } else {
+                                    addressEntity.setShipZip("");
+                                }
+                                System.out.println("======================" + orderModel + "=====================");
+                                orderModel.setProductShipAddressEntity(addressEntity);
                                 for (int m = 0; m < orderItemResponseDtos.get(k).getOrderItems().size(); m++) {
+
+                                    //获取订单商品编号
+                                    String orderItemId = orderItemResponseDtos.get(k).getOrderItems().get(m).getOrderItemId();
+
                                     System.out.println("店铺id===================" + shopId);
                                     String titlename = orderItemResponseDtos.get(k).getOrderItems().get(m).getTitle();
-                                    System.out.println("商品名称:"+titlename+"==================");
+                                    System.out.println("商品名称:" + titlename + "==================");
                                     String product_asin = orderItemResponseDtos.get(k).getOrderItems().get(m).getASIN();
-                                    System.out.println("商品asin码:"+product_asin+"==================");
-                                    String orderItemId = orderItemResponseDtos.get(k).getOrderItems().get(m).getOrderItemId();
+                                    System.out.println("商品asin码:" + product_asin + "==================");
                                     String product_sku = orderItemResponseDtos.get(k).getOrderItems().get(m).getSellerSKU();
-                                    System.out.println("商品sku:"+product_sku+"==================");
-                                    int ordernumber = orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
+                                    System.out.println("商品sku:" + product_sku + "==================");
+                                    int orderItemNumber = orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
                                     //根据商品sku获取图片连接的url的方法
-                                    String img_url= this.getImageUrl(product_sku,product_asin,sellerId,mwsAuthToken,serviceURL,marketplaceId);
-                                    System.out.println("订单配送数量："+ordernumber+"============");
-                                    ProductShipAddressEntity addressEntity = new ProductShipAddressEntity();
-                                    String shipname = listOrdersResponseDtos.get(i).getOrders().get(j).getName();
-                                    System.out.println("收件人姓名:"+shipname+"==========");
-                                    String shipaddress1 = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
-                                    String shipaddress2 = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine2();
-
-                                    System.out.println("收件地址1："+shipaddress1+"===============");
-                                    System.out.println("收件地址2："+shipaddress2+"===============");
-
-                                    String shipcity = listOrdersResponseDtos.get(i).getOrders().get(j).getCity();
-                                    System.out.println("收件人城市:"+shipcity+"====================");
-                                    String shipCounty = listOrdersResponseDtos.get(i).getOrders().get(j).getCounty();
-                                    System.out.println("收件人县:"+shipCounty+"====================");
-                                    String shipCountry = listOrdersResponseDtos.get(i).getOrders().get(j).getCountryCode();
-                                    System.out.println("收件人国家:"+shipCountry+"====================");
-                                    String shipdistrict = listOrdersResponseDtos.get(i).getOrders().get(j).getDistrict();
-                                    System.out.println("收件人区:"+shipdistrict+"====================");
-                                    String shipregion = listOrdersResponseDtos.get(i).getOrders().get(j).getStateOrRegion();
-                                    System.out.println("收件人区域:"+shipregion+"====================");
-                                    String shiptel = listOrdersResponseDtos.get(i).getOrders().get(j).getPhone();
-                                    System.out.println("收件人电话:"+shiptel+"====================");
-                                    String shipzip = listOrdersResponseDtos.get(i).getOrders().get(j).getPostalCode();
-                                    System.out.println("收件人邮编:"+shipzip+"====================");
+                                    String img_url = this.getImageUrl(product_sku, product_asin, sellerId, mwsAuthToken, serviceURL, marketplaceId);
+                                    //获取商品价格
+                                    String productPrice=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
+                                    System.out.println("订单商品配送数量：" + orderItemNumber + "============");
+                                    OrderItemModel orderItemModel=new OrderItemModel();
                                     //获得订单商品sku
                                     //进行数据库表查询根据AmazonOrderId，有就更新，没有就插入
-                                    OrderModel orderModel = new OrderModel();
-
-                                    orderModel.setAmazonOrderId(AmazonOrderId);
-                                    String buytime=listOrdersResponseDtos.get(i).getOrders().get(j).getPurchaseDate();
-                                    orderModel.setCountry((String) map.get("countryCode"));
-                                    buytime = buytime.replace("Z", " UTC");// UTC是本地时间
-                                    SimpleDateFormat format = new SimpleDateFormat(
-                                            "yyyy-MM-dd'T'HH:mm:ss.SSS Z");
-                                    SimpleDateFormat format1 = new SimpleDateFormat(
-                                            "yyyy-MM-dd'T'HH:mm:ss Z");
-                                    Date d=null;
-                                    try{
-                                        d=format.parse(buytime);
-                                    }catch (ParseException e){
-                                        try {
-                                            d=format1.parse(buytime);
-                                        } catch (ParseException e1) {
-                                            e1.printStackTrace();
-                                        }
-                                    }
-                                    Timestamp timeStamep = new Timestamp(d.getTime());
-                                    System.out.println("购买日期:"+timeStamep+"=================================");
-                                    orderModel.setBuyDate(timeStamep);
-                                    orderModel.setOrderStatus(listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus());
-                                    if (titlename != null) {
-                                        orderModel.setTitlename(titlename);
-                                    } else {
-                                        orderModel.setTitlename("");
-                                    }
-                                    if (product_asin != null) {
-                                        orderModel.setProductAsin(product_asin);
-                                    } else {
-                                        orderModel.setProductAsin("");
+                                    if(AmazonOrderId!=null){
+                                        orderItemModel.setAmazonOrderId(AmazonOrderId);
                                     }
                                     if (orderItemId != null) {
-                                        orderModel.setOrderItemId(orderItemId);
+                                        orderItemModel.setOrderItemId(orderItemId);
                                     } else {
-                                        orderModel.setOrderItemId("");
+                                        orderItemModel.setOrderItemId("");
+                                    }
+                                    if (titlename != null) {
+                                        orderItemModel.setProductTitle(titlename);
+                                    } else {
+                                        orderItemModel.setProductTitle("");
+                                    }
+                                    if (product_asin != null) {
+                                        orderItemModel.setProductAsin(product_asin);
+                                    } else {
+                                        orderItemModel.setProductAsin("");
                                     }
                                     if (product_sku != null) {
-                                        orderModel.setProductSku(product_sku);
+                                        orderItemModel.setProductSku(product_sku);
                                     } else {
-                                        orderModel.setProductSku("");
+                                        orderItemModel.setProductSku("");
                                     }
-                                    if(img_url!=null){
-                                        orderModel.setProductImageUrl(img_url);
-                                    }else{
-                                        orderModel.setProductImageUrl("");
-                                    }
-                                    if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
-                                        String orderMoney = listOrdersResponseDtos.get(i).getOrders().get(j).getAmount();
-                                        System.out.println("订单金额："+orderMoney+"============");
-                                        if (orderMoney != null) {
-                                            BigDecimal OrderMoney = new BigDecimal(orderMoney);
-                                            orderModel.setOrderMoney(OrderMoney);//订单总费用
-                                        } else {
-                                            orderModel.setOrderMoney(new BigDecimal(0));//订单总费用
-                                        }
-                                        String CurrencyCode=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getCurrencyCode();
-                                        System.out.println("货币代码："+CurrencyCode+"============");
-                                        if(CurrencyCode!=null){
-                                            orderModel.setCurrencyCode(CurrencyCode);
-                                        }else{
-                                            orderModel.setCurrencyCode("");
-                                        }
-                                    }
-                                    orderModel.setOrderNumber(ordernumber);//订单总量
-                                    if (shopName != null) {
-                                        orderModel.setShopName(shopName);
+                                    if (img_url != null) {
+                                        orderItemModel.setProductImageUrl(img_url);
                                     } else {
-                                        orderModel.setShopName("");
+                                        orderItemModel.setProductImageUrl("");
                                     }
+                                    if (productPrice != null) {
+                                        BigDecimal itemPrice=new BigDecimal(productPrice);
+                                        orderItemModel.setProductPrice(itemPrice);
+                                    } else {
+                                        orderItemModel.setProductPrice(new BigDecimal(0));//订单总费用
+                                    }
+                                    //订单商品数量
+                                    orderItemModel.setOrderItemNumber(orderItemNumber);
+                                    //订单商品更新日期
+                                    orderItemModel.setUpdatetime(new Date());
+                                    orderItemModels.add(orderItemModel);
+                                    orderModel.setOrderItemModels(orderItemModels);
 
-                                    orderModel.setShopId(shopId);
-                                    orderModel.setUserId(userId);
-                                    orderModel.setDeptId(deptId);
-                                    if (shipname != null) {
-                                        addressEntity.setShipName(shipname);
-                                    } else {
-                                        addressEntity.setShipName("");
-                                    }
-                                    if (shipaddress1 != null) {
-                                        addressEntity.setShipAddressLine1(shipaddress1);
-                                    } else if(shipaddress2 != null){
-                                        addressEntity.setShipAddressLine1(shipaddress2);
-                                    }else{
-                                        addressEntity.setShipAddressLine1("");
-                                    }
-                                    if (shipcity != null) {
-                                        addressEntity.setShipCity(shipcity);
-
-                                    } else {
-                                        addressEntity.setShipCity("");
-
-                                    }
-                                    /**
-                                     * 国家
-                                     */
-                                    if (shipCountry != null) {
-                                        addressEntity.setShipCountry(shipCountry);
-                                    } else {
-                                        addressEntity.setShipCountry("");
-                                    }
-                                    /**
-                                     * 县
-                                     */
-                                    if(shipCounty !=null){
-                                        addressEntity.setShipCounty(shipCounty);
-                                    }else{
-                                        addressEntity.setShipCounty("");
-                                    }
-                                    if (shipdistrict != null) {
-                                        addressEntity.setShipDistrict(shipdistrict);
-
-                                    } else {
-                                        addressEntity.setShipDistrict("");
-
-                                    }
-                                    if (shipregion != null) {
-                                        addressEntity.setShipRegion(shipregion);
-                                    } else {
-                                        addressEntity.setShipRegion("");
-                                    }
-                                    if (shiptel != null) {
-                                        addressEntity.setShipTel(shiptel);
-                                    } else {
-                                        addressEntity.setShipTel("");
-                                    }
-                                    if (shipzip != null) {
-                                        addressEntity.setShipZip(shipzip);
-                                    } else {
-                                        addressEntity.setShipZip("");
-                                    }
-                                    System.out.println("======================"+orderModel+"=====================");
-                                    orderModel.setProductShipAddressEntity(addressEntity);
-                                    orderModelList.add(orderModel);
-                                    System.out.println("============="+orderModelList.size()+"========================");
                                 }
+                                orderModelList.add(orderModel);
+                                System.out.println("=============" + orderModelList.size() + "========================");
                                 if(orderModelList.size() > 0){
 //                                    orderService.updateOrder(orderModelList);
                                     System.out.println("执行更新");
