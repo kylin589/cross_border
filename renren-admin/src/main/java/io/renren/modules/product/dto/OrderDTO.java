@@ -50,7 +50,7 @@ public class OrderDTO {
      */
     private String shopName;
 
-    private List<OrderItemModel> orderItemModels = new ArrayList<>();
+    private List<OrderItemModel> orderitems = new ArrayList<>();
     /**
      * 关联产品id
      */
@@ -273,12 +273,13 @@ public class OrderDTO {
     public void setDomesticLogisticsList(List<DomesticLogisticsEntity> domesticLogisticsList) {
         this.domesticLogisticsList = domesticLogisticsList;
     }
-    public List<OrderItemModel> getOrderItemModels() {
-        return orderItemModels;
+
+    public List<OrderItemModel> getOrderitems() {
+        return orderitems;
     }
 
-    public void setOrderItemModels(List<OrderItemModel> orderItemModels) {
-        this.orderItemModels = orderItemModels;
+    public void setOrderitems(List<OrderItemModel> orderitems) {
+        this.orderitems = orderitems;
     }
 
     public BigDecimal getMomentRate() {

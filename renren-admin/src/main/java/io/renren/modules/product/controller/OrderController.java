@@ -153,22 +153,9 @@ public class OrderController extends AbstractController{
         orderDTO.setAbnormalState(orderEntity.getAbnormalState());
         String AmazonOrderId=orderEntity.getAmazonOrderId();
         List<ProductOrderItemEntity> productOrderItemEntitys=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",AmazonOrderId));
-
-        for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntitys) {
-            orderDTO.setProductId(productOrderItemEntity.getProductId());
-            orderDTO.setProductSku(productOrderItemEntity.getProductSku());
-            ProductsEntity productsEntity = productsService.selectById(productOrderItemEntity.getProductId());
-            if(productOrderItemEntity.getProductTitle() != null){
-                orderDTO.setProductTitle(productOrderItemEntity.getProductTitle());
-            }else if(productsEntity != null){
-                orderDTO.setProductTitle(productsEntity.getProductTitle());
-            }
-
-            orderDTO.setProductAsin(productOrderItemEntity.getProductAsin());
-
-
+        List<OrderItemModel> orderItemModels=new ArrayList<>();
+        OrderItemModel orderItemModel=new OrderItemModel();
         orderDTO.setShopName(orderEntity.getShopName());
-
         orderDTO.setOrderNumber(orderEntity.getOrderNumber());
         orderDTO.setPurchasePrice(orderEntity.getPurchasePrice());
         ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
@@ -191,15 +178,24 @@ public class OrderController extends AbstractController{
         }else{
             orderDTO.setAbroadLogistics(abroadLogistics);
         }
-
-        //设置amazon产品链接
-//        amazonProductUrl
+        for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntitys) {
+            orderItemModel.setProductId(productOrderItemEntity.getProductId());
+            orderItemModel.setProductSku(productOrderItemEntity.getProductSku());
+            ProductsEntity productsEntity = productsService.selectById(productOrderItemEntity.getProductId());
+            if(productOrderItemEntity.getProductTitle() != null){
+                orderItemModel.setProductTitle(productOrderItemEntity.getProductTitle());
+            }else if(productsEntity != null){
+                orderItemModel.setProductTitle(productsEntity.getProductTitle());
+            }
+            orderItemModel.setProductAsin(productOrderItemEntity.getProductAsin());
+           //设置amazon产品链接
+           // amazonProductUrl
         AmazonMarketplaceEntity amazonMarketplaceEntity = amazonMarketplaceService.selectOne(new EntityWrapper<AmazonMarketplaceEntity>().eq("country_code",orderEntity.getCountryCode()));
-
         String amazonProductUrl = amazonMarketplaceEntity.getAmazonSite() + "/gp/product/" + productOrderItemEntity.getProductAsin();
         orderDTO.setAmazonProductUrl(amazonProductUrl);
-        orderDTO.setProductImageUrl(productOrderItemEntity.getProductImageUrl());
+        orderItemModel.setProductImageUrl(productOrderItemEntity.getProductImageUrl());
         orderDTO.setMomentRate(momentRate);
+         orderItemModels.add(orderItemModel);
         }
         //判断订单异常状态——不属于退货
         if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
@@ -291,6 +287,7 @@ public class OrderController extends AbstractController{
         List<RemarkEntity> logList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","log").eq("order_id",orderId));
         orderDTO.setRemarkList(remarkList);
         orderDTO.setLogList(logList);
+        orderDTO.setOrderitems(orderItemModels);
         return R.ok().put("orderDTO",orderDTO);
     }
 
