@@ -1,5 +1,6 @@
 package io.renren.modules.product.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
@@ -61,6 +62,12 @@ public class ProductOrderItemEntity implements Serializable {
 	 * 更新日期
 	 */
 	private Date updatetime;
+
+	/**
+	 * 用户名
+	 */
+	@TableField(exist = false)
+	private String amazonProductUrl;
 
 	public String getAmazonOrderId() {
 		return amazonOrderId;
@@ -179,5 +186,13 @@ public class ProductOrderItemEntity implements Serializable {
 	 */
 	public Date getUpdatetime() {
 		return updatetime;
+	}
+
+	public String getAmazonProductUrl() {
+		return amazonProductUrl;
+	}
+
+	public void setAmazonProductUrl(String amazonProductUrl) {
+		this.amazonProductUrl = amazonProductUrl;
 	}
 }
