@@ -269,7 +269,7 @@ public class OldOrderTimer {
                                 String orderStatus=listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus();
                                 orderModel.setOrderStatus(orderStatus);
                                 //订单总量
-                                int ordernumber=Integer.parseInt(listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsShipped()+listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsUnshipped());
+                                int ordernumber=Integer.parseInt(listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsShipped())+Integer.parseInt(listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsUnshipped());
                                 orderModel.setOrderNumber(ordernumber);
                                 //订单总金额
                                 String orderMoney = listOrdersResponseDtos.get(i).getOrders().get(j).getAmount();
@@ -370,7 +370,12 @@ public class OldOrderTimer {
                                     //根据商品sku获取图片连接的url的方法
                                     String img_url = this.getImageUrl(product_sku, product_asin, sellerId, mwsAuthToken, serviceURL, marketplaceId);
                                     //获取商品价格
-                                    String productPrice=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
+                                    String productPrice="0.00";
+                                    if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
+                                        productPrice=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
+                                    }else{
+                                        productPrice="0.00";
+                                    }
                                     System.out.println("订单商品配送数量：" + orderItemNumber + "============");
                                     OrderItemModel orderItemModel=new OrderItemModel();
                                     //获得订单商品sku
@@ -455,7 +460,7 @@ public class OldOrderTimer {
                 return getProductinfoTest(sellerld,token,product_asin,marketplaceId);
             }
         }
-        return null;
+        return img_url;
     }
 
 
