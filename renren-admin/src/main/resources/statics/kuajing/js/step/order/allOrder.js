@@ -283,7 +283,6 @@ var vm = new Vue({
         },
         // 获取订单列表
         getOrderlist:function (orderStatus) {
-
             console.log(orderStatus);
             this.startDate = this.value9[0];
             this.endDate = this.value9[1];
