@@ -90,6 +90,31 @@ public class OldOrderTimer {
         }
     }
 
+    public void getSingleShopGrantlist(String userId){
+        List<AmazonGrantEntity> grantList = amazonGrantService.selectList(new EntityWrapper<AmazonGrantEntity>().eq("user_id",userId));
+        Map map=new HashMap();
+        List<AmazonGrantShopEntity> shoplist=null;
+        for (AmazonGrantEntity grant : grantList) {
+            Long grantId = grant.getGrantId();
+            String sellerId = grant.getMerchantId();//获得商家id
+            String mwsAuthToken = grant.getGrantToken();//获得授权Token
+
+            shoplist=amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("region",grant.getRegion()).eq("grant_id",grant.getGrantId()));
+            for(AmazonGrantShopEntity shop:shoplist){
+                String shopName = shop.getShopName();
+                map.put("sellerId",sellerId);
+                map.put("mwsAuthToken",mwsAuthToken);
+                map.put("shopname",shop.getShopName());
+                map.put("countryCode",shop.getCountryCode());
+                map.put("serviceURL",shop.getMwsPoint());
+                map.put("marketplaceId",shop.getMarketplaceId());
+                map.put("shopId",shop.getGrantShopId());
+                map.put("userId",shop.getUserId());
+                map.put("deptId",shop.getDeptId());
+                getSingleShopOrderList(map);//获得单个店铺列表
+            }
+        }
+    }
     /***
      * 获得单个店铺订单和订单详情
      */

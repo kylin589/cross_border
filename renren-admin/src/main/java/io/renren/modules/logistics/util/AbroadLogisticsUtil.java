@@ -71,8 +71,8 @@ public class AbroadLogisticsUtil {
         //修改订单备注
 //        updateOrderRemark("302-7660577-9242718","订单中途遇到了问题1");
         //获取转单号
-        getTrackWaybill("305-1302253-6227547");
-//        String orderData = "{\"order\":{\"order_sn\":\"20181214\",\"order_currency\":\"null\",\"order_date\":\"null\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
+        getTrackWaybill("305-1302253-62275471");
+//        String orderData = "{\"order\":{\"order_sn\":\"20181214\" ,\"order_currency\":\"null\",\"order_date\":\"null\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
 //        System.out.println(orderData);
     }
     public static Map<String,String> pushOrder(String orderData){
@@ -402,7 +402,15 @@ public class AbroadLogisticsUtil {
                 String data1 = new String(decoder.decode(data), "UTF-8");
                 System.out.println("data1:" + data1);
                 JSONObject a = JSONObject.parseObject(data1);
-                map.put("code","true");
+                String trackWaybill = a.getString("otherData");
+                if(StringUtils.isNotBlank(trackWaybill)){
+                    map.put("code","true");
+                    map.put("trackWaybill","trackWaybill");
+                }else{
+                    map.put("code","false");
+                    map.put("msg","没有获取到转单号");
+                }
+
             }
         } catch (Exception e) {
             map.put("code","false");

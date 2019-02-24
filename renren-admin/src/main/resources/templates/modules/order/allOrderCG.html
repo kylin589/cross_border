@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的订单</title>
+    <#include "/header_kuajing.html">
+        <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/order/myOrder.css" media="all">
+        <style>
+            .layui-col-md3{
+                width: 20%;
+            }
+            .stateBtn{
+                display: inline-block;
+                height: 32px;
+                line-height: 35px;
+                padding: 0 10px;
+                margin-left: 10px;
+                background: #00aee3;
+                color: #fff;
+                border-radius: 3px;
+            }
+        </style>
+        </head>
+<body>
+<div class="box" id="step" v-cloak>
+
+    <!--搜索区域-->
+    <div class="search1">
+        <!--<select name="remark_type" class="sousuoAreaInput" v-model="shopName">-->
+            <!--<option value="" selected="selected">店铺名称</option>-->
+            <!--<option :value="item.shopName" v-for="item in shopList">{{item.shopName}}</option>-->
+        <!--</select>-->
+
+        <#if shiro.hasPermission("sys:dept:sign")>
+            <el-select v-model="allGongsiValue" filterable @change="chanGongsiFunc" placeholder="请选择公司">
+                <el-option
+                        v-for="item in allGongsi"
+                        :key="item.deptId"
+                        :label="item.name"
+                        :value="item.deptId"
+                >
+                </el-option>
+            </el-select>
+        </#if>
+
+
+        <el-select v-model="allYUanGValue" placeholder="请选择员工" @focus="getManList">
+            <el-option
+                    v-for="item in allYUanG"
+                    :key="item.userId"
+                    :label="item.displayName"
+                    :value="item.userId">
+            </el-option>
+        </el-select>
+
+        <el-select v-model="shopName" placeholder="请选择店铺">
+            <el-option
+                    v-for="item in shopList"
+                    :key="item.shopName"
+                    :label="item.shopName"
+                    :value="item.shopName">
+            </el-option>
+        </el-select>
+
+        <input type="text" placeholder="订单id" v-model="orderId">
+        <input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">
+        <input type="text" class="sousuoAreaInput" placeholder="关联产品id" v-model="productId">
+        <input type="text" placeholder="产品SKU" v-model="productSku">
+        <input type="text" placeholder="产品asin码" v-model="productAsin">
+        <input type="text" class="sousuoAreaInput" placeholder="国内物流单号" v-model="domesticWaybill">
+        <input type="text" placeholder="国际物流单号" v-model="abroadWaybill">
+        <div style="display: inline-block;">
+            <el-date-picker
+                    value-format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd"
+                    v-model="value9"
+                    type="daterange"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    default-value="">
+            </el-date-picker>
+        </div>
+
+        <button class="sousuo" @click="getOrderlist('')">搜索</button>
+
+    </div>
+    <!--筛选区域-->
+    <div class="screen">
+        <div class="audit">
+            <span>订单状态</span>
+            <ul class="zhuangtaiUl">
+                <li class="red action" @click="getOrderlist2('',0)">全部 <span>({{ allOrderCount1 }})</span></li>
+                <li  v-for="(item,index) in orderStateList" :class="item.color"  @click="getOrderlist2(item.dataNumber,index+1)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
+            </ul>
+        </div>
+        <div class="audit">
+            <span>异常状态</span>
+            <ul class="yichangUl">
+                <li class="red action" @click="getOrderlist3('',0)">全部 <span>({{ allOrderCount1 }})</span></li>
+                <li  v-for="(item,index) in orderStateListyc" :class="item.color"  @click="getOrderlist3(item.dataNumber,index+1)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
+            </ul>
+        </div>
+
+    </div>
+
+
+
+    <!--操作区域-->
+    <div class="operation">
+        <!--<button class="addBtn"><i class="layui-icon layui-icon-add-1"></i> 添加订单</button>-->
+        <label for="" style="color: #666;font-weight: bold;">选中项：</label>
+        <el-select v-model="yichangListValue" placeholder="请选择状态" >
+            <el-option
+                    v-for="item in yichangList"
+                    :key="item.dataNumber"
+                    :label="item.dataContent"
+                    :value="item.dataNumber">
+            </el-option>
+        </el-select>
+        <span class="stateBtn" v-if="yichangListValue!=''" @click="updateAbnormalState" style="cursor:pointer;">确定</span>
+        <!--统计-->
+        <div class="statistics" style="">
+            订单数: <span>{{ statistics.orderCount }}</span>
+            核算订单数: <span>{{ statistics.orderCounts }}</span>
+            总金额: <span>{{ statistics.orderMoney }}</span>
+            利润: <span>{{ statistics.orderProfit }}</span>
+            运费: <span>{{ statistics.orderFreight }}</span>
+            采购: <span>{{ statistics.purchasePrice }}</span>
+            退款数: <span>{{ statistics.returnCounts }}</span>
+            退款成本: <span>{{ statistics.returnCost }}</span>
+        </div>
+    </div>
+
+
+
+    <table>
+        <tr>
+            <th>
+                <input type="checkbox"  v-model='isok' @click='demo'>
+            </th>
+            <th>订单号</th>
+            <th>图片</th>
+            <th>亚马逊单号</th>
+            <th>订单金额</th>
+            <th>Amazon佣金</th>
+            <th>到账金额</th>
+
+            <!--<th>状态</th>-->
+            <!--<th>异常状态</th>-->
+            <!--<th>国际运单</th>-->
+            <!--<th>国内运单</th>-->
+
+            <th>当天汇率</th>
+            <th>采购价</th>
+            <th>国际运费</th>
+            <th>平台佣金</th>
+            <th>利润</th>
+            <th>利润率</th>
+
+
+            <th>状态</th>
+            <th>异常状态</th>
+            <!--<th>退货费用</th>-->
+            <th style="width: 100px">下单时间</th>
+            <th style="width: 130px;">公司名</th>
+            <th>操作</th>
+        </tr>
+        <tr v-for = '(item,index) in prolist'>
+            <td class="orderchenc">
+                <input type="checkbox" :value='item.orderid' v-model='allcheck[index]' @change='demo2(item.orderId)'>
+            </td>
+            <td>
+                {{ item.orderId }}<br/>
+                <span class="brSpan">
+
+                    <span v-if="item.countryCode == 'US'">
+                        <img src="../../statics/kuajing/img/american.png" alt="">
+                        美国
+                    </span>
+                    <span v-if="item.countryCode == 'JP'">
+                        <img src="../../statics/kuajing/img/riben.jpg" alt="">
+                        日本
+                    </span>
+                    <span v-if="item.countryCode == 'FR'">
+                        <img src="../../statics/kuajing/img/faguo.jpg" alt="">
+                        法国
+                    </span>
+                    <span v-if="item.countryCode == 'ES'">
+                        <img src="../../statics/kuajing/img/xibanya.jpg" alt="">
+                        西班牙
+                    </span>
+                    <span v-if="item.countryCode == 'GB'">
+                        <img src="../../statics/kuajing/img/yingg.jpg" alt="">
+                        英国
+                    </span>
+                    <span v-if="item.countryCode == 'IT'">
+                        <img src="../../statics/kuajing/img/yidali.jpg" alt="">
+                        意大利</span>
+                    <span v-if="item.countryCode == 'DE'">
+                        <img src="../../statics/kuajing/img/deguo.jpg" alt="">
+                        德国</span>
+                    <span v-if="item.countryCode == 'BR'">
+                        <img src="../../statics/kuajing/img/baxi.jpg" alt="">
+                        巴西</span>
+                    <span v-if="item.countryCode == 'CA'">
+                        <img src="../../statics/kuajing/img/jianada.jpg" alt="">
+                        加拿大</span>
+                    <span v-if="item.countryCode == 'MX'">
+                        <img src="../../statics/kuajing/img/moxige.jpg" alt="">
+                        墨西哥</span>
+                    <span v-if="item.countryCode == 'AU'">
+                        <img src="../../statics/kuajing/img/aodaliya.jpg" alt="">
+                        澳大利亚</span>
+                </span></td>
+            <td class="imgtd" v-if="item.productImageUrl"><img :src="item.productImageUrl" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
+            <td class="imgtd" v-if="!item.productImageUrl"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
+            <td><a :href="'orderDetailsCG.html?orderid='+item.orderId+'page='+proCurr">{{ item.amazonOrderId }}</a> <br/>
+                <span class="brSpan">
+                    <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
+                    {{ item.shopName }}
+                    <span v-if="item.countryCode == 'US'">美国</span>
+                    <span v-if="item.countryCode == 'JP'">日本</span>
+                    <span v-if="item.countryCode == 'FR'">法国</span>
+                    <span v-if="item.countryCode == 'ES'">西班牙</span>
+                    <span v-if="item.countryCode == 'GB'">英国</span>
+                    <span v-if="item.countryCode == 'IT'">意大利</span>
+                    <span v-if="item.countryCode == 'DE'">德国</span>
+                    <span v-if="item.countryCode == 'BR'">巴西</span>
+                    <span v-if="item.countryCode == 'CA'">加拿大</span>
+                    <span v-if="item.countryCode == 'MX'">墨西哥</span>
+                    <span v-if="item.countryCode == 'AU'">澳大利亚</span>
+
+                </span>
+            </td>
+            <td>
+                {{ item.orderMoney }} <span v-if="item.rateCode">({{item.rateCode}})</span><br>
+                <span style="color: #999" v-if="item.orderMoneyCny">¥ {{ item.orderMoneyCny }}</span>
+            </td>
+            <td>
+                {{item.amazonCommission}} <span v-if="item.rateCode">({{item.rateCode}})</span><br>
+                <span style="color: #999" v-if="item.amazonCommissionCny">¥ {{item.amazonCommissionCny}}</span>
+            </td>
+            <td>
+                {{item.accountMoney}} <span v-if="item.rateCode">({{item.rateCode}})</span><br>
+                <span style="color: #999" v-if="item.accountMoneyCny">¥ {{item.accountMoneyCny}}</span>
+            </td>
+
+            <!--<td>803216550758084158</td>-->
+            <!--<td>{{ item.abroadWaybill }}</td>-->
+            <!--<td>{{ item.domesticWaybill }}</td>-->
+
+            <td>{{item.momentRate}}</td>
+            <td>{{item.purchasePrice }}</td>
+            <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.interFreight}}</td>
+            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
+            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
+            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
+            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
+            <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.platformCommissions}}</td>
+            <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.orderProfit}}</td>
+            <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.profitRate}}</td>
+
+
+            <td>
+                <span v-if="(item.orderState == '虚发货')" class="org">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="(item.orderState == '待付款')" class="org1">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '已付款'" class="bule1">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '国内物流已采购'" class="bule2">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '国内物流待发货'" class="bule3">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '仓库已入库'" class="bule4">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '国际已发货'" class="bule">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '物流仓库未签收'" class="green">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '完成'" class="ok">
+                    {{ item.orderState }}
+                </span>
+                <span v-if="item.orderState == '取消'" class="red">
+                    {{ item.orderState }}
+                </span>
+            </td>
+            <td>
+                <span v-if="JSON.stringify(item.abnormalStatus) != 'null' " style="padding: 2px 6px;border-radius: 3px;background: #ff6154;color: #fff;font-size: 13px">{{item.abnormalState}}</span>
+                <span v-if="JSON.stringify(item.abnormalStatus) == 'null' "></span>
+            </td>
+            <!--<td>{{item.accountMoneyCny}}</td>-->
+            <td style="width: 100px;color: #999;">{{ item.buyDate }}</td>
+            <td style="width: 130px;">
+                <span style="font-size: 13px;color: #666">{{item.deptName}}</span><br>
+                <span style="font-size: 13px;color: #666">操作人:{{item.userName}}</span>
+            </td>
+            <td>
+                <span style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="shuaxin(item.orderId)">手动刷新</span>
+            </td>
+        </tr>
+    </table>
+
+
+    <!--分页-->
+    <div id="page" style="text-align: center"></div>
+
+    <!--<div id="addOrder" style="display: none">-->
+        <!--<h3>添加订单</h3>-->
+        <!--<span>-->
+            <!--<label for="">选择店铺</label>-->
+            <!--<select class="form-control" id="order_marketplace_id">-->
+                <!--<option value="">&#45;&#45; 请选择 &#45;&#45;</option>-->
+                <!--<option value="3116">baijing(意大利)</option>-->
+                <!--<option value="3115">baijing(西班牙)</option>-->
+                <!--<option value="3114">baijing(德国)</option>-->
+                <!--<option value="3113">baijing(英国)</option>-->
+                <!--<option value="3112">baijing(法国)</option>-->
+            <!--</select>-->
+        <!--</span>-->
+        <!--<br>-->
+        <!--<span>-->
+            <!--<label for="">Amazon订单ID</label>-->
+            <!--<input type="text" placeholder="Amazon订单ID">-->
+        <!--</span>-->
+    <!--</div>-->
+
+</div>
+
+<div class="bigImgDiv"></div>
+
+<script src="${request.contextPath}/statics/kuajing/js/step/order/allOrder.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
+<!--<script src="${request.contextPath}/statics/kuajing/js/step/product/tuozhaiduoxuan.js"></script>-->
+</body>
+</html>

@@ -212,7 +212,7 @@ public class OrderLogisticsTimer {
                         }
 
                         //设置转单号
-                        /*if(StringUtils.isBlank(abroadLogisticsEntity.getTrackWaybill())){
+                        if(StringUtils.isBlank(abroadLogisticsEntity.getTrackWaybill())){
                             Map<String,String> trackWaybillMap = AbroadLogisticsUtil.getTrackWaybill(amazonOrderId);
                             if("true".equals(trackWaybillMap.get("code"))){
                                 String trackWaybill = trackWaybillMap.get("trackWaybill");
@@ -221,15 +221,15 @@ public class OrderLogisticsTimer {
                                     abroadLogisticsEntity.setIsSynchronization(0);
                                 }
                             }
-                        }*/
+                        }
                     }
                     abroadLogisticsService.updateById(abroadLogisticsEntity);
                     orderService.updateById(orderEntity);
                     //同步转单号
-                    /*if(StringUtils.isNotBlank(abroadLogisticsEntity.getTrackWaybill()) && abroadLogisticsEntity.getIsSynchronization() == 0){
+                    if(StringUtils.isNotBlank(abroadLogisticsEntity.getTrackWaybill()) && abroadLogisticsEntity.getIsSynchronization() == 0){
                         SendDataMoedl sendDataMoedl = synchronizationZhenModel(orderEntity,abroadLogisticsEntity);
                         amazonUpdateLogistics(sendDataMoedl,orderId);
-                    }*/
+                    }
                 }
             }
         }
