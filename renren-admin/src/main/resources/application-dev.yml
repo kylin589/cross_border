@@ -1,14 +1,14 @@
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     druid:
       first:  #数据源1
-        url: jdbc:mysql://127.0.0.1:3306/cross_border?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
-#        url: jdbc:mysql://39.106.131.222:3306/cross_border?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=FALSE
+#        url: jdbc:mysql://127.0.0.1:3306/cross_border?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        url: jdbc:mysql://localhost:3306/cross_border?useUnicode=true&characterEncoding=UTF-8&useSSL=FALSE&serverTimezone=GMT
         username: root
-        password: admin
-#        password: chuangtao2019
+#        password: admin
+        password: root
       second:  #数据源2
         url: jdbc:mysql://10.10.168.18:3306/renren_security?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
         username: root

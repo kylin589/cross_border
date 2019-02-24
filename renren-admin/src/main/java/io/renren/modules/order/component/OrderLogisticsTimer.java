@@ -16,7 +16,9 @@ import io.renren.modules.logistics.service.SubmitLogisticsService;
 import io.renren.modules.logistics.util.AbroadLogisticsUtil;
 import io.renren.modules.logistics.util.XmlUtils;
 import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.product.entity.ProductOrderItemEntity;
 import io.renren.modules.product.service.OrderService;
+import io.renren.modules.product.service.ProductOrderItemService;
 import io.renren.modules.sys.service.SysDeptService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +42,8 @@ public class OrderLogisticsTimer {
 
     @Autowired
     private OrderService orderService;
-
+    @Autowired
+    private ProductOrderItemService ProductOrderItemService;
     @Autowired
     private AbroadLogisticsService abroadLogisticsService;
 
@@ -243,8 +246,10 @@ public class OrderLogisticsTimer {
      */
     private SendDataMoedl synchronizationZhenModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String orderItemId = orderEntity.getOrderItemId();
+
+
         String amazonOrderId = orderEntity.getAmazonOrderId();
+
         String trackWaybill = abroadLogisticsEntity.getTrackWaybill();
         Date date = abroadLogisticsEntity.getShipTime();
         Shipping u1 = new Shipping();
@@ -261,16 +266,22 @@ public class OrderLogisticsTimer {
         fd.setCarrierName(abroadLogisticsEntity.getDestTransportCompany());
         fd.setShippingMethod(abroadLogisticsEntity.getDestChannel());//<ShippingMethod>根据自己的需求可以有可以没有
         fd.setShipperTrackingNumber(trackWaybill);
+        List<Item> items=new ArrayList<>();
         Item item=new Item();
-        item.setAmazonOrderItemCode(orderItemId);
-        item.setQuantity(orderEntity.getOrderNumber().toString());
+        List<ProductOrderItemEntity> productOrderItemEntities=ProductOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
+        for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntities) {
+            String orderItemId= productOrderItemEntity.getOrderItemId();
+            item.setAmazonOrderItemCode(orderItemId);
+            item.setQuantity(String.valueOf(productOrderItemEntity.getOrderItemNumber()));
+            items.add(item);
+        }
         AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(orderEntity.getShopId());
         List<String> serviceURL = new ArrayList<>();
         List<String> marketplaceIds = new ArrayList<>();
         serviceURL.add(shopEntity.getMwsPoint());
         marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
         orderful.setFulfillmentData(fd);
-        orderful.setItem(item);
+        orderful.setItems(items);
         message.setOrderFulfillment(orderful);
         u1.setHeader(header);
         u1.setMessage(message);

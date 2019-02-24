@@ -1,10 +1,8 @@
 package io.renren.modules.product.controller;
 
-import com.aliyun.oss.model.Grant;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.DateUtils;
 import io.renren.common.utils.R;
-import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.entity.AmazonMarketplaceEntity;
@@ -25,23 +23,16 @@ import io.renren.modules.order.entity.RemarkEntity;
 import io.renren.modules.order.service.ProductShipAddressService;
 import io.renren.modules.order.service.RemarkService;
 import io.renren.modules.product.dto.OrderDTO;
-import io.renren.modules.product.entity.AmazonRateEntity;
-import io.renren.modules.product.entity.DataDictionaryEntity;
-import io.renren.modules.product.entity.OrderEntity;
-import io.renren.modules.product.entity.ProductsEntity;
-import io.renren.modules.product.service.AmazonRateService;
-import io.renren.modules.product.service.DataDictionaryService;
-import io.renren.modules.product.service.OrderService;
-import io.renren.modules.product.service.ProductsService;
+import io.renren.modules.product.entity.*;
+import io.renren.modules.product.service.*;
+import io.renren.modules.product.vm.OrderItemModel;
 import io.renren.modules.product.vm.OrderModel;
 import io.renren.modules.product.vm.OrderVM;
 import io.renren.modules.sys.controller.AbstractController;
-import io.renren.modules.sys.entity.NoticeEntity;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.service.NoticeService;
 import io.renren.modules.sys.service.SysDeptService;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -75,6 +65,8 @@ import java.util.*;
 public class OrderController extends AbstractController{
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private ProductOrderItemService productOrderItemService;
     @Autowired
     private ProductShipAddressService productShipAddressService;
     @Autowired
@@ -159,18 +151,11 @@ public class OrderController extends AbstractController{
 
         orderDTO.setAbnormalStatus(abnormalStatus);
         orderDTO.setAbnormalState(orderEntity.getAbnormalState());
-
+        String AmazonOrderId=orderEntity.getAmazonOrderId();
+        List<ProductOrderItemEntity> productOrderItemEntitys=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",AmazonOrderId));
+        List<OrderItemModel> orderItemModels=new ArrayList<>();
+        OrderItemModel orderItemModel=new OrderItemModel();
         orderDTO.setShopName(orderEntity.getShopName());
-        orderDTO.setProductId(orderEntity.getProductId());
-        orderDTO.setProductSku(orderEntity.getProductSku());
-        ProductsEntity productsEntity = productsService.selectById(orderEntity.getProductId());
-        if(orderEntity.getProductTitle() != null){
-            orderDTO.setProductTitle(orderEntity.getProductTitle());
-        }else if(productsEntity != null){
-            orderDTO.setProductTitle(productsEntity.getProductTitle());
-        }
-
-        orderDTO.setProductAsin(orderEntity.getProductAsin());
         orderDTO.setOrderNumber(orderEntity.getOrderNumber());
         orderDTO.setPurchasePrice(orderEntity.getPurchasePrice());
         ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
@@ -193,14 +178,25 @@ public class OrderController extends AbstractController{
         }else{
             orderDTO.setAbroadLogistics(abroadLogistics);
         }
-
-        //设置amazon产品链接
-//        amazonProductUrl
+        for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntitys) {
+            orderItemModel.setProductId(productOrderItemEntity.getProductId());
+            orderItemModel.setProductSku(productOrderItemEntity.getProductSku());
+            ProductsEntity productsEntity = productsService.selectById(productOrderItemEntity.getProductId());
+            if(productOrderItemEntity.getProductTitle() != null){
+                orderItemModel.setProductTitle(productOrderItemEntity.getProductTitle());
+            }else if(productsEntity != null){
+                orderItemModel.setProductTitle(productsEntity.getProductTitle());
+            }
+            orderItemModel.setProductAsin(productOrderItemEntity.getProductAsin());
+           //设置amazon产品链接
+           // amazonProductUrl
         AmazonMarketplaceEntity amazonMarketplaceEntity = amazonMarketplaceService.selectOne(new EntityWrapper<AmazonMarketplaceEntity>().eq("country_code",orderEntity.getCountryCode()));
-        String amazonProductUrl = amazonMarketplaceEntity.getAmazonSite() + "/gp/product/" + orderEntity.getProductAsin();
+        String amazonProductUrl = amazonMarketplaceEntity.getAmazonSite() + "/gp/product/" + productOrderItemEntity.getProductAsin();
         orderDTO.setAmazonProductUrl(amazonProductUrl);
-        orderDTO.setProductImageUrl(orderEntity.getProductImageUrl());
+        orderItemModel.setProductImageUrl(productOrderItemEntity.getProductImageUrl());
         orderDTO.setMomentRate(momentRate);
+         orderItemModels.add(orderItemModel);
+        }
         //判断订单异常状态——不属于退货
         if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){
             //国际已发货、已完成订单
@@ -291,6 +287,7 @@ public class OrderController extends AbstractController{
         List<RemarkEntity> logList = remarkService.selectList(new EntityWrapper<RemarkEntity>().eq("type","log").eq("order_id",orderId));
         orderDTO.setRemarkList(remarkList);
         orderDTO.setLogList(logList);
+        orderDTO.setOrderitems(orderItemModels);
         return R.ok().put("orderDTO",orderDTO);
     }
 
@@ -330,7 +327,7 @@ public class OrderController extends AbstractController{
     }
 
     /**
-     * 同步物流单号
+     * 给物流那边同步修改后的物流单号
      */
     @RequestMapping("/synchronizeWaybill")
     public R synchronizeWaybill(@RequestParam Long orderId){
@@ -465,7 +462,7 @@ public class OrderController extends AbstractController{
         order.setAbroadWaybill(abroadWaybill);
         //生成国际物流对象
         AbroadLogisticsEntity abroadLogistics = new AbroadLogisticsEntity();
-        abroadLogistics = new AbroadLogisticsEntity();
+//        abroadLogistics = new AbroadLogisticsEntity();//new了2次删去
         abroadLogistics.setOrderId(orderId);
         abroadLogistics.setAbroadWaybill(abroadWaybill);
         abroadLogistics.setIsSynchronization(0);
@@ -485,8 +482,8 @@ public class OrderController extends AbstractController{
      * orderVM: orderId,
      */
     @RequestMapping("/synchronization")
-    public R synchronization(@RequestBody OrderVM orderVM){
-        Long orderId = orderVM.getOrderId();
+    public R synchronization(@RequestParam Long orderId){
+//        Long orderId = orderVM.getOrderId();
         OrderEntity order = orderService.selectById(orderId);
         order.getAmazonOrderId();
         AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
@@ -501,15 +498,7 @@ public class OrderController extends AbstractController{
         }
         // 将运单号同步到亚马逊平台
         amazonUpdateLogistics(sendDataMoedl,orderId);
-        boolean flag = false;
-        if(flag){
-            abroadLogistics.setIsSynchronization(1);
-            abroadLogistics.setUpdateTime(new Date());
-            abroadLogisticsService.updateById(abroadLogistics);
-            return R.ok();
-        }else{
-            return R.error("同步失败");
-        }
+        return R.ok("正在同步，请稍后查看");
     }
 
     /**
@@ -520,7 +509,6 @@ public class OrderController extends AbstractController{
      */
     private SendDataMoedl synchronizationXuModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String orderItemId = orderEntity.getOrderItemId();
         String amazonOrderId = orderEntity.getAmazonOrderId();
         String abroadWaybill = abroadLogisticsEntity.getAbroadWaybill();
         Date date = abroadLogisticsEntity.getShipTime();
@@ -538,16 +526,22 @@ public class OrderController extends AbstractController{
         fd.setCarrierName("Yun Express");
         fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
         fd.setShipperTrackingNumber(abroadWaybill);
+        List<Item> items=new ArrayList<>();
         Item item=new Item();
-        item.setAmazonOrderItemCode(orderItemId);
-        item.setQuantity(orderEntity.getOrderNumber().toString());
+        List<ProductOrderItemEntity> productOrderItemEntities=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
+        for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntities) {
+            String orderItemId= productOrderItemEntity.getOrderItemId();
+            item.setAmazonOrderItemCode(orderItemId);
+            item.setQuantity(String.valueOf(productOrderItemEntity.getOrderItemNumber()));
+            items.add(item);
+        }
         AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(orderEntity.getShopId());
         List<String> serviceURL = new ArrayList<>();
         List<String> marketplaceIds = new ArrayList<>();
         serviceURL.add(shopEntity.getMwsPoint());
         marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
         orderful.setFulfillmentData(fd);
-        orderful.setItem(item);
+        orderful.setItems(items);
         message.setOrderFulfillment(orderful);
         u1.setHeader(header);
         u1.setMessage(message);
@@ -567,7 +561,6 @@ public class OrderController extends AbstractController{
      */
     private SendDataMoedl synchronizationZhenModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String orderItemId = orderEntity.getOrderItemId();
         String amazonOrderId = orderEntity.getAmazonOrderId();
         String trackWaybill = abroadLogisticsEntity.getTrackWaybill();
         Date date = abroadLogisticsEntity.getShipTime();
@@ -585,16 +578,22 @@ public class OrderController extends AbstractController{
         fd.setCarrierName(abroadLogisticsEntity.getDestTransportCompany());
         fd.setShippingMethod(abroadLogisticsEntity.getDestChannel());//<ShippingMethod>根据自己的需求可以有可以没有
         fd.setShipperTrackingNumber(trackWaybill);
+        List<Item> items=new ArrayList<>();
         Item item=new Item();
-        item.setAmazonOrderItemCode(orderItemId);
-        item.setQuantity(orderEntity.getOrderNumber().toString());
+        List<ProductOrderItemEntity> productOrderItemEntities=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
+        for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntities) {
+            String orderItemId= productOrderItemEntity.getOrderItemId();
+            item.setAmazonOrderItemCode(orderItemId);
+            item.setQuantity(String.valueOf(productOrderItemEntity.getOrderItemNumber()));
+            items.add(item);
+        }
         AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(orderEntity.getShopId());
         List<String> serviceURL = new ArrayList<>();
         List<String> marketplaceIds = new ArrayList<>();
         serviceURL.add(shopEntity.getMwsPoint());
         marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
         orderful.setFulfillmentData(fd);
-        orderful.setItem(item);
+        orderful.setItems(items);
         message.setOrderFulfillment(orderful);
         u1.setHeader(header);
         u1.setMessage(message);
@@ -737,13 +736,41 @@ public class OrderController extends AbstractController{
                 }
             }*/
             //更新订单
-            ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",orderModel.getProductSku()));
-            if(StringUtils.isNotBlank(orderModel.getProductImageUrl())){
-                orderEntity.setProductImageUrl(orderModel.getProductImageUrl());
+            List<OrderItemModel> orderItemModels=orderModel.getOrderItemModels();
+            if(orderItemModels!=null && orderItemModels.size()>0) {
+                for (OrderItemModel orderItemModel : orderItemModels) {
+                    //判断该商品是否存在
+                    ProductOrderItemEntity productOrderItemEntity = productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id", orderItemModel.getOrderItemId()));
+                    //存在更新
+                    ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku", orderItemModel.getProductSku()));
+                    if (StringUtils.isNotBlank(orderItemModel.getProductImageUrl())) {
+                        productOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
+                    } else if (productsEntity != null) {
+                        productOrderItemEntity.setProductImageUrl(productsEntity.getMainImageUrl());
+                    }
+                    //更新订单商品
+//                            orderEntity.setProductTitle(orderModel.getTitlename());
+//                            orderEntity.setCountryCode(orderModel.getCountry());
+                    productOrderItemEntity.setProductTitle(orderItemModel.getProductTitle());
+                    productOrderItemEntity.setProductSku(orderItemModel.getProductSku());
+                    productOrderItemEntity.setProductAsin(orderItemModel.getProductAsin());
+                    productOrderItemEntity.setProductPrice(orderItemModel.getProductPrice());
+                    productOrderItemEntity.setUpdatetime(new Date());
+                    productOrderItemService.updateById(productOrderItemEntity);
+                }
+            }
+            /*String orderItemId=orderModel.getOrderItemId();
+            ProductOrderItemEntity productOrderItemEntity=productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id",orderItemId));
+
+            ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",productOrderItemEntity.getProductSku()));
+            if(StringUtils.isNotBlank(productOrderItemEntity.getProductImageUrl())){
+                orderEntity.setProductImageUrl(productOrderItemEntity.getProductImageUrl());
             }else if(productsEntity != null){
                 orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
             }
+
             orderEntity.setProductTitle(orderModel.getTitlename());
+*/
             orderEntity.setCountryCode(orderModel.getCountry());
             //设置汇率
             BigDecimal rate = new BigDecimal(0.00);

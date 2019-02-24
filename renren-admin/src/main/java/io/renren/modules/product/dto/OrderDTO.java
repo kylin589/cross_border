@@ -4,8 +4,10 @@ import io.renren.modules.logistics.entity.AbroadLogisticsEntity;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.entity.RemarkEntity;
+import io.renren.modules.product.vm.OrderItemModel;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,10 +49,14 @@ public class OrderDTO {
      * 店铺名称(店铺+国家）
      */
     private String shopName;
+
+    private List<OrderItemModel> orderitems = new ArrayList<>();
     /**
      * 关联产品id
      */
     private Long productId;
+
+
     /**
      * 主图片
      */
@@ -266,6 +272,14 @@ public class OrderDTO {
 
     public void setDomesticLogisticsList(List<DomesticLogisticsEntity> domesticLogisticsList) {
         this.domesticLogisticsList = domesticLogisticsList;
+    }
+
+    public List<OrderItemModel> getOrderitems() {
+        return orderitems;
+    }
+
+    public void setOrderitems(List<OrderItemModel> orderitems) {
+        this.orderitems = orderitems;
     }
 
     public BigDecimal getMomentRate() {
