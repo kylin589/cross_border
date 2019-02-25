@@ -224,9 +224,8 @@ public class ProductsController extends AbstractController {
         SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
         String companySku = sysDeptEntity.getCompanySku();
         SysUserEntity user = getUser();
-        String enName = user.getEnName();
         String enBrand = user.getEnBrand();
-        String SKU = companySku + "-" + enName + "-" + enBrand + "-" + productsEntity.getProductId();
+        String SKU = companySku + "-" + enBrand + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
         //生成库存
         int IStock = (int) (200 + Math.random() * (300 - 200 + 1));
@@ -1090,9 +1089,8 @@ public class ProductsController extends AbstractController {
         SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
         String companySku = sysDeptEntity.getCompanySku();
         SysUserEntity user = getUser();
-        String enName = user.getEnName();
         String enBrand = user.getEnBrand();
-        String SKU = companySku + "-" + enName + "-" + enBrand + "-" + productsEntity.getProductId();
+        String SKU = companySku + "-" + enBrand + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
         //生成库存
         int IStock = (int) (200 + Math.random() * (300 - 200 + 1));

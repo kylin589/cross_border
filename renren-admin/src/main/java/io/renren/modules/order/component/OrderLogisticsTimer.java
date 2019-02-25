@@ -59,6 +59,9 @@ public class OrderLogisticsTimer {
     @Autowired
     private SubmitLogisticsService submitLogisticsService;
 
+    @Autowired
+    private ProductOrderItemService productOrderItemService;
+
     @Value(("${file.path}"))
     private String fileStoragePath;
 
@@ -246,10 +249,7 @@ public class OrderLogisticsTimer {
      */
     private SendDataMoedl synchronizationZhenModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
-
         String amazonOrderId = orderEntity.getAmazonOrderId();
-
         String trackWaybill = abroadLogisticsEntity.getTrackWaybill();
         Date date = abroadLogisticsEntity.getShipTime();
         Shipping u1 = new Shipping();
@@ -268,7 +268,7 @@ public class OrderLogisticsTimer {
         fd.setShipperTrackingNumber(trackWaybill);
         List<Item> items=new ArrayList<>();
         Item item=new Item();
-        List<ProductOrderItemEntity> productOrderItemEntities=ProductOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
+        List<ProductOrderItemEntity> productOrderItemEntities=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
         for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntities) {
             String orderItemId= productOrderItemEntity.getOrderItemId();
             item.setAmazonOrderItemCode(orderItemId);
@@ -293,7 +293,6 @@ public class OrderLogisticsTimer {
         SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
         return sendDataMoedl;
     }
-
     /**
      * 上传国际物流信息到amazon
      * @param sendDataMoedl

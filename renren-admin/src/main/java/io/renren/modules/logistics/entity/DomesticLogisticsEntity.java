@@ -28,6 +28,10 @@ public class DomesticLogisticsEntity implements Serializable {
 	 */
 	private Long orderId;
 	/**
+	 * 订单商品id
+	 */
+	private Long itemId;
+	/**
 	 * 采购价
 	 */
 	private BigDecimal price;
@@ -128,5 +132,13 @@ public class DomesticLogisticsEntity implements Serializable {
 	 */
 	public Date getCreateTime() {
 		return createTime;
+	}
+
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
 	}
 }
