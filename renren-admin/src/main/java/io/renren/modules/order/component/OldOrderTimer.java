@@ -369,8 +369,14 @@ public class OldOrderTimer {
                                     int orderItemNumber = orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
                                     //根据商品sku获取图片连接的url的方法
                                     String img_url = this.getImageUrl(product_sku, product_asin, sellerId, mwsAuthToken, serviceURL, marketplaceId);
+                                    System.out.println("商品图片:"+img_url+"======================");
                                     //获取商品价格
-                                    String productPrice=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
+                                    String productPrice="0.00";
+                                    if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
+                                        productPrice=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
+                                    }else{
+                                        productPrice="0.00";
+                                    }
                                     System.out.println("订单商品配送数量：" + orderItemNumber + "============");
                                     OrderItemModel orderItemModel=new OrderItemModel();
                                     //获得订单商品sku
