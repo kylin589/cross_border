@@ -186,6 +186,8 @@ public class OrderController extends AbstractController{
             AmazonMarketplaceEntity amazonMarketplaceEntity = amazonMarketplaceService.selectOne(new EntityWrapper<AmazonMarketplaceEntity>().eq("country_code",orderEntity.getCountryCode()));
             String amazonProductUrl = amazonMarketplaceEntity.getAmazonSite() + "/gp/product/" + productOrderItemEntity.getProductAsin();
             productOrderItemEntity.setAmazonProductUrl(amazonProductUrl);
+            DomesticLogisticsEntity domesticLogistics = domesticLogisticsService.selectOne(new EntityWrapper<DomesticLogisticsEntity>().eq("item_id",productOrderItemEntity.getItemId()));
+            productOrderItemEntity.setDomesticLogistics(domesticLogistics);
         }
         //判断订单异常状态——不属于退货
         if(!ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abnormalStatus)){

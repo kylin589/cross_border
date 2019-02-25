@@ -558,10 +558,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 deanname.append(domesticLogisticsEntitys.get(i).getLogisticsCompany());
                 deanname.append(",");
             }
-            if(StringUtils.isNotBlank(domesticLogisticsEntitys.get(i).getWaybill())){
-                supplyexpressno.append(domesticLogisticsEntitys.get(i).getWaybill());
-                supplyexpressno.append(",");
-            }
         }
         if(StringUtils.isNotBlank(deanname.toString())){
             omsOrder.setDelivery_deanname(deanname.substring(0,deanname.length()-1));
@@ -572,17 +568,26 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         omsOrder.setOrder_date(sdf.format(orderEntity.getBuyDate()));
         omsOrder.setOrder_memo(shipAddressEntity.getShipCountry());
         //推送--订单详情
-/*
+
         List<OmsOrderDetail> omsOrderDetails = new ArrayList<>();
-*/
-        OmsOrderDetail omsOrderDetail=new OmsOrderDetail();
-        String amazonOrderId=orderEntity.getAmazonOrderId();
-
-
-        omsOrderDetail.setQuantity(orderEntity.getOrderNumber());
-        if(StringUtils.isNotBlank(supplyexpressno.toString())){
-            omsOrderDetail.setSupplyexpressno(supplyexpressno.substring(0,supplyexpressno.length()-1));
+        List<ProductOrderItemEntity> productOrderItemEntitys=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",orderEntity.getAmazonOrderId()));
+        List<Image> images=new ArrayList<>();
+        for(ProductOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
+            OmsOrderDetail omsOrderDetail=new OmsOrderDetail();
+            omsOrderDetail.setProduct_id(productOrderItemEntity.getProductSku());
+            omsOrderDetail.setQuantity(productOrderItemEntity.getOrderItemNumber());
+            DomesticLogisticsEntity domesticLogistics = domesticLogisticsService.selectOne(
+                    new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderId).eq("item_id",productOrderItemEntity.getItemId())
+            );
+            omsOrderDetail.setSupplyexpressno(domesticLogistics.getWaybill());
+            omsOrderDetails.add(omsOrderDetail);
+            Image image = new Image();
+            image.setSellersku(productOrderItemEntity.getProductSku());
+            image.setTitle(productOrderItemEntity.getProductTitle());
+            image.setPic(productOrderItemEntity.getProductImageUrl());
+            images.add(image);
         }
+
         //推送—收货人信息
         OmsShippingAddr omsShippingAddr = new OmsShippingAddr();
         omsShippingAddr.setAddress_line1(shipAddressEntity.getShipAddressLine1());
@@ -596,22 +601,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         omsShippingAddr.setCustphone(shipAddressEntity.getShipTel());
         omsShippingAddr.setCuststate(shipAddressEntity.getShipRegion());
         omsShippingAddr.setCustzipcode(shipAddressEntity.getShipZip());
-//        List<Image> images=new ArrayList<>();
-        Image image = new Image();
-        List<ProductOrderItemEntity> productOrderItemEntitys=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
-        for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntitys) {
-            omsOrderDetail.setProduct_id(productOrderItemEntity.getProductSku());
-            image.setSellersku(productOrderItemEntity.getProductSku());
-            image.setTitle(productOrderItemEntity.getProductTitle());
-            image.setPic(productOrderItemEntity.getProductImageUrl());
-//            omsOrderDetails.add(omsOrderDetail);
-//            images.add(image);
-        }
+
         JSONObject orderDataJson = new JSONObject();
         JSONObject omsOrderJson = JSONObject.fromObject(omsOrder);
-        JSONArray orderDetailListJson = JSONArray.fromObject(omsOrderDetail);
+        JSONArray orderDetailListJson = JSONArray.fromObject(omsOrderDetails);
         JSONObject omsShippingAddrJson = JSONObject.fromObject(omsShippingAddr);
-        JSONArray imageJson = JSONArray.fromObject(image);
+        JSONArray imageJson = JSONArray.fromObject(images);
         orderDataJson.put("order",omsOrderJson);
         orderDataJson.put("orderDetailList",orderDetailListJson);
         orderDataJson.put("address",omsShippingAddrJson);

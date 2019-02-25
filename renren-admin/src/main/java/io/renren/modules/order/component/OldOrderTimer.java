@@ -269,7 +269,7 @@ public class OldOrderTimer {
                                 String orderStatus=listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus();
                                 orderModel.setOrderStatus(orderStatus);
                                 //订单总量
-                                int ordernumber=Integer.parseInt(listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsShipped()+listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsUnshipped());
+                                int ordernumber=Integer.parseInt(listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsShipped())+Integer.parseInt(listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsUnshipped());
                                 orderModel.setOrderNumber(ordernumber);
                                 //订单总金额
                                 String orderMoney = listOrdersResponseDtos.get(i).getOrders().get(j).getAmount();
@@ -455,7 +455,7 @@ public class OldOrderTimer {
                 return getProductinfoTest(sellerld,token,product_asin,marketplaceId);
             }
         }
-        return null;
+        return img_url;
     }
 
 

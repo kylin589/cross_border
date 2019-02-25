@@ -3,6 +3,7 @@ package io.renren.modules.product.entity;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -64,7 +65,13 @@ public class ProductOrderItemEntity implements Serializable {
 	private Date updatetime;
 
 	/**
-	 * 用户名
+	 * 产品链接
+	 */
+	@TableField(exist = false)
+	private DomesticLogisticsEntity DomesticLogistics;
+
+	/**
+	 * 国内物流信息
 	 */
 	@TableField(exist = false)
 	private String amazonProductUrl;
@@ -194,5 +201,13 @@ public class ProductOrderItemEntity implements Serializable {
 
 	public void setAmazonProductUrl(String amazonProductUrl) {
 		this.amazonProductUrl = amazonProductUrl;
+	}
+
+	public DomesticLogisticsEntity getDomesticLogistics() {
+		return DomesticLogistics;
+	}
+
+	public void setDomesticLogistics(DomesticLogisticsEntity domesticLogistics) {
+		DomesticLogistics = domesticLogistics;
 	}
 }
