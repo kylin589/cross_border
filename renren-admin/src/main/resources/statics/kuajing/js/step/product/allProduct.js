@@ -453,6 +453,8 @@ var vm = new Vue({
                     'auditNumber': this.auditNumber,
                     'shelveNumber': this.shelveNumber,
                     'productNumber': this.productNumber,
+                    'deptId':Gongs,
+                    'userId':Yuang
                     // '_': $.now()
                 },
                 dataType: 'json',
