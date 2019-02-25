@@ -551,8 +551,26 @@ var vm = new Vue({
                 s = this.value9[0] + ' 00:00:00';
                 e = this.value9[1] + ' 23:59:59';
             }
+
+            var Gongs='';
+            var Yuang='';
+
+            if(this.allYUanGValue == '--'){
+                Yuang='';
+            }else {
+                Yuang=this.allYUanGValue;
+            }
+
+            if(this.allGongsiValue == '--'){
+                Gongs=''
+            }else {
+                Gongs=this.allGongsiValue
+            }
+            console.log(Gongs);
+            console.log(Yuang);
+
             $.ajax({
-                url: '../../product/products/mylist',
+                url: '../../product/products/getClaimList',
                 type: 'post',
                 data: {
                     // '_search': false,
@@ -568,6 +586,8 @@ var vm = new Vue({
                     'auditNumber': this.auditNumber,
                     'shelveNumber': this.shelveNumber,
                     'productNumber': this.productNumber,
+                    'deptId':Gongs,
+                    'userId':Yuang
                     // '_': $.now()
                 },
                 dataType: 'json',
