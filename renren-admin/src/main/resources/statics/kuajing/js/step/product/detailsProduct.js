@@ -988,42 +988,47 @@ var vm = new Vue({
         },
         // 刷新 利润，利润率
         lirFunc:function () {
-            var index = layer.load();
-            var index = layer.load(1); //换了种风格
-            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-            $.ajax({
-                type: 'post',
-                url: '../../product/products/refresh',
-                contentType: "application/json",
-                data: JSON.stringify(vm.proDetails),
-                success: function (r) {
-                    console.log('利润');
-                    console.log(r)
-                    if (r.code == 0) {
-                        // console.log('成本运费成功')
-                        vm.proDetails.americanFC = r.productsEntity.americanFC;
-                        vm.proDetails.canadaFC = r.productsEntity.canadaFC;
-                        vm.proDetails.mexicoFC = r.productsEntity.mexicoFC;
-                        vm.proDetails.britainFC = r.productsEntity.britainFC;
-                        vm.proDetails.franceFC = r.productsEntity.franceFC;
-                        vm.proDetails.germanyFC = r.productsEntity.germanyFC;
-                        vm.proDetails.italyFC = r.productsEntity.italyFC;
-                        vm.proDetails.spainFC = r.productsEntity.spainFC;
-                        vm.proDetails.japanFC = r.productsEntity.japanFC;
-                        vm.proDetails.australiaFC = r.productsEntity.australiaFC;
-                        // this.costFreight = r.categoryOneList;
-                        layer.close(index);
-                        // console.log(vm.categoryOneList)
-                    } else {
-                        alert(r.msg);
+            if(vm.proDetails.productWeight == 0){
+                layer.msg('包装毛重不能为0')
+            }else {
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                $.ajax({
+                    type: 'post',
+                    url: '../../product/products/refresh',
+                    contentType: "application/json",
+                    data: JSON.stringify(vm.proDetails),
+                    success: function (r) {
+                        console.log('利润');
+                        console.log(r)
+                        if (r.code == 0) {
+                            // console.log('成本运费成功')
+                            vm.proDetails.americanFC = r.productsEntity.americanFC;
+                            vm.proDetails.canadaFC = r.productsEntity.canadaFC;
+                            vm.proDetails.mexicoFC = r.productsEntity.mexicoFC;
+                            vm.proDetails.britainFC = r.productsEntity.britainFC;
+                            vm.proDetails.franceFC = r.productsEntity.franceFC;
+                            vm.proDetails.germanyFC = r.productsEntity.germanyFC;
+                            vm.proDetails.italyFC = r.productsEntity.italyFC;
+                            vm.proDetails.spainFC = r.productsEntity.spainFC;
+                            vm.proDetails.japanFC = r.productsEntity.japanFC;
+                            vm.proDetails.australiaFC = r.productsEntity.australiaFC;
+                            // this.costFreight = r.categoryOneList;
+                            layer.close(index);
+                            // console.log(vm.categoryOneList)
+                        } else {
+                            alert(r.msg);
+                            layer.close(index);
+                        }
+                    },
+                    error:function () {
+                        layer.msg("网络故障");
                         layer.close(index);
                     }
-                },
-                error:function () {
-                    layer.msg("网络故障");
-                    layer.close(index);
-                }
-            });
+                });
+            }
+
         },
         // 售价修改
         lirFunc1:function () {
