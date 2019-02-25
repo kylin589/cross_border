@@ -166,10 +166,10 @@ public class OrderController extends AbstractController{
             orderDTO.setShipAddress(shipAddress);
         }
 
-        List<DomesticLogisticsEntity> domesticLogisticsList = domesticLogisticsService.selectList(
+/*        List<DomesticLogisticsEntity> domesticLogisticsList = domesticLogisticsService.selectList(
                 new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderId)
         );
-        orderDTO.setDomesticLogisticsList(domesticLogisticsList);
+        orderDTO.setDomesticLogisticsList(domesticLogisticsList);*/
         //国际物流
         AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
         if(abroadLogistics == null){
