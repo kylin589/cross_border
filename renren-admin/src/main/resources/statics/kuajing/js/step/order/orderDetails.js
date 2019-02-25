@@ -101,7 +101,8 @@ var vm = new Vue({
             abroadLogistics:{},
             domesticLogisticsList:[],
             logList:[],
-            remarkList:[]
+            remarkList:[],
+            orderProductList:[]
         },
         waybill:[],
         domesticLogisticsId:null,
@@ -499,7 +500,7 @@ var vm = new Vue({
             // }
         },
         // 添加国内物流
-        addWuliuFunc:function () {
+        addWuliuFunc:function (id) {
             layer.open({
                 type: 1,
                 title: false,
@@ -519,7 +520,8 @@ var vm = new Vue({
                         data: {
                             orderId:vm.orderid,
                             price:vm.caigou,
-                            waybill:vm.wulDanh
+                            waybill:vm.wulDanh,
+                            itemId:id
                         },
                         dataType: 'json',
                         success: function (r) {
