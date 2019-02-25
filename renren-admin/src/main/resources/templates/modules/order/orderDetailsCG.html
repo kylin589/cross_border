@@ -27,7 +27,7 @@
               <a><cite>订单详情</cite></a>
             </span>
 
-            <input type="button" class="return" @click="returnFunc" value="返回" />
+            <input type="button" class="return" @click="javascript:window.location.href = 'allOrderCG.html?page='+page;" value="返回" />
         </p>
 
         <div class="form_item one">
@@ -420,7 +420,7 @@
 
 
 
-<script src="${request.contextPath}/statics/kuajing/js/step/order/allOrderCG.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/step/order/orderDetails.js"></script>
 <script src="${request.contextPath}/statics/kuajing/js/layui.js?t=1"></script>
 <script>
     layui.config({
