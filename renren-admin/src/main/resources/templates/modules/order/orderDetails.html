@@ -71,17 +71,17 @@
                     <h4>国内物流</h4>
                 </div>
                 <div class="pro_inf chengben okEdit">
-                    <p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addWuliuFunc(orderProductItem.itemId)"></p>
-                    <div v-for="(item,index) in orderDetails.domesticLogisticsList">
+                    <p style="margin-bottom: 10px" v-if="!orderProductItem.domesticLogistics"><input class="addguojiyundan" type="button" value="添加" @click="addWuliuFunc(orderProductItem.itemId)"></p>
+                    <div v-if="orderProductItem.domesticLogistics">
 
-                        <span><label for="">采购价(￥)：</label><input type="text" :placeholder="orderDetails.purchasePrice" v-model="price[index]" disabled></span>
-                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(item.waybill,$event)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  placeholder="物流单号" v-model="waybill[index]" disabled></a></span>
-                        <span><label for="">物流公司：</label><input class="" type="text" :placeholder="item.logisticsCompany" disabled></span>
-                        <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="item.issuanceDate" disabled></span>
+                        <span><label for="">采购价(￥)：</label><input type="text" v-model="orderProductItem.domesticLogistics.price" disabled></span>
+                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(orderProductItem.domesticLogistics.waybill,$event)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  placeholder="物流单号" v-model="orderProductItem.domesticLogistics.waybill" disabled></a></span>
+                        <span><label for="">物流公司：</label><input class="" type="text" :placeholder="orderProductItem.domesticLogistics.logisticsCompany" v-model="orderProductItem.domesticLogistics.logisticsCompany" disabled></span>
+                        <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="orderProductItem.domesticLogistics.issuanceDate" v-model="orderProductItem.domesticLogistics.issuanceDate" disabled></span>
                         <div class="fr" style="">
-                            <input class="edit" type="button" value="编辑" @click="edit(item.domesticLogisticsId,index,$event)">
-                            <input class="noedit" type="button" value="取消" @click="noedit(waybill[index],index,$event)">
-                            <input class="edit" type="button" value="同步" @click="synchronize(item)">
+                            <input class="edit" type="button" value="编辑" @click="edit(orderProductItem.domesticLogistics,$event)">
+                            <input class="noedit" type="button" value="取消" @click="noedit(orderProductItem.domesticLogistics.waybill,$event)">
+                            <input class="edit" type="button" value="同步" @click="synchronize(orderProductItem.domesticLogistics)">
                         </div>
                     </div>
                 </div>

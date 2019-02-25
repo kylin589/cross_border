@@ -33,39 +33,59 @@
         <div class="form_item one">
             <div class="item">
                 <div>
+                    <h4>基本信息</h4>
                     <!--<img src="../../statics/kuajing/img/img1.jpg" alt="">-->
-                    <img :src="orderDetails.productImageUrl" alt="">
+                    <!--<img :src="orderDetails.productImageUrl" alt="">-->
                 </div>
                 <div>
-                    <h4><a :href="orderDetails.amazonProductUrl" target="_blank">{{ orderDetails.productTitle }}</a></h4>
-                    <!--<p>sdkfjbsanklnsml;kdgfuasbjkdnlcxm </p>-->
-                    <!--<p>{{ orderDetails.shipAddress }}</p>-->
-
                     <span><label for="">订单ID：</label><span>{{ orderDetails.orderId }}</span></span>
                     <span><label for="">店铺：</label><span>{{ orderDetails.shopName }}</span></span><br>
-                    <span><label for="">SKU：</label><span :lay-href="'modules/product/detailsProduct1.html?id='+orderDetails.productId" layadmin-event="message" lay-text="产品详情" style="color: #12ace8;cursor:pointer;">{{ orderDetails.productSku }}</span></span>
-                    <span><label for="">ASIN：</label><span>{{ orderDetails.productAsin }}</span></span><br>
                     <span><label for="">数量：</label><span>{{ orderDetails.orderNumber }}</span></span>
                     <span><label for="">采购价（￥）：</label><span>{{ orderDetails.purchasePrice }}</span></span>
                     <span><label for="">订单状态：</label><span>{{ orderDetails.orderState }}</span></span>
                     <span><label for="">亚马逊单号：</label><span>{{ orderDetails.amazonOrderId }}</span></span>
                     <span><label for="">购买日期：</label><span>{{ orderDetails.buyDate }}</span></span>
-                    <!--<input v-if="orderDetails.orderState == '待付款'" class="yiCaigou" type="button" value="待付款">-->
                     <input v-if="orderDetails.orderState == '虚发货'" class="yiFahuo" type="button" value="国内物流已采购" @click="updateState('国内物流已采购')">
-                    <!--<input v-if="orderDetails.orderState == '缺货'" class="yiCaigou" type="button" value="缺货">-->
-                    <!--<input v-if="orderDetails.orderState == '取消'" class="yiFahuo" type="button" value="取消">-->
-                    <!--<input v-if="orderDetails.orderState == '退货'" class="yiCaigou" type="button" value="退货">-->
-                    <!--<input v-if="orderDetails.orderState == '问题'" class="yiFahuo" type="button" value="问题">-->
-                    <!--<input v-if="orderDetails.orderState == '已付款'" class="yiCaigou" type="button" value="已付款">-->
-                    <!--<input v-if="orderDetails.orderState == '国内物流已采购'" class="yiFahuo" type="button" value="国内物流已采购">-->
                     <input v-if="orderDetails.orderState == '国内物流待发货'" class="yiCaigou" type="button" value="通知仓库已发货" @click="updateState('物流仓库未签收')">
-                    <!--<input v-if="orderDetails.orderState == '仓库已入库'" class="yiFahuo" type="button" value="仓库已入库">-->
                     <input v-if="orderDetails.orderState == '国际已发货'" class="yiCaigou" type="button" value="已完成" @click="updateState('完成')">
-                    <!--<input v-if="orderDetails.orderState == '物流仓库未签收'" class="yiFahuo" type="button" value="物流仓库未签收">-->
-                    <!--<input v-if="orderDetails.orderState == '补发'" class="yiCaigou" type="button" value="补发">-->
                 </div>
             </div>
             
+        </div>
+        <div class="form_item one" v-for="orderProductItem in orderDetails.orderProductList">
+            <div class="item">
+                <div>
+                    <!--<img src="../../statics/kuajing/img/img1.jpg" alt="">-->
+                    <img :src="orderProductItem.productImageUrl" alt="">
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 20px"><a :href="orderProductItem.amazonProductUrl" target="_blank">{{ orderProductItem.productTitle }}</a></h4>
+                    <span><label for="">SKU：</label><span :lay-href="'modules/product/detailsProduct1.html?id='+orderProductItem.productId" layadmin-event="message" lay-text="产品详情" style="color: #12ace8;cursor:pointer;">{{ orderProductItem.productSku }}</span></span>
+                    <span><label for="">ASIN：</label><span>{{ orderProductItem.productAsin }}</span></span><br>
+                    <span><label for="">数量：</label><span>{{ orderProductItem.orderItemNumber }}</span></span>
+                    <span><label for="">金额：</label><span>{{ orderProductItem.productPrice }}</span></span>
+                </div>
+            </div>
+            <div class="item">
+                <div>
+                    <h4>国内物流</h4>
+                </div>
+                <div class="pro_inf chengben okEdit">
+                    <p style="margin-bottom: 10px" v-if="!orderProductItem.domesticLogistics"><input class="addguojiyundan" type="button" value="添加" @click="addWuliuFunc(orderProductItem.itemId)"></p>
+                    <div v-if="orderProductItem.domesticLogistics">
+
+                        <span><label for="">采购价(￥)：</label><input type="text" v-model="orderProductItem.domesticLogistics.price" disabled></span>
+                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(orderProductItem.domesticLogistics.waybill,$event)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  placeholder="物流单号" v-model="orderProductItem.domesticLogistics.waybill" disabled></a></span>
+                        <span><label for="">物流公司：</label><input class="" type="text" :placeholder="orderProductItem.domesticLogistics.logisticsCompany" v-model="orderProductItem.domesticLogistics.logisticsCompany" disabled></span>
+                        <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="orderProductItem.domesticLogistics.issuanceDate" v-model="orderProductItem.domesticLogistics.issuanceDate" disabled></span>
+                        <div class="fr" style="">
+                            <input class="edit" type="button" value="编辑" @click="edit(orderProductItem.domesticLogistics,$event)">
+                            <input class="noedit" type="button" value="取消" @click="noedit(orderProductItem.domesticLogistics.waybill,$event)">
+                            <input class="edit" type="button" value="同步" @click="synchronize(orderProductItem.domesticLogistics)">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="form_item">
             <div class="item">
@@ -96,26 +116,7 @@
             </div>
         </div>
         <div class="form_item">
-            <div class="item">
-                <div>
-                    <h4>国内物流</h4>
-                </div>
-                <div class="pro_inf chengben okEdit">
-                    <p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addWuliuFunc"></p>
-                    <div v-for="(item,index) in orderDetails.domesticLogisticsList">
 
-                        <span><label for="">采购价(￥)：</label><input type="text" :placeholder="orderDetails.purchasePrice" v-model="price[index]" disabled></span>
-                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(item.waybill,$event)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  placeholder="物流单号" v-model="waybill[index]" disabled></a></span>
-                        <span><label for="">物流公司：</label><input class="" type="text" :placeholder="item.logisticsCompany" disabled></span>
-                        <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="item.issuanceDate" disabled></span>
-                        <div class="fr" style="">
-                            <input class="edit" type="button" value="编辑" @click="edit(item.domesticLogisticsId,index,$event)">
-                            <input class="noedit" type="button" value="取消" @click="noedit(waybill[index],index,$event)">
-                            <input class="edit" type="button" value="同步" @click="synchronize(item)">
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="item">
                 <div>
                     <h4>国际物流</h4>

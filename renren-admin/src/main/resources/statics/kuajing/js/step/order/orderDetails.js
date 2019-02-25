@@ -227,12 +227,12 @@ var vm = new Vue({
                     if (r.code === 0) {
                         vm.orderDetails = r.orderDTO;
                         vm.price = [];
-                        vm.waybill = [];
-                        for (var i=0;i<vm.orderDetails.domesticLogisticsList.length;i++){
-                            vm.waybill.push(vm.orderDetails.domesticLogisticsList[i].waybill);
-                            vm.price.push(vm.orderDetails.domesticLogisticsList[i].price);
-
-                        }
+                        // vm.waybill = [];
+                        // for (var i=0;i<vm.orderDetails.domesticLogisticsList.length;i++){
+                        //     vm.waybill.push(vm.orderDetails.domesticLogisticsList[i].waybill);
+                        //     vm.price.push(vm.orderDetails.domesticLogisticsList[i].price);
+                        //
+                        // }
                         // vm.quxiaoJijian = r.orderDTO.shipAddress;
                         // console.log(vm.quxiaoJijian);
                     } else {
@@ -297,8 +297,8 @@ var vm = new Vue({
             }
         },
         //编辑修改国内物流
-        edit:function (domesticLogisticsId,index,event) {
-            console.log(index);
+        edit:function (d,event) {
+            // console.log(index);
             if($(event.target).val() == '编辑'){
                 vm.isLookWuliu = false;
                 $(event.target).val('保存');
@@ -325,9 +325,9 @@ var vm = new Vue({
                     type: 'get',
                     data: {
                         orderId:vm.orderid,
-                        waybill:this.waybill[index],
-                        domesticLogisticsId:domesticLogisticsId,
-                        price:this.price[index],
+                        waybill:d.waybill,
+                        domesticLogisticsId:d.domesticLogisticsId,
+                        price:d.price
                     },
                     dataType: 'json',
                     success: function (r) {
@@ -366,7 +366,7 @@ var vm = new Vue({
             }
         },
         //取消修改
-        noedit:function (d,index,event) {
+        noedit:function (d,event) {
             // d = vm.orderDetails.domesticLogisticsList[index].waybill;
             // console.log(d);
             // $(event.target).parent().parent().find('.logistics').find('input').val(d);
