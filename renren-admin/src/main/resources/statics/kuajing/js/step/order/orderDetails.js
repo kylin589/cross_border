@@ -715,6 +715,9 @@ var vm = new Vue({
         },
         returnFunc:function () {
             window.location.href = 'myOrder.html?page='+vm.page;
+        },
+        magSku:function () {
+            layer.msg('暂无该产品')
         }
     },
     created:function () {

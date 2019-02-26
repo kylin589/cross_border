@@ -436,6 +436,20 @@ var vm = new Vue({
                 s = this.value9[0] + ' 00:00:00';
                 e = this.value9[1] + ' 23:59:59';
             }
+            var Gongs='';
+            var Yuang='';
+
+            if(this.allYUanGValue == '1-1'){
+                Yuang='';
+            }else {
+                Yuang=this.allYUanGValue;
+            }
+
+            if(this.allGongsiValue == '1-1'){
+                Gongs=''
+            }else {
+                Gongs=this.allGongsiValue
+            }
             $.ajax({
                 url: '../../product/products/alllist',
                 type: 'post',

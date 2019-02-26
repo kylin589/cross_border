@@ -438,14 +438,15 @@ var vm = new Vue({
             });
 
         },
-        getOrderlist1:function (orderStatus) {
-
-            console.log(orderStatus);
+        getOrderlist1:function () {
+            console.log('订单状态');
+            console.log(this.orderStatus);
+            console.log(this.orderStatus1);
             this.startDate = this.value9[0];
             this.endDate = this.value9[1];
-            console.log(this.shopName);
-            console.log(this.endDate);
-            this.orderStatus = orderStatus;
+            // console.log(this.shopName);
+            // console.log(this.endDate);
+            // this.orderStatus = orderStatus;
             $.ajax({
                 url: '../../product/order/getAllList',
                 type: 'post',

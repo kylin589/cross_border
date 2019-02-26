@@ -432,14 +432,14 @@ var vm = new Vue({
                 }
             });
         },
-        getOrderlist1:function (orderStatus) {
+        getOrderlist1:function () {
 
-            console.log(orderStatus);
+            // console.log(orderStatus);
             this.startDate = this.value9[0];
             this.endDate = this.value9[1];
             console.log(this.shopName);
             console.log(this.endDate);
-            this.orderStatus = orderStatus;
+            // this.orderStatus = orderStatus;
             $.ajax({
                 url: '../../product/order/getOldAllList',
                 type: 'post',

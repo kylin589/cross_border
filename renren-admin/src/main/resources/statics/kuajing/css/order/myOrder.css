@@ -237,6 +237,9 @@ td:nth-child(14) span{
 td span.org{
     background: orange;
 }
+td span.org1{
+    background: #ff7922;
+}
 td span.red{
     background: orangered;
 }

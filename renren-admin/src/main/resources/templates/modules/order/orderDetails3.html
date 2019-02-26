@@ -58,7 +58,8 @@
                 </div>
                 <div>
                     <h4 style="margin-bottom: 20px"><a :href="orderProductItem.amazonProductUrl" target="_blank">{{ orderProductItem.productTitle }}</a></h4>
-                    <span><label for="">SKU：</label><span :lay-href="'modules/product/detailsProduct1.html?id='+orderProductItem.productId" layadmin-event="message" lay-text="产品详情" style="color: #12ace8;cursor:pointer;">{{ orderProductItem.productSku }}</span></span>
+                    <span v-if="!orderProductItem.productId"><label for="">SKU：</label><span style="color: #12ace8;cursor:pointer;" @click="magSku">{{ orderProductItem.productSku }}</span></span>
+                    <span v-if="orderProductItem.productId"><label for="">SKU：</label><span :lay-href="'modules/product/detailsProduct1.html?id='+orderProductItem.productId" layadmin-event="message" lay-text="产品详情" style="color: #12ace8;cursor:pointer;">{{ orderProductItem.productSku }}</span></span>
                     <span><label for="">ASIN：</label><span>{{ orderProductItem.productAsin }}</span></span><br>
                     <span><label for="">数量：</label><span>{{ orderProductItem.orderItemNumber }}</span></span>
                     <span><label for="">金额：</label><span>{{ orderProductItem.productPrice }}</span></span>
