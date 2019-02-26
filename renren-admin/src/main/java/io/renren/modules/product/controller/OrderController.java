@@ -460,6 +460,7 @@ public class OrderController extends AbstractController{
         abroadLogistics.setIsSynchronization(0);
         abroadLogistics.setCreateTime(new Date());
         abroadLogistics.setUpdateTime(new Date());
+        System.out.println(order.getBuyDate());
         abroadLogistics.setShipTime(DateUtils.addDateHours(order.getBuyDate(),8));
         abroadLogisticsService.insert(abroadLogistics);
         orderService.updateById(order);
@@ -500,10 +501,11 @@ public class OrderController extends AbstractController{
      * @param abroadLogisticsEntity
      */
     private SendDataMoedl synchronizationXuModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'00:01:00");
         String amazonOrderId = orderEntity.getAmazonOrderId();
         String abroadWaybill = abroadLogisticsEntity.getAbroadWaybill();
         Date date = abroadLogisticsEntity.getShipTime();
+        date=DateUtils.addDateHours(date,-8);
         Shipping u1 = new Shipping();
         u1.setMessageType("OrderFulfillment");
         Header header=new Header();
