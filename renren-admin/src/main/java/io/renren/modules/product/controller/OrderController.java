@@ -639,6 +639,7 @@ public class OrderController extends AbstractController{
             //同步成功后把物流状态改为同步
             AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
             abroadLogisticsEntity.setIsSynchronization(1);
+            abroadLogisticsEntity.setState("已发货");
             abroadLogisticsService.updateById(abroadLogisticsEntity);
         }
     }
