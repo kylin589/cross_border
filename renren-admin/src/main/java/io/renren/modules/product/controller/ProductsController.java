@@ -1383,7 +1383,6 @@ public class ProductsController extends AbstractController {
         String correction = products.getCorrection();
         StringBuffer correctionLater = new StringBuffer();
         String productSku = products.getProductSku();
-
         correctionLater.append(productSku);
         //判断修正是否为空
         if (correction != "" && StringUtils.isNotBlank(correction)) {
@@ -1423,7 +1422,9 @@ public class ProductsController extends AbstractController {
         }
 
         //根据产品id进行更新
-        productsService.updateById(products);
+        products.setProductSku(correctionLaterString);
+        products.setCorrection(null);
+        productsService.updateAllColumnById(products);
         return R.ok();
     }
 
@@ -1651,10 +1652,9 @@ public class ProductsController extends AbstractController {
         String correction = products.getCorrection();
         StringBuffer correctionLater = new StringBuffer();
         String productSku = products.getProductSku();
-
         correctionLater.append(productSku);
         //判断修正是否为空
-        if (correction != "" && StringUtils.isNotBlank(correction)) {
+        if (StringUtils.isNotBlank(correction)) {
             products.setCorrection(correction);
             correctionLater.append("-");
             correctionLater.append(correction);
@@ -1689,7 +1689,9 @@ public class ProductsController extends AbstractController {
             variantsInfoService.insertBatch(variantsInfosList);
         }
         //根据产品id进行更新
-        productsService.updateById(products);
+        products.setProductSku(correctionLaterString);
+        products.setCorrection(null);
+        productsService.updateAllColumnById(products);
         return R.ok();
     }
 

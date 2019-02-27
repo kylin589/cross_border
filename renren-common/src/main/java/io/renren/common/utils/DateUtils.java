@@ -291,7 +291,7 @@ public class DateUtils {
      */
     public static Date getTheDateNow1MonthsShort() {
         Date currentTime = new Date();
-        currentTime = addDateMonths(currentTime,-1);
+        currentTime = addDateMonths(currentTime,-2);
         return currentTime;
     }
     /**

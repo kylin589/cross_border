@@ -155,7 +155,7 @@ public class OrderController extends AbstractController{
         String AmazonOrderId=orderEntity.getAmazonOrderId();
         List<ProductOrderItemEntity> productOrderItemEntitys=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",AmazonOrderId));
         orderDTO.setShopName(orderEntity.getShopName());
-//        orderDTO.setOrderNumber(orderEntity.getOrderNumber());
+        orderDTO.setOrderNumber(orderEntity.getOrderNumber());
         orderDTO.setPurchasePrice(orderEntity.getPurchasePrice());
         ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
                 new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderId)
