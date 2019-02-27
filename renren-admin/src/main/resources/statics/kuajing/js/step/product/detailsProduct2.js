@@ -2337,8 +2337,10 @@ var vm = new Vue({
             // console.log(JSON.stringify(vm.proDetails.purchasePrice) == '');
             // if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == '' || vm.proDetails.productWeight == ''){
             // if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || JSON.stringify(vm.proDetails.purchasePrice) == '' || vm.proDetails.stock == '' || JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
-            if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || JSON.stringify(vm.proDetails.purchasePrice) == '' || JSON.stringify(vm.proDetails.stock) == '' || JSON.stringify(vm.proDetails.domesticFreight) == '' || JSON.stringify(vm.proDetails.productWeight) == '' || JSON.stringify(vm.proDetails.productLength) == '' || JSON.stringify(vm.proDetails.productWide) == '' || JSON.stringify(vm.proDetails.productHeight) == '' || JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
-                layer.msg('产品分类、厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
+            // if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || JSON.stringify(vm.proDetails.purchasePrice) == '' || JSON.stringify(vm.proDetails.stock) == '' || JSON.stringify(vm.proDetails.domesticFreight) == '' || JSON.stringify(vm.proDetails.productWeight) == '' || JSON.stringify(vm.proDetails.productLength) == '' || JSON.stringify(vm.proDetails.productWide) == '' || JSON.stringify(vm.proDetails.productHeight) == '' || JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
+            if(JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
+                layer.msg('产品分类不能为空！！');
+                // layer.msg('产品分类、厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
             }else {
 
                 // if(vm.proDetails.chinesePRE.productTitle)

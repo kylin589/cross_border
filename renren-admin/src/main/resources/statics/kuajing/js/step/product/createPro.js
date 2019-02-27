@@ -2332,91 +2332,174 @@ var vm = new Vue({
         // 修改保存
         savePro:function () {
 
-            if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == '' || vm.proDetails.domesticFreight == '' || vm.proDetails.productWeight == '' || vm.proDetails.productLength == '' || vm.proDetails.productWide == '' || vm.proDetails.productHeight == ''){
-                layer.msg('厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
+            if(JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
+                layer.msg('产品分类不能为空！！');
             }else {
 
-                var u = $('.ul1');
-                var shunx = [];
-                for(var j = 0;j<u.length;j++){
-                    var arr = u.eq(j).find('li');
-                    shunx[j] = []
-                    for(var i = 0;i<arr.length;i++){
-                        shunx[j].push(arr.eq(i).attr('data-index'))
+                if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
+                    layer.msg('中文产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.keyWord).length > 250){
+                    layer.msg('中文关键字内容不能超过250个字符')
+                }else if(JSON.stringify(vm.proDetails.chinesePRE.productDescription).length > 2000){
+                    layer.msg('中文产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.productTitle).length > 200){
+                    layer.msg('法语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.keyWord).length > 250){
+                    layer.msg('法语关键字内容不能超过250个字符')
+                }else if(JSON.stringify(vm.proDetails.francePRE.productDescription).length > 2000){
+                    layer.msg('法语产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.productTitle).length > 200){
+                    layer.msg('西班牙语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.keyWord).length > 250){
+                    layer.msg('西班牙语关键字内容不能超过250个字符')
+                }else if(JSON.stringify(vm.proDetails.spainPRE.productDescription).length > 2000){
+                    layer.msg('西班牙语产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.productTitle).length > 200){
+                    layer.msg('德国产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.keyWord).length > 250){
+                    layer.msg('德国关键字内容不能超过250个字符')
+                }else if(JSON.stringify(vm.proDetails.germanyPRE.productDescription).length > 2000){
+                    layer.msg('德国产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.productTitle).length > 200){
+                    layer.msg('意大利产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.keyWord).length > 250){
+                    layer.msg('意大利关键字内容不能超过250个字符')
+                }else if(JSON.stringify(vm.proDetails.italyPRE.productDescription).length > 2000){
+                    layer.msg('意大利产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.productTitle).length > 200){
+                    layer.msg('英语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.keyWord).length > 250){
+                    layer.msg('英语关键字内容不能超过250个字符')
+                }else if(JSON.stringify(vm.proDetails.britainPRE.productDescription).length > 2000){
+                    layer.msg('英语产品描述内容不能超过2000个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.productTitle).length > 200){
+                    layer.msg('日语产品标题内容不能超过200个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.keyWord).length > 250){
+                    layer.msg('日语关键字内容不能超过250个字符')
+                }else if(JSON.stringify(vm.proDetails.japanPRE.productDescription).length > 2000){
+                    layer.msg('日语产品描述内容不能超过2000个字符')
+                }else {
+                    // if(vm.)
+                    objectKeyIsEmpty(vm.proDetails.francePRE);
+                    objectKeyIsEmpty(vm.proDetails.spainPRE);
+                    objectKeyIsEmpty(vm.proDetails.germanyPRE);
+                    objectKeyIsEmpty(vm.proDetails.italyPRE);
+                    objectKeyIsEmpty(vm.proDetails.britainPRE);
+                    objectKeyIsEmpty(vm.proDetails.japanPRE);
+                    objectKeyIsEmpty(vm.proDetails.chinesePRE);
+
+
+                    if(vm.proDetails.manufacturerNumber == ''){
+                        vm.proDetails.manufacturerNumber = ' ';
                     }
-                }
-
-                // var arr = $('.ul1 li');
-                // var shunx = [];
-                // for(var i = 0;i<arr.length;i++){
-                //     shunx.push(arr.eq(i).attr('data-index'))
-                // }
-                console.log(shunx);
-
-                shunx.forEach(function (v,i) {
-                    var t = vm.recommendAll[i];
-                    console.log(t);
-                    var string = '';
-                    v.forEach(function (n) {
-                        string+=t.img[n]+','
-                    })
-                    console.log('11111111');
-                    // console.log(v.join(','));
-                    vm.proDetails.variantsInfos[i].variantId = i;
-                    vm.proDetails.variantsInfos[i].eanCode = t.code;
-                    vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
-                    vm.proDetails.variantsInfos[i].variantSku = t.sku;
-                    vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
-                    vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
-                })
-
-                // vm.recommendAll.forEach(function (t,i) {
-                //     vm.proDetails.variantsInfos[i].variantId = i;
-                //     vm.proDetails.variantsInfos[i].eanCode = t.code;
-                //     vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
-                //     vm.proDetails.variantsInfos[i].variantSku = t.sku;
-                //     vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
-                //     vm.proDetails.variantsInfos[i].imageUrl = (t.img).join(',');
-                // })
-
-                // vm.proDetails.variantsInfos.eanCode = vm.recommendAll.code;
-                // vm.proDetails.variantsInfos.variantAddPrice = vm.recommendAll.addPrice;
-                // vm.proDetails.variantsInfos.variantSku = vm.recommendAll.sku;
-                // vm.proDetails.variantsInfos.variantStock = vm.recommendAll.stock;
-                console.log(vm.proDetails);
+                    if(vm.proDetails.productSku == ''){
+                        vm.proDetails.productSku = ' ';
+                    }
+                    if(vm.proDetails.productSource == ''){
+                        vm.proDetails.productSource = ' ';
+                    }
+                    if(vm.proDetails.sellerLink == ''){
+                        vm.proDetails.sellerLink = ' ';
+                    }
+                    if(vm.proDetails.productRemark == ''){
+                        vm.proDetails.productRemark = ' ';
+                    }
+                    if(vm.proDetails.productAbbreviations == ''){
+                        vm.proDetails.productAbbreviations = ' ';
+                    }
 
 
 
-                layer.confirm('确定修改吗？', function(index){
-
-
-
-                    var index = layer.load();
-                    var index = layer.load(1); //换了种风格
-                    var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-                    $.ajax({
-                        type: 'post',
-                        url: '../../product/products/modifyproduct',
-                        contentType: "application/json",
-                        data: JSON.stringify(vm.proDetails),
-                        success: function (r) {
-                            console.log('修改产品');
-                            console.log(r);
-                            console.log(vm.proDetails);
-                            if (r.code == 0) {
-                                layer.close(index);
-
-                                window.location.href = document.referrer;
-
-                            } else {
-                                alert(r.msg);
-                            }
+                    var u = $('.ul1');
+                    var shunx = [];
+                    for(var j = 0;j<u.length;j++){
+                        var arr = u.eq(j).find('li');
+                        shunx[j] = []
+                        for(var i = 0;i<arr.length;i++){
+                            shunx[j].push(arr.eq(i).attr('data-index'))
                         }
+                    }
+
+                    // var arr = $('.ul1 li');
+                    // var shunx = [];
+                    // for(var i = 0;i<arr.length;i++){
+                    //     shunx.push(arr.eq(i).attr('data-index'))
+                    // }
+                    console.log(shunx);
+
+                    shunx.forEach(function (v,i) {
+                        var t = vm.recommendAll[i];
+                        console.log(t);
+                        var string = '';
+                        for(var m = 0;m<v.length;m++){
+                            v.forEach(function (n,i) {
+                                console.log(m)
+                                console.log(n)
+                                console.log(m == n)
+                                if(m == n){
+                                    string+=t.img[i]+','
+                                }
+
+                            })
+                        }
+
+                        console.log('11111111');
+                        // console.log(v.join(','));
+                        vm.proDetails.variantsInfos[i].variantId = i;
+                        vm.proDetails.variantsInfos[i].eanCode = t.code;
+                        vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
+                        vm.proDetails.variantsInfos[i].variantSku = t.sku;
+                        vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
+                        vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
+                    })
+
+                    layer.confirm('确定修改吗？', function(index){
+                        var index = layer.load();
+                        var index = layer.load(1); //换了种风格
+                        var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                        $.ajax({
+                            type: 'post',
+                            url: '../../product/products/modifyproduct',
+                            contentType: "application/json",
+                            data: JSON.stringify(vm.proDetails),
+                            success: function (r) {
+                                console.log('修改产品');
+                                console.log(r);
+                                console.log(vm.proDetails);
+                                if (r.code == 0) {
+                                    layer.close(index);
+
+                                    window.location.href = 'xmlListUP.html?id='+vm.id1;
+
+                                } else {
+                                    layer.close(index);
+                                    alert(r.msg);
+                                }
+                            },
+                            error:function () {
+                                layer.msg("网络故障");
+                                layer.close(index);
+                            }
+                        });
+
+
+
                     });
+                }
+            }
 
-
-
-                });
+            function objectKeyIsEmpty(obj) {
+                // console.log(obj);
+                // let empty = null;
+                for (var aa in obj) {
+                    if (obj[aa] == '') {
+                        obj[aa] = ' '
+                        console.log(obj[aa]);
+                    }
+                    // obj[aa] = JSON.stringify(obj[aa]);
+                }
+                // console.log(obj);
+                // return empty;
             }
 
 
@@ -2561,8 +2644,8 @@ var vm = new Vue({
         },
         // 原创保存
         createSava:function () {
-            if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || JSON.stringify(vm.proDetails.purchasePrice) == '' || JSON.stringify(vm.proDetails.stock) == '' || JSON.stringify(vm.proDetails.domesticFreight) == '' || JSON.stringify(vm.proDetails.productWeight) == '' || JSON.stringify(vm.proDetails.productLength) == '' || JSON.stringify(vm.proDetails.productWide) == '' || JSON.stringify(vm.proDetails.productHeight) == '' || JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
-                layer.msg('产品分类、厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
+            if(JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
+                layer.msg('产品分类不能为空！！');
             }else {
 
                 if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
