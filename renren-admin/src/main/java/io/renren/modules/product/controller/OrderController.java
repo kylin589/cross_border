@@ -431,6 +431,7 @@ public class OrderController extends AbstractController{
      */
     @RequestMapping("/createAbroadWaybill")
     public R createAbroadWaybill(@RequestBody OrderVM orderVM){
+
         //获取可用余额
         SysDeptEntity dept = deptService.selectById(getDeptId());
         if(dept.getAvailableBalance().compareTo(new BigDecimal(50.00)) != 1){
@@ -461,7 +462,7 @@ public class OrderController extends AbstractController{
         abroadLogistics.setCreateTime(new Date());
         abroadLogistics.setUpdateTime(new Date());
         System.out.println(order.getBuyDate());
-        abroadLogistics.setShipTime(DateUtils.addDateHours(order.getBuyDate(),8));
+        abroadLogistics.setShipTime(new Date());
         abroadLogisticsService.insert(abroadLogistics);
         orderService.updateById(order);
         //准备订单国际物流上传信息模型
@@ -501,11 +502,15 @@ public class OrderController extends AbstractController{
      * @param abroadLogisticsEntity
      */
     private SendDataMoedl synchronizationXuModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'00:01:00");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         String amazonOrderId = orderEntity.getAmazonOrderId();
         String abroadWaybill = abroadLogisticsEntity.getAbroadWaybill();
-        Date date = abroadLogisticsEntity.getShipTime();
+        //获取系统当前日期北京时间
+        Date date = new Date();
+        //北京时间减去8小时
         date=DateUtils.addDateHours(date,-8);
+        //再把当前日期变成格林时间带T的.
+        String shipDate=simpleDateFormat.format(date);
         Shipping u1 = new Shipping();
         u1.setMessageType("OrderFulfillment");
         Header header=new Header();
@@ -515,7 +520,7 @@ public class OrderController extends AbstractController{
         message.setMessageID("1");
         OrderFulfillment orderful=new OrderFulfillment();
         orderful.setAmazonOrderID(amazonOrderId);
-        orderful.setFulfillmentDate(simpleDateFormat.format(date));
+        orderful.setFulfillmentDate(shipDate);
         FulfillmentData fd=new FulfillmentData();
         fd.setCarrierName("Yun Express");
         fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
@@ -557,7 +562,12 @@ public class OrderController extends AbstractController{
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         String amazonOrderId = orderEntity.getAmazonOrderId();
         String trackWaybill = abroadLogisticsEntity.getTrackWaybill();
-        Date date = abroadLogisticsEntity.getShipTime();
+        //获取系统当前日期北京时间
+        Date date = new Date();
+        //北京时间减去8小时
+        date=DateUtils.addDateHours(date,-8);
+        //再把当前日期变成格林时间带T的.
+        String shipDate=simpleDateFormat.format(date);
         Shipping u1 = new Shipping();
         u1.setMessageType("OrderFulfillment");
         Header header=new Header();
@@ -567,7 +577,7 @@ public class OrderController extends AbstractController{
         message.setMessageID("1");
         OrderFulfillment orderful=new OrderFulfillment();
         orderful.setAmazonOrderID(amazonOrderId);
-        orderful.setFulfillmentDate(simpleDateFormat.format(date));
+        orderful.setFulfillmentDate(shipDate);
         FulfillmentData fd=new FulfillmentData();
         fd.setCarrierName(abroadLogisticsEntity.getDestTransportCompany());
         fd.setShippingMethod(abroadLogisticsEntity.getDestChannel());//<ShippingMethod>根据自己的需求可以有可以没有
