@@ -78,9 +78,12 @@ public class OrderLogisticsTimer {
                         .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED)
                         .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH)
         );
-        for(OrderEntity orderEntity : orderEntityList){
-            new RefreshOrderThread(orderEntity.getOrderId()).start();
+        if(orderEntityList != null && orderEntityList.size() >0){
+            for(OrderEntity orderEntity : orderEntityList){
+                new RefreshOrderThread(orderEntity.getOrderId()).start();
+            }
         }
+
     }
 
     /**
@@ -152,7 +155,7 @@ public class OrderLogisticsTimer {
                             abroadLogisticsEntity.setMobile(receiveOofayData.getMobile());
                         }
                         //有运费
-                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && ("0").equals(receiveOofayData.getInterFreight()) && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
+                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && !("0").equals(receiveOofayData.getInterFreight()) && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
                             //计算国际运费、平台佣金、利润
                             //国际运费
                             BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
@@ -242,16 +245,17 @@ public class OrderLogisticsTimer {
     }
 
     /**
-     * 真实发货信息 ——封装物流信息
+     * 虚发货——封装物流信息
      * 后置：上传数据到亚马逊
      * @param orderEntity
      * @param abroadLogisticsEntity
      */
     private SendDataMoedl synchronizationZhenModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'00:01:00");
         String amazonOrderId = orderEntity.getAmazonOrderId();
         String trackWaybill = abroadLogisticsEntity.getTrackWaybill();
         Date date = abroadLogisticsEntity.getShipTime();
+        date=DateUtils.addDateHours(date,-8);
         Shipping u1 = new Shipping();
         u1.setMessageType("OrderFulfillment");
         Header header=new Header();

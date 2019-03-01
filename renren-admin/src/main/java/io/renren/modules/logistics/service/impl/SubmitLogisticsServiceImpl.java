@@ -128,7 +128,7 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
     }
 
 
-    // TODO: 2018/12/27 步骤二：得到上传数据列表
+    //2018/12/27 步骤二：得到上传数据列表
     @Override
     public List<String> getFeedSubmissionList(String serviceURL, String merchantId, String sellerDevAuthToken, String feedSubmissionId) {
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
@@ -143,7 +143,7 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
         return invokeGetFeedSubmissionList(service, requests);
 
     }
-    // TODO: 2018/12/27 得到上传数据列表 发送请求，获得响应
+    //2018/12/27 得到上传数据列表 发送请求，获得响应
     public List<String> invokeGetFeedSubmissionList(MarketplaceWebService service, List<GetFeedSubmissionListRequest> requests) {
         List<String> feedSubmissionIds = new ArrayList<>();
         List<Future<GetFeedSubmissionListResponse>> responses = new ArrayList<Future<GetFeedSubmissionListResponse>>();

@@ -155,7 +155,7 @@ public class OrderController extends AbstractController{
         String AmazonOrderId=orderEntity.getAmazonOrderId();
         List<ProductOrderItemEntity> productOrderItemEntitys=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",AmazonOrderId));
         orderDTO.setShopName(orderEntity.getShopName());
-//        orderDTO.setOrderNumber(orderEntity.getOrderNumber());
+        orderDTO.setOrderNumber(orderEntity.getOrderNumber());
         orderDTO.setPurchasePrice(orderEntity.getPurchasePrice());
         ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
                 new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderId)
@@ -919,7 +919,7 @@ public class OrderController extends AbstractController{
                             abroadLogisticsEntity.setMobile(receiveOofayData.getMobile());
                         }
                         //有运费
-                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && ("0").equals(receiveOofayData.getInterFreight()) && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
+                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && !("0").equals(receiveOofayData.getInterFreight()) && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
                             //计算国际运费、平台佣金、利润
                             //国际运费
                             BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());

@@ -61,7 +61,7 @@ public class AbroadLogisticsUtil {
         //推送订单
 //        pushOrder("1");
         //获取订单国际物流状态
-//        getOrderDetail("305-8612849-0465910");
+        getOrderDetail("408-8886970-1570715");
         //获取物流价格
 //        getSaleDetail(1L);
         //修改订单国际物流状态
@@ -71,7 +71,7 @@ public class AbroadLogisticsUtil {
         //修改订单备注
 //        updateOrderRemark("302-7660577-9242718","订单中途遇到了问题1");
         //获取转单号
-        getTrackWaybill("305-1302253-62275471");
+//        getTrackWaybill("305-1302253-62275471");
 //        String orderData = "{\"order\":{\"order_sn\":\"20181214\" ,\"order_currency\":\"null\",\"order_date\":\"null\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
 //        System.out.println(orderData);
     }
@@ -154,16 +154,16 @@ public class AbroadLogisticsUtil {
                 JSONObject omsOrder = a.getJSONObject("oms_order");
 
                 JSONObject omsOrderDetailext = a.getJSONArray("OmsOrderDetailext").getJSONObject(0);
-                System.out.println("omsOrder:" + omsOrder.toString());
-                System.out.println("omsOrderDetailext:" + omsOrderDetailext.toString());
+//                System.out.println("omsOrder:" + omsOrder.toString());
+//                System.out.println("omsOrderDetailext:" + omsOrderDetailext.toString());
                 JSONArray omsExpressList = a.getJSONArray("oms_Express");
-                System.out.println("oms_Express:" + omsExpressList);
+//                System.out.println("oms_Express:" + omsExpressList);
                 //获取状态码
                 String status = omsOrderDetailext.getString("status");
                 receiveOofayData.setStatusStr(omsOrderDetailext.getString("status"));
                 //获取运费
                 String feedamount = omsOrder.getString("feedamount");
-                System.out.println("运费：" + feedamount);
+//                System.out.println("运费：" + feedamount);
                 receiveOofayData.setInterFreight(omsOrder.getString("feedamount"));
 
                 //获取是否有仓库已入库信息
@@ -174,7 +174,7 @@ public class AbroadLogisticsUtil {
                     receiveOofayData.setWarehousing(false);
                 }
                 JSONObject destInfo = a.getJSONObject("ChannelQueryInfo");
-                System.out.println("destInfo:" + destInfo.toString());
+//                System.out.println("destInfo:" + destInfo.toString());
                 if(destInfo != null){
                     //国际物流公司
                     receiveOofayData.setDestTransportCompany(destInfo.getString("dest_transport_company"));
@@ -195,6 +195,7 @@ public class AbroadLogisticsUtil {
                 }
                 map.put("code","true");
                 map.put("receiveOofayData",receiveOofayData);
+                System.out.println("receiveOofayData:" + receiveOofayData);
             }
         } catch (Exception e) {
             map.put("code","false");
@@ -405,12 +406,11 @@ public class AbroadLogisticsUtil {
                 String trackWaybill = a.getString("otherData");
                 if(StringUtils.isNotBlank(trackWaybill)){
                     map.put("code","true");
-                    map.put("trackWaybill","trackWaybill");
+                    map.put("trackWaybill",trackWaybill);
                 }else{
                     map.put("code","false");
                     map.put("msg","没有获取到转单号");
                 }
-
             }
         } catch (Exception e) {
             map.put("code","false");
@@ -464,6 +464,7 @@ public class AbroadLogisticsUtil {
         UTCTimeBuffer.append(" ").append(hour).append(":").append(minute) ;
         Date date = null;
         try{
+            System.out.println("UTCTimeBuffer:::" + UTCTimeBuffer);
             date = format.parse(UTCTimeBuffer.toString()) ;
             return date;
         }catch(ParseException e)

@@ -1,8 +1,15 @@
 package io.renren;
 
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
+import io.renren.modules.logistics.service.DomesticLogisticsService;
+import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.product.entity.ProductOrderItemEntity;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.UploadEntity;
+import io.renren.modules.product.service.OrderService;
+import io.renren.modules.product.service.ProductOrderItemService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.service.UploadService;
 import io.renren.modules.sys.entity.SysDeptEntity;
@@ -20,6 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
@@ -34,6 +42,43 @@ public class DynamicDataSourceTest {
     private ProductsService productsService;
     @Autowired
     private SysUserService userService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private ProductOrderItemService productOrderItemService;
+    @Autowired
+    private DomesticLogisticsService domesticLogisticsService;
+
+    @Test
+    public void tongbuOrder(){
+        List<OrderEntity> orderEntityList = orderService.selectList(null);
+        List<ProductOrderItemEntity> list = new ArrayList<ProductOrderItemEntity>();
+        for(OrderEntity orderEntity : orderEntityList){
+            ProductOrderItemEntity orderItem = new ProductOrderItemEntity();
+            orderItem.setAmazonOrderId(orderEntity.getAmazonOrderId());
+            orderItem.setProductImageUrl(orderEntity.getProductImageUrl());
+            orderItem.setProductAsin(orderEntity.getProductAsin());
+            orderItem.setProductSku(orderEntity.getProductSku());
+            orderItem.setProductPrice(orderEntity.getOrderMoney());
+            orderItem.setProductTitle(orderEntity.getProductTitle());
+            orderItem.setProductId(orderEntity.getProductId());
+            orderItem.setUpdatetime(new Date());
+            orderItem.setOrderItemId(orderEntity.getOrderItemId());
+            orderItem.setOrderItemNumber(orderEntity.getOrderNumber());
+            list.add(orderItem);
+        }
+        productOrderItemService.insertBatch(list);
+    }
+    @Test
+    public void tongbuwuliu(){
+        List<DomesticLogisticsEntity> domesticLogisticsEntityList = domesticLogisticsService.selectList(null);
+        for(DomesticLogisticsEntity dom : domesticLogisticsEntityList){
+            OrderEntity order = orderService.selectById(dom.getOrderId());
+            ProductOrderItemEntity orderItem = productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id",order.getOrderItemId()));
+            dom.setItemId(orderItem.getItemId());
+        }
+        domesticLogisticsService.updateBatchById(domesticLogisticsEntityList);
+    }
     @Test
     public void test(){
         //数据源1
