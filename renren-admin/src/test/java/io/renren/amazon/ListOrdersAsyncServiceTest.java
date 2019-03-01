@@ -45,10 +45,10 @@ public class ListOrdersAsyncServiceTest {
     final String serviceURL = "https://mws.amazonservices.co.uk/Orders/2013-09-01";
 
     // 卖家ID
-    final String sellerId = "A3OT34MAE5R969";
+    final String sellerId = "A18MNV1HNZ2F2W";
 
     // MWS验证令牌
-    final String mwsAuthToken = "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A";
+    final String mwsAuthToken = "amzn.mws.8ab41e16-8486-6400-e655-b77def0356f2";
 
     @Autowired
     private ListOrdersAsyncService listOrdersAsyncService;
@@ -56,6 +56,8 @@ public class ListOrdersAsyncServiceTest {
     private SubmitLogisticsService submitLogisticsService;
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
+    @Test
+    @Ignore
     public void invokeListFeedsTest() {
         //定义一个map集合存储
         Map<String, Object> map = new HashMap<>();
@@ -71,28 +73,42 @@ public class ListOrdersAsyncServiceTest {
         u1.setMessageType("OrderFulfillment");
         Header header=new Header();
         header.setDocumentVersion("1.01");
-        header.setMerchantIdentifier("MYID");//<MerchantIdentifier>此选项可以随便填写，，
-        Message message=new Message();//如果要确认多个订单可以增加多个<message>
-        message.setMessageID("1");
+        header.setMerchantIdentifier("MYID");
+        u1.setHeader(header);
+        List<Message> messages=new ArrayList<>();
+        Message message1=new Message();
+        message1.setMessageID("1");
         OrderFulfillment orderful=new OrderFulfillment();
-        orderful.setAmazonOrderID("171-7366447-0960300");
-        orderful.setFulfillmentDate("2018-12-26T09:06:00");
+        orderful.setAmazonOrderID("306-7829162-9096359");
+        orderful.setFulfillmentDate("2019-03-01T02:01:34");
         FulfillmentData fd=new FulfillmentData();
         fd.setCarrierName("Yun Express");
-        fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
-        fd.setShipperTrackingNumber("YT1836121208000624");
-        List<Item> items=new ArrayList<>();
+        fd.setShippingMethod("Standard");
+        fd.setShipperTrackingNumber("YT3076279392579333");
         Item item=new Item();
-        item.setAmazonOrderItemCode("56799397374259");
+        item.setAmazonOrderItemCode("34270572071275");
         item.setQuantity("1");
-        Item item2=new Item();
-        item.setAmazonOrderItemCode("26799397374254");
-        item.setQuantity("2");
+        orderful.setItem(item);
         orderful.setFulfillmentData(fd);
-        orderful.setItems(items);
-        message.setOrderFulfillment(orderful);
-        u1.setHeader(header);
-        u1.setMessage(message);
+        message1.setOrderFulfillment(orderful);
+        Message message2=new Message();
+        message2.setMessageID("2");
+        OrderFulfillment orderful2=new OrderFulfillment();
+        orderful2.setAmazonOrderID("306-7829162-9096359");
+        orderful2.setFulfillmentDate("2019-03-01T02:01:34");
+        FulfillmentData fd2=new FulfillmentData();
+        fd2.setCarrierName("Yun Express");
+        fd2.setShippingMethod("Standard");
+        fd2.setShipperTrackingNumber("YT3076279392579333");
+        Item item2=new Item();
+        item2.setAmazonOrderItemCode("38670572071278");
+        item2.setQuantity("1");
+        orderful2.setItem(item2);
+        orderful2.setFulfillmentData(fd2);
+        message2.setOrderFulfillment(orderful2);
+        messages.add(message1);
+        messages.add(message2);
+        u1.setMessages(messages);
         List<Shipping> List = new ArrayList<Shipping>();
         List.add(u1);
         /**
@@ -116,13 +132,13 @@ public class ListOrdersAsyncServiceTest {
 //         List<Object> responseList =listOrdersAsyncService.invokeListOrders(client,requestList);
         //进行数据上传(步骤一)
         // TODO: 2018/12/26 数据上传
-        String feedSubmissionId=submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath);
+        String feedSubmissionId=submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
         //进行数据上传(步骤二)
-        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId);
+        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId,accessKey,secretKey);
         System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
         if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
             //进行数据上传(步骤三)
-            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0));
+            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0),accessKey,secretKey);
         }
     }
 
@@ -202,7 +218,6 @@ public class ListOrdersAsyncServiceTest {
     }
 
     @Test
-    @Ignore
     public void getOrderAsyncTest() {
 
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
@@ -220,16 +235,38 @@ public class ListOrdersAsyncServiceTest {
         request.setMWSAuthToken(mwsAuthToken);
         List<String> amazonOrderId = new ArrayList<String>();
         // 最多50个
-        amazonOrderId.add("404-8753970-2929168");
-        amazonOrderId.add("302-8563289-3648321");
+        amazonOrderId.add("306-7829162-9096359");
         request.setAmazonOrderId(amazonOrderId);
         requestList.add(request);
 
         // Make the calls.
-        listOrdersAsyncService.invokeGetOrder(client, requestList);
+        List<Object> reponselist=listOrdersAsyncService.invokeGetOrder(client, requestList);
+        Boolean isSuccess = false;
+        GetOrderResponse getOrderResponse = null;
+        for (Object tempResponse : reponselist) {
+            // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
+            String className = tempResponse.getClass().getName();
+            if ((GetOrderResponse.class.getName()).equals(className) == true) {
+                System.out.println("responseList 类型是 GetOrderResponse。");
+                GetOrderResponse response = (GetOrderResponse) tempResponse;
+                System.out.println(response.toXML());
+                String s=response.toXML();
+                if(s.contains("<OrderStatus>")){
+                   s= s.substring(s.indexOf("<OrderStatus>"),s.indexOf("</OrderStatus>")).replace("<OrderStatus>","");
+                    System.out.println(s);
+                }
+//                getOrderResponse = analysisGetOrderResponse(response.toXML());
+                isSuccess = true;
+            } else {
+                System.out.println("responseList 类型是 MarketplaceWebServiceOrdersException。");
+                isSuccess = false;
+                continue;
+            }
+        }
     }
 
     @Test
+    @Ignore
     public void listOrderItemsAsyncTest() {
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
         config.setServiceURL(serviceURL);
@@ -280,6 +317,7 @@ public class ListOrdersAsyncServiceTest {
     }
 
     @Test
+    @Ignore
     public void getServiceStatusAsyncTest() {
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
         config.setServiceURL(serviceURL);
