@@ -73,7 +73,7 @@
                     <h4>国内物流</h4>
                 </div>
                 <div class="pro_inf chengben okEdit">
-                    <p style="margin-bottom: 10px" v-if="!orderProductItem.domesticLogistics"><input class="addguojiyundan" type="button" value="添加" @click="addWuliuFunc(orderProductItem.itemId)"></p>
+                    <p style="margin-bottom: 10px" v-if="!orderProductItem.domesticLogistics && orderDetails.orderState != '待付款' && orderDetails.orderState != '已付款'"><input class="addguojiyundan" type="button" value="添加" @click="addWuliuFunc(orderProductItem.itemId)"></p>
                     <div v-if="orderProductItem.domesticLogistics">
 
                         <span><label for="">采购价(￥)：</label><input type="text" v-model="orderProductItem.domesticLogistics.price" disabled></span>
