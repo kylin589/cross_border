@@ -948,7 +948,7 @@ var vm = new Vue({
             }else {
                 var index = layer.load();
                 var index = layer.load(1); //换了种风格
-                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                var index = layer.load(2, {time: 10*10000}); //又换了种风格，并且设定最长等待10秒
                 $.ajax({
                     type: 'post',
                     url: '../../product/products/costFreight',
@@ -2352,17 +2352,32 @@ var vm = new Vue({
             // }
 
             // objectKeyIsEmpty(arr);
-            console.log(vm.proDetails.purchasePrice);
-            console.log(vm.proDetails.purchasePrice == '');
-            console.log(JSON.stringify(vm.proDetails.purchasePrice));
-            console.log(JSON.stringify(vm.proDetails.purchasePrice) == '');
+            // console.log(vm.proDetails.purchasePrice);
+            // console.log(vm.proDetails.purchasePrice == '');
+            // console.log(JSON.stringify(vm.proDetails.purchasePrice));
+            // console.log(JSON.stringify(vm.proDetails.purchasePrice) == '');
             // if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || vm.proDetails.purchasePrice == '' || vm.proDetails.stock == '' || vm.proDetails.productWeight == ''){
             // if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || JSON.stringify(vm.proDetails.purchasePrice) == '' || vm.proDetails.stock == '' || JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
             // if(vm.proDetails.producerName == '' || vm.proDetails.brandName == '' || JSON.stringify(vm.proDetails.purchasePrice) == '' || JSON.stringify(vm.proDetails.stock) == '' || JSON.stringify(vm.proDetails.domesticFreight) == '' || JSON.stringify(vm.proDetails.productWeight) == '' || JSON.stringify(vm.proDetails.productLength) == '' || JSON.stringify(vm.proDetails.productWide) == '' || JSON.stringify(vm.proDetails.productHeight) == '' || JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
             if(JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
                 layer.msg('产品分类不能为空！！');
             }else {
+                if(vm.proDetails.auditStatus == 001){
+                    if(JSON.stringify(vm.proDetails.purchasePrice) == '0'){
+                        layer.msg('采购价格不能为零！！');
+                        return;
+                    }else if(JSON.stringify(vm.proDetails.domesticFreight) == '0'){
+                        layer.msg('国内运费不能为零！！');
+                        return;
+                    }else if(JSON.stringify(vm.proDetails.productWeight) == '0'){
+                        layer.msg('包装毛重不能为零！！');
+                        return;
+                    }else if(parseInt(vm.proDetails.productLength) == 0 || parseInt(vm.proDetails.productWide) == 0 || parseInt(vm.proDetails.productHeight) == 0){
+                        layer.msg('包装尺寸不能为零！！');
+                        return;
+                    }
 
+                }
                 // if(vm.proDetails.chinesePRE.productTitle)
                 if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
                     layer.msg('中文产品标题内容不能超过200个字符')
@@ -2435,9 +2450,6 @@ var vm = new Vue({
                     if(vm.proDetails.productAbbreviations == ''){
                         vm.proDetails.productAbbreviations = ' ';
                     }
-
-
-
                     var u = $('.ul1');
                     var shunx = [];
                     for(var j = 0;j<u.length;j++){
@@ -2480,7 +2492,7 @@ var vm = new Vue({
                         vm.proDetails.variantsInfos[i].variantStock = parseInt(t.stock);
                         vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
                     })
-                    console.log(vm.proDetails.variantsInfos);
+                    // console.log(vm.proDetails.variantsInfos);
 
                     layer.confirm('确定修改吗？', function(index1){
                         var index = layer.load();

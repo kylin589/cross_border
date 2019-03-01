@@ -2342,6 +2342,22 @@ var vm = new Vue({
                 layer.msg('产品分类不能为空！！');
                 // layer.msg('产品分类、厂商名称、品牌名称、库存数量、采购价格、国内运费、包装毛重、包装尺寸不能为空！！');
             }else {
+                if(vm.proDetails.auditStatus == 001){
+                    if(JSON.stringify(vm.proDetails.purchasePrice) == '0'){
+                        layer.msg('采购价格不能为零！！');
+                        return;
+                    }else if(JSON.stringify(vm.proDetails.domesticFreight) == '0'){
+                        layer.msg('国内运费不能为零！！');
+                        return;
+                    }else if(JSON.stringify(vm.proDetails.productWeight) == '0'){
+                        layer.msg('包装毛重不能为零！！');
+                        return;
+                    }else if(parseInt(vm.proDetails.productLength) == 0 || parseInt(vm.proDetails.productWide) == 0 || parseInt(vm.proDetails.productHeight) == 0){
+                        layer.msg('包装尺寸不能为零！！');
+                        return;
+                    }
+
+                }
 
                 // if(vm.proDetails.chinesePRE.productTitle)
                 if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
@@ -2415,9 +2431,6 @@ var vm = new Vue({
                     if(vm.proDetails.productAbbreviations == ''){
                         vm.proDetails.productAbbreviations = ' ';
                     }
-
-
-
                     var u = $('.ul1');
                     var shunx = [];
                     for(var j = 0;j<u.length;j++){

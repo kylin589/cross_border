@@ -2647,6 +2647,22 @@ var vm = new Vue({
             if(JSON.stringify(vm.proDetails.categoryThreeId) == 'null'){
                 layer.msg('产品分类不能为空！！');
             }else {
+                if(vm.proDetails.auditStatus == 001){
+                    if(JSON.stringify(vm.proDetails.purchasePrice) == '0'){
+                        layer.msg('采购价格不能为零！！');
+                        return;
+                    }else if(JSON.stringify(vm.proDetails.domesticFreight) == '0'){
+                        layer.msg('国内运费不能为零！！');
+                        return;
+                    }else if(JSON.stringify(vm.proDetails.productWeight) == '0'){
+                        layer.msg('包装毛重不能为零！！');
+                        return;
+                    }else if(parseInt(vm.proDetails.productLength) == 0 || parseInt(vm.proDetails.productWide) == 0 || parseInt(vm.proDetails.productHeight) == 0){
+                        layer.msg('包装尺寸不能为零！！');
+                        return;
+                    }
+
+                }
 
                 if(JSON.stringify(vm.proDetails.chinesePRE.productTitle).length > 200){
                     layer.msg('中文产品标题内容不能超过200个字符')
@@ -2789,7 +2805,7 @@ var vm = new Vue({
                         }
                     });
 
-                    layer.confirm('确定保存吗？', function(index){
+                    layer.confirm('确定保存吗？', function(index1){
                         var index = layer.load();
                         var index = layer.load(1); //换了种风格
                         var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
@@ -2804,6 +2820,7 @@ var vm = new Vue({
                                 console.log(vm.proDetails);
                                 if (r.code == 0) {
                                     layer.close(index);
+                                    layer.close(index1);
 
                                     window.location.href = 'myProduct.html';
 
@@ -2872,6 +2889,42 @@ var vm = new Vue({
                     }
                 })
             })
+        },
+        // 售价修改
+        lirFunc1:function () {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+            $.ajax({
+                type: 'post',
+                url: '../../product/products/refreshProfitRate',
+                contentType: "application/json",
+                data: JSON.stringify(vm.proDetails),
+                success: function (r) {
+                    console.log('利润');
+                    console.log(r)
+                    if (r.code == 0) {
+                        // console.log('成本运费成功')
+                        vm.proDetails.americanFC = r.productsEntity.americanFC;
+                        vm.proDetails.canadaFC = r.productsEntity.canadaFC;
+                        vm.proDetails.mexicoFC = r.productsEntity.mexicoFC;
+                        vm.proDetails.britainFC = r.productsEntity.britainFC;
+                        vm.proDetails.franceFC = r.productsEntity.franceFC;
+                        vm.proDetails.germanyFC = r.productsEntity.germanyFC;
+                        vm.proDetails.italyFC = r.productsEntity.italyFC;
+                        vm.proDetails.spainFC = r.productsEntity.spainFC;
+                        vm.proDetails.japanFC = r.productsEntity.japanFC;
+                        vm.proDetails.australiaFC = r.productsEntity.australiaFC;
+                        // this.costFreight = r.categoryOneList;
+                        layer.close(index);
+                        // console.log(vm.categoryOneList)
+                    } else {
+                        layer.close(index);
+                        alert(r.msg);
+
+                    }
+                }
+            });
         },
         titleChange:function (event) {
             if($(event.target).val().length > 200){

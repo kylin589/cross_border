@@ -35,40 +35,47 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['添加','取消'],
                 btn1: function (index) {
-                    console.log(vm.shopName);
-                    console.log(vm.amazonAccount);
-                    console.log(vm.area);
-                    console.log(vm.merchantId);
-                    console.log(vm.grantToken);
-                    $.ajax({
-                        url: '../../amazon/amazongrant/addAmazonGrant',
-                        type: 'post',
-                        data: JSON.stringify({
-                            shopName:vm.shopName,
-                            amazonAccount:vm.amazonAccount,
-                            region:vm.area,
-                            merchantId:vm.merchantId,
-                            grantToken:vm.grantToken
-                        }),
-                        contentType: "application/json",
-                        success: function (r) {
-                            console.log(r);
-                            if (r.code === 0) {
-                                vm.getauthorizeList();
-                                vm.shopName='';
-                                vm.amazonAccount='';
-                                vm.area='' ;
-                                vm.merchantId='';
-                                vm.grantToken='';
-                                layer.close(index)
-                            } else {
-                                layer.alert(r.msg);
+                    // console.log(vm.shopName);
+                    // console.log(vm.amazonAccount);
+                    // console.log(vm.area);
+                    // console.log(vm.merchantId);
+                    // console.log(vm.grantToken);
+                    var res = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+                    if(res.test(vm.amazonAccount)){
+                        // layer.msg('邮箱格式对了');
+                        $.ajax({
+                            url: '../../amazon/amazongrant/addAmazonGrant',
+                            type: 'post',
+                            data: JSON.stringify({
+                                shopName:vm.shopName,
+                                amazonAccount:vm.amazonAccount,
+                                region:vm.area,
+                                merchantId:vm.merchantId,
+                                grantToken:vm.grantToken
+                            }),
+                            contentType: "application/json",
+                            success: function (r) {
+                                console.log(r);
+                                if (r.code === 0) {
+                                    vm.getauthorizeList();
+                                    vm.shopName='';
+                                    vm.amazonAccount='';
+                                    vm.area='' ;
+                                    vm.merchantId='';
+                                    vm.grantToken='';
+                                    layer.close(index)
+                                } else {
+                                    layer.alert(r.msg);
+                                }
+                            },
+                            error: function () {
+                                layer.msg("网络故障");
                             }
-                        },
-                        error: function () {
-                            layer.msg("网络故障");
-                        }
-                    });
+                        });
+                    }else {
+                        layer.msg('邮箱格式错误');
+                    }
+
                 },
                 btn2: function (index) {
 

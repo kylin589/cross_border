@@ -16,8 +16,9 @@
         </span>
 
         <!--<button class="save" >添加授权</button>-->
-        <a href="ruheAuthorize.html" target="_blank" style="float: right;margin-right: 20px;line-height: 30px;color: #34a4ee;">如何授权？</a>
-        <input class="save" type="button" value="添加授权" @click="addShouq">
+
+        <input class="save" type="button" value="添加授权" @click="addShouq" style="margin-right: 20px;">
+        <a href="ruheAuthorize.html" target="_blank" style="float: right;line-height: 30px;color: rgb(238, 125, 52);font-size: 19px">如何授权？</a>
 
     </p>
 
@@ -55,7 +56,7 @@
         <br>
         <span>
             <label for="">Amazon账号</label>
-            <input type="text" placeholder="Amazon账号" v-model="amazonAccount">
+            <input type="email" placeholder="Amazon账号" v-model="amazonAccount">
         </span>
         <br>
         <span>
