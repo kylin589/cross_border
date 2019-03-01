@@ -222,7 +222,10 @@ var vm = new Vue({
 
                                 vm.operateItem = [];
                                 // console.log(vm.inputche)
-                                vm.uploadIds = vm.upProDetails.uploadEntity.uploadIds.split(',');
+                                if(JSON.stringify(vm.upProDetails.uploadEntity.uploadIds) != 'null'){
+                                    vm.uploadIds = vm.upProDetails.uploadEntity.uploadIds.split(',');
+                                }
+                                // vm.uploadIds = vm.upProDetails.uploadEntity.uploadIds.split(',');
 
                                 $.ajax({
                                     url: '../../product/upload/renewTimingUpload',
@@ -323,8 +326,11 @@ var vm = new Vue({
 
                     // console.log(vm.shopinfo);
                     // vm.uploadIds = vm.uploadIdsstr;
-                    vm.uploadIds = vm.upProDetails.uploadEntity.uploadIds.split(',');
-                    console.log(vm.uploadIds);
+                    if(JSON.stringify(vm.upProDetails.uploadEntity.uploadIds) != 'null'){
+                        vm.uploadIds = vm.upProDetails.uploadEntity.uploadIds.split(',');
+                    }
+
+                    // console.log(vm.uploadIds);
                     // if (vm.inputche[0]==true){
                     //
                     //     vm.operateItem = [0,1,2,3,4];
@@ -395,6 +401,7 @@ var vm = new Vue({
                             } else {
                                 layer.alert(r.msg);
                                 layer.close(index);
+                                layer.close(index1);
                             }
 
 
@@ -402,6 +409,7 @@ var vm = new Vue({
                         error: function () {
                             layer.msg("网络故障");
                             layer.close(index);
+                            layer.close(index1);
                         }
                     });
                 });
