@@ -766,7 +766,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             orderEntity.setOrderState("已付款");
                         }else if("Shipped".equals(modelStatus)){
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_SHIPPED);
-                            orderEntity.setOrderState("已发货");
+                            orderEntity.setOrderState("虚发货");
                         }
                         orderEntity.setCountryCode(orderModel.getCountry());
                         orderEntity.setShopId(orderModel.getShopId());
@@ -950,7 +950,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             orderEntity.setOrderState("已付款");
                         }else if("Shipped".equals(modelStatus)){
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_SHIPPED);
-                            orderEntity.setOrderState("已发货");
+                            orderEntity.setOrderState("虚发货");
                         }
                         //判断该订单的订单商品列表是否存在
                         List<OrderItemModel> orderItemModels=orderModel.getOrderItemModels();
@@ -1179,40 +1179,43 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      */
     @Override
     public void deduction(OrderEntity order){
-        //扣款
-        SysDeptEntity dept = deptService.selectById(order.getDeptId());
-        //原来余额
-        BigDecimal oldBalance = dept.getBalance();
-        BigDecimal nowBalance = oldBalance.subtract(order.getInterFreight()).subtract(order.getPlatformCommissions());
-        dept.setBalance(nowBalance);
-        deptService.updateById(dept);
-        //生成运费记录
-        ConsumeEntity consumeEntity1 = new ConsumeEntity();
-        consumeEntity1.setDeptId(order.getDeptId());
-        consumeEntity1.setDeptName(deptService.selectById(order.getDeptId()).getName());
-        consumeEntity1.setUserId(order.getUserId());
-        consumeEntity1.setUserName(userService.selectById(order.getUserId()).getDisplayName());
-        consumeEntity1.setType("物流费");
-        consumeEntity1.setOrderId(order.getOrderId());
-        consumeEntity1.setMoney(order.getInterFreight());
-        consumeEntity1.setBeforeBalance(oldBalance);
-        consumeEntity1.setAfterBalance(oldBalance.subtract(order.getInterFreight()));
-        consumeEntity1.setAbroadWaybill(order.getAbroadWaybill());
-        consumeEntity1.setCreateTime(new Date());
-        consumeService.insert(consumeEntity1);
-        //生成服务费记录
-        ConsumeEntity consumeEntity2 = new ConsumeEntity();
-        consumeEntity2.setDeptId(order.getDeptId());
-        consumeEntity2.setDeptName(deptService.selectById(order.getDeptId()).getName());
-        consumeEntity2.setUserId(order.getUserId());
-        consumeEntity2.setUserName(userService.selectById(order.getUserId()).getDisplayName());
-        consumeEntity2.setType("服务费");
-        consumeEntity2.setOrderId(order.getOrderId());
-        consumeEntity2.setMoney(order.getPlatformCommissions());
-        consumeEntity2.setBeforeBalance(oldBalance.subtract(order.getInterFreight()));
-        consumeEntity2.setAfterBalance(nowBalance);
-        consumeEntity2.setCreateTime(new Date());
-        consumeService.insert(consumeEntity2);
+        List<ConsumeEntity> consumeList = consumeService.selectList(new EntityWrapper<ConsumeEntity>().eq("order_id",order.getOrderId()));
+        if(consumeList == null || consumeList.size() == 0){
+            //扣款
+            SysDeptEntity dept = deptService.selectById(order.getDeptId());
+            //原来余额
+            BigDecimal oldBalance = dept.getBalance();
+            BigDecimal nowBalance = oldBalance.subtract(order.getInterFreight()).subtract(order.getPlatformCommissions());
+            dept.setBalance(nowBalance);
+            deptService.updateById(dept);
+            //生成运费记录
+            ConsumeEntity consumeEntity1 = new ConsumeEntity();
+            consumeEntity1.setDeptId(order.getDeptId());
+            consumeEntity1.setDeptName(deptService.selectById(order.getDeptId()).getName());
+            consumeEntity1.setUserId(order.getUserId());
+            consumeEntity1.setUserName(userService.selectById(order.getUserId()).getDisplayName());
+            consumeEntity1.setType("物流费");
+            consumeEntity1.setOrderId(order.getOrderId());
+            consumeEntity1.setMoney(order.getInterFreight());
+            consumeEntity1.setBeforeBalance(oldBalance);
+            consumeEntity1.setAfterBalance(oldBalance.subtract(order.getInterFreight()));
+            consumeEntity1.setAbroadWaybill(order.getAbroadWaybill());
+            consumeEntity1.setCreateTime(new Date());
+            consumeService.insert(consumeEntity1);
+            //生成服务费记录
+            ConsumeEntity consumeEntity2 = new ConsumeEntity();
+            consumeEntity2.setDeptId(order.getDeptId());
+            consumeEntity2.setDeptName(deptService.selectById(order.getDeptId()).getName());
+            consumeEntity2.setUserId(order.getUserId());
+            consumeEntity2.setUserName(userService.selectById(order.getUserId()).getDisplayName());
+            consumeEntity2.setType("服务费");
+            consumeEntity2.setOrderId(order.getOrderId());
+            consumeEntity2.setMoney(order.getPlatformCommissions());
+            consumeEntity2.setBeforeBalance(oldBalance.subtract(order.getInterFreight()));
+            consumeEntity2.setAfterBalance(nowBalance);
+            consumeEntity2.setCreateTime(new Date());
+            consumeService.insert(consumeEntity2);
+        }
     }
 
     @Override

@@ -170,13 +170,13 @@ public class SysLoginController extends AbstractController {
             SysDeptEntity dept = deptService.selectById(getDeptId());
             //未发货订单
             int unshippedNumber = orderService.selectCount(
-                    new EntityWrapper<OrderEntity>().in("order_status", ConstantDictionary.OrderStateCode.UNLIQUIDATED_ORDER_STATE)
+                    new EntityWrapper<OrderEntity>().in("order_status", ConstantDictionary.OrderStateCode.UNLIQUIDATED_ORDER_STATE).andNew()
                             .ne("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN)
             );
             dept.setUnshippedNumber(unshippedNumber);
             //未结算订单数(国际已发货)
             int unliquidatedNumber = orderService.selectCount(
-                    new EntityWrapper<OrderEntity>().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED)
+                    new EntityWrapper<OrderEntity>().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED).eq("dept_id",dept.getDeptId())
             );
             dept.setUnliquidatedNumber(unliquidatedNumber);
             //预计费用

@@ -234,10 +234,12 @@ public class ProductsController extends AbstractController {
         productsEntity.setDomesticFreight(new BigDecimal(15));
         // 生成产品标题
         productsEntity.setProductTitle("产品标题");
+        productsEntity.setProducerName(user.getEnName());
+        productsEntity.setBrandName(user.getEnBrand());
         //设置预处理时间
         productsEntity.setPretreatmentDate(1);
         //获取Ean码
-        EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
+        /*EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
             String code = eanUpcEntity.getCode();
             //设置Ean码
@@ -247,7 +249,7 @@ public class ProductsController extends AbstractController {
             //关联产品id
             eanUpcEntity.setProductId(productsEntity.getProductId());
             eanUpcService.updateById(eanUpcEntity);
-        }
+        }*/
         productsService.updateById(productsEntity);
         return R.ok().put("productsEntity", productsEntity);
     }
@@ -1097,10 +1099,12 @@ public class ProductsController extends AbstractController {
         productsEntity.setStock(new BigDecimal(IStock));
         // 生成国内运费，15
         productsEntity.setDomesticFreight(new BigDecimal(15));
+        productsEntity.setProducerName(user.getEnName());
+        productsEntity.setBrandName(user.getEnBrand());
         //设置预处理时间
         productsEntity.setPretreatmentDate(1);
         //获取码
-        EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
+        /*EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
             String code = eanUpcEntity.getCode();
             //设置Ean码
@@ -1110,7 +1114,7 @@ public class ProductsController extends AbstractController {
             //关联产品id
             eanUpcEntity.setProductId(productId);
             eanUpcService.updateById(eanUpcEntity);
-        }
+        }*/
         //设置分类
         /*Long categoryThreeId = productsEntity.getCategoryThreeId();
         String s = categoryService.queryParentByChildIdAndCategory(categoryThreeId, productsEntity);
@@ -1400,7 +1404,7 @@ public class ProductsController extends AbstractController {
             eanUpcEntity.setType("EAN");
             eanUpcEntity.setSize(size);
             //查出未使用的EAN码，修改为使用
-            List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanUpcEntity);
+            /*List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanUpcEntity);
             if (eanUpcEntities != null && eanUpcEntities.size() != 0 && eanUpcEntities.size() == variantsInfosList.size()) {
                 for (int i = 0; i < eanUpcEntities.size(); i++) {
                     eanUpcEntities.get(i).setState(1);
@@ -1409,13 +1413,13 @@ public class ProductsController extends AbstractController {
                 }
             } else {
                 return R.error("EAN码数量不足，尽快添加");
-            }
+            }*/
 
             for (int i = 0; i < variantsInfosList.size(); i++) {
-                String code = eanUpcEntities.get(i).getCode();
+//                String code = eanUpcEntities.get(i).getCode();
                 VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
-                variantsInfoEntity.setEanCode(code);
-                variantsInfoEntity.setVariantSku(correctionLaterString + "-" + code);
+//                variantsInfoEntity.setEanCode(code);
+                variantsInfoEntity.setVariantSku(correctionLaterString + "-" + i);
                 variantsInfoEntity.setProductId(products.getProductId());
             }
             variantsInfoService.insertBatch(variantsInfosList);
@@ -1669,7 +1673,7 @@ public class ProductsController extends AbstractController {
             eanUpcEntity.setType("EAN");
             eanUpcEntity.setSize(size);
             //查出未使用的EAN码，修改为使用
-            List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanUpcEntity);
+            /*List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanUpcEntity);
             if (eanUpcEntities != null && eanUpcEntities.size() > 0 && eanUpcEntities.size() == variantsInfosList.size()) {
                 for (int i = 0; i < eanUpcEntities.size(); i++) {
                     eanUpcEntities.get(i).setState(1);
@@ -1678,11 +1682,11 @@ public class ProductsController extends AbstractController {
                 }
             } else {
                 return R.error("EAN码数量不足，尽快添加");
-            }
+            }*/
             for (int i = 0; i < variantsInfosList.size(); i++) {
-                String code = eanUpcEntities.get(i).getCode();
+//                String code = eanUpcEntities.get(i).getCode();
                 VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
-                variantsInfoEntity.setEanCode(code);
+//                variantsInfoEntity.setEanCode(code);
                 variantsInfoEntity.setVariantSku(correctionLaterString + "-" + i);
                 variantsInfoEntity.setProductId(products.getProductId());
             }
