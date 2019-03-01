@@ -39,7 +39,39 @@ import java.util.*;
 
 @Component("OrderLogisticsTimer")
 public class OrderLogisticsTimer {
+    // 欧洲
+    @Value(("${mws-config.eu-access-key}"))
+    private String euAccessKey;
 
+    @Value(("${mws-config.eu-secret-key}"))
+    private String euSecretKey;
+
+    // 日本
+    @Value(("${mws-config.jp-access-key}"))
+    private String jpAccessKey;
+
+    @Value(("${mws-config.jp-secret-key}"))
+    private String jpSecretKey;
+
+    // 北美
+    @Value(("${mws-config.na-access-key}"))
+    private String naAccessKey;
+
+    @Value(("${mws-config.na-secret-key}"))
+    private String naSecretKey;
+
+    // 澳大利亚
+    @Value(("${mws-config.au-access-key}"))
+    private String auAccessKey;
+
+    @Value(("${mws-config.au-secret-key}"))
+    private String auSecretKey;
+
+    @Value(("${mws-config.app-name}"))
+    private String appName;
+
+    @Value(("${mws-config.app-version}"))
+    private String appVersion;
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -261,34 +293,35 @@ public class OrderLogisticsTimer {
         Header header=new Header();
         header.setDocumentVersion("1.01");
         header.setMerchantIdentifier("MYID");//<MerchantIdentifier>此选项可以随便填写，，
-        Message message=new Message();//如果要确认多个订单可以增加多个<message>
-        message.setMessageID("1");
-        OrderFulfillment orderful=new OrderFulfillment();
-        orderful.setAmazonOrderID(amazonOrderId);
-        orderful.setFulfillmentDate(simpleDateFormat.format(date));
-        FulfillmentData fd=new FulfillmentData();
-        fd.setCarrierName(abroadLogisticsEntity.getDestTransportCompany());
-        fd.setShippingMethod(abroadLogisticsEntity.getDestChannel());//<ShippingMethod>根据自己的需求可以有可以没有
-        fd.setShipperTrackingNumber(trackWaybill);
-        List<Item> items=new ArrayList<>();
-        Item item=new Item();
+        u1.setHeader(header);
+        List<Message> messages=new ArrayList<>();
+        int count=1;
         List<ProductOrderItemEntity> productOrderItemEntities=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
         for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntities) {
+            Message message=new Message();//如果要确认多个订单可以增加多个<message>
+            message.setMessageID(String.valueOf(count++));
+            OrderFulfillment orderful=new OrderFulfillment();
+            orderful.setAmazonOrderID(amazonOrderId);
+            orderful.setFulfillmentDate(simpleDateFormat.format(date));
+            FulfillmentData fd=new FulfillmentData();
+            fd.setCarrierName(abroadLogisticsEntity.getDestTransportCompany());
+            fd.setShippingMethod(abroadLogisticsEntity.getDestChannel());//<ShippingMethod>根据自己的需求可以有可以没有
+            fd.setShipperTrackingNumber(trackWaybill);
+            Item item=new Item();
             String orderItemId= productOrderItemEntity.getOrderItemId();
             item.setAmazonOrderItemCode(orderItemId);
             item.setQuantity(String.valueOf(productOrderItemEntity.getOrderItemNumber()));
-            items.add(item);
+            orderful.setFulfillmentData(fd);
+            orderful.setItem(item);
+            message.setOrderFulfillment(orderful);
+            messages.add(message);
         }
         AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(orderEntity.getShopId());
         List<String> serviceURL = new ArrayList<>();
         List<String> marketplaceIds = new ArrayList<>();
         serviceURL.add(shopEntity.getMwsPoint());
         marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
-        orderful.setFulfillmentData(fd);
-        orderful.setItems(items);
-        message.setOrderFulfillment(orderful);
-        u1.setHeader(header);
-        u1.setMessage(message);
+        u1.setMessages(messages);
         List<Shipping> list = new ArrayList<Shipping>();
         list.add(u1);
         AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(shopEntity.getGrantId());
@@ -308,6 +341,25 @@ public class OrderLogisticsTimer {
         List<String> marketplaceIds = sendDataMoedl.getMarketplaceIds();
         String sellerId = sendDataMoedl.getSellerId();
         String mwsAuthToken = sendDataMoedl.getMwsAuthToken();
+        //获得授权表里的region字段的值，判断其逻辑
+        AmazonGrantEntity amazonGrantEntity=amazonGrantService.selectOne(new EntityWrapper<AmazonGrantEntity>().eq("merchant_id",sellerId).eq("grant_token",mwsAuthToken));
+        String accessKey=null;
+        String secretKey=null;
+        if(amazonGrantEntity!=null){
+            int region= amazonGrantEntity.getRegion();
+            if(region==0){//北美
+                accessKey=naAccessKey;
+                secretKey=naSecretKey;
+            }else if(region==1){//欧洲
+                accessKey=euAccessKey;
+                secretKey=euSecretKey;
+            }else if(region==2){//日本
+                accessKey=jpAccessKey;
+                secretKey=jpSecretKey;
+            }else if(region==3){//澳大利亚
+                accessKey=auAccessKey;
+                secretKey=auSecretKey;
+            }
         /**
          * 根据List数组，生成XML数据
          */
@@ -329,17 +381,18 @@ public class OrderLogisticsTimer {
         outfile.close();
 //         List<Object> responseList =listOrdersAsyncService.invokeListOrders(client,requestList);
         //进行数据上传(步骤一)
-        String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath);
+        String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
         //进行数据上传(步骤二)
-        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId);
+        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId,accessKey,secretKey);
         System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
         if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
             //进行数据上传(步骤三)
-            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0));
+            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0),accessKey,secretKey);
             //同步成功后把物流状态改为同步
             AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
             abroadLogisticsEntity.setIsSynchronization(1);
             abroadLogisticsService.updateById(abroadLogisticsEntity);
         }
     }
+}
 }

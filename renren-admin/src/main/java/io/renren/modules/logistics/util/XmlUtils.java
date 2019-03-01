@@ -16,21 +16,22 @@ public class XmlUtils {
      * @return 返回封装后的数据
      */
     public static String getXmlFromList(List<Shipping> beanList) {
-        {
-            String result = "";
+        String result = "";
+        Element root = new Element("AmazonEnvelope");
+        Document doc = new Document(root);
 
-            Element root = new Element("AmazonEnvelope");
-            Document doc = new Document(root);
+        for (Shipping ship : beanList) { //先循环它
+            Element elementHeader = new Element("Header");
+            Header header=ship.getHeader();
+            elementHeader.addContent(new Element("DocumentVersion").setText(header.getDocumentVersion()));
+            elementHeader.addContent(new Element("MerchantIdentifier").setText(header.getMerchantIdentifier()));
 
-            for (Shipping ship : beanList) { //先循环它
-                Element elementHeader = new Element("Header");
-                Header header=ship.getHeader();
-                elementHeader.addContent(new Element("DocumentVersion").setText(header.getDocumentVersion()));
-                elementHeader.addContent(new Element("MerchantIdentifier").setText(header.getMerchantIdentifier()));
-
-                Element element = new Element("MessageType");
-                element.setText(ship.getMessageType());
-                Message message=ship.getMessage();
+            Element element = new Element("MessageType");
+            element.setText(ship.getMessageType());
+            List<Message> messages=ship.getMessages();
+            root.addContent(elementHeader);
+            root.addContent(element);
+            for (Message message:messages) {
                 Element element2 = new Element("Message");
                 element2.addContent(new Element("MessageID").setText(message.getMessageID()));
                 OrderFulfillment orderfu=message.getOrderFulfillment();
@@ -40,41 +41,34 @@ public class XmlUtils {
                 element3.addContent(new Element("AmazonOrderID").setText(orderfu.getAmazonOrderID()));
                 element3.addContent(new Element("FulfillmentDate").setText(orderfu.getFulfillmentDate()));
                 FulfillmentData fuda=orderfu.getFulfillmentData();
-                System.out.println(fuda.getCarrierName()+"==");
                 element4.addContent(new Element("CarrierName").setText(fuda.getCarrierName()));
                 element4.addContent(new Element("ShippingMethod").setText(fuda.getShippingMethod()));
                 element4.addContent(new Element("ShipperTrackingNumber").setText(fuda.getShipperTrackingNumber()));
-                List<Item> items=orderfu.getItems();
-                for (Item item:items) {
-                    element5.addContent(new Element("AmazonOrderItemCode").setText(item.getAmazonOrderItemCode()));
-                    element5.addContent(new Element("Quantity").setText(item.getQuantity()));
-                }
-
+                Item item=orderfu.getItem();
+                element5.addContent(new Element("AmazonOrderItemCode").setText(item.getAmazonOrderItemCode()));
+                element5.addContent(new Element("Quantity").setText(item.getQuantity()));
                 element3.addContent(element4);
                 element3.addContent(element5);
                 element2.addContent(element3);
-
-                root.addContent(elementHeader);
-                root.addContent(element);
                 root.addContent(element2);
-
             }
 
-            XMLOutputter XMLOut = new XMLOutputter();
 
-            try {
-                /**
-                 * 输出XML数据
-                 */
-                result = XMLOut.outputString(doc);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result;
         }
+
+        XMLOutputter XMLOut = new XMLOutputter();
+
+        try {
+            /**
+             * 输出XML数据
+             */
+            result = XMLOut.outputString(doc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
-      
-  
+
 
 
 }

@@ -29,11 +29,11 @@ import java.util.concurrent.Future;
 public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
     // TODO: 2018/12/27 步骤一：同步上传数据
     @Override
-    public String submitFeed(String serviceURL, String merchantId, String sellerDevAuthToken, String feedType, String filePath) {
+    public String submitFeed(String serviceURL, String merchantId, String sellerDevAuthToken, String feedType, String filePath,String accessKey,String secretKey) {
 
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
         config.setServiceURL(serviceURL);
-        MarketplaceWebService service = new MarketplaceWebServiceClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+        MarketplaceWebService service = new MarketplaceWebServiceClient(accessKey, secretKey,
                 "mws", "1.1", config);
 
         SubmitFeedRequest request = new SubmitFeedRequest();
@@ -130,10 +130,10 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
 
     //2018/12/27 步骤二：得到上传数据列表
     @Override
-    public List<String> getFeedSubmissionList(String serviceURL, String merchantId, String sellerDevAuthToken, String feedSubmissionId) {
+    public List<String> getFeedSubmissionList(String serviceURL, String merchantId, String sellerDevAuthToken, String feedSubmissionId,String accessKey,String secretKey) {
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
         config.setServiceURL(serviceURL);
-        MarketplaceWebService service = new MarketplaceWebServiceClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+        MarketplaceWebService service = new MarketplaceWebServiceClient(accessKey, secretKey,
                 "mws", "1.1", config);
         GetFeedSubmissionListRequest request = new GetFeedSubmissionListRequest();
         List<GetFeedSubmissionListRequest> requests = new ArrayList<GetFeedSubmissionListRequest>();
@@ -182,10 +182,10 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
 
     //步骤三： 得到返回结果
     @Override
-    public void getFeedSubmissionResult(String serviceURL, String merchantId, String sellerDevAuthToken, String feedSubmissionId) {
+    public void getFeedSubmissionResult(String serviceURL, String merchantId, String sellerDevAuthToken, String feedSubmissionId,String accessKey,String secretKey) {
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
         config.setServiceURL(serviceURL);
-        MarketplaceWebService service = new MarketplaceWebServiceClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+        MarketplaceWebService service = new MarketplaceWebServiceClient(accessKey, secretKey,
                 "mws", "1.1", config);
         /*List<GetFeedSubmissionResultRequest>    requests=new ArrayList<GetFeedSubmissionResultRequest>();*/
         GetFeedSubmissionResultRequest request = new GetFeedSubmissionResultRequest();
