@@ -1,5 +1,12 @@
 package io.renren.modules.product.controller;
 
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsync;
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsyncClient;
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConfig;
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersException;
+import com.amazonservices.mws.orders._2013_09_01.model.GetOrderRequest;
+import com.amazonservices.mws.orders._2013_09_01.model.GetOrderResponse;
+import com.amazonservices.mws.orders._2013_09_01.model.ResponseHeaderMetadata;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.DateUtils;
 import io.renren.common.utils.R;
@@ -50,7 +57,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 
 /**
@@ -63,6 +71,39 @@ import java.util.*;
 @RestController
 @RequestMapping("product/order")
 public class OrderController extends AbstractController{
+    // 欧洲
+    @Value(("${mws-config.eu-access-key}"))
+    private String euAccessKey;
+
+    @Value(("${mws-config.eu-secret-key}"))
+    private String euSecretKey;
+
+    // 日本
+    @Value(("${mws-config.jp-access-key}"))
+    private String jpAccessKey;
+
+    @Value(("${mws-config.jp-secret-key}"))
+    private String jpSecretKey;
+
+    // 北美
+    @Value(("${mws-config.na-access-key}"))
+    private String naAccessKey;
+
+    @Value(("${mws-config.na-secret-key}"))
+    private String naSecretKey;
+
+    // 澳大利亚
+    @Value(("${mws-config.au-access-key}"))
+    private String auAccessKey;
+
+    @Value(("${mws-config.au-secret-key}"))
+    private String auSecretKey;
+
+    @Value(("${mws-config.app-name}"))
+    private String appName;
+
+    @Value(("${mws-config.app-version}"))
+    private String appVersion;
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -455,7 +496,6 @@ public class OrderController extends AbstractController{
         order.setAbroadWaybill(abroadWaybill);
         //生成国际物流对象
         AbroadLogisticsEntity abroadLogistics = new AbroadLogisticsEntity();
-//        abroadLogistics = new AbroadLogisticsEntity();//new了2次删去
         abroadLogistics.setOrderId(orderId);
         abroadLogistics.setAbroadWaybill(abroadWaybill);
         abroadLogistics.setIsSynchronization(0);
@@ -516,34 +556,35 @@ public class OrderController extends AbstractController{
         Header header=new Header();
         header.setDocumentVersion("1.01");
         header.setMerchantIdentifier("MYID");//<MerchantIdentifier>此选项可以随便填写，，
-        Message message=new Message();//如果要确认多个订单可以增加多个<message>
-        message.setMessageID("1");
-        OrderFulfillment orderful=new OrderFulfillment();
-        orderful.setAmazonOrderID(amazonOrderId);
-        orderful.setFulfillmentDate(shipDate);
-        FulfillmentData fd=new FulfillmentData();
-        fd.setCarrierName("Yun Express");
-        fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
-        fd.setShipperTrackingNumber(abroadWaybill);
-        List<Item> items=new ArrayList<>();
-        Item item=new Item();
+        u1.setHeader(header);
+        List<Message> messages=new ArrayList<>();
+        int count=1;
         List<ProductOrderItemEntity> productOrderItemEntities=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
         for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntities) {
+            Message message=new Message();//如果要确认多个订单可以增加多个<message>
+            message.setMessageID(String.valueOf(count++));
+            OrderFulfillment orderful=new OrderFulfillment();
+            orderful.setAmazonOrderID(amazonOrderId);
+            orderful.setFulfillmentDate(shipDate);
+            FulfillmentData fd=new FulfillmentData();
+            fd.setCarrierName("Yun Express");
+            fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
+            fd.setShipperTrackingNumber(abroadWaybill);
+            Item item=new Item();
             String orderItemId= productOrderItemEntity.getOrderItemId();
             item.setAmazonOrderItemCode(orderItemId);
             item.setQuantity(String.valueOf(productOrderItemEntity.getOrderItemNumber()));
-            items.add(item);
+            orderful.setFulfillmentData(fd);
+            orderful.setItem(item);
+            message.setOrderFulfillment(orderful);
+            messages.add(message);
         }
         AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(orderEntity.getShopId());
         List<String> serviceURL = new ArrayList<>();
         List<String> marketplaceIds = new ArrayList<>();
         serviceURL.add(shopEntity.getMwsPoint());
         marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
-        orderful.setFulfillmentData(fd);
-        orderful.setItems(items);
-        message.setOrderFulfillment(orderful);
-        u1.setHeader(header);
-        u1.setMessage(message);
+        u1.setMessages(messages);
         List<Shipping> list = new ArrayList<Shipping>();
         list.add(u1);
         AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(shopEntity.getGrantId());
@@ -573,34 +614,35 @@ public class OrderController extends AbstractController{
         Header header=new Header();
         header.setDocumentVersion("1.01");
         header.setMerchantIdentifier("MYID");//<MerchantIdentifier>此选项可以随便填写，，
-        Message message=new Message();//如果要确认多个订单可以增加多个<message>
-        message.setMessageID("1");
-        OrderFulfillment orderful=new OrderFulfillment();
-        orderful.setAmazonOrderID(amazonOrderId);
-        orderful.setFulfillmentDate(shipDate);
-        FulfillmentData fd=new FulfillmentData();
-        fd.setCarrierName(abroadLogisticsEntity.getDestTransportCompany());
-        fd.setShippingMethod(abroadLogisticsEntity.getDestChannel());//<ShippingMethod>根据自己的需求可以有可以没有
-        fd.setShipperTrackingNumber(trackWaybill);
-        List<Item> items=new ArrayList<>();
-        Item item=new Item();
+        u1.setHeader(header);
+        List<Message> messages=new ArrayList<>();
+        int count=1;
         List<ProductOrderItemEntity> productOrderItemEntities=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
         for (ProductOrderItemEntity productOrderItemEntity:productOrderItemEntities) {
+            Message message=new Message();//如果要确认多个订单可以增加多个<message>
+            message.setMessageID(String.valueOf(count++));
+            OrderFulfillment orderful=new OrderFulfillment();
+            orderful.setAmazonOrderID(amazonOrderId);
+            orderful.setFulfillmentDate(shipDate);
+            FulfillmentData fd=new FulfillmentData();
+            fd.setCarrierName("Yun Express");
+            fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
+            fd.setShipperTrackingNumber(trackWaybill);
+            Item item=new Item();
             String orderItemId= productOrderItemEntity.getOrderItemId();
             item.setAmazonOrderItemCode(orderItemId);
             item.setQuantity(String.valueOf(productOrderItemEntity.getOrderItemNumber()));
-            items.add(item);
+            orderful.setFulfillmentData(fd);
+            orderful.setItem(item);
+            message.setOrderFulfillment(orderful);
+            messages.add(message);
         }
         AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(orderEntity.getShopId());
         List<String> serviceURL = new ArrayList<>();
         List<String> marketplaceIds = new ArrayList<>();
         serviceURL.add(shopEntity.getMwsPoint());
         marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
-        orderful.setFulfillmentData(fd);
-        orderful.setItems(items);
-        message.setOrderFulfillment(orderful);
-        u1.setHeader(header);
-        u1.setMessage(message);
+        u1.setMessages(messages);
         List<Shipping> list = new ArrayList<Shipping>();
         list.add(u1);
         AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(shopEntity.getGrantId());
@@ -616,15 +658,37 @@ public class OrderController extends AbstractController{
     @Async("taskExecutor")
     public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl,Long orderId){
         List<Shipping> list = sendDataMoedl.getList();
+
+
         List<String> serviceURL = sendDataMoedl.getServiceURL();
         List<String> marketplaceIds = sendDataMoedl.getMarketplaceIds();
         String sellerId = sendDataMoedl.getSellerId();
         String mwsAuthToken = sendDataMoedl.getMwsAuthToken();
+        //获得授权表里的region字段的值，判断其逻辑
+        AmazonGrantEntity amazonGrantEntity=amazonGrantService.selectOne(new EntityWrapper<AmazonGrantEntity>().eq("merchant_id",sellerId).eq("grant_token",mwsAuthToken));
+        String accessKey=null;
+        String secretKey=null;
+        if(amazonGrantEntity!=null){
+           int region= amazonGrantEntity.getRegion();
+            if(region==0){//北美
+                accessKey=naAccessKey;
+                secretKey=naSecretKey;
+            }else if(region==1){//欧洲
+                accessKey=euAccessKey;
+                secretKey=euSecretKey;
+            }else if(region==2){//日本
+                accessKey=jpAccessKey;
+                secretKey=jpSecretKey;
+            }else if(region==3){//澳大利亚
+                accessKey=auAccessKey;
+                secretKey=auSecretKey;
+            }
+        }
+
         /**
          * 根据List数组，生成XML数据
          */
         String resultXml = XmlUtils.getXmlFromList(list);
-
         //打印生成xml数据
         FileWriter outdata = null;
         FileUtil.generateFilePath(fileStoragePath,"shipping");
@@ -641,18 +705,62 @@ public class OrderController extends AbstractController{
         outfile.close();
 //         List<Object> responseList =listOrdersAsyncService.invokeListOrders(client,requestList);
         //进行数据上传(步骤一)
-        String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath);
+        String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
         //进行数据上传(步骤二)
-        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId);
+        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId,accessKey,secretKey);
         System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
         if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
             //进行数据上传(步骤三)
-            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0));
+            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0),accessKey,secretKey);
             //同步成功后把物流状态改为同步
             AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
-            abroadLogisticsEntity.setIsSynchronization(1);
-            abroadLogisticsEntity.setState("已发货");
-            abroadLogisticsService.updateById(abroadLogisticsEntity);
+            String amazonOrderId=orderService.selectById(orderId).getAmazonOrderId();
+             //从后代调用接口获取亚马逊后台的订单状态
+            String orderStatus="";
+            MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
+            config.setServiceURL(serviceURL.get(0));
+            MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
+                    "my_test", "1.0", config, null);
+            List<GetOrderRequest> requestList = new ArrayList<GetOrderRequest>();
+            GetOrderRequest request = new GetOrderRequest();
+            request.setSellerId(sellerId);
+            request.setMWSAuthToken(mwsAuthToken);
+            List<String> amazonOrderIds = new ArrayList<String>();
+            amazonOrderIds.add(amazonOrderId);
+            request.setAmazonOrderId(amazonOrderIds);
+            requestList.add(request);
+            List<Object> responseList=invokeGetOrder(client,requestList);
+            Boolean isSuccess = false;
+            GetOrderResponse getOrderResponse = null;
+            for (Object tempResponse : responseList) {
+                // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
+                String className = tempResponse.getClass().getName();
+                if ((GetOrderResponse.class.getName()).equals(className) == true) {
+                    System.out.println("responseList 类型是 GetOrderResponse。");
+                    GetOrderResponse response = (GetOrderResponse) tempResponse;
+                    System.out.println(response.toXML());
+                    orderStatus=response.toXML();
+                    if(orderStatus.contains("<OrderStatus>")){
+                        orderStatus= orderStatus.substring(orderStatus.indexOf("<OrderStatus>"),orderStatus.indexOf("</OrderStatus>")).replace("<OrderStatus>","");
+                    }
+                    isSuccess = true;
+                } else {
+                    System.out.println("responseList 类型是 MarketplaceWebServiceOrderException。");
+                    isSuccess = false;
+                    continue;
+                }
+            }
+
+            //判读亚马逊后台订单的状态
+            if("Shipped".equals(orderStatus)){
+                abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
+                abroadLogisticsService.updateById(abroadLogisticsEntity);
+            }else{
+                logger.error("同步失败,请重新上传订单...");
+                abroadLogisticsEntity.setIsSynchronization(0);//表示同步成功
+                abroadLogisticsService.updateById(abroadLogisticsEntity);
+            }
+
         }
     }
     /**
@@ -839,6 +947,60 @@ public class OrderController extends AbstractController{
             }
         }
     }
+
+    /**
+     * 获取单个订单的方法
+     * @param client
+     * @param requestList
+     * @return
+     */
+    public static List<Object> invokeGetOrder(MarketplaceWebServiceOrdersAsync client, List<GetOrderRequest> requestList) {
+        // Call the service async.
+        List<Future<GetOrderResponse>> futureList =
+                new ArrayList<Future<GetOrderResponse>>();
+        for (GetOrderRequest request : requestList) {
+            Future<GetOrderResponse> future =
+                    client.getOrderAsync(request);
+            futureList.add(future);
+        }
+        List<Object> responseList = new ArrayList<Object>();
+        for (Future<GetOrderResponse> future : futureList) {
+            Object xresponse;
+            try {
+                GetOrderResponse response = future.get();
+                ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
+                // We recommend logging every the request id and timestamp of every call.
+                System.out.println("Response:");
+                System.out.println("RequestId: " + rhmd.getRequestId());
+                System.out.println("Timestamp: " + rhmd.getTimestamp());
+                String responseXml = response.toXML();
+                System.out.println(responseXml);
+                xresponse = response;
+
+                xresponse = response;
+            } catch (ExecutionException ee) {
+                Throwable cause = ee.getCause();
+                if (cause instanceof MarketplaceWebServiceOrdersException) {
+                    // Exception properties are important for diagnostics.
+                    MarketplaceWebServiceOrdersException ex =
+                            (MarketplaceWebServiceOrdersException) cause;
+                    ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
+
+                    xresponse = ex;
+                } else {
+                    xresponse = cause;
+                }
+            } catch (Exception e) {
+                xresponse = e;
+            }
+            responseList.add(xresponse);
+        }
+        return responseList;
+    }
+
+
+
+
     /**
      * 刷新订单国际物流线程
      * 手动刷新订单时且状态不为亚马逊状态时调用

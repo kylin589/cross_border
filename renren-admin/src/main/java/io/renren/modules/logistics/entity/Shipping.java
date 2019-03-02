@@ -1,5 +1,8 @@
 package io.renren.modules.logistics.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 功能描述：订单发货物流信息，主要用于绑定订单表中的订单Id,进行发货。
  */
@@ -10,7 +13,7 @@ public class Shipping {
 
     private String messageType;//类型
 
-    private Message message;//实体类
+    private List<Message> messages=new ArrayList<>();//实体类
 
     public Header getHeader() {
         return header;
@@ -29,15 +32,13 @@ public class Shipping {
         this.messageType = messageType;
     }
 
-    public Message getMessage() {
-        return message;
+    public List<Message> getMessages() {
+        return messages;
     }
 
-    public void setMessage(Message message) {
-        this.message = message;
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
-
-
 
     public Shipping() {
         super();
