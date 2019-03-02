@@ -256,12 +256,12 @@
                     <h4>成本运费</h4>
                 </div>
                 <div class="pro_inf chengben">
-                    <span><label for="">采购价格(￥)：</label><input type="text" placeholder="采购价格(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></span>
-                    <span><label for="">国内运费(￥)：</label><input type="text" placeholder="国内运费(￥)" v-model="proDetails.domesticFreight" @change="getcostFreight" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></span>
-                    <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="包装毛重(kg)" v-model="proDetails.productWeight" @change="getcostFreight" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></span><br>
-                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"> * <input class="size_input" type="text" placeholder="宽" v-model="proDetails.productWide" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"> * <input class="size_input" type="text" placeholder="高" v-model="proDetails.productHeight" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></span>
-                    <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" v-model="proDetails.stock" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></span>
-                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" v-model="proDetails.pretreatmentDate" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></span>
+                    <span><label for="">采购价格(￥)：</label><input type="text" placeholder="采购价格(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></span>
+                    <span><label for="">国内运费(￥)：</label><input type="text" placeholder="国内运费(￥)" v-model="proDetails.domesticFreight" @change="getcostFreight" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></span>
+                    <span><label for="">包装毛重(kg)：</label><input type="text" placeholder="包装毛重(kg)" v-model="proDetails.productWeight" @change="getcostFreight" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></span><br>
+                    <span><label for="">包装尺寸(cm)：</label><input type="text" class="size_input" placeholder="长" v-model="proDetails.productLength" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"> * <input class="size_input" type="text" placeholder="宽" v-model="proDetails.productWide" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"> * <input class="size_input" type="text" placeholder="高" v-model="proDetails.productHeight" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></span>
+                    <span><label for="">库存数量：</label><input type="text" placeholder="库存数量" v-model="proDetails.stock" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></span>
+                    <span><label for="" style="width: 172px">预处理时间(天/现货填1)：</label><input type="text" placeholder="预处理时间(天/现货填1)" v-model="proDetails.pretreatmentDate" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></span>
                     <!--<span><label for="">销售价格(￥)：</label><input type="text" placeholder="销售价格(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>-->
                     <!--<span><label for="">国际运费(￥)：</label><input type="text" placeholder="国际运费(￥)" v-model="proDetails.purchasePrice" @change="getcostFreight"></span>-->
                     <!--<span><label class="">产品有电池：</label><input type="checkbox" name="" style="" @change="getcostFreight"> </span><br>-->
@@ -347,17 +347,16 @@
 
                     </tr>
                     <tr>
-                    <th>最终售价</th>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.americanFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.canadaFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.mexicoFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.britainFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.franceFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.germanyFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.italyFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.spainFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.japanFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
-                    <td><input type="text" style="width: 90%" v-model="proDetails.australiaFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.americanFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.canadaFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.mexicoFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.britainFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.franceFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.germanyFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.italyFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.spainFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.japanFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
+                        <td><input type="text" style="width: 90%" v-model="proDetails.australiaFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
 
                     </tr>
                     <tr>
