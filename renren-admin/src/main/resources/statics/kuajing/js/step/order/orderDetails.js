@@ -659,8 +659,9 @@ var vm = new Vue({
                     if (r.code === 0) {
                         // vm.orderDetails = r.orderDTO;
                         vm.orderDetails.shipAddress.abroadWaybill = r.abroadLogistics;
-                        layer.msg('生成成功');
+
                         layer.close(index);
+                        layer.msg('操作成功，请稍后刷新查看是否成功');
 
                     } else {
                         layer.alert(r.msg);
@@ -691,8 +692,9 @@ var vm = new Vue({
                     if (r.code === 0) {
                         // vm.orderDetails = r.orderDTO;
                         // vm.orderDetails.shipAddress.abroadWaybill = r.abroadLogistics;
-                        layer.msg('同步成功');
+
                         layer.close(index);
+                        layer.msg('操作成功，请稍后刷新查看是否同步成功');
 
                     } else {
                         layer.alert(r.msg);
