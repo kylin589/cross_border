@@ -16,6 +16,7 @@
         <result property="shipCounty" column="ship_county"/>
         <result property="shipDistrict" column="ship_district"/>
         <result property="shipAddressLine" column="ship_address_line"/>
+        <result property="shipAddressDetail" column="ship_address_detail"/>
     </resultMap>
 
 

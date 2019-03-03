@@ -70,6 +70,8 @@ public class ProductShipAddressEntity implements Serializable {
 	 */
 	private String shipAddressLine3;
 
+	private String shipAddressDetail;
+
 	/**
 	 * 设置：配送地址id
 	 */
@@ -88,6 +90,15 @@ public class ProductShipAddressEntity implements Serializable {
 	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
+
+	public String getShipAddressDetail() {
+		return shipAddressDetail;
+	}
+
+	public void setShipAddressDetail(String shipAddressDetail) {
+		this.shipAddressDetail = shipAddressDetail;
+	}
+
 	/**
 	 * 获取：订单id
 	 */

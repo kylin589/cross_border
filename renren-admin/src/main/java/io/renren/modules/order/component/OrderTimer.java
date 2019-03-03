@@ -364,11 +364,17 @@ public class OrderTimer {
                                     addressEntity.setShipName("");
                                 }
                                 if (shipaddress1 != null) {
+                                    String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress1;
                                     addressEntity.setShipAddressLine1(shipaddress1);
+                                    addressEntity.setShipAddressDetail(detail);
                                 } else if (shipaddress2 != null) {
+                                    String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress2;
                                     addressEntity.setShipAddressLine1(shipaddress2);
+                                    addressEntity.setShipAddressDetail(detail);
                                 } else {
+                                    String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict;
                                     addressEntity.setShipAddressLine1("");
+                                    addressEntity.setShipAddressDetail(detail);
                                 }
                                 if (shipcity != null) {
                                     addressEntity.setShipCity(shipcity);
