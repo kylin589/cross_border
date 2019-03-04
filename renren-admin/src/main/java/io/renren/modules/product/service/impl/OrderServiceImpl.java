@@ -818,7 +818,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         }
                     }
                 } else {
-                    if (!"Canceled".equals(orderModel.getOrderStatus())) {
+                    if (!"Canceled".equals(orderModel.getOrderStatus()) && ("Pending".equals(orderEntity.getOrderStatus())|| "Unshipped".equals(orderEntity.getOrderStatus()))) {
                         List<OrderItemModel> orderItemModels = orderModel.getOrderItemModels();
                         if (orderItemModels != null && orderItemModels.size() > 0) {
                             for (OrderItemModel orderItemModel : orderItemModels) {
