@@ -784,7 +784,7 @@ var vm = new Vue({
 
                             })
                         })
-                        vm.saveXc();
+                        // vm.saveXc();
                         // vm.proAlbum = r.imageInfo;
 
                     } else {

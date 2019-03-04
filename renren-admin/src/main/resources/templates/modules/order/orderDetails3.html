@@ -100,10 +100,8 @@
                         <span><label for="" style="width: 64px">州：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipRegion" disabled></span>
                         <span><label for="" style="width: 47.8px">市：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipCity" disabled></span>
                         <span><label for="">街道：</label><input type="text" placeholder="建议填写" v-model="orderDetails.shipAddress.shipAddressLine1" disabled></span><br>
-                        <span><label for="">详细地址：</label><textarea v-model="orderDetails.shipAddress.shipCity" disabled>
-                            {{orderDetails.shipAddress.shipCity}}
-                            {{orderDetails.shipAddress.shipCounty}}
-                            {{orderDetails.shipAddress.shipDistrict}}
+                        <span><label for="">详细地址：</label><textarea v-model="orderDetails.shipAddress.shipAddressDetail" disabled>
+                            {{orderDetails.shipAddress.shipAddressDetail}}
                         </textarea></span>
                         <!--<div class="fr" style="">-->
                             <!--<input class="edit" type="button" value="编辑" @click="editJijian">-->

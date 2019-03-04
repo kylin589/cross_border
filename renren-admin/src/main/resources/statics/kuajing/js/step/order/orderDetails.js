@@ -250,7 +250,7 @@ var vm = new Vue({
             if($(event.target).val() == '编辑'){
                 $(event.target).val('保存');
                 $(event.target).parent().parent().find('input').removeAttr("disabled");
-                // $(event.target).parent().parent().find('textarea').removeAttr("disabled");
+                $(event.target).parent().parent().find('textarea').removeAttr("disabled");
                 $(event.target).parent().parent().find('input[type=text]').css('border','1px solid #d8dce5');
                 $(event.target).parent().parent().find('input.noedit').css('display','inline-block');
                 if($(event.target).parent().parent().find('.logistics').length!=0){
