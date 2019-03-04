@@ -1,6 +1,13 @@
 package io.renren.modules.order.component;
 
 
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsync;
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsyncClient;
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConfig;
+import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersException;
+import com.amazonservices.mws.orders._2013_09_01.model.GetOrderRequest;
+import com.amazonservices.mws.orders._2013_09_01.model.GetOrderResponse;
+import com.amazonservices.mws.orders._2013_09_01.model.ResponseHeaderMetadata;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.DateUtils;
 import io.renren.modules.amazon.entity.AmazonGrantEntity;
@@ -34,7 +41,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 
 @Component("OrderLogisticsTimer")
@@ -111,9 +119,10 @@ public class OrderLogisticsTimer {
                         .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH)
         );
         if(orderEntityList != null && orderEntityList.size() >0){
-            for(OrderEntity orderEntity : orderEntityList){
+            new RefreshOrderThread(5548L).start();
+            /*for(OrderEntity orderEntity : orderEntityList){
                 new RefreshOrderThread(orderEntity.getOrderId()).start();
-            }
+            }*/
         }
 
     }
@@ -187,7 +196,7 @@ public class OrderLogisticsTimer {
                             abroadLogisticsEntity.setMobile(receiveOofayData.getMobile());
                         }
                         //有运费
-                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && !("0").equals(receiveOofayData.getInterFreight()) && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
+                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && new BigDecimal(receiveOofayData.getInterFreight()).compareTo(new BigDecimal(0.00)) == 1 && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
                             //计算国际运费、平台佣金、利润
                             //国际运费
                             BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
@@ -230,7 +239,8 @@ public class OrderLogisticsTimer {
                         if(orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
                             orderEntity.setUpdateTime(new Date());
                             //有运费
-                            if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && !("0").equals(receiveOofayData.getInterFreight())){
+
+                            if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && new BigDecimal(receiveOofayData.getInterFreight()).compareTo(new BigDecimal(0.00)) == 1){
                                 //计算国际运费、平台佣金、利润
                                 //国际运费
                                 BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
@@ -277,17 +287,21 @@ public class OrderLogisticsTimer {
     }
 
     /**
-     * 虚发货——封装物流信息
+     * 真实发货信息 ——封装物流信息
      * 后置：上传数据到亚马逊
      * @param orderEntity
      * @param abroadLogisticsEntity
      */
     private SendDataMoedl synchronizationZhenModel(OrderEntity orderEntity, AbroadLogisticsEntity abroadLogisticsEntity){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'00:01:00");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         String amazonOrderId = orderEntity.getAmazonOrderId();
         String trackWaybill = abroadLogisticsEntity.getTrackWaybill();
-        Date date = abroadLogisticsEntity.getShipTime();
+        //获取系统当前日期北京时间
+        Date date = new Date();
+        //北京时间减去8小时
         date=DateUtils.addDateHours(date,-8);
+        //再把当前日期变成格林时间带T的.
+        String shipDate=simpleDateFormat.format(date);
         Shipping u1 = new Shipping();
         u1.setMessageType("OrderFulfillment");
         Header header=new Header();
@@ -302,10 +316,10 @@ public class OrderLogisticsTimer {
             message.setMessageID(String.valueOf(count++));
             OrderFulfillment orderful=new OrderFulfillment();
             orderful.setAmazonOrderID(amazonOrderId);
-            orderful.setFulfillmentDate(simpleDateFormat.format(date));
+            orderful.setFulfillmentDate(shipDate);
             FulfillmentData fd=new FulfillmentData();
-            fd.setCarrierName(abroadLogisticsEntity.getDestTransportCompany());
-            fd.setShippingMethod(abroadLogisticsEntity.getDestChannel());//<ShippingMethod>根据自己的需求可以有可以没有
+            fd.setCarrierName("Yun Express");
+            fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
             fd.setShipperTrackingNumber(trackWaybill);
             Item item=new Item();
             String orderItemId= productOrderItemEntity.getOrderItemId();
@@ -337,6 +351,8 @@ public class OrderLogisticsTimer {
     @Async("taskExecutor")
     public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl,Long orderId){
         List<Shipping> list = sendDataMoedl.getList();
+
+
         List<String> serviceURL = sendDataMoedl.getServiceURL();
         List<String> marketplaceIds = sendDataMoedl.getMarketplaceIds();
         String sellerId = sendDataMoedl.getSellerId();
@@ -360,11 +376,12 @@ public class OrderLogisticsTimer {
                 accessKey=auAccessKey;
                 secretKey=auSecretKey;
             }
+        }
+
         /**
          * 根据List数组，生成XML数据
          */
         String resultXml = XmlUtils.getXmlFromList(list);
-
         //打印生成xml数据
         FileWriter outdata = null;
         FileUtil.generateFilePath(fileStoragePath,"shipping");
@@ -390,9 +407,102 @@ public class OrderLogisticsTimer {
             submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0),accessKey,secretKey);
             //同步成功后把物流状态改为同步
             AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
-            abroadLogisticsEntity.setIsSynchronization(1);
-            abroadLogisticsService.updateById(abroadLogisticsEntity);
+            String amazonOrderId=orderService.selectById(orderId).getAmazonOrderId();
+            //从后代调用接口获取亚马逊后台的订单状态
+            String orderStatus="";
+            MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
+            config.setServiceURL(serviceURL.get(0));
+            MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
+                    "my_test", "1.0", config, null);
+            List<GetOrderRequest> requestList = new ArrayList<GetOrderRequest>();
+            GetOrderRequest request = new GetOrderRequest();
+            request.setSellerId(sellerId);
+            request.setMWSAuthToken(mwsAuthToken);
+            List<String> amazonOrderIds = new ArrayList<String>();
+            amazonOrderIds.add(amazonOrderId);
+            request.setAmazonOrderId(amazonOrderIds);
+            requestList.add(request);
+            List<Object> responseList=invokeGetOrder(client,requestList);
+            Boolean isSuccess = false;
+            GetOrderResponse getOrderResponse = null;
+            for (Object tempResponse : responseList) {
+                // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
+                String className = tempResponse.getClass().getName();
+                if ((GetOrderResponse.class.getName()).equals(className) == true) {
+                    System.out.println("responseList 类型是 GetOrderResponse。");
+                    GetOrderResponse response = (GetOrderResponse) tempResponse;
+                    System.out.println(response.toXML());
+                    orderStatus=response.toXML();
+                    if(orderStatus.contains("<OrderStatus>")){
+                        orderStatus= orderStatus.substring(orderStatus.indexOf("<OrderStatus>"),orderStatus.indexOf("</OrderStatus>")).replace("<OrderStatus>","");
+                    }
+                    isSuccess = true;
+                } else {
+                    System.out.println("responseList 类型是 MarketplaceWebServiceOrderException。");
+                    isSuccess = false;
+                    continue;
+                }
+            }
+
+            //判读亚马逊后台订单的状态
+            if("Shipped".equals(orderStatus)){
+                abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
+                abroadLogisticsService.updateById(abroadLogisticsEntity);
+            }else{
+//                logger.error("同步失败,请重新上传订单...");
+                abroadLogisticsEntity.setIsSynchronization(0);//表示同步成功
+                abroadLogisticsService.updateById(abroadLogisticsEntity);
+            }
+
         }
     }
-}
+    /**
+     * 获取单个订单的方法
+     * @param client
+     * @param requestList
+     * @return
+     */
+    public static List<Object> invokeGetOrder(MarketplaceWebServiceOrdersAsync client, List<GetOrderRequest> requestList) {
+        // Call the service async.
+        List<Future<GetOrderResponse>> futureList =
+                new ArrayList<Future<GetOrderResponse>>();
+        for (GetOrderRequest request : requestList) {
+            Future<GetOrderResponse> future =
+                    client.getOrderAsync(request);
+            futureList.add(future);
+        }
+        List<Object> responseList = new ArrayList<Object>();
+        for (Future<GetOrderResponse> future : futureList) {
+            Object xresponse;
+            try {
+                GetOrderResponse response = future.get();
+                ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
+                // We recommend logging every the request id and timestamp of every call.
+                System.out.println("Response:");
+                System.out.println("RequestId: " + rhmd.getRequestId());
+                System.out.println("Timestamp: " + rhmd.getTimestamp());
+                String responseXml = response.toXML();
+                System.out.println(responseXml);
+                xresponse = response;
+
+                xresponse = response;
+            } catch (ExecutionException ee) {
+                Throwable cause = ee.getCause();
+                if (cause instanceof MarketplaceWebServiceOrdersException) {
+                    // Exception properties are important for diagnostics.
+                    MarketplaceWebServiceOrdersException ex =
+                            (MarketplaceWebServiceOrdersException) cause;
+                    ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
+
+                    xresponse = ex;
+                } else {
+                    xresponse = cause;
+                }
+            } catch (Exception e) {
+                xresponse = e;
+            }
+            responseList.add(xresponse);
+        }
+        return responseList;
+    }
 }

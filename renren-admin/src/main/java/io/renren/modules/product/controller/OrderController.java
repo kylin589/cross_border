@@ -1081,7 +1081,7 @@ public class OrderController extends AbstractController{
                             abroadLogisticsEntity.setMobile(receiveOofayData.getMobile());
                         }
                         //有运费
-                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && !("0").equals(receiveOofayData.getInterFreight()) && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
+                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && new BigDecimal(receiveOofayData.getInterFreight()).compareTo(new BigDecimal(0.00)) == 1 && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
                             //计算国际运费、平台佣金、利润
                             //国际运费
                             BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
@@ -1124,7 +1124,7 @@ public class OrderController extends AbstractController{
                         if(orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
                             orderEntity.setUpdateTime(new Date());
                             //有运费
-                            if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && !("0").equals(receiveOofayData.getInterFreight())){
+                            if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && new BigDecimal(receiveOofayData.getInterFreight()).compareTo(new BigDecimal(0.00)) == 1){
                                 //计算国际运费、平台佣金、利润
                                 //国际运费
                                 BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());

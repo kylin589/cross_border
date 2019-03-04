@@ -1,6 +1,5 @@
 package io.renren.modules.product.controller;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.renren.common.utils.PageUtils;
@@ -72,11 +71,6 @@ public class UploadController extends AbstractController {
     @Autowired
     private TemplateService templateService;
 
-    @Autowired
-    private EanUpcService eanUpcService;
-
-    @Autowired
-    private VariantsInfoService variantsInfoService;
     //英国
     private static final int GBUTC = 0;
     // 美国
@@ -257,7 +251,7 @@ public class UploadController extends AbstractController {
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
         //idList:要上传的id列表
         List<Long> idList = new ArrayList<Long>();
-        if (addUploadVM.getUploadIds() != null) {
+        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0) {
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()), getUserId());
             if ("ok".equals(dto1.getCode())) {
                 List productsList1 = dto1.getProductsList();
@@ -361,48 +355,7 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setDeptId(getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
-        for(ProductsEntity productsEntity : ret){
-            //设置要上传产品的ean码
-            EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
-            if (eanUpcEntity != null) {
-                String code = eanUpcEntity.getCode();
-                //设置Ean码
-                productsEntity.setEanCode(code);
-                //修改状态
-                eanUpcEntity.setState(1);
-                //关联产品id
-                eanUpcEntity.setProductId(productsEntity.getProductId());
-                eanUpcService.updateById(eanUpcEntity);
-                List<VariantsInfoEntity> variantsInfosList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id",productsEntity.getProductId()));
-                if (variantsInfosList != null && variantsInfosList.size() != 0) {
-                    int size = variantsInfosList.size();
-                    EanUpcEntity eanEntity = new EanUpcEntity();
-                    eanEntity.setState(0);
-                    eanEntity.setType("EAN");
-                    eanEntity.setSize(size);
-                    //查出未使用的EAN码，修改为使用
-                    List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanEntity);
-                    if (eanUpcEntities != null && eanUpcEntities.size() != 0 && eanUpcEntities.size() == variantsInfosList.size()) {
-                        for (int i = 0; i < eanUpcEntities.size(); i++) {
-                            eanUpcEntities.get(i).setState(1);
-                            eanUpcEntities.get(i).setProductId(productsEntity.getProductId());
-                            eanUpcService.updateById(eanUpcEntities.get(i));
-                        }
-                        for (int i = 0; i < variantsInfosList.size(); i++) {
-                            String eanCode = eanUpcEntities.get(i).getCode();
-                            VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
-                            variantsInfoEntity.setEanCode(eanCode);
-                        }
-                        variantsInfoService.updateBatchById(variantsInfosList);
-                    } else {
-                        return R.error("EAN码数量不足，尽快添加");
-                    }
-                }
-            }
-            productsEntity.setIsUpload(1);
-        }
         submitFeedService.submitFeed(uploadEntity);
-        productsService.updateBatchById(ret);
         return R.ok();
     }
 
@@ -432,7 +385,7 @@ public class UploadController extends AbstractController {
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
         //idList:要上传的id列表
         List<Long> idList = new ArrayList<Long>();
-        if (addUploadVM.getUploadIds() != null) {
+        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0) {
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()), getUserId());
             if ("ok".equals(dto1.getCode())) {
                 List productsList1 = dto1.getProductsList();
@@ -584,7 +537,7 @@ public class UploadController extends AbstractController {
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
         //idList:要上传的id列表
         List<Long> idList = new ArrayList<Long>();
-        if (addUploadVM.getUploadIds() != null) {
+        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0) {
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()), getUserId());
             if ("ok".equals(dto1.getCode())) {
                 List productsList1 = dto1.getProductsList();
@@ -673,7 +626,7 @@ public class UploadController extends AbstractController {
         uploadEntity.setEndId(addUploadVM.getEndId());
         uploadEntity.setUploadState(0);
         uploadEntity.setUploadIds(StringUtils.join(addUploadVM.getUploadIds(), ","));
-        List<ProductsEntity> ret = addUploadVM.getUploadProductsList();
+
         uploadEntity.setUploadProductsList(addUploadVM.getUploadProductsList());
         uploadEntity.setUploadProductsIds(addUploadVM.getUploadProductsIds());
         //获取分类对象
@@ -749,47 +702,6 @@ public class UploadController extends AbstractController {
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
         submitFeedService.submitFeed(uploadEntity);
-        for(ProductsEntity productsEntity : ret){
-            //设置要上传产品的ean码
-            EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
-            if (eanUpcEntity != null) {
-                String code = eanUpcEntity.getCode();
-                //设置Ean码
-                productsEntity.setEanCode(code);
-                //修改状态
-                eanUpcEntity.setState(1);
-                //关联产品id
-                eanUpcEntity.setProductId(productsEntity.getProductId());
-                eanUpcService.updateById(eanUpcEntity);
-                List<VariantsInfoEntity> variantsInfosList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id",productsEntity.getProductId()));
-                if (variantsInfosList != null && variantsInfosList.size() != 0) {
-                    int size = variantsInfosList.size();
-                    EanUpcEntity eanEntity = new EanUpcEntity();
-                    eanEntity.setState(0);
-                    eanEntity.setType("EAN");
-                    eanEntity.setSize(size);
-                    //查出未使用的EAN码，修改为使用
-                    List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanEntity);
-                    if (eanUpcEntities != null && eanUpcEntities.size() != 0 && eanUpcEntities.size() == variantsInfosList.size()) {
-                        for (int i = 0; i < eanUpcEntities.size(); i++) {
-                            eanUpcEntities.get(i).setState(1);
-                            eanUpcEntities.get(i).setProductId(productsEntity.getProductId());
-                            eanUpcService.updateById(eanUpcEntities.get(i));
-                        }
-                        for (int i = 0; i < variantsInfosList.size(); i++) {
-                            String eanCode = eanUpcEntities.get(i).getCode();
-                            VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
-                            variantsInfoEntity.setEanCode(eanCode);
-                        }
-                        variantsInfoService.updateBatchById(variantsInfosList);
-                    } else {
-                        return R.error("EAN码数量不足，尽快添加");
-                    }
-                }
-            }
-            productsEntity.setIsUpload(1);
-        }
-        productsService.updateBatchById(ret);
         return R.ok();
     }
 
@@ -809,7 +721,7 @@ public class UploadController extends AbstractController {
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
         //idList:要上传的id列表
         List<Long> idList = new ArrayList<Long>();
-        if (addUploadVM.getUploadIds() != null) {
+        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0) {
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()), getUserId());
             if ("ok".equals(dto1.getCode())) {
                 List productsList1 = dto1.getProductsList();

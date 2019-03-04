@@ -593,7 +593,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         omsShippingAddr.setAddress_line1(shipAddressEntity.getShipAddressLine1());
         omsShippingAddr.setAddress_line2(shipAddressEntity.getShipAddressLine2());
         omsShippingAddr.setAddress_line3(shipAddressEntity.getShipAddressLine3());
-        omsShippingAddr.setCustaddress(shipAddressEntity.getShipAddressLine1() + " " + shipAddressEntity.getShipAddressLine2() + " " + shipAddressEntity.getShipAddressLine3());
+        omsShippingAddr.setCustaddress(shipAddressEntity.getShipAddressDetail());
         omsShippingAddr.setCustcity(shipAddressEntity.getShipCity());
         omsShippingAddr.setCustcountry(shipAddressEntity.getShipCountry());
         omsShippingAddr.setCustomer(shipAddressEntity.getShipName());

@@ -47,6 +47,9 @@ public class GenerateProductXML {
     @Autowired
     private FreightCostService freightCostService;
 
+    @Autowired
+    private AmazonRateService amazonRateService;
+
     @Value(("${file.path}"))
     private String fileStoragePath;
 
@@ -114,8 +117,7 @@ public class GenerateProductXML {
                 } else if (StringUtils.isNotBlank(productsEntity.getUpcCode())) {
                     Element standardProductID = product.addElement("StandardProductID");
                     Element type = standardProductID.addElement("Type");
-//                    type.addText("UPC");
-                    type.addText("EAN");
+                    type.addText("UPC");
                     Element value = standardProductID.addElement("Value");
                     value.addText(productsEntity.getUpcCode());
                 }
@@ -271,18 +273,27 @@ public class GenerateProductXML {
                 if (variantsInfoEntityList.get(0).getVariantCombination().contains("-")) {
                     variationThemeStr = "Size-Color";
                     variationTheme.addText(variationThemeStr);
+                    /*Element colorMap = variationData.addElement("ColorMap");
+                    colorMap.addText("white");*/
+                    /*Element sizeMap = variationData.addElement("SizeMap");
+                    sizeMap.addText("free");*/
                 } else if (productsEntity.getColorId() != null) {
                     variationThemeStr = "Color";
                     variationTheme.addText(variationThemeStr);
+                    /*Element colorMap = variationData.addElement("ColorMap");
+                    colorMap.addText("white");*/
                 } else if (productsEntity.getSizeId() != null) {
                     variationThemeStr = "Size";
                     variationTheme.addText(variationThemeStr);
+                    /*Element sizeMap = variationData.addElement("SizeMap");
+                    sizeMap.addText("free");*/
                 }
-                Element unitCount = meautyMisc.addElement("UnitCount");
+
+                /*Element unitCount = meautyMisc.addElement("UnitCount");
                 unitCount.addAttribute("unitOfMeasure", "oz");
                 unitCount.addText("0.1");
                 Element directions = meautyMisc.addElement("Directions");
-                directions.addText("\\t");
+                directions.addText("\\t");*/
 
                 for (int j = 0; j < variantsInfoEntityList.size(); j++) {
                     VariantsInfoEntity variantsInfoEntity = variantsInfoEntityList.get(j);
@@ -300,6 +311,7 @@ public class GenerateProductXML {
                     Element type = standardProductID.addElement("Type");
                     type.addText("EAN");
                     Element value = standardProductID.addElement("Value");
+                    System.out.println("变体id：" + variantsInfoEntity.getVariantId());
                     value.addText(variantsInfoEntity.getEanCode());
 
                     Element vieProductTaxCode = vieProduct.addElement("ProductTaxCode");
@@ -407,32 +419,40 @@ public class GenerateProductXML {
                             vieSize.addText(str[1]);
                             Element vieColor = vieVariationData.addElement("Color");
                             vieColor.addText(str[0]);
+                            Element colorMap1 = vieVariationData.addElement("ColorMap");
+                            colorMap1.addText("white");
+                            Element sizeMap1 = vieVariationData.addElement("SizeMap");
+                            sizeMap1.addText("free");
                             break;
                         case "Color":
                             Element vieColor1 = vieVariationData.addElement("Color");
                             vieColor1.addText(variantsInfoEntity.getVariantCombination());
+                            Element colorMap2 = vieVariationData.addElement("ColorMap");
+                            colorMap2.addText("white");
                             break;
                         case "Size":
                             Element vieSize2 = vieVariationData.addElement("Size");
                             vieSize2.addText(variantsInfoEntity.getVariantCombination());
+                            Element sizeMap2 = vieVariationData.addElement("SizeMap");
+                            sizeMap2.addText("free");
                             break;
                         default:
                             break;
                     }
+
                     /*Element vieUnitCount = vieMeautyMisc.addElement("UnitCount");
                     vieUnitCount.addAttribute("unitOfMeasure", "oz");
                     vieUnitCount.addText("0.1");
                     Element vieDirections = vieMeautyMisc.addElement("Directions");
                     vieDirections.addText("\\t");*/
                 }
-            }
-            /*else {
-                Element unitCount = meautyMisc.addElement("UnitCount");
+            } else {
+                /*Element unitCount = meautyMisc.addElement("UnitCount");
                 unitCount.addAttribute("unitOfMeasure", "oz");
                 unitCount.addText("0.1");
                 Element directions = meautyMisc.addElement("Directions");
-                directions.addText("\\t");
-            }*/
+                directions.addText("\\t");*/
+            }
 
         }
         // 生成文件路径
@@ -496,7 +516,7 @@ public class GenerateProductXML {
             }
 
             // 主产品图片
-            List<ImageAddressEntity> imageAddressEntityList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productsEntity.getProductId()).eq("is_deleted", "0").orderBy("sort",true));
+            List<ImageAddressEntity> imageAddressEntityList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productsEntity.getProductId()).eq("is_deleted", "0"));
             if (imageAddressEntityList != null || imageAddressEntityList.size() != 0) {
                 int temp = imageAddressEntityList.size();
                 if (temp > 8) {
@@ -757,6 +777,7 @@ public class GenerateProductXML {
             sku.addText(productsEntity.getProductSku());
             Element standardPrice = price.addElement("StandardPrice");
             standardPrice.addAttribute("currency", money);
+
             standardPrice.addText(final_price.toString());
             messageId++;
 
@@ -772,7 +793,15 @@ public class GenerateProductXML {
                     sku1.addText(variantsInfoEntity.getVariantSku());
                     Element standardPrice1 = price1.addElement("StandardPrice");
                     standardPrice1.addAttribute("currency", money);
-                    standardPrice1.addText(final_price.toString());
+                    BigDecimal addPrice = variantsInfoEntity.getVariantAddPrice();
+                    if(addPrice != null && addPrice.compareTo(new BigDecimal(0)) != 0){
+                        AmazonRateEntity rateEntity = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",money));
+                        BigDecimal relAddPrice = addPrice.divide(rateEntity.getRate(),2,BigDecimal.ROUND_HALF_UP);
+                        BigDecimal variantPrice = final_price.add(relAddPrice);
+                        standardPrice1.addText(variantPrice.toString());
+                    }else {
+                        standardPrice1.addText(final_price.toString());
+                    }
                     messageId++;
                 }
 
@@ -921,8 +950,7 @@ public class GenerateProductXML {
                 } else if (StringUtils.isNotBlank(productsEntity.getUpcCode())) {
                     Element standardProductID = product.addElement("StandardProductID");
                     Element type = standardProductID.addElement("Type");
-//                    type.addText("UPC");
-                    type.addText("EAN");
+                    type.addText("UPC");
                     Element value = standardProductID.addElement("Value");
                     value.addText(productsEntity.getUpcCode());
                 }
@@ -1075,12 +1103,20 @@ public class GenerateProductXML {
                 if (variantsInfoEntityList.get(0).getVariantCombination().contains("-")) {
                     variationThemeStr = "SizeColor";
                     variationTheme.addText(variationThemeStr);
+                    /*Element colorMap = variationData.addElement("ColorMap");
+                    colorMap.addText("white");
+                    Element sizeMap = variationData.addElement("SizeMap");
+                    sizeMap.addText("free");*/
                 } else if (productsEntity.getColorId() != null) {
                     variationThemeStr = "Color";
                     variationTheme.addText(variationThemeStr);
+                    /*Element colorMap = variationData.addElement("ColorMap");
+                    colorMap.addText("white");*/
                 } else if (productsEntity.getSizeId() != null) {
                     variationThemeStr = "Size";
                     variationTheme.addText(variationThemeStr);
+                    /*Element sizeMap = variationData.addElement("SizeMap");
+                    sizeMap.addText("free");*/
                 }
 
                 Element vieClassificationData1 = clothing.addElement("ClassificationData");
@@ -1114,8 +1150,8 @@ public class GenerateProductXML {
                 modelName1.addText("null");
                 Element modelNumber1 = vieClassificationData1.addElement("ModelNumber");
                 modelNumber1.addText("null");
-                Element sizeMap1 = vieClassificationData1.addElement("SizeMap");
-                sizeMap1.addText("null");
+                /*Element sizeMap1 = vieClassificationData1.addElement("SizeMap");
+                sizeMap1.addText("null");*/
                 Element beltStyle1 = vieClassificationData1.addElement("BeltStyle");
                 beltStyle1.addText("null");
                 Element bottomStyle1 = vieClassificationData1.addElement("BottomStyle");
@@ -1348,18 +1384,27 @@ public class GenerateProductXML {
                             vieSize.addText(str[1]);
                             Element vieColor = vieVariationData.addElement("Color");
                             vieColor.addText(str[0]);
+                            Element colorMap1 = vieVariationData.addElement("ColorMap");
+                            colorMap1.addText("white");
+                            Element sizeMap1 = vieVariationData.addElement("SIzeMap");
+                            sizeMap1.addText("free");
                             break;
                         case "Color":
                             Element vieColor1 = vieVariationData.addElement("Color");
                             vieColor1.addText(variantsInfoEntity.getVariantCombination());
+                            Element colorMap2 = vieVariationData.addElement("ColorMap");
+                            colorMap2.addText("white");
                             break;
                         case "Size":
                             Element vieSize2 = vieVariationData.addElement("Size");
                             vieSize2.addText(variantsInfoEntity.getVariantCombination());
+                            Element sizeMap2 = vieVariationData.addElement("SIzeMap");
+                            sizeMap2.addText("free");
                             break;
                         default:
                             break;
                     }
+
                     Element vieVariationTheme = vieVariationData.addElement("VariationTheme");
                     vieVariationTheme.addText(variationThemeStr);
 
@@ -1394,8 +1439,8 @@ public class GenerateProductXML {
                     modelName.addText("null");
                     Element modelNumber = vieClassificationData.addElement("ModelNumber");
                     modelNumber.addText("null");
-                    Element sizeMap = vieClassificationData.addElement("SizeMap");
-                    sizeMap.addText("null");
+                    /*Element sizeMap = vieClassificationData.addElement("SizeMap");
+                    sizeMap.addText("null");*/
                     Element beltStyle = vieClassificationData.addElement("BeltStyle");
                     beltStyle.addText("null");
                     Element bottomStyle = vieClassificationData.addElement("BottomStyle");
@@ -1741,8 +1786,7 @@ public class GenerateProductXML {
                 } else if (StringUtils.isNotBlank(productsEntity.getUpcCode())) {
                     Element standardProductID = product.addElement("StandardProductID");
                     Element type = standardProductID.addElement("Type");
-//                    type.addText("UPC");
-                    type.addText("EAN");
+                    type.addText("UPC");
                     Element value = standardProductID.addElement("Value");
                     value.addText(productsEntity.getUpcCode());
                 }
@@ -1755,8 +1799,8 @@ public class GenerateProductXML {
             productTaxCode.addText("A_GEN_TAX");
 
             Map<String, Object> countryMap = switchCountry(productsEntity, countryCode);
-//            Long freightId = Long.valueOf(String.valueOf(countryMap.get("freightId")));
-//            String money = String.valueOf(countryMap.get("money"));
+            Long freightId = Long.valueOf(String.valueOf(countryMap.get("freightId")));
+            String money = String.valueOf(countryMap.get("money"));
             IntroductionEntity introductionEntity = introductionService.selectById(Long.valueOf(String.valueOf(countryMap.get("freightId"))));
 
             Element descriptionData = product.addElement("DescriptionData");
@@ -1896,12 +1940,20 @@ public class GenerateProductXML {
                 if (variantsInfoEntityList.get(0).getVariantCombination().contains("-")) {
                     variationThemeStr = "Size-Color";
                     variationTheme.addText(variationThemeStr);
+                    /*Element colorMap = variationTheme.addElement("ColorMap");
+                    colorMap.addText("white");
+                    Element sizeMap = variationTheme.addElement("SizeMap");
+                    sizeMap.addText("free");*/
                 } else if (productsEntity.getColorId() != null) {
                     variationThemeStr = "Color";
                     variationTheme.addText(variationThemeStr);
+                    /*Element colorMap = variationTheme.addElement("ColorMap");
+                    colorMap.addText("white");*/
                 } else if (productsEntity.getSizeId() != null) {
                     variationThemeStr = "Size";
                     variationTheme.addText(variationThemeStr);
+                    /*EElement sizeMap = variationTheme.addElement("SizeMap");
+                    sizeMap.addText("free");*/
                 }
 
                 // 后续部分
@@ -2026,6 +2078,7 @@ public class GenerateProductXML {
                 fabricType.addText("\\t");
 */
                 for (int j = 0; j < variantsInfoEntityList.size(); j++) {
+                    System.out.println("varid=" + variantsInfoEntityList.get(j).getVariantId());
                     VariantsInfoEntity variantsInfoEntity = variantsInfoEntityList.get(j);
                     Element vieMessage = root.addElement("Message");
                     Element vieMessageID = vieMessage.addElement("MessageID");
@@ -2217,6 +2270,11 @@ public class GenerateProductXML {
                             // 色系和颜色一样
                             /*Element vieColorMap = vieBuildingMaterials.addElement("ColorMap");
                             vieColorMap.addText("\\t");*/
+
+                            Element vieColorMap = vieBuildingMaterials.addElement("ColorMap");
+                            vieColorMap.addText("white");
+                            Element vieSizeMap = vieBuildingMaterials.addElement("SizeMap");
+                            vieSizeMap.addText("free");
                             break;
                         case "Color":
                             // 尺寸
@@ -2226,7 +2284,8 @@ public class GenerateProductXML {
                             // 颜色
                             Element vieColor1 = vieBuildingMaterials.addElement("Color");
                             vieColor1.addText(variantsInfoEntity.getVariantCombination());
-
+                            Element vieColorMap1 = vieBuildingMaterials.addElement("ColorMap");
+                            vieColorMap1.addText("white");
                             // 色系和颜色一样
                            /* Element vieColorMap1 = vieBuildingMaterials.addElement("ColorMap");
                             vieColorMap1.addText("\\t");*/
@@ -2236,6 +2295,8 @@ public class GenerateProductXML {
                             Element vieSize2 = vieBuildingMaterials.addElement("Size");
                             vieSize2.addText(variantsInfoEntity.getVariantCombination());
 
+                            Element vieSizeMap1 = vieBuildingMaterials.addElement("SizeMap");
+                            vieSizeMap1.addText("free");
                           /*  // 颜色
                             Element vieColor2 = vieBuildingMaterials.addElement("Color");
                             vieColor2.addText("\\t");
@@ -2246,7 +2307,6 @@ public class GenerateProductXML {
                             break;
                         default:
                     }
-
                     // Material - 材料
                     Element vieMaterial = vieBuildingMaterials.addElement("Material");
                     vieMaterial.addText(String.valueOf(valueMap.get("Material")));
@@ -2370,7 +2430,10 @@ public class GenerateProductXML {
                 // 色系和颜色一样
                 Element colorMap = buildingMaterials.addElement("ColorMap");
                 colorMap.addText("\\t");*/
-
+                Element colorMap = buildingMaterials.addElement("ColorMap");
+                colorMap.addText("white");
+                Element sizeMap = buildingMaterials.addElement("SizeMap");
+                sizeMap.addText("free");
                 // Material - 材料
                 Element material = buildingMaterials.addElement("Material");
                 material.addText(String.valueOf(valueMap.get("Material")));
