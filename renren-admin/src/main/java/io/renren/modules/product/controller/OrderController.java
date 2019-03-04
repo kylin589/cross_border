@@ -43,7 +43,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -480,6 +479,8 @@ public class OrderController extends AbstractController{
         }
 
         Long orderId = orderVM.getOrderId();
+        AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
+
         Random random = new Random();
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("YT3");
@@ -494,16 +495,24 @@ public class OrderController extends AbstractController{
         order.setOrderState("虚发货");
         //设置国际物流单号
         order.setAbroadWaybill(abroadWaybill);
-        //生成国际物流对象
-        AbroadLogisticsEntity abroadLogistics = new AbroadLogisticsEntity();
-        abroadLogistics.setOrderId(orderId);
-        abroadLogistics.setAbroadWaybill(abroadWaybill);
-        abroadLogistics.setIsSynchronization(0);
-        abroadLogistics.setCreateTime(new Date());
-        abroadLogistics.setUpdateTime(new Date());
-        System.out.println(order.getBuyDate());
-        abroadLogistics.setShipTime(new Date());
-        abroadLogisticsService.insert(abroadLogistics);
+        if(abroadLogistics != null){
+            abroadLogistics.setAbroadWaybill(abroadWaybill);
+            abroadLogistics.setIsSynchronization(2);//表示正在同步中
+            abroadLogistics.setUpdateTime(new Date());
+            abroadLogistics.setShipTime(new Date());
+            abroadLogisticsService.updateById(abroadLogistics);
+        }else{
+            //生成国际物流对象
+            abroadLogistics = new AbroadLogisticsEntity();
+            abroadLogistics.setOrderId(orderId);
+            abroadLogistics.setAbroadWaybill(abroadWaybill);
+            abroadLogistics.setIsSynchronization(2);//表示正在同步中
+            abroadLogistics.setCreateTime(new Date());
+            abroadLogistics.setUpdateTime(new Date());
+            System.out.println(order.getBuyDate());
+            abroadLogistics.setShipTime(new Date());
+            abroadLogisticsService.insert(abroadLogistics);
+        }
         orderService.updateById(order);
         //准备订单国际物流上传信息模型
         SendDataMoedl sendDataMoedl = synchronizationXuModel(order,abroadLogistics);
@@ -655,113 +664,9 @@ public class OrderController extends AbstractController{
      * 上传国际物流信息到amazon
      * @param sendDataMoedl
      */
-    @Async("taskExecutor")
+//    @Async("taskExecutor")
     public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl,Long orderId){
-        List<Shipping> list = sendDataMoedl.getList();
-
-
-        List<String> serviceURL = sendDataMoedl.getServiceURL();
-        List<String> marketplaceIds = sendDataMoedl.getMarketplaceIds();
-        String sellerId = sendDataMoedl.getSellerId();
-        String mwsAuthToken = sendDataMoedl.getMwsAuthToken();
-        //获得授权表里的region字段的值，判断其逻辑
-        AmazonGrantEntity amazonGrantEntity=amazonGrantService.selectOne(new EntityWrapper<AmazonGrantEntity>().eq("merchant_id",sellerId).eq("grant_token",mwsAuthToken));
-        String accessKey=null;
-        String secretKey=null;
-        if(amazonGrantEntity!=null){
-           int region= amazonGrantEntity.getRegion();
-            if(region==0){//北美
-                accessKey=naAccessKey;
-                secretKey=naSecretKey;
-            }else if(region==1){//欧洲
-                accessKey=euAccessKey;
-                secretKey=euSecretKey;
-            }else if(region==2){//日本
-                accessKey=jpAccessKey;
-                secretKey=jpSecretKey;
-            }else if(region==3){//澳大利亚
-                accessKey=auAccessKey;
-                secretKey=auSecretKey;
-            }
-        }
-
-        /**
-         * 根据List数组，生成XML数据
-         */
-        String resultXml = XmlUtils.getXmlFromList(list);
-        //打印生成xml数据
-        FileWriter outdata = null;
-        FileUtil.generateFilePath(fileStoragePath,"shipping");
-        String filePath = FileUtil.generateFilePath(fileStoragePath,"shipping");
-        String feedType="_POST_ORDER_FULFILLMENT_DATA_";
-        try {
-            outdata = new FileWriter(filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        PrintWriter outfile=new PrintWriter(outdata);
-        outfile.println(resultXml);// 输出String
-        outfile.flush();// 输出缓冲区的数据
-        outfile.close();
-//         List<Object> responseList =listOrdersAsyncService.invokeListOrders(client,requestList);
-        //进行数据上传(步骤一)
-        String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
-        //进行数据上传(步骤二)
-        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId,accessKey,secretKey);
-        System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
-        if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
-            //进行数据上传(步骤三)
-            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0),accessKey,secretKey);
-            //同步成功后把物流状态改为同步
-            AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
-            String amazonOrderId=orderService.selectById(orderId).getAmazonOrderId();
-             //从后代调用接口获取亚马逊后台的订单状态
-            String orderStatus="";
-            MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
-            config.setServiceURL(serviceURL.get(0));
-            MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
-                    "my_test", "1.0", config, null);
-            List<GetOrderRequest> requestList = new ArrayList<GetOrderRequest>();
-            GetOrderRequest request = new GetOrderRequest();
-            request.setSellerId(sellerId);
-            request.setMWSAuthToken(mwsAuthToken);
-            List<String> amazonOrderIds = new ArrayList<String>();
-            amazonOrderIds.add(amazonOrderId);
-            request.setAmazonOrderId(amazonOrderIds);
-            requestList.add(request);
-            List<Object> responseList=invokeGetOrder(client,requestList);
-            Boolean isSuccess = false;
-            GetOrderResponse getOrderResponse = null;
-            for (Object tempResponse : responseList) {
-                // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
-                String className = tempResponse.getClass().getName();
-                if ((GetOrderResponse.class.getName()).equals(className) == true) {
-                    System.out.println("responseList 类型是 GetOrderResponse。");
-                    GetOrderResponse response = (GetOrderResponse) tempResponse;
-                    System.out.println(response.toXML());
-                    orderStatus=response.toXML();
-                    if(orderStatus.contains("<OrderStatus>")){
-                        orderStatus= orderStatus.substring(orderStatus.indexOf("<OrderStatus>"),orderStatus.indexOf("</OrderStatus>")).replace("<OrderStatus>","");
-                    }
-                    isSuccess = true;
-                } else {
-                    System.out.println("responseList 类型是 MarketplaceWebServiceOrderException。");
-                    isSuccess = false;
-                    continue;
-                }
-            }
-
-            //判读亚马逊后台订单的状态
-            if("Shipped".equals(orderStatus)){
-                abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
-                abroadLogisticsService.updateById(abroadLogisticsEntity);
-            }else{
-                logger.error("同步失败,请重新上传订单...");
-                abroadLogisticsEntity.setIsSynchronization(0);//表示同步成功
-                abroadLogisticsService.updateById(abroadLogisticsEntity);
-            }
-
-        }
+        new AmazonUpdateLogisticsThread(sendDataMoedl,orderId).start();
     }
     /**
      * 手动更新订单状态
@@ -789,6 +694,124 @@ public class OrderController extends AbstractController{
             }
         }
         return R.ok();
+    }
+
+    /**
+     * 更新亚马逊订单的方法
+     */
+    class AmazonUpdateLogisticsThread extends Thread{
+        private SendDataMoedl sendDataMoedl;
+        private Long orderId;
+
+        public AmazonUpdateLogisticsThread(SendDataMoedl sendDataMoedl,Long orderId){
+            this.sendDataMoedl=sendDataMoedl;
+            this.orderId=orderId;
+        }
+        @Override
+        public void run(){
+            List<Shipping> list = sendDataMoedl.getList();
+            List<String> serviceURL = sendDataMoedl.getServiceURL();
+            List<String> marketplaceIds = sendDataMoedl.getMarketplaceIds();
+            String sellerId = sendDataMoedl.getSellerId();
+            String mwsAuthToken = sendDataMoedl.getMwsAuthToken();
+            //获得授权表里的region字段的值，判断其逻辑
+            AmazonGrantEntity amazonGrantEntity=amazonGrantService.selectOne(new EntityWrapper<AmazonGrantEntity>().eq("merchant_id",sellerId).eq("grant_token",mwsAuthToken));
+            String accessKey=null;
+            String secretKey=null;
+            if(amazonGrantEntity!=null){
+                int region= amazonGrantEntity.getRegion();
+                if(region==0){//北美
+                    accessKey=naAccessKey;
+                    secretKey=naSecretKey;
+                }else if(region==1){//欧洲
+                    accessKey=euAccessKey;
+                    secretKey=euSecretKey;
+                }else if(region==2){//日本
+                    accessKey=jpAccessKey;
+                    secretKey=jpSecretKey;
+                }else if(region==3){//澳大利亚
+                    accessKey=auAccessKey;
+                    secretKey=auSecretKey;
+                }
+            }
+
+            /**
+             * 根据List数组，生成XML数据
+             */
+            String resultXml = XmlUtils.getXmlFromList(list);
+            //打印生成xml数据
+            FileWriter outdata = null;
+            FileUtil.generateFilePath(fileStoragePath,"shipping");
+            String filePath = FileUtil.generateFilePath(fileStoragePath,"shipping");
+            String feedType="_POST_ORDER_FULFILLMENT_DATA_";
+            try {
+                outdata = new FileWriter(filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            PrintWriter outfile=new PrintWriter(outdata);
+            outfile.println(resultXml);// 输出String
+            outfile.flush();// 输出缓冲区的数据
+            outfile.close();
+//         List<Object> responseList =listOrdersAsyncService.invokeListOrders(client,requestList);
+            //进行数据上传(步骤一)
+            String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
+            //进行数据上传(步骤二)
+            List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId,accessKey,secretKey);
+            System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
+            if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
+                //进行数据上传(步骤三)
+                submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0),accessKey,secretKey);
+                AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
+                String amazonOrderId=orderService.selectById(orderId).getAmazonOrderId();
+                //从后代调用接口获取亚马逊后台的订单状态
+                String orderStatus="";
+                MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
+                config.setServiceURL(serviceURL.get(0));
+                MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
+                        "my_test", "1.0", config, null);
+                List<GetOrderRequest> requestList = new ArrayList<GetOrderRequest>();
+                GetOrderRequest request = new GetOrderRequest();
+                request.setSellerId(sellerId);
+                request.setMWSAuthToken(mwsAuthToken);
+                List<String> amazonOrderIds = new ArrayList<String>();
+                amazonOrderIds.add(amazonOrderId);
+                request.setAmazonOrderId(amazonOrderIds);
+                requestList.add(request);
+                List<Object> responseList=invokeGetOrder(client,requestList);
+                Boolean isSuccess = false;
+                GetOrderResponse getOrderResponse = null;
+                for (Object tempResponse : responseList) {
+                    // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
+                    String className = tempResponse.getClass().getName();
+                    if ((GetOrderResponse.class.getName()).equals(className) == true) {
+                        System.out.println("responseList 类型是 GetOrderResponse。");
+                        GetOrderResponse response = (GetOrderResponse) tempResponse;
+                        System.out.println(response.toXML());
+                        orderStatus=response.toXML();
+                        if(orderStatus.contains("<OrderStatus>")){
+                            orderStatus= orderStatus.substring(orderStatus.indexOf("<OrderStatus>"),orderStatus.indexOf("</OrderStatus>")).replace("<OrderStatus>","");
+                        }
+                        isSuccess = true;
+                    } else {
+                        System.out.println("responseList 类型是 MarketplaceWebServiceOrderException。");
+                        isSuccess = false;
+                        continue;
+                    }
+                }
+
+                //判读亚马逊后台订单的状态
+                if("Shipped".equals(orderStatus)){
+                    abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
+                    abroadLogisticsService.updateById(abroadLogisticsEntity);
+                }else{
+                    logger.error("同步失败,请重新上传订单...");
+                    abroadLogisticsEntity.setIsSynchronization(0);//表示同步失败
+                    abroadLogisticsService.updateById(abroadLogisticsEntity);
+                }
+
+            }
+        }
     }
     /**
      * 刷新订单亚马逊状态线程
