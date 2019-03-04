@@ -531,6 +531,9 @@ var vm = new Vue({
     methods:{
         // 获取产品id
         getProId:function () {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../product/products/getproductid',
                 type: 'get',
@@ -545,8 +548,10 @@ var vm = new Vue({
                         vm.id = r.productsEntity.productId;
                         vm.getProStation();
                         vm.getProAlbum();
+                        layer.close(index);
                     } else {
                         layer.alert(r.msg);
+
                     }
                 },
                 error: function () {
