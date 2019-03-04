@@ -31,6 +31,7 @@ import io.renren.modules.product.vm.OrderItemModel;
 import io.renren.modules.product.vm.OrderModel;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +49,39 @@ import static io.renren.modules.amazon.util.XMLUtil.*;
 
 @Component("OldOrderTimer")
 public class OldOrderTimer {
+    // 欧洲
+    @Value(("${mws-config.eu-access-key}"))
+    private String euAccessKey;
+
+    @Value(("${mws-config.eu-secret-key}"))
+    private String euSecretKey;
+
+    // 日本
+    @Value(("${mws-config.jp-access-key}"))
+    private String jpAccessKey;
+
+    @Value(("${mws-config.jp-secret-key}"))
+    private String jpSecretKey;
+
+    // 北美
+    @Value(("${mws-config.na-access-key}"))
+    private String naAccessKey;
+
+    @Value(("${mws-config.na-secret-key}"))
+    private String naSecretKey;
+
+    // 澳大利亚
+    @Value(("${mws-config.au-access-key}"))
+    private String auAccessKey;
+
+    @Value(("${mws-config.au-secret-key}"))
+    private String auSecretKey;
+
+    @Value(("${mws-config.app-name}"))
+    private String appName;
+
+    @Value(("${mws-config.app-version}"))
+    private String appVersion;
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
 
@@ -129,6 +163,23 @@ public class OldOrderTimer {
         Long shopId = (Long)map.get("shopId");
         Long userId = (Long)map.get("userId");
         Long deptId = (Long)map.get("deptId");
+        int region= (int) map.get("region");
+        String accessKey=null;
+        String secretKey=null;
+        if(region==0){//北美
+            accessKey=naAccessKey;
+            secretKey=naSecretKey;
+        }else if(region==1){//欧洲
+            accessKey=euAccessKey;
+            secretKey=euSecretKey;
+        }else if(region==2){//日本
+            accessKey=jpAccessKey;
+            secretKey=jpSecretKey;
+        }else if(region==3){//澳大利亚
+            accessKey=auAccessKey;
+            secretKey=auSecretKey;
+        }
+
         String serviceURL = (String) map.get("serviceURL");
         marketplaceId.add((String) map.get("marketplaceId"));
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
@@ -375,7 +426,7 @@ public class OldOrderTimer {
                                     System.out.println("商品sku:" + product_sku + "==================");
                                     int orderItemNumber = orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
                                     //根据商品sku获取图片连接的url的方法
-                                    String img_url = this.getImageUrl(product_sku, product_asin, sellerId, mwsAuthToken, serviceURL, marketplaceId);
+                                    String img_url = this.getImageUrl(product_sku, product_asin, sellerId, mwsAuthToken, serviceURL, marketplaceId,accessKey,secretKey);
                                     System.out.println("商品图片:"+img_url+"======================");
                                     //获取商品价格
                                     String productPrice="0.00";
@@ -450,7 +501,7 @@ public class OldOrderTimer {
      * 根据商品sku来获取商品的image_url值
      * @param product_sku
      */
-    public String getImageUrl(String product_sku,String product_asin,String sellerld,String token,String sericeUrl,List marketplaceId){
+    public String getImageUrl(String product_sku,String product_asin,String sellerld,String token,String sericeUrl,List marketplaceId,String accessKey,String secretKey){
         String img_url =null;
         //根据sku去新库的变体表中获取变体信息
         VariantsInfoEntity skuInfo=variantsInfoService.selectOne(new EntityWrapper<VariantsInfoEntity>().eq("variant_sku",product_sku) );
@@ -465,17 +516,16 @@ public class OldOrderTimer {
             }
             if(!StringUtils.isNotBlank(img_url)){
                 //如果新库获取不到，就到旧库里获取，调用商品获取的接口
-                return getProductinfoTest(sellerld,token,product_asin,marketplaceId);
+                return getProductinfoTest(sellerld,token,product_asin,marketplaceId,accessKey,secretKey,sericeUrl);
             }
         }
         return img_url;
     }
 
-
-    public String getProductinfoTest(String sellerld,String token,String product_asin,List marketplacedId) {
+    public String getProductinfoTest(String sellerld,String token,String product_asin,List marketplacedId,String accessKey,String secrectKey,String serviceUrl) {
         MarketplaceWebServiceProductsConfig config = new MarketplaceWebServiceProductsConfig();
-        config.setServiceURL("https://mws-eu.amazonservices.com");
-        MarketplaceWebServiceProductsAsyncClient client = new MarketplaceWebServiceProductsAsyncClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+        config.setServiceURL(serviceUrl);
+        MarketplaceWebServiceProductsAsyncClient client = new MarketplaceWebServiceProductsAsyncClient(accessKey, secrectKey,
                 "mws_test", "1.0", config, null);
         // Create a request.
         GetMatchingProductRequest request = new GetMatchingProductRequest();
