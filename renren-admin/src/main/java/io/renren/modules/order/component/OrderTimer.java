@@ -259,7 +259,7 @@ public class OrderTimer {
                     for (int j = 0; j < listOrdersResponseDtos.get(i).getOrders().size(); j++) {
                         List<ListOrderItemsRequest> ListOrderItemsRequestRequests = new ArrayList<ListOrderItemsRequest>();
                         ListOrderItemsRequest ListOrderItemsRequest = new ListOrderItemsRequest();
-                        //403-6734497-8009147
+                        //113-9562786-3667458
                         String AmazonOrderId = listOrdersResponseDtos.get(i).getOrders().get(j).getAmazonOrderId();
                         System.out.println("订单号:" + AmazonOrderId + "=================");
                         ListOrderItemsRequest.setAmazonOrderId(AmazonOrderId);
@@ -364,11 +364,17 @@ public class OrderTimer {
                                     addressEntity.setShipName("");
                                 }
                                 if (shipaddress1 != null) {
+                                    String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress1;
                                     addressEntity.setShipAddressLine1(shipaddress1);
+                                    addressEntity.setShipAddressDetail(detail);
                                 } else if (shipaddress2 != null) {
+                                    String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress2;
                                     addressEntity.setShipAddressLine1(shipaddress2);
+                                    addressEntity.setShipAddressDetail(detail);
                                 } else {
+                                    String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict;
                                     addressEntity.setShipAddressLine1("");
+                                    addressEntity.setShipAddressDetail(detail);
                                 }
                                 if (shipcity != null) {
                                     addressEntity.setShipCity(shipcity);
@@ -432,7 +438,7 @@ public class OrderTimer {
                                         System.out.println("商品sku:" + product_sku + "==================");
                                         int orderItemNumber = orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
                                         //根据商品sku获取图片连接的url的方法
-                                        String img_url = this.getImageUrl(product_sku, product_asin, sellerId, mwsAuthToken, serviceURL, marketplaceId);
+                                        String img_url = this.getImageUrl(product_sku, product_asin, sellerId, mwsAuthToken, serviceURL, marketplaceId,accessKey,secretKey);
                                         System.out.println("商品图片url"+img_url+"====================");
                                         //获取商品价格
                                         String productPrice="0.00";
@@ -508,7 +514,7 @@ public class OrderTimer {
      * 根据商品sku来获取商品的image_url值
      * @param product_sku
      */
-    public String getImageUrl(String product_sku,String product_asin,String sellerld,String token,String sericeUrl,List marketplaceId){
+    public String getImageUrl(String product_sku,String product_asin,String sellerld,String token,String sericeUrl,List marketplaceId,String accessKey,String secretKey){
         String img_url =null;
         //根据sku去新库的变体表中获取变体信息
         VariantsInfoEntity skuInfo=variantsInfoService.selectOne(new EntityWrapper<VariantsInfoEntity>().eq("variant_sku",product_sku) );
@@ -523,17 +529,17 @@ public class OrderTimer {
             }
             if(!StringUtils.isNotBlank(img_url)){
                 //如果新库获取不到，就到旧库里获取，调用商品获取的接口
-                return getProductinfoTest(sellerld,token,product_asin,marketplaceId);
+                return getProductinfoTest(sellerld,token,product_asin,marketplaceId,accessKey,secretKey,sericeUrl);
             }
         }
         return img_url;
     }
 
 
-    public String getProductinfoTest(String sellerld,String token,String product_asin,List marketplacedId) {
+    public String getProductinfoTest(String sellerld,String token,String product_asin,List marketplacedId,String accessKey,String secrectKey,String serviceUrl) {
         MarketplaceWebServiceProductsConfig config = new MarketplaceWebServiceProductsConfig();
-        config.setServiceURL("https://mws-eu.amazonservices.com");
-        MarketplaceWebServiceProductsAsyncClient client = new MarketplaceWebServiceProductsAsyncClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+        config.setServiceURL(serviceUrl);
+        MarketplaceWebServiceProductsAsyncClient client = new MarketplaceWebServiceProductsAsyncClient(accessKey, secrectKey,
                 "mws_test", "1.0", config, null);
         // Create a request.
         GetMatchingProductRequest request = new GetMatchingProductRequest();
