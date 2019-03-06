@@ -168,6 +168,8 @@ var vm = new Vue({
         wulDanh:'',
         isLookWuliu:true,
         quxiaoJijian:null,
+        islogistics:false,
+        logisticsNum:''
 
     },
     methods:{
@@ -343,7 +345,8 @@ var vm = new Vue({
                                 success: function (r) {
                                     console.log(r);
                                     if (r.code === 0) {
-                                        layer.msg('修改成功')
+                                        layer.msg('修改成功');
+                                        vm.getOrderInfo();
                                     } else {
                                         layer.alert(r.msg);
                                     }
@@ -379,6 +382,7 @@ var vm = new Vue({
             if($(event.target).parent().parent().find('.logistics').length!=0){
                 $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
             }
+            vm.isLookWuliu = true;
         },
         noedit1:function (event) {
             // d = vm.orderDetails.domesticLogisticsList[index].waybill;
@@ -431,15 +435,27 @@ var vm = new Vue({
         },
         //物流信息
         queryLogistic:function (waybill,event) {
-            console.log(waybill);
-            console.log($(event.target));
-            // console.log($(event.target).attr('data-ok'));
-            // console.log($(event.target).find('input').attr('disabled'));
+            console.log()
+
             if(vm.isLookWuliu == true && JSON.stringify(waybill) != 'null'){
-                console.log(waybill)
-                // var index = layer.load();
-                // var index = layer.load(1); //换了种风格
-                // var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                console.log(waybill);
+                vm.logisticsNum = waybill;
+
+
+                layer.open({
+                    type: 1,
+                    title: '物流信息',
+                    content: $('#logisticsDiv'), //这里content是一个普通的String
+                    skin: 'openClass',
+                    area: ['300px', '420px'],
+                    shadeClose: true,
+                    btn: [],
+
+                });
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+
                 $.ajax({
                     // url: 'http://39.106.131.222:8000/domestic/queryLogistic',
                     url: 'http://www.threeee.cn/domestic/queryLogistic',
@@ -453,10 +469,16 @@ var vm = new Vue({
                         console.log(r);
                         if (r.code === 0) {
                             vm.logistics = r.data;
-                            // layer.close(index);
+                            layer.close(index);
+                            if(vm.logistics.length == 0){
+                                vm.islogistics = true;
+                            }else {
+                                vm.islogistics = false;
+                            }
+
                         } else {
                             layer.alert(r.msg);
-                            // layer.close(index);
+                            layer.close(index);
                         }
                     },
                     error: function () {
@@ -464,16 +486,16 @@ var vm = new Vue({
                         // layer.close(index);
                     }
                 });
-                var _val = $(event.target).val();
-                var _top = $(event.target).offset().top;
-                var _left = $(event.target).offset().left - 130;
-                var _height = $(event.target).height();
-                var top = _top + _height-8;
-                $('.logisticsDiv').css({
-                    'display':'inline-block',
-                    'top':top+'px',
-                    'left':_left+'px'
-                })
+                // var _val = $(event.target).val();
+                // var _top = $(event.target).offset().top;
+                // var _left = $(event.target).offset().left - 130;
+                // var _height = $(event.target).height();
+                // var top = _top + _height-8;
+                // $('.logisticsDiv').css({
+                //     'display':'inline-block',
+                //     'top':top+'px',
+                //     'left':_left+'px'
+                // })
             }
 
             // if($(event.target).attr('data-ok') == 'true'){
@@ -489,6 +511,10 @@ var vm = new Vue({
             //         'left':_left+'px'
             //     })
             // }
+        },
+        // 取消单击事件
+        closeClick:function () {
+
         },
         // 鼠标一处物流消失
         xiaoshiFcun:function (event) {

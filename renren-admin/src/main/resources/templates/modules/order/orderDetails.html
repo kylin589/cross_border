@@ -77,7 +77,7 @@
                     <div v-if="orderProductItem.domesticLogistics">
 
                         <span><label for="">采购价(￥)：</label><input type="text" v-model="orderProductItem.domesticLogistics.price" disabled></span>
-                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @mouseover="queryLogistic(orderProductItem.domesticLogistics.waybill,$event)" @mouseout="xiaoshiFcun"><input class="" data-ok="true" type="text"  placeholder="物流单号" v-model="orderProductItem.domesticLogistics.waybill" disabled></a></span>
+                        <span><label for="">物流单号(￥)：</label><a href="javascript:;" data-ok="true" class="logistics" @click="queryLogistic(orderProductItem.domesticLogistics.waybill,$event)"><input class="" data-ok="true" type="text"  placeholder="物流单号" v-model="orderProductItem.domesticLogistics.waybill" disabled></a></span>
                         <span><label for="">物流公司：</label><input class="" type="text" :placeholder="orderProductItem.domesticLogistics.logisticsCompany" v-model="orderProductItem.domesticLogistics.logisticsCompany" disabled></span>
                         <span><label for="">发货日期(￥)：</label><input type="text" :placeholder="orderProductItem.domesticLogistics.issuanceDate" v-model="orderProductItem.domesticLogistics.issuanceDate" disabled></span>
                         <div class="fr" style="">
@@ -259,15 +259,15 @@
 
         </div>
 
-        <div class="logisticsDiv">
-            <span class="jiantou"></span>
+        <div class="logisticsDiv" id="logisticsDiv" style="display: none;">
+            <!--<span class="jiantou"></span>-->
             <div>
                 <p>
-                    <span>{{ logistics.express }}</span>
-                    <span>{{ logistics.expressNum }}</span>
+                    <span style="color: #666;">单号：<span>{{logisticsNum}}</span></span>
+                    <!--<span>{{ logistics.expressNum }}</span>-->
                 </p>
                 <ul>
-                    <li v-if="logistics.length == 0">暂无物流</li>
+                    <li v-if="logistics.length == 0 && islogistics">暂无物流</li>
                     <li v-if="logistics.length != 0" v-for="item in logistics">
                         <p>{{ item.context }}</p>
                         <span>{{ item.time }}</span>
