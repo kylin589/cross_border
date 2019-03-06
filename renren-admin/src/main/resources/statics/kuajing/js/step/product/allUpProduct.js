@@ -183,6 +183,10 @@ var vm = new Vue({
         xmlFunc:function (id) {
             window.location.href="xmlListUP.html?id="+id;
         },
+        // xml1列表
+        xmlFunc1:function (id) {
+            window.location.href="xmlListUP1.html?id="+id;
+        },
 
     },
     created:function () {

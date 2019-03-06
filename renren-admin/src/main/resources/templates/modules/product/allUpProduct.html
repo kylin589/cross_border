@@ -26,8 +26,9 @@
             <th>分类类型</th>
             <th>更新时间</th>
             <th>产品状态</th>
+            <th>操作</th>
         </tr>
-        <tr v-for = '(item,index) in prolist'>
+        <tr v-for = '(item,index) in prolist' style="height: 54px">
             <td>{{ item.uploadId }}</td>
             <!--<td><img :src="item.mainUrl" alt=""></td>-->
             <td>{{ item.grantShop }}</td>
@@ -42,26 +43,26 @@
                 <span v-if="item.uploadState == 3" class="red">上传失败</span>
                 <span v-if="item.uploadState == 4" class="org">有警告</span>
             </td>
-            <!--<td style="text-align: left;width: 270px">
+            <td style="text-align: left;width: 270px">
                 <div class="operation">
-                    <div @click="delFunc(item.uploadId)">
-                        <i class="layui-icon layui-icon-delete"></i>
-                        <p>删除</p>
-                    </div>
-                    <div @click="upFunc(item.uploadId)">
-                        <i class="layui-icon layui-icon-edit"></i>
-                        <p>编辑</p>
-                    </div>
-                    <div @click="xmlFunc(item.uploadId)" v-if="item.uploadState == 3 || item.uploadState == 4">
+                    <!--<div @click="delFunc(item.uploadId)">-->
+                        <!--<i class="layui-icon layui-icon-delete"></i>-->
+                        <!--<p>删除</p>-->
+                    <!--</div>-->
+                    <!--<div @click="upFunc(item.uploadId)">-->
+                        <!--<i class="layui-icon layui-icon-edit"></i>-->
+                        <!--<p>编辑</p>-->
+                    <!--</div>-->
+                    <div @click="xmlFunc1(item.uploadId)" v-if="item.uploadState == 3 || item.uploadState == 4">
                         <i class="layui-icon layui-icon-align-center"></i>
                         <p>报告列表</p>
                     </div>
-                    <div @click="reUpFunc(item.uploadId)" v-if="item.uploadState == 3 || item.uploadState == 4">
-                        <i class="layui-icon layui-icon-refresh-1"></i>
-                        <p>重新上传</p>
-                    </div>
+                    <!--<div @click="reUpFunc(item.uploadId)" v-if="item.uploadState == 3 || item.uploadState == 4">-->
+                        <!--<i class="layui-icon layui-icon-refresh-1"></i>-->
+                        <!--<p>重新上传</p>-->
+                    <!--</div>-->
                 </div>
-            </td>-->
+            </td>
         </tr>
     </table>
 
