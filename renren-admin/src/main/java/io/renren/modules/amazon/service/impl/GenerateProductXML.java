@@ -419,22 +419,22 @@ public class GenerateProductXML {
                             vieSize.addText(str[1]);
                             Element vieColor = vieVariationData.addElement("Color");
                             vieColor.addText(str[0]);
-                            Element colorMap1 = vieVariationData.addElement("ColorMap");
-                            colorMap1.addText("white");
-                            Element sizeMap1 = vieVariationData.addElement("SizeMap");
-                            sizeMap1.addText("free");
+                            /*Element colorMap1 = vieVariationData.addElement("ColorMap");
+                            colorMap1.addText("white");*/
+                            /*Element sizeMap1 = vieVariationData.addElement("SizeMap");
+                            sizeMap1.addText("free");*/
                             break;
                         case "Color":
                             Element vieColor1 = vieVariationData.addElement("Color");
                             vieColor1.addText(variantsInfoEntity.getVariantCombination());
-                            Element colorMap2 = vieVariationData.addElement("ColorMap");
-                            colorMap2.addText("white");
+                            /*Element colorMap2 = vieVariationData.addElement("ColorMap");
+                            colorMap2.addText("white");*/
                             break;
                         case "Size":
                             Element vieSize2 = vieVariationData.addElement("Size");
                             vieSize2.addText(variantsInfoEntity.getVariantCombination());
-                            Element sizeMap2 = vieVariationData.addElement("SizeMap");
-                            sizeMap2.addText("free");
+                            /*Element sizeMap2 = vieVariationData.addElement("SizeMap");
+                            sizeMap2.addText("free");*/
                             break;
                         default:
                             break;
@@ -1384,22 +1384,22 @@ public class GenerateProductXML {
                             vieSize.addText(str[1]);
                             Element vieColor = vieVariationData.addElement("Color");
                             vieColor.addText(str[0]);
-                            Element colorMap1 = vieVariationData.addElement("ColorMap");
+                            /*Element colorMap1 = vieVariationData.addElement("ColorMap");
                             colorMap1.addText("white");
                             Element sizeMap1 = vieVariationData.addElement("SIzeMap");
-                            sizeMap1.addText("free");
+                            sizeMap1.addText("free");*/
                             break;
                         case "Color":
                             Element vieColor1 = vieVariationData.addElement("Color");
                             vieColor1.addText(variantsInfoEntity.getVariantCombination());
-                            Element colorMap2 = vieVariationData.addElement("ColorMap");
-                            colorMap2.addText("white");
+                            /*Element colorMap2 = vieVariationData.addElement("ColorMap");
+                            colorMap2.addText("white");*/
                             break;
                         case "Size":
                             Element vieSize2 = vieVariationData.addElement("Size");
                             vieSize2.addText(variantsInfoEntity.getVariantCombination());
-                            Element sizeMap2 = vieVariationData.addElement("SIzeMap");
-                            sizeMap2.addText("free");
+                            /*Element sizeMap2 = vieVariationData.addElement("SIzeMap");
+                            sizeMap2.addText("free");*/
                             break;
                         default:
                             break;
@@ -1586,8 +1586,8 @@ public class GenerateProductXML {
                 modelName.addText("null");
                 Element modelNumber = classificationData.addElement("ModelNumber");
                 modelNumber.addText("null");
-                Element sizeMap = classificationData.addElement("SizeMap");
-                sizeMap.addText("null");
+                /*Element sizeMap = classificationData.addElement("SizeMap");
+                sizeMap.addText("null");*/
                 Element beltStyle = classificationData.addElement("BeltStyle");
                 beltStyle.addText("null");
                 Element bottomStyle = classificationData.addElement("BottomStyle");
@@ -2273,8 +2273,8 @@ public class GenerateProductXML {
 
                             Element vieColorMap = vieBuildingMaterials.addElement("ColorMap");
                             vieColorMap.addText("white");
-                            Element vieSizeMap = vieBuildingMaterials.addElement("SizeMap");
-                            vieSizeMap.addText("free");
+                            /*Element vieSizeMap = vieBuildingMaterials.addElement("SizeMap");
+                            vieSizeMap.addText("free");*/
                             break;
                         case "Color":
                             // 尺寸
@@ -2295,8 +2295,8 @@ public class GenerateProductXML {
                             Element vieSize2 = vieBuildingMaterials.addElement("Size");
                             vieSize2.addText(variantsInfoEntity.getVariantCombination());
 
-                            Element vieSizeMap1 = vieBuildingMaterials.addElement("SizeMap");
-                            vieSizeMap1.addText("free");
+                            /*Element vieSizeMap1 = vieBuildingMaterials.addElement("SizeMap");
+                            vieSizeMap1.addText("free");*/
                           /*  // 颜色
                             Element vieColor2 = vieBuildingMaterials.addElement("Color");
                             vieColor2.addText("\\t");
@@ -2430,10 +2430,10 @@ public class GenerateProductXML {
                 // 色系和颜色一样
                 Element colorMap = buildingMaterials.addElement("ColorMap");
                 colorMap.addText("\\t");*/
-                Element colorMap = buildingMaterials.addElement("ColorMap");
-                colorMap.addText("white");
-                Element sizeMap = buildingMaterials.addElement("SizeMap");
-                sizeMap.addText("free");
+                /*Element colorMap = buildingMaterials.addElement("ColorMap");
+                colorMap.addText("white");*/
+                /*Element sizeMap = buildingMaterials.addElement("SizeMap");
+                sizeMap.addText("free");*/
                 // Material - 材料
                 Element material = buildingMaterials.addElement("Material");
                 material.addText(String.valueOf(valueMap.get("Material")));
