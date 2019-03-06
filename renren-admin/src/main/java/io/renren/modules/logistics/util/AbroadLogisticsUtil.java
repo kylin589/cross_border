@@ -61,17 +61,17 @@ public class AbroadLogisticsUtil {
         //推送订单
 //        pushOrder("1");
         //获取订单国际物流状态
-        getOrderDetail("408-8886970-1570715");
+//        getOrderDetail("304-2814143-2413964");
+        //获取转单号
+//        getTrackWaybill("304-2814143-2413964");
         //获取物流价格
-//        getSaleDetail(1L);
+//        getSaleDetail(new BigDecimal(2.5));
         //修改订单国际物流状态
-//        updateOrder(20181214L,4);
+        updateOrder("R403-0425292-2081946",1);
         //修改订单国内跟踪号
 //        updateOrderWaybill("302-7660577-9242718","666666,88888888");
         //修改订单备注
 //        updateOrderRemark("302-7660577-9242718","订单中途遇到了问题1");
-        //获取转单号
-//        getTrackWaybill("305-1302253-62275471");
 //        String orderData = "{\"order\":{\"order_sn\":\"20181214\" ,\"order_currency\":\"null\",\"order_date\":\"null\",\"profitamount\":null,\"costamount\":null,\"feedamount\":null,\"delivery_address\":\"222-11\",\"order_memo\":\"US\",\"memo\":null,\"saleamount\":111111.0},\"orderDetailList\":[{\"product_id\":\"SKU\",\"price\":null,\"quantity\":1,\"cost\":null,\"profit\":null,\"supplyorderno\":null,\"supplyexpressno\":\"xxxxxxxx\",\"saleamount\":null,\"product_date\":null,\"is_electriferous\":false,\"is_liquid\":false}],\"address\":{\"customer\":\"aa\",\"custcompany\":\"bb\",\"custcountry\":\"UK\",\"custstate\":\"ggg\",\"custcity\":\"aa\",\"custzipcode\":\"1234342\",\"custphone\":\"1231\",\"custaddress\":\"aaadddddddddd\",\"address_line1\":\"aaa\",\"address_line2\":null,\"address_line3\":null}}";
 //        System.out.println(orderData);
     }
@@ -206,16 +206,16 @@ public class AbroadLogisticsUtil {
 
     /**
      *
-     * @param orderId
+     * @param amazonId
      * @param status
      * 1备货；2，缺货；4.问题；3发货；5退款；6妥投；10物流问题
      */
-    public static void updateOrder(Long orderId, int status){
+    public static void updateOrder(String amazonId, int status){
         //传输参数
         Map<String, String> paramList = new HashMap<>();
         paramList.put("userdean", String.valueOf(userdean));
         paramList.put("timestamp", String.valueOf(getTimestampByLocalTimeToTotalSeconds()));
-        paramList.put("orderSn",String.valueOf(orderId));
+        paramList.put("orderSn",String.valueOf(amazonId));
         paramList.put("status",String.valueOf(status));
         String asin = null;
         String result = null;

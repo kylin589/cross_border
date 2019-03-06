@@ -35,7 +35,7 @@ public class R extends HashMap<String, Object> {
 	}
 	
 	public static R error() {
-		return error(500, "未知异常，请联系管理员");
+		return error(500, "填写信息有误，请核实信息内容后再次尝试");
 	}
 	
 	public static R error(String msg) {

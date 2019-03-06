@@ -184,7 +184,7 @@ public class OldOrderTimer {
         marketplaceId.add((String) map.get("marketplaceId"));
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
         config.setServiceURL(serviceURL);
-        MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient("AKIAJPTOJEGMM7G4FJQA", "1ZlBne3VgcLhoGUmXkD+TtOVztOzzGassbCDam6A",
+        MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
                 "my_test", "1.0", config, null);
         List<ListOrdersRequest> requestList = new ArrayList<ListOrdersRequest>();
         ListOrdersRequest request = new ListOrdersRequest();

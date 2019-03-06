@@ -34,6 +34,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Service
 @Component
@@ -151,314 +152,321 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
                 long startTime = System.currentTimeMillis();
                 long endTime;
+                try{
+                    // 商品列表
+                    List<ProductsEntity> productsEntityList;
+                    if (uploadEntity.getUploadProductsList() != null) {
+                        productsEntityList = uploadEntity.getUploadProductsList();
+                    } else {
+                        List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
+                        productsEntityList = productsService.selectBatchIds(ids);
+                    }
 
-                // 商品列表
-                List<ProductsEntity> productsEntityList;
-                if (uploadEntity.getUploadProductsList() != null) {
-                    productsEntityList = uploadEntity.getUploadProductsList();
-                } else {
-                    List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
-                    productsEntityList = productsService.selectBatchIds(ids);
-                }
+                    // 授权店铺信息
+                    AmazonGrantShopEntity amazonGrantShopEntity = amazonGrantShopService.selectById(uploadEntity.getGrantShopId());
+                    // 请求接口网站
+                    String serviceURL = amazonGrantShopEntity.getMwsPoint();
+                    // 国家端点
+                    String marketplaceId = amazonGrantShopEntity.getMarketplaceId();
+                    List<String> marketplaceIdList = new ArrayList<>();
+                    marketplaceIdList.add(marketplaceId);
 
-                // 授权店铺信息
-                AmazonGrantShopEntity amazonGrantShopEntity = amazonGrantShopService.selectById(uploadEntity.getGrantShopId());
-                // 请求接口网站
-                String serviceURL = amazonGrantShopEntity.getMwsPoint();
-                // 国家端点
-                String marketplaceId = amazonGrantShopEntity.getMarketplaceId();
-                List<String> marketplaceIdList = new ArrayList<>();
-                marketplaceIdList.add(marketplaceId);
+                    AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(amazonGrantShopEntity.getGrantId());
+                    // 授权令牌
+                    String sellerDevAuthToken = amazonGrantEntity.getGrantToken();
+                    // 店铺id
+                    String merchantId = amazonGrantEntity.getMerchantId();
+                    // 国家代码
+                    String countryCode = amazonGrantShopEntity.getCountryCode();
+                    // 操作项
+                    String[] operateItemStr = uploadEntity.getOperateItem().split(",");
+                    // 模板名称
+                    String templateName = "";
+                    if (uploadEntity.getAmazonTemplateId() == 0) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("template_display_name", uploadEntity.getAmazonTemplate());
+                        templateName = templateService.selectByMap(map).get(0).getTemplateName();
+                    } else {
+                        templateName = templateService.selectById(uploadEntity.getAmazonTemplateId()).getTemplateName();
+                    }
 
-                AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(amazonGrantShopEntity.getGrantId());
-                // 授权令牌
-                String sellerDevAuthToken = amazonGrantEntity.getGrantToken();
-                // 店铺id
-                String merchantId = amazonGrantEntity.getMerchantId();
-                // 国家代码
-                String countryCode = amazonGrantShopEntity.getCountryCode();
-                // 操作项
-                String[] operateItemStr = uploadEntity.getOperateItem().split(",");
-                // 模板名称
-                String templateName = "";
-                if (uploadEntity.getAmazonTemplateId() == 0) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("template_display_name", uploadEntity.getAmazonTemplate());
-                    templateName = templateService.selectByMap(map).get(0).getTemplateName();
-                } else {
-                    templateName = templateService.selectById(uploadEntity.getAmazonTemplateId()).getTemplateName();
-                }
-
-                // 判断是否是单商品上传
-                if (productsEntityList.size() == 1) {
-                    Long pId = productsEntityList.get(0).getProductId();
-                    List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", pId).orderBy(true, "variant_sort", true));
-                    if (variantsInfoEntityList.size() == 0) {
-                        //没有变体，不生成关系XML
-                        for (int i = 0; i < operateItemStr.length; i++) {
-                            if ("1".equals(operateItemStr[i])) {
-                                operateItemStr[i] = "-1";
+                    // 判断是否是单商品上传
+                    if (productsEntityList.size() == 1) {
+                        Long pId = productsEntityList.get(0).getProductId();
+                        List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", pId).orderBy(true, "variant_sort", true));
+                        if (variantsInfoEntityList.size() == 0) {
+                            //没有变体，不生成关系XML
+                            for (int i = 0; i < operateItemStr.length; i++) {
+                                if ("1".equals(operateItemStr[i])) {
+                                    operateItemStr[i] = "-1";
+                                }
                             }
                         }
                     }
-                }
 
-                // 生成xml文件路径
-                Map<String, String> filePathMap = new HashMap<>();
-                for (int i = 0; i < operateItemStr.length; i++) {
-                    switch (operateItemStr[i]) {
-                        // 0 基本信息
-                        case "0":
-                            String productPath = switchCountry(templateName, uploadId, merchantId, productsEntityList, countryCode);
-                            filePathMap.put("0", productPath);
-                            break;
-                        // 1 关系
-                        case "1":
-                            String relationshipsPath = generateProductXML.generateRelationshipsXML(productsEntityList, merchantId);
-                            filePathMap.put("1", relationshipsPath);
-                            break;
-                        // 2 图片
-                        case "2":
-                            String imagesPath = generateProductXML.generateImagesXML(productsEntityList, merchantId);
-                            filePathMap.put("2", imagesPath);
-                            break;
-                        // 3 库存
-                        case "3":
-                            String inventoryPath = generateProductXML.generateInventoryXML(productsEntityList, merchantId);
-                            filePathMap.put("3", inventoryPath);
-                            break;
-                        // 4 价格
-                        case "4":
-                            String pricesPath = generateProductXML.generatePricesXML(countryCode, productsEntityList, merchantId);
-                            filePathMap.put("4", pricesPath);
-                            break;
-                        default:
+                    // 生成xml文件路径
+                    Map<String, String> filePathMap = new HashMap<>();
+                    for (int i = 0; i < operateItemStr.length; i++) {
+                        switch (operateItemStr[i]) {
+                            // 0 基本信息
+                            case "0":
+                                String productPath = switchCountry(templateName, uploadId, merchantId, productsEntityList, countryCode);
+                                filePathMap.put("0", productPath);
+                                break;
+                            // 1 关系
+                            case "1":
+                                String relationshipsPath = generateProductXML.generateRelationshipsXML(productsEntityList, merchantId);
+                                filePathMap.put("1", relationshipsPath);
+                                break;
+                            // 2 图片
+                            case "2":
+                                String imagesPath = generateProductXML.generateImagesXML(productsEntityList, merchantId);
+                                filePathMap.put("2", imagesPath);
+                                break;
+                            // 3 库存
+                            case "3":
+                                String inventoryPath = generateProductXML.generateInventoryXML(productsEntityList, merchantId);
+                                filePathMap.put("3", inventoryPath);
+                                break;
+                            // 4 价格
+                            case "4":
+                                String pricesPath = generateProductXML.generatePricesXML(countryCode, productsEntityList, merchantId);
+                                filePathMap.put("4", pricesPath);
+                                break;
+                            default:
+                        }
                     }
-                }
 
-                FeedSubmissionInfoDto productFeedSubmissionInfoDto = null;
+                    FeedSubmissionInfoDto productFeedSubmissionInfoDto = null;
 
-                // 0 是产品基本信息xml
-                if (filePathMap.containsKey("0")) {
-                    // 产品信息上传
-                    productFeedSubmissionInfoDto = submitProductFeed(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap.get("0"), filePathMap.get("0"), marketplaceIdList);
+                    // 0 是产品基本信息xml
+                    if (filePathMap.containsKey("0")) {
+                        // 产品信息上传
+                        productFeedSubmissionInfoDto = submitProductFeed(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap.get("0"), filePathMap.get("0"), marketplaceIdList);
 
-                    //使用FeedSubmissionId获取的亚马逊对于xml的处理状态
+                        //使用FeedSubmissionId获取的亚马逊对于xml的处理状态
+                        while (true) {
+
+                            try {
+                                // 设置睡眠的时间 120 秒
+                                Thread.sleep(2 * 60 * 1000);
+
+                                List<String> feedSubmissionList = new ArrayList<>();
+                                feedSubmissionList.add(productFeedSubmissionInfoDto.getFeedSubmissionId());
+                                productFeedSubmissionInfoDto = getFeedSubmissionListAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionList).get(0);
+                                // 成功
+                                if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(1)) {
+                                    break;
+                                }
+                                // 出现如下三种情况，总状态变失败。
+                                if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(3)) {
+                                    List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
+                                    tempList.add(productFeedSubmissionInfoDto);
+                                    updateFeedUpload(uploadId, tempList, 3);
+                                    break;
+                                }
+
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList;
+                    // 剩余xml的上传
                     while (true) {
 
+                        feedSubmissionInfoDtoList = submitFeedAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap, filePathMap, marketplaceIdList);
+
+                        if (productFeedSubmissionInfoDto != null) {
+                            feedSubmissionInfoDtoList.add(productFeedSubmissionInfoDto);
+                        }
+
+                        if (feedSubmissionInfoDtoList.size() == filePathMap.size()) {
+                            break;
+                        }
+
+                        // 设置睡眠的时间 60 秒
                         try {
-                            // 设置睡眠的时间 120 秒
                             Thread.sleep(2 * 60 * 1000);
-
-                            List<String> feedSubmissionList = new ArrayList<>();
-                            feedSubmissionList.add(productFeedSubmissionInfoDto.getFeedSubmissionId());
-                            productFeedSubmissionInfoDto = getFeedSubmissionListAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionList).get(0);
-                            // 成功
-                            if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(1)) {
-                                break;
-                            }
-                            // 出现如下三种情况，总状态变失败。
-                            if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(3)) {
-                                List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
-                                tempList.add(productFeedSubmissionInfoDto);
-                                updateFeedUpload(uploadId, tempList, 3);
-                                break;
-                            }
-
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-                }
 
-                List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList;
-                // 剩余xml的上传
-                while (true) {
+                    // FeedSubmissionInfoDto 数据存放，正在上传
+                    updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
 
-                    feedSubmissionInfoDtoList = submitFeedAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap, filePathMap, marketplaceIdList);
-
-                    if (productFeedSubmissionInfoDto != null) {
-                        feedSubmissionInfoDtoList.add(productFeedSubmissionInfoDto);
-                    }
-
-                    if (feedSubmissionInfoDtoList.size() == filePathMap.size()) {
-                        break;
-                    }
-
-                    // 设置睡眠的时间 60 秒
-                    try {
-                        Thread.sleep(2 * 60 * 1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                // FeedSubmissionInfoDto 数据存放，正在上传
-                updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
-
-                List<String> feedSubmissionIdList = new ArrayList<>();
-                for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
-                    feedSubmissionIdList.add(feedSubmissionInfoDtoList.get(i).getFeedSubmissionId());
-                }
-
-                // 当所有状态都为_DONE_时，执行下一步
-                boolean b = false;
-                int count;
-                while (!b) {
-
-                    try {
-                        // 设置睡眠的时间 2 分钟
-                        Thread.sleep(2 * 60 * 1000);
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    count = 0;
-                    feedSubmissionInfoDtoList = getFeedSubmissionListAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionIdList);
+                    List<String> feedSubmissionIdList = new ArrayList<>();
                     for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
-                        if (feedSubmissionInfoDtoList.get(0).getFeedProcessingStatus() == 1) {
-                            count++;
-                            if (count == feedSubmissionInfoDtoList.size()) {
-                                b = true;
-                                break;
+                        feedSubmissionIdList.add(feedSubmissionInfoDtoList.get(i).getFeedSubmissionId());
+                    }
+
+                    // 当所有状态都为_DONE_时，执行下一步
+                    boolean b = false;
+                    int count;
+                    while (!b) {
+
+                        try {
+                            // 设置睡眠的时间 2 分钟
+                            Thread.sleep(2 * 60 * 1000);
+
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        count = 0;
+                        feedSubmissionInfoDtoList = getFeedSubmissionListAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionIdList);
+                        for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
+                            if (feedSubmissionInfoDtoList.get(0).getFeedProcessingStatus() == 1) {
+                                count++;
+                                if (count == feedSubmissionInfoDtoList.size()) {
+                                    b = true;
+                                    break;
+                                }
                             }
                         }
                     }
-                }
 
-                // 总状态改为正在上传,并改子状态
-                updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
-
-                try {
-                    // 设置睡眠的时间 5 分钟
-                    Thread.sleep(5 * 60 * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                // 获取报告
-                List<FeedSubmissionResultDto> feedSubmissionResultDtos;
-                while (true) {
-
-                    feedSubmissionResultDtos = getFeedSubmissionResultAsync(uploadId, fileStoragePath, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionInfoDtoList);
-
-                    if (feedSubmissionResultDtos != null || feedSubmissionResultDtos.size() != feedSubmissionInfoDtoList.size()) {
-                        break;
-                    }
+                    // 总状态改为正在上传,并改子状态
+                    updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
 
                     try {
-                        // 设置睡眠的时间 3 分钟
-                        Thread.sleep(3 * 60 * 1000);
+                        // 设置睡眠的时间 5 分钟
+                        Thread.sleep(5 * 60 * 1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                }
+
+                    // 获取报告
+                    List<FeedSubmissionResultDto> feedSubmissionResultDtos;
+                    while (true) {
+
+                        feedSubmissionResultDtos = getFeedSubmissionResultAsync(uploadId, fileStoragePath, serviceURL, merchantId, sellerDevAuthToken, feedSubmissionInfoDtoList);
+
+                        if (feedSubmissionResultDtos != null || feedSubmissionResultDtos.size() != feedSubmissionInfoDtoList.size()) {
+                            break;
+                        }
+
+                        try {
+                            // 设置睡眠的时间 3 分钟
+                            Thread.sleep(3 * 60 * 1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
 
-                Map<String, String> pathMap = new HashMap<>();
-                for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
-                    String submissionId = feedSubmissionInfoDtoList.get(i).getFeedSubmissionId();
-                    Calendar calendar = Calendar.getInstance();
-                    String year = calendar.get(Calendar.YEAR) + "/";
-                    String month = (calendar.get(Calendar.MONTH)) + 1 + "/";
-                    // 返回结果路径
-                    String tempPath = fileStoragePath + year + month + "FeedSubmissionResult/" + submissionId + "_SubmissionResult.xml";
+                    Map<String, String> pathMap = new HashMap<>();
+                    for (int i = 0; i < feedSubmissionInfoDtoList.size(); i++) {
+                        String submissionId = feedSubmissionInfoDtoList.get(i).getFeedSubmissionId();
+                        Calendar calendar = Calendar.getInstance();
+                        String year = calendar.get(Calendar.YEAR) + "/";
+                        String month = (calendar.get(Calendar.MONTH)) + 1 + "/";
+                        // 返回结果路径
+                        String tempPath = fileStoragePath + year + month + "FeedSubmissionResult/" + submissionId + "_SubmissionResult.xml";
 
-                    for (int j = 0; j < feedSubmissionResultDtos.size(); j++) {
-                        if (submissionId.equals(feedSubmissionResultDtos.get(j).getFeedSubmissionId())) {
-                            switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
-                                case "_POST_PRODUCT_DATA_":
-                                    pathMap.put("基本信息", tempPath);
-                                    break;
-                                case "_POST_PRODUCT_RELATIONSHIP_DATA_":
-                                    pathMap.put("关系", tempPath);
-                                    break;
-                                case "_POST_PRODUCT_IMAGE_DATA_":
-                                    pathMap.put("图片", tempPath);
-                                    break;
-                                case "_POST_INVENTORY_AVAILABILITY_DATA_":
-                                    pathMap.put("库存", tempPath);
-                                    break;
-                                case "_POST_PRODUCT_PRICING_DATA_":
-                                    pathMap.put("价格", tempPath);
-                                    break;
+                        for (int j = 0; j < feedSubmissionResultDtos.size(); j++) {
+                            if (submissionId.equals(feedSubmissionResultDtos.get(j).getFeedSubmissionId())) {
+                                switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
+                                    case "_POST_PRODUCT_DATA_":
+                                        pathMap.put("基本信息", tempPath);
+                                        break;
+                                    case "_POST_PRODUCT_RELATIONSHIP_DATA_":
+                                        pathMap.put("关系", tempPath);
+                                        break;
+                                    case "_POST_PRODUCT_IMAGE_DATA_":
+                                        pathMap.put("图片", tempPath);
+                                        break;
+                                    case "_POST_INVENTORY_AVAILABILITY_DATA_":
+                                        pathMap.put("库存", tempPath);
+                                        break;
+                                    case "_POST_PRODUCT_PRICING_DATA_":
+                                        pathMap.put("价格", tempPath);
+                                        break;
+                                }
                             }
                         }
                     }
-                }
 
-                // 解析xml
-                List<Integer> typeStatus = new ArrayList();
-                Iterator<Map.Entry<String, String>> it = pathMap.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<String, String> entry = it.next();
-                    AnalysisFeedSubmissionResultDto analysisFeedSubmissionResultDto = null;
-                    String type = null;
-                    int tempStatus = 1;
-                    switch (entry.getKey()) {
-                        case "基本信息":
-                            type = "基本信息";
-                            analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("基本信息"));
-                            // 子状态判断
-                            tempStatus = judgementState(analysisFeedSubmissionResultDto);
-                            uploadEntity.setProductsResultStatus(tempStatus);
-                            break;
-                        case "关系":
-                            type = "关系";
-                            analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("关系"));
-                            // 子状态判断
-                            tempStatus = judgementState(analysisFeedSubmissionResultDto);
-                            uploadEntity.setRelationshipsResultStatus(tempStatus);
-                            break;
-                        case "图片":
-                            type = "图片";
-                            analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("图片"));
-                            // 子状态判断
-                            tempStatus = judgementState(analysisFeedSubmissionResultDto);
-                            uploadEntity.setImagesResultStatus(tempStatus);
-                            break;
-                        case "库存":
-                            type = "库存";
-                            analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("库存"));
-                            // 子状态判断
-                            tempStatus = judgementState(analysisFeedSubmissionResultDto);
-                            uploadEntity.setInventoryResultStatus(tempStatus);
-                            break;
-                        case "价格":
-                            type = "价格";
-                            analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("价格"));
-                            // 子状态判断
-                            tempStatus = judgementState(analysisFeedSubmissionResultDto);
-                            uploadEntity.setPricesResultStatus(tempStatus);
-                            break;
-                    }
-                    typeStatus.add(tempStatus);
-                    List<ResultXMLDto> resultXMLDtoList = analysisFeedSubmissionResultDto.getResultXMLDtoList();
-                    if (resultXMLDtoList.size() != 0) {
-                        for (int k = 0; k < resultXMLDtoList.size(); k++) {
-                            ResultXmlEntity resultXmlEntity = new ResultXmlEntity();
-                            resultXmlEntity.setSku(resultXMLDtoList.get(k).getSku());
-                            resultXmlEntity.setProductId(productsService.queryIdBySku(resultXMLDtoList.get(k).getSku()));
-                            resultXmlEntity.setUploadId(uploadId);
-                            resultXmlEntity.setType(type);
-                            resultXmlEntity.setState(tempStatus);
-                            resultXmlEntity.setResult(resultXMLDtoList.get(k).getResultDescription());
-                            resultXmlEntity.setResultType(resultXMLDtoList.get(k).getResultCode());
-                            resultXmlEntity.setResultCode(resultXMLDtoList.get(k).getResultMessageCode());
-                            resultXmlEntity.setCreationTime(new Date());
-
-                            resultXmlService.insert(resultXmlEntity);
+                    // 解析xml
+                    List<Integer> typeStatus = new ArrayList();
+                    Iterator<Map.Entry<String, String>> it = pathMap.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry<String, String> entry = it.next();
+                        AnalysisFeedSubmissionResultDto analysisFeedSubmissionResultDto = null;
+                        String type = null;
+                        int tempStatus = 1;
+                        switch (entry.getKey()) {
+                            case "基本信息":
+                                type = "基本信息";
+                                analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("基本信息"));
+                                // 子状态判断
+                                tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                                uploadEntity.setProductsResultStatus(tempStatus);
+                                break;
+                            case "关系":
+                                type = "关系";
+                                analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("关系"));
+                                // 子状态判断
+                                tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                                uploadEntity.setRelationshipsResultStatus(tempStatus);
+                                break;
+                            case "图片":
+                                type = "图片";
+                                analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("图片"));
+                                // 子状态判断
+                                tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                                uploadEntity.setImagesResultStatus(tempStatus);
+                                break;
+                            case "库存":
+                                type = "库存";
+                                analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("库存"));
+                                // 子状态判断
+                                tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                                uploadEntity.setInventoryResultStatus(tempStatus);
+                                break;
+                            case "价格":
+                                type = "价格";
+                                analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("价格"));
+                                // 子状态判断
+                                tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                                uploadEntity.setPricesResultStatus(tempStatus);
+                                break;
                         }
-                    } else {
-                        continue;
-                    }
-                }
-                // 处理总状态
-                uploadEntity.setUploadState(judgingTheTotalState(typeStatus));
-                uploadEntity.setUpdateTime(new Date());
-                //保存xml结果，保存状态
-                uploadService.updateById(uploadEntity);
+                        typeStatus.add(tempStatus);
+                        List<ResultXMLDto> resultXMLDtoList = analysisFeedSubmissionResultDto.getResultXMLDtoList();
+                        if (resultXMLDtoList.size() != 0) {
+                            for (int k = 0; k < resultXMLDtoList.size(); k++) {
+                                ResultXmlEntity resultXmlEntity = new ResultXmlEntity();
+                                resultXmlEntity.setSku(resultXMLDtoList.get(k).getSku());
+                                resultXmlEntity.setProductId(productsService.queryIdBySku(resultXMLDtoList.get(k).getSku()));
+                                resultXmlEntity.setUploadId(uploadId);
+                                resultXmlEntity.setType(type);
+                                resultXmlEntity.setState(tempStatus);
+                                resultXmlEntity.setResult(resultXMLDtoList.get(k).getResultDescription());
+                                resultXmlEntity.setResultType(resultXMLDtoList.get(k).getResultCode());
+                                resultXmlEntity.setResultCode(resultXMLDtoList.get(k).getResultMessageCode());
+                                resultXmlEntity.setCreationTime(new Date());
 
+                                resultXmlService.insert(resultXmlEntity);
+                            }
+                        } else {
+                            continue;
+                        }
+                    }
+                    // 处理总状态
+                    uploadEntity.setUploadState(judgingTheTotalState(typeStatus));
+                    uploadEntity.setUpdateTime(new Date());
+                    //保存xml结果，保存状态
+                    uploadService.updateById(uploadEntity);
+
+                }catch (Exception ex){
+                    System.out.println("错误为：" +ex);
+                    uploadEntity.setUploadState(3);
+                    uploadEntity.setUpdateTime(new Date());
+                    uploadService.updateById(uploadEntity);
+                    return;
+                }
             }
         });
 
@@ -949,103 +957,128 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 break;
             // 服装/ProductClothing
             case "ProductClothing":
-                filePath = generateProductXML.generateProductXMLByClothing(uploadId, merchantIdentifierText, productsList, countryCode);
+//                filePath = generateProductXML.generateProductXMLByClothing(uploadId, merchantIdentifierText, productsList, countryCode);
+                filePath = generateProductXML.generateProductXMLByHomeImprovement(uploadId, merchantIdentifierText, productsList, countryCode);
                 break;
             // 汽车配件/AutoAccessory
             case "AutoAccessory":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 宝宝/Baby
             case "Baby":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 美妆/Beauty
             case "Beauty":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 相机照片/CameraPhoto
             case "CameraPhoto":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 服装饰品/ClothingAccessories
             case "ClothingAccessories":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 电脑/Computers
             case "Computers":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 消费类电子产品/CE
             case "CE":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 美食/Gourmet
             case "Gourmet":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 食品和饮料/FoodAndBeverages
             case "FoodAndBeverages":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 健康/Health
             case "Health":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 食品服务和门卫，卫生与安全/FoodServiceAndJanSan
             case "FoodServiceAndJanSan":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 实验室和科学用品/LabSupplies
             case "LabSupplies":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 电力传输/PowerTransmission
             case "PowerTransmission":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 原材料/RawMaterials
             case "RawMaterials":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 首饰/Jewelry
             case "Jewelry":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 大家电/LargeAppliances
             case "LargeAppliances":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 灯/Lighting
             case "Lighting":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 乐器/MusicalInstruments
             case "MusicalInstruments":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 宠物用品/PetSupplies
             case "PetSupplies":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 体育用品/Sports
             case "Sports":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 体育纪念品/SportsMemorabilia
             case "SportsMemorabilia":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 轮胎和车轮/TiresAndWheels
             case "TiresAndWheels":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 工具/Tools
             case "Tools":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 玩具和游戏/Toys
             case "Toys":
-
+                filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
 
                 // 无线/Wireless
             case "Wireless":
@@ -1054,6 +1087,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 break;
             default:
                 filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
+                break;
         }
         return filePath;
     }

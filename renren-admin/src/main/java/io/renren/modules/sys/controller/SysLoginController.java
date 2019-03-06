@@ -171,7 +171,7 @@ public class SysLoginController extends AbstractController {
             //未发货订单
             int unshippedNumber = orderService.selectCount(
                     new EntityWrapper<OrderEntity>().in("order_status", ConstantDictionary.OrderStateCode.UNLIQUIDATED_ORDER_STATE).andNew()
-                            .ne("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN)
+                            .ne("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN).andNew().ne("inter_freight",0)
             );
             dept.setUnshippedNumber(unshippedNumber);
             //未结算订单数(国际已发货)
