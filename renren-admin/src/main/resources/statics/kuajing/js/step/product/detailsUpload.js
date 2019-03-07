@@ -172,9 +172,9 @@ var vm = new Vue({
             });
             console.log('打印');
             console.log($('.inner-content-div2'))
-            $('.inner-content-div2').slimScroll({
-                height: '270px' //设置显示的高度
-            });
+            // $('.inner-content-div2').slimScroll({
+            //     height: '270px' //设置显示的高度
+            // });
         },
         // 定时上传
         timeUpFunc:function () {
@@ -468,11 +468,7 @@ var vm = new Vue({
                             console.log(vm.leven);
 
                             vm.fenleiTankuang();
-                            setTimeout(function () {
-                                $('.inner-content-div2').slimScroll({
-                                    height: '270px' //设置显示的高度
-                                });
-                            },1000)
+
 
                         } else {
                             layer.alert(r.msg);
@@ -489,9 +485,9 @@ var vm = new Vue({
         },
         // 子级分类
         amazonItemCategory:function (list,event) {
-            $('.inner-content-div2').slimScroll({
-                height: '270px' //设置显示的高度
-            });
+            // $('.inner-content-div2').slimScroll({
+            //     height: '270px' //设置显示的高度
+            // });
             // console.log($(event))
             $(event.target).siblings().removeClass('active');
             $(event.target).addClass('active');
@@ -626,14 +622,10 @@ var vm = new Vue({
                                     // $('#fenleiTankuang div.con li').removeClass('active');
                                 }
                             });
-                            $('.inner-content-div2').slimScroll({
-                                height: '300px' //设置显示的高度
-                            });
-                            setTimeout(function () {
-                                $('.inner-content-div2').slimScroll({
-                                    height: '300px' //设置显示的高度
-                                });
-                            },1000)
+                            // $('.inner-content-div2').slimScroll({
+                            //     height: '300px' //设置显示的高度
+                            // });
+
 
 
                         } else {
