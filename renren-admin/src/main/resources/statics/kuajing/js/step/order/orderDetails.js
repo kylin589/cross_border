@@ -264,9 +264,7 @@ var vm = new Vue({
                 $.ajax({
                     url: '../../order/productshipaddress/update',
                     type: 'post',
-                    data: JSON.stringify({
-                        'shipAddress':vm.orderDetails.shipAddress
-                    }),
+                    data: JSON.stringify(vm.orderDetails.shipAddress),
                     contentType: "application/json",
                     // dataType: 'json',
                     success: function (r) {
