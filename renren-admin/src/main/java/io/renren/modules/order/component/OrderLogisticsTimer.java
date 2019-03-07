@@ -140,7 +140,6 @@ public class OrderLogisticsTimer {
         public RefreshOrderThread(Long orderId) {
             this.orderId = orderId;
         }
-
         @Override
         public void run() {
             //订单对象
@@ -163,69 +162,6 @@ public class OrderLogisticsTimer {
                     //如果订单状态在物流仓库未签收和仓库已入库时，更新订单的国际物流信息
                     if(ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus) || ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING.equals(orderStatus)){
                         int status = 0;
-                        //设置国际物流公司
-                        if(StringUtils.isNotBlank(receiveOofayData.getDestTransportCompany())){
-                            System.out.println("物流公司：" + receiveOofayData.getDestTransportCompany());
-                            abroadLogisticsEntity.setDestTransportCompany(receiveOofayData.getDestTransportCompany());
-                            //设置国际物流渠道
-                            if(StringUtils.isNotBlank(receiveOofayData.getDestChannel())){
-                                abroadLogisticsEntity.setDestChannel(receiveOofayData.getDestChannel());
-                            }else{
-                                abroadLogisticsEntity.setDestChannel("Standard");
-                            }
-                        }
-                        //设置国内跟踪号
-                        if(StringUtils.isNotBlank(receiveOofayData.getDomesticTrackWaybill())){
-                            abroadLogisticsEntity.setDomesticTrackWaybill(receiveOofayData.getDomesticTrackWaybill());
-                        }
-                        //设置发货时间
-                        if(StringUtils.isNotBlank(receiveOofayData.getShipTime())){
-                            DateFormat df= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                            Date shipTime = null;
-                            try {
-                                shipTime = df.parse(receiveOofayData.getShipTime());
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            abroadLogisticsEntity.setShipTime(shipTime);
-                        }
-                        //设置实际重量
-                        if(StringUtils.isNotBlank(receiveOofayData.getActualWeight()) && !"0.0".equals(receiveOofayData.getActualWeight())){
-                            abroadLogisticsEntity.setActualWeight(receiveOofayData.getActualWeight());
-                        }
-                        //设置目的地查询网址
-                        if(StringUtils.isNotBlank(receiveOofayData.getDestQueryUrl())){
-                            abroadLogisticsEntity.setDestQueryUrl(receiveOofayData.getDestQueryUrl());
-                        }
-                        //设置服务查询网址
-                        if(StringUtils.isNotBlank(receiveOofayData.getServiceQueryUrl())){
-                            abroadLogisticsEntity.setServiceQueryUrl(receiveOofayData.getServiceQueryUrl());
-                        }
-                        //设置联系电话
-                        if(StringUtils.isNotBlank(receiveOofayData.getMobile())){
-                            abroadLogisticsEntity.setMobile(receiveOofayData.getMobile());
-                        }
-                        //有运费
-                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && new BigDecimal(receiveOofayData.getInterFreight()).compareTo(new BigDecimal(0.00)) == 1 && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
-                            //计算国际运费、平台佣金、利润
-                            //国际运费
-                            BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
-                            abroadLogisticsEntity.setInterFreight(interFreight);
-                            orderEntity.setInterFreight(interFreight);
-                            //到账金额(人民币)
-                            BigDecimal accountMoney = orderEntity.getAccountMoneyCny();
-                            //平台佣金
-                            BigDecimal companyPoint = deptService.selectById(orderEntity.getDeptId()).getCompanyPoints();
-                            BigDecimal platformCommissions = accountMoney.multiply(companyPoint).setScale(2,BigDecimal.ROUND_HALF_UP);
-                            orderEntity.setPlatformCommissions(platformCommissions);
-                            //利润 到账-国际运费-采购价-平台佣金
-                            BigDecimal orderProfit = accountMoney.subtract(orderEntity.getPurchasePrice()).subtract(interFreight).subtract(platformCommissions).setScale(2,BigDecimal.ROUND_HALF_UP);
-                            orderEntity.setOrderProfit(orderProfit);
-                            //利润率
-                            BigDecimal profitRate = orderProfit.divide(orderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
-                            orderEntity.setProfitRate(profitRate);
-                            orderService.deduction(orderEntity);
-                        }
                         //状态转变为仓库已入库
                         if(receiveOofayData.isWarehousing && ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus)){
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING);
@@ -242,6 +178,69 @@ public class OrderLogisticsTimer {
                             }
                         }
                         abroadLogisticsEntity.setUpdateTime(new Date());
+                    }
+                    //设置国际物流公司
+                    if(StringUtils.isNotBlank(receiveOofayData.getDestTransportCompany())){
+                        System.out.println("物流公司：" + receiveOofayData.getDestTransportCompany());
+                        abroadLogisticsEntity.setDestTransportCompany(receiveOofayData.getDestTransportCompany());
+                        //设置国际物流渠道
+                        if(StringUtils.isNotBlank(receiveOofayData.getDestChannel())){
+                            abroadLogisticsEntity.setDestChannel(receiveOofayData.getDestChannel());
+                        }else{
+                            abroadLogisticsEntity.setDestChannel("Standard");
+                        }
+                    }
+                    //设置国内跟踪号
+                    if(StringUtils.isNotBlank(receiveOofayData.getDomesticTrackWaybill())){
+                        abroadLogisticsEntity.setDomesticTrackWaybill(receiveOofayData.getDomesticTrackWaybill());
+                    }
+                    //设置发货时间
+                    if(StringUtils.isNotBlank(receiveOofayData.getShipTime())){
+                        DateFormat df= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                        Date shipTime = null;
+                        try {
+                            shipTime = df.parse(receiveOofayData.getShipTime());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        abroadLogisticsEntity.setShipTime(shipTime);
+                    }
+                    //设置实际重量
+                    if(StringUtils.isNotBlank(receiveOofayData.getActualWeight()) && !"0.0".equals(receiveOofayData.getActualWeight())){
+                        abroadLogisticsEntity.setActualWeight(receiveOofayData.getActualWeight());
+                    }
+                    //设置目的地查询网址
+                    if(StringUtils.isNotBlank(receiveOofayData.getDestQueryUrl())){
+                        abroadLogisticsEntity.setDestQueryUrl(receiveOofayData.getDestQueryUrl());
+                    }
+                    //设置服务查询网址
+                    if(StringUtils.isNotBlank(receiveOofayData.getServiceQueryUrl())){
+                        abroadLogisticsEntity.setServiceQueryUrl(receiveOofayData.getServiceQueryUrl());
+                    }
+                    //设置联系电话
+                    if(StringUtils.isNotBlank(receiveOofayData.getMobile())){
+                        abroadLogisticsEntity.setMobile(receiveOofayData.getMobile());
+                    }
+                    //有运费
+                    if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && new BigDecimal(receiveOofayData.getInterFreight()).compareTo(new BigDecimal(0.00)) == 1 && orderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
+                        //计算国际运费、平台佣金、利润
+                        //国际运费
+                        BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
+                        abroadLogisticsEntity.setInterFreight(interFreight);
+                        orderEntity.setInterFreight(interFreight);
+                        //到账金额(人民币)
+                        BigDecimal accountMoney = orderEntity.getAccountMoneyCny();
+                        //平台佣金
+                        BigDecimal companyPoint = deptService.selectById(orderEntity.getDeptId()).getCompanyPoints();
+                        BigDecimal platformCommissions = accountMoney.multiply(companyPoint).setScale(2,BigDecimal.ROUND_HALF_UP);
+                        orderEntity.setPlatformCommissions(platformCommissions);
+                        //利润 到账-国际运费-采购价-平台佣金
+                        BigDecimal orderProfit = accountMoney.subtract(orderEntity.getPurchasePrice()).subtract(interFreight).subtract(platformCommissions).setScale(2,BigDecimal.ROUND_HALF_UP);
+                        orderEntity.setOrderProfit(orderProfit);
+                        //利润率
+                        BigDecimal profitRate = orderProfit.divide(orderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
+                        orderEntity.setProfitRate(profitRate);
+                        orderService.deduction(orderEntity);
                     }
                     //判断状态为国际已发货或已完成
                     else if(ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED.equals(orderStatus) || ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH.equals(orderStatus)){
