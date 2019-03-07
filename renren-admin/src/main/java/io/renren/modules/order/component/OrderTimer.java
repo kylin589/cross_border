@@ -515,7 +515,7 @@ public class OrderTimer {
      * @param product_sku
      */
     public String getImageUrl(String product_sku,String product_asin,String sellerld,String token,String sericeUrl,List marketplaceId,String accessKey,String secretKey){
-        String img_url =null;
+        /*String img_url =null;
         //根据sku去新库的变体表中获取变体信息
         VariantsInfoEntity skuInfo=variantsInfoService.selectOne(new EntityWrapper<VariantsInfoEntity>().eq("variant_sku",product_sku) );
         if(skuInfo!=null) {
@@ -532,7 +532,8 @@ public class OrderTimer {
                 return getProductinfoTest(sellerld,token,product_asin,marketplaceId,accessKey,secretKey,sericeUrl);
             }
         }
-        return img_url;
+        return img_url;*/
+        return getProductinfoTest(sellerld,token,product_asin,marketplaceId,accessKey,secretKey,sericeUrl);
     }
 
 

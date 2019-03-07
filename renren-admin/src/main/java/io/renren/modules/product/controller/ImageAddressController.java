@@ -165,7 +165,7 @@ public class ImageAddressController extends AbstractController {
             String date = String.valueOf(calendar.get(Calendar.DATE));
             // 文件上传后是原始路径
             // String filePath = "D:/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
-            String filePath = "F:/usr/linshi/images/" + productId + "/" + fileUUID + suffixName;
+            String filePath = "/usr/linshi/images/" + productId + "/" + fileUUID + suffixName;
             File dest = new File(filePath);
             if (!dest.getParentFile().exists()) {
                 // 检测是否存在目录不存在创建一个文件

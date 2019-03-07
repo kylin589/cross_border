@@ -721,8 +721,22 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                    if(orderItemModel.getProductTitle()!=null){
                                        productOrderItemEntity.setProductTitle(orderItemModel.getProductTitle());
                                    }
+                                   String productIdStr = "0";
                                    if(orderItemModel.getProductSku()!=null){
                                        productOrderItemEntity.setProductSku(orderItemModel.getProductSku());
+                                       String[] skuArray = orderItemModel.getProductSku().split("-");
+                                       if(skuArray != null && skuArray.length > 2){
+                                           productIdStr = skuArray[2];
+                                           ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().eq("product_id", productIdStr));
+                                           if (productsEntity != null) {
+                                               productOrderItemEntity.setProductId(productsEntity.getProductId());
+                                           }else{
+                                               productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku", orderItemModel.getProductSku()));
+                                               if (productsEntity != null) {
+                                                   productOrderItemEntity.setProductId(productsEntity.getProductId());
+                                               }
+                                           }
+                                       }
                                    }
                                    if(orderItemModel.getProductAsin()!=null){
                                        productOrderItemEntity.setProductAsin(orderItemModel.getProductAsin());
@@ -730,18 +744,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                    if(orderItemModel.getProductPrice()!=null){
                                        productOrderItemEntity.setProductPrice(orderItemModel.getProductPrice());
                                    }
-                                   ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku", orderItemModel.getProductSku()));
                                    if (StringUtils.isNotBlank(orderItemModel.getProductImageUrl())) {
                                        productOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                        orderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
-                                   } else if (productsEntity != null) {
-                                       productOrderItemEntity.setProductImageUrl(productsEntity.getMainImageUrl());
-                                       orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
-                                   }
-                                   if (productsEntity != null) {
-                                       productOrderItemEntity.setProductId(productsEntity.getProductId());
-                                       productOrderItemEntity.setProductImageUrl(productsEntity.getMainImageUrl());
-                                       orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
                                    }
                                    productOrderItemEntity.setOrderItemNumber(orderItemModel.getOrderItemNumber());
                                    productOrderItemEntity.setUpdatetime(orderItemModel.getUpdatetime());
@@ -822,16 +827,29 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         List<OrderItemModel> orderItemModels = orderModel.getOrderItemModels();
                         if (orderItemModels != null && orderItemModels.size() > 0) {
                             for (OrderItemModel orderItemModel : orderItemModels) {
+
                                 //判断该商品是否存在
                                 ProductOrderItemEntity productOrderItemEntity = productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id", orderItemModel.getOrderItemId()));
                                 //存在更新
-                                ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku", orderItemModel.getProductSku()));
                                 if (StringUtils.isNotBlank(orderItemModel.getProductImageUrl())) {
                                     productOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                     orderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
-                                } else if (productsEntity != null) {
-                                    productOrderItemEntity.setProductImageUrl(productsEntity.getMainImageUrl());
-                                    orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
+                                }
+                                String productIdStr = "0";
+                                if(orderItemModel.getProductSku()!=null){
+                                    String[] skuArray = orderItemModel.getProductSku().split("-");
+                                    if(skuArray != null && skuArray.length > 2){
+                                        productIdStr = skuArray[2];
+                                        ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().eq("product_id", productIdStr));
+                                        if(productsEntity != null){
+                                            productOrderItemEntity.setProductId(productsEntity.getProductId());
+                                        }else{
+                                            productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku", orderItemModel.getProductSku()));
+                                            if (productsEntity != null) {
+                                                productOrderItemEntity.setProductId(productsEntity.getProductId());
+                                            }
+                                        }
+                                    }
                                 }
                                 //更新订单商品
 //                            orderEntity.setProductTitle(orderModel.getTitlename());
@@ -843,6 +861,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                 productOrderItemEntity.setUpdatetime(new Date());
                                 productOrderItemService.updateById(productOrderItemEntity);
                             }
+
                         }
                         //更新订单
                         //设置汇率
