@@ -119,14 +119,18 @@ public class OrderLogisticsTimer {
                         .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH)
         );
         if(orderEntityList != null && orderEntityList.size() >0){
-            new RefreshOrderThread(5548L).start();
-            /*for(OrderEntity orderEntity : orderEntityList){
+//            new RefreshOrderThread(5548L).start();
+            for(OrderEntity orderEntity : orderEntityList){
                 new RefreshOrderThread(orderEntity.getOrderId()).start();
-            }*/
+
+            }
         }
 
     }
-
+//    @Async("taskExecutor")
+//    private void refreshOrder(Long orderId){
+//
+//    }
     /**
      * 刷新订单国际物流线程
      * 手动刷新订单时且状态不为亚马逊状态时调用
@@ -143,6 +147,9 @@ public class OrderLogisticsTimer {
             OrderEntity orderEntity = orderService.selectById(orderId);
             //国际物流对象
             AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
+            if(abroadLogisticsEntity == null){
+                abroadLogisticsEntity = new AbroadLogisticsEntity();
+            }
             String amazonOrderId = orderEntity.getAmazonOrderId();
             String abnormalStatus = orderEntity.getAbnormalStatus();
             String orderStatus = orderEntity.getOrderStatus();
@@ -156,13 +163,16 @@ public class OrderLogisticsTimer {
                     //如果订单状态在物流仓库未签收和仓库已入库时，更新订单的国际物流信息
                     if(ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT.equals(orderStatus) || ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING.equals(orderStatus)){
                         int status = 0;
-                        //设置国际物流渠道
-                        if(StringUtils.isNotBlank(receiveOofayData.getDestChannel())){
-                            abroadLogisticsEntity.setDestChannel(receiveOofayData.getDestChannel());
-                        }
                         //设置国际物流公司
                         if(StringUtils.isNotBlank(receiveOofayData.getDestTransportCompany())){
+                            System.out.println("物流公司：" + receiveOofayData.getDestTransportCompany());
                             abroadLogisticsEntity.setDestTransportCompany(receiveOofayData.getDestTransportCompany());
+                            //设置国际物流渠道
+                            if(StringUtils.isNotBlank(receiveOofayData.getDestChannel())){
+                                abroadLogisticsEntity.setDestChannel(receiveOofayData.getDestChannel());
+                            }else{
+                                abroadLogisticsEntity.setDestChannel("Standard");
+                            }
                         }
                         //设置国内跟踪号
                         if(StringUtils.isNotBlank(receiveOofayData.getDomesticTrackWaybill())){
@@ -180,7 +190,7 @@ public class OrderLogisticsTimer {
                             abroadLogisticsEntity.setShipTime(shipTime);
                         }
                         //设置实际重量
-                        if(StringUtils.isNotBlank(receiveOofayData.getActualWeight())){
+                        if(StringUtils.isNotBlank(receiveOofayData.getActualWeight()) && !"0.0".equals(receiveOofayData.getActualWeight())){
                             abroadLogisticsEntity.setActualWeight(receiveOofayData.getActualWeight());
                         }
                         //设置目的地查询网址
@@ -274,8 +284,13 @@ public class OrderLogisticsTimer {
                             }
                         }
                     }
-                    abroadLogisticsService.updateById(abroadLogisticsEntity);
-                    orderService.updateById(orderEntity);
+                    if(abroadLogisticsEntity.getOrderId() == null){
+                        abroadLogisticsEntity.setOrderId(orderId);
+                        abroadLogisticsService.insert(abroadLogisticsEntity);
+                    }else{
+                        abroadLogisticsService.updateById(abroadLogisticsEntity);
+                    }
+                    orderService.insertOrUpdate(orderEntity);
                     //同步转单号
                     if(StringUtils.isNotBlank(abroadLogisticsEntity.getTrackWaybill()) && abroadLogisticsEntity.getIsSynchronization() == 0){
                         SendDataMoedl sendDataMoedl = synchronizationZhenModel(orderEntity,abroadLogisticsEntity);

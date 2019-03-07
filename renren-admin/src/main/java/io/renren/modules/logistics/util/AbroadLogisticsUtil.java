@@ -61,13 +61,13 @@ public class AbroadLogisticsUtil {
         //推送订单
 //        pushOrder("1");
         //获取订单国际物流状态
-//        getOrderDetail("304-2814143-2413964");
+        getOrderDetail("026-9987555-9381968");
         //获取转单号
-//        getTrackWaybill("304-2814143-2413964");
+        getTrackWaybill("026-9987555-9381968");
         //获取物流价格
 //        getSaleDetail(new BigDecimal(2.5));
         //修改订单国际物流状态
-        updateOrder("R403-0425292-2081946",1);
+//        updateOrder("R403-0425292-2081946",1);
         //修改订单国内跟踪号
 //        updateOrderWaybill("302-7660577-9242718","666666,88888888");
         //修改订单备注
@@ -152,15 +152,19 @@ public class AbroadLogisticsUtil {
                 JSONObject a = JSONObject.parseObject(data1);
                 ReceiveOofayData receiveOofayData = new ReceiveOofayData();
                 JSONObject omsOrder = a.getJSONObject("oms_order");
-
+                //获取实际重量
+                receiveOofayData.setActualWeight(a.getString("DisplayWeight"));
                 JSONObject omsOrderDetailext = a.getJSONArray("OmsOrderDetailext").getJSONObject(0);
 //                System.out.println("omsOrder:" + omsOrder.toString());
 //                System.out.println("omsOrderDetailext:" + omsOrderDetailext.toString());
                 JSONArray omsExpressList = a.getJSONArray("oms_Express");
 //                System.out.println("oms_Express:" + omsExpressList);
                 //获取状态码
-                String status = omsOrderDetailext.getString("status");
                 receiveOofayData.setStatusStr(omsOrderDetailext.getString("status"));
+                //获取物流公司
+                receiveOofayData.setDestTransportCompany(omsOrder.getString("delivery_deanname"));
+                //获取国内物流跟踪号
+                receiveOofayData.setDomesticTrackWaybill(omsOrderDetailext.getString("deliveryexpressno"));
                 //获取运费
                 String feedamount = omsOrder.getString("feedamount");
 //                System.out.println("运费：" + feedamount);
@@ -186,8 +190,6 @@ public class AbroadLogisticsUtil {
                     receiveOofayData.setServiceQueryUrl(destInfo.getString("service_query_url"));
                     //联系电话
                     receiveOofayData.setMobile(destInfo.getString("mobile"));
-                    //获取国内跟踪号
-                    receiveOofayData.setDomesticTrackWaybill(omsOrderDetailext.getString("deliveryexpressno"));
                 }
                 if(omsExpressList.size() >0 ){
                     //发货时间
