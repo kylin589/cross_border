@@ -189,7 +189,7 @@ var vm = new Vue({
                                                 window.location.href="upProduct.html";
                                             } else {
                                                 layer.close(index);
-                                                layer.alert('请按界面输入框提示重新操作');
+                                                layer.alert(r.msg);
                                                 // window.location.href="upProduct.html";
                                             }
 
@@ -311,7 +311,7 @@ var vm = new Vue({
                                 window.location.href="upProduct.html";
 
                             } else {
-                                layer.alert('请按界面输入框提示重新操作');
+                                layer.alert(r.msg);
                                 layer.close(index);
                             }
 

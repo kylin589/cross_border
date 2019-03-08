@@ -259,7 +259,7 @@ var vm = new Vue({
                                             window.location.href="upProduct.html";
                                         } else {
                                             layer.close(index);
-                                            // layer.alert(r.message);
+                                            layer.alert(r.msg);
                                             // window.location.href="upProduct.html";
                                         }
 
