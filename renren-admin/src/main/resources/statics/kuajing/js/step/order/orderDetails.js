@@ -525,75 +525,80 @@ var vm = new Vue({
         },
         // 添加国内物流
         addWuliuFunc:function (id) {
-            layer.open({
-                type: 1,
-                title: false,
-                content: $('#addWul'), //这里content是一个普通的String
-                skin: 'openClass',
-                area: ['400px', '220px'],
-                shadeClose: true,
-                btn: ['添加','取消'],
-                btn1: function (index1) {
-                    var index = layer.load();
-                    var index = layer.load(1); //换了种风格
-                    var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-                    $.ajax({
-                        // url: 'http://39.106.131.222:8000/domestic/getLogisticsCompany',
-                        url: 'http://www.threeee.cn/domestic/getLogisticsCompany',
-                        type: 'get',
-                        data: {
-                            orderId:vm.orderid,
-                            price:vm.caigou,
-                            waybill:vm.wulDanh,
-                            itemId:id
-                        },
-                        dataType: 'json',
-                        success: function (r) {
-                            console.log(r);
-                            if (r.code === 0) {
-                                $.ajax({
-                                    url: '../../order/remark/addLog',
-                                    type: 'get',
-                                    data: {
-                                        "orderId":vm.orderid,
-                                    },
-                                    dataType: 'json',
-                                    success: function (r) {
-                                        console.log(r);
-                                        if (r.code === 0) {
-                                            layer.msg("添加成功");
+            if(vm.orderDetails.abroadLogistics.isSynchronization != 1){
+                layer.msg('订单还未同步，请同步后再添加物流信息')
+            }else {
+                layer.open({
+                    type: 1,
+                    title: false,
+                    content: $('#addWul'), //这里content是一个普通的String
+                    skin: 'openClass',
+                    area: ['400px', '220px'],
+                    shadeClose: true,
+                    btn: ['添加','取消'],
+                    btn1: function (index1) {
+                        var index = layer.load();
+                        var index = layer.load(1); //换了种风格
+                        var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+                        $.ajax({
+                            // url: 'http://39.106.131.222:8000/domestic/getLogisticsCompany',
+                            url: 'http://www.threeee.cn/domestic/getLogisticsCompany',
+                            type: 'get',
+                            data: {
+                                orderId:vm.orderid,
+                                price:vm.caigou,
+                                waybill:vm.wulDanh,
+                                itemId:id
+                            },
+                            dataType: 'json',
+                            success: function (r) {
+                                console.log(r);
+                                if (r.code === 0) {
+                                    $.ajax({
+                                        url: '../../order/remark/addLog',
+                                        type: 'get',
+                                        data: {
+                                            "orderId":vm.orderid,
+                                        },
+                                        dataType: 'json',
+                                        success: function (r) {
+                                            console.log(r);
+                                            if (r.code === 0) {
+                                                layer.msg("添加成功");
+                                                layer.close(index);
+                                                layer.close(index1);
+                                                vm.getOrderInfo();
+                                                ;                                        } else {
+                                                layer.alert(r.msg);
+                                                layer.close(index);
+                                            }
+                                        },
+                                        error: function () {
+                                            layer.msg("网络故障");
                                             layer.close(index);
-                                            layer.close(index1);
-                                            vm.getOrderInfo();
-;                                        } else {
-                                            layer.alert(r.msg);
-                                            layer.close(index);
+
                                         }
-                                    },
-                                    error: function () {
-                                        layer.msg("网络故障");
-                                        layer.close(index);
+                                    });
+                                } else {
+                                    layer.alert(r.msg);
+                                    layer.close(index);
 
-                                    }
-                                });
-                            } else {
-                                layer.alert(r.msg);
+                                }
+                            },
+                            error: function () {
+                                layer.msg("网络故障");
                                 layer.close(index);
-
+                                // layer.close(index1);
                             }
-                        },
-                        error: function () {
-                            layer.msg("网络故障");
-                            layer.close(index);
-                            // layer.close(index1);
-                        }
-                    });
-                },
-                btn2: function (index1) {
+                        });
+                    },
+                    btn2: function (index1) {
 
 
-                }
-            });
+                    }
+                });
+            }
+
         },
         //修改订单状态
         updateState:function (orderState) {
