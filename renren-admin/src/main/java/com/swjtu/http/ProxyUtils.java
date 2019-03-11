@@ -14,11 +14,10 @@ import java.util.Map;
  * @Date: 2018/12/28 00:16
  * @Description:
  */
-public class JDBC {
+public class ProxyUtils {
 
     private static Connection getConn() {
         String driver = "com.mysql.jdbc.Driver";
-//        String url = "jdbc:mysql://121.42.27.61:3306/cross_border";
         String url = "jdbc:mysql://39.106.131.222:3306/cross_border";
         String username = "root";
         String password = "chuangtao2019";

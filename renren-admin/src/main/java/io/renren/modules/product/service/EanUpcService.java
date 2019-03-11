@@ -19,5 +19,8 @@ public interface EanUpcService extends IService<EanUpcEntity> {
     PageUtils queryPage(Map<String, Object> params);
     //查询几条数据
     List<EanUpcEntity> selectByLimit(EanUpcEntity eanUpcEntity);
+
+    //批量删除
+    int selectMaxId();
 }
 

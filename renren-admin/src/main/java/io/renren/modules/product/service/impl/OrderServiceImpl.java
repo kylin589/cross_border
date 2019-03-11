@@ -687,7 +687,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Override
     public void updateOrder(List<OrderModel> orderModelList) {
         for(OrderModel orderModel : orderModelList ){
-            //获取亚马逊订单id 028-0681367-5581141
+            //获取亚马逊订单id 304-6754745-7864352
             String amazonOrderId = orderModel.getAmazonOrderId();
             if(StringUtils.isNotBlank(amazonOrderId)) {
                 //判断该订单是否存在

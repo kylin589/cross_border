@@ -14,4 +14,8 @@
     <select id="selectByLimit" parameterType="EanUpcEntity" resultType="EanUpcEntity">
     select * from product_ean_upc  where type=#{type} and state=#{state} order by state limit #{size};
     </select>
+
+    <select id="selectMaxId" resultType="int">
+        select max(ean_upc_id) ean_upc_id from product_ean_upc;
+    </select>
 </mapper>

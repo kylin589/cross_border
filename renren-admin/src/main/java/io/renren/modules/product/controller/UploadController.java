@@ -279,7 +279,7 @@ public class UploadController extends AbstractController {
             }
         }
         if (ret.size() == 0) {
-            return R.error("请填写需要上传的产品编码！");
+            return R.error("请填写正确的上传产品编码！");
         }
         uploadEntity.setUploadProductsList(ret);
         uploadEntity.setUploadProductsIds(StringUtils.join(idList.toArray(), ","));
@@ -413,7 +413,7 @@ public class UploadController extends AbstractController {
             }
         }
         if (ret.size() == 0) {
-            return R.error("请填写需要上传的产品编码！");
+            return R.error("请填写正确的上传产品编码");
         }
         uploadEntity.setUploadProductsList(ret);
         uploadEntity.setUploadProductsIds(StringUtils.join(idList.toArray(), ","));
@@ -516,7 +516,7 @@ public class UploadController extends AbstractController {
             uploadEntity.setUploadProductsList(productsService.selectBatchIds(ids));
             submitFeedService.submitFeed(uploadEntity);
         } else {
-            return R.error("请填写需要上传的产品编码！");
+            return R.error("请填写正确的上传产品编码");
         }
         return R.ok();
     }
@@ -565,7 +565,7 @@ public class UploadController extends AbstractController {
             }
         }
         if (ret.size() == 0) {
-            return R.error("请填写需要上传的产品编码！");
+            return R.error("请填写正确的上传产品编码");
         }
 
 
@@ -749,7 +749,7 @@ public class UploadController extends AbstractController {
             }
         }
         if (ret.size() == 0) {
-            return R.error("请填写需要上传的产品编码！");
+            return R.error("请填写正确的上传产品编码");
         }
 
 

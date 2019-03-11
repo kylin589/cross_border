@@ -270,7 +270,7 @@ public class GenerateProductXML {
 
                 Element variationTheme = variationData.addElement("VariationTheme");
                 System.out.println(productsEntity.getProductId());
-                if (variantsInfoEntityList.get(0).getVariantCombination().contains("-")) {
+                if (productsEntity.getColorId() != null && productsEntity.getSizeId() != null) {
                     variationThemeStr = "Size-Color";
                     variationTheme.addText(variationThemeStr);
                     /*Element colorMap = variationData.addElement("ColorMap");
@@ -346,7 +346,7 @@ public class GenerateProductXML {
                                 vieDulletPoint.addText(tmep);
                             }
                         } else {
-                            for (int x = 0; x < 4; x++) {
+                            for (int x = 0; x < 5; x++) {
                                 String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
                                 if (kepPoints[x].length() > 500) {
@@ -1016,7 +1016,7 @@ public class GenerateProductXML {
                         bulletPoint.addText(tempKepPoints);
                     }
                 } else {
-                    for (int j = 0; j < 4; j++) {
+                    for (int j = 0; j < 5; j++) {
                         String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
                         if (kepPoints[j].length() > 500) {
@@ -1100,7 +1100,7 @@ public class GenerateProductXML {
                 parentage.addText("parent");
 
                 Element variationTheme = variationData.addElement("VariationTheme");
-                if (variantsInfoEntityList.get(0).getVariantCombination().contains("-")) {
+                if (productsEntity.getColorId() != null && productsEntity.getSizeId() != null) {
                     variationThemeStr = "SizeColor";
                     variationTheme.addText(variationThemeStr);
                     /*Element colorMap = variationData.addElement("ColorMap");
@@ -1314,7 +1314,7 @@ public class GenerateProductXML {
                                 vieDulletPoint.addText(tmep);
                             }
                         } else {
-                            for (int x = 0; x < 4; x++) {
+                            for (int x = 0; x < 5; x++) {
                                 String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
                                 if (kepPoints[x].length() > 500) {
@@ -1852,7 +1852,7 @@ public class GenerateProductXML {
                         bulletPoint.addText(tempKepPoints);
                     }
                 } else {
-                    for (int j = 0; j < 4; j++) {
+                    for (int j = 0; j < 5; j++) {
                         String tempKepPoints;
                         Element bulletPoint = descriptionData.addElement("BulletPoint");
                         if (kepPoints[j].length() > 500) {
@@ -1937,7 +1937,7 @@ public class GenerateProductXML {
                 Element parentage = variationData.addElement("Parentage");
                 parentage.addText("parent");
                 Element variationTheme = variationData.addElement("VariationTheme");
-                if (variantsInfoEntityList.get(0).getVariantCombination().contains("-")) {
+                if (productsEntity.getColorId() != null && productsEntity.getSizeId() != null) {
                     variationThemeStr = "Size-Color";
                     variationTheme.addText(variationThemeStr);
                     /*Element colorMap = variationTheme.addElement("ColorMap");
@@ -2128,7 +2128,7 @@ public class GenerateProductXML {
                                 vieDulletPoint.addText(tmep);
                             }
                         } else {
-                            for (int x = 0; x < 4; x++) {
+                            for (int x = 0; x < 5; x++) {
                                 String tmep;
                                 Element vieDulletPoint = vieDescriptionData.addElement("BulletPoint");
                                 if (kepPoints[x].length() > 500) {
