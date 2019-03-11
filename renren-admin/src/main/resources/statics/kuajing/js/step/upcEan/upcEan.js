@@ -190,7 +190,8 @@ var vm = new Vue({
                 success: function (r) {
                     console.log(r);
                     if (r.code === 0) {
-                        layer.msg('删除成功')
+                        layer.msg('删除成功');
+                        vm.getauthorizeList1();
                         // vm.laypage();
                     } else {
                         layer.alert(r.message);

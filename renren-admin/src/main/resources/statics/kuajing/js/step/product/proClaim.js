@@ -786,8 +786,8 @@ var vm = new Vue({
         // 获取选中产品id
         getProIDs:function () {
             var activeProList = $('.pro_list .item.action');
-            // console.log($('.pro_list .item'));
-            // console.log(activeProList);
+            console.log($('.pro_list .item'));
+            console.log(activeProList);
             for(var i = 0;i<activeProList.length;i++){
                 // vm.activeProlist.push(activeProList.eq(i).attr('data-id'));
                 vm.activeProlist.push(parseInt(activeProList.eq(i).attr('data-id')));
@@ -1213,7 +1213,7 @@ var vm = new Vue({
         pilClaim:function () {
             vm.getProIDs();
             vm.xiugaiData.productIds = vm.activeProlist;
-            console.log(vm.xiugaiData.productIds);
+            // console
             layer.open({
                 type: 1,
                 title: false,
@@ -1223,14 +1223,11 @@ var vm = new Vue({
                 shadeClose: true,
                 btn: ['认领','取消'],
                 btn1: function (index) {
-                    console.log(vm.allYUanGValue1);
+                    // console.log(vm.xiugaiData);
                     layer.confirm('确定认领吗？',function () {
-                        var index1 = layer.load();
-                        var index1 = layer.load(1); //换了种风格
-                        var index1 = layer.load(2, {time: 100*1000});
                         $.ajax({
                             url: '../../product/claim/batchClaim',
-                            type: 'get',
+                            type: 'post',
                             // data:vm.xiugaiData,
                             data:JSON.stringify({
                                 'productIds':vm.xiugaiData.productIds,
@@ -1241,17 +1238,14 @@ var vm = new Vue({
                                 console.log(r);
                                 if (r.code === 0) {
                                     layer.close(index);
-                                    layer.close(index1);
                                     layer.msg('认领成功');
 
                                 } else {
                                     layer.alert(r.msg);
-                                    layer.close(index1);
                                 }
                             },
                             error: function () {
                                 layer.msg("网络故障");
-                                layer.close(index1);
                             }
                         })
                     })

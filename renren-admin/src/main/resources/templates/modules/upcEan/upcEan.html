@@ -84,7 +84,7 @@
 
     <div class="operation">
         <input class="inp" v-model="delValue" type="text" placeholder="请输入要删除的内容" onkeyup="this.value=this.value.replace(/[^\d]/g,'');">
-        <input class="del" type="button" value="批量删除" @click="">
+        <input class="del" type="button" value="批量删除" @click="delPiliang">
 
         <input class="save" type="button" value="添加UPC/EAN码" @click="addShouq">
     </div>
