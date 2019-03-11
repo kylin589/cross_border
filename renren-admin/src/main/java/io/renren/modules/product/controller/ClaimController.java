@@ -122,9 +122,7 @@ public class ClaimController extends AbstractController{
      */
     @RequestMapping("/batchClaim")
 //    @RequiresPermissions("product:claim:claim")
-    public R batchClaim(@RequestBody ClaimVM claimVM){
-        Long[] productIds = claimVM.getProductIds();
-        Long userId = claimVM.getUserId();
+    public R batchClaim(@RequestParam Long[] productIds, @RequestParam Long userId ){
         SysUserEntity toUser = userService.selectById(userId);
         Long deptId = toUser.getDeptId();
         for(int i=0; i < productIds[i]; i++){
