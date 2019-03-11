@@ -27,7 +27,8 @@ var vm = new Vue({
         // 总数
         all:'',
         shiyong:'',
-        weishuy:''
+        weishuy:'',
+        delValue:''
     },
     methods:{
         //添加upc
@@ -176,8 +177,30 @@ var vm = new Vue({
                 }
             });
         },
+        // 批量删除
+        delPiliang:function () {
+            $.ajax({
+                url: '../../product/eanupc/batchDelete',
+                type: 'get',
+                data: {
+                    number:this.delValue,
 
-
+                },
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    if (r.code === 0) {
+                        layer.msg('删除成功')
+                        // vm.laypage();
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        }
     },
     created:function () {
         this.getauthorizeList();

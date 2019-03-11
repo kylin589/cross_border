@@ -6,11 +6,7 @@
     <#include "/header_kuajing.html">
         <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/authorize/authorize.css" media="all">
         <style>
-            .del{
-                float: right;
-                background: #fdc1b0;
-                /*box-shadow: 0 0 10px #feaa9c;*/
-            }
+
             .del:hover{
                 background: #fe8060;
                 /*box-shadow: 0 0 10px #fecb9c;*/
@@ -27,6 +23,40 @@
                 padding: 4px;
                 width: 316px;
                 height: 130px;
+            }
+            .operation{
+                margin-top: 50px;
+                border-radius: 5px;
+                background: #fff;
+                padding: 8px;
+            }
+            .box>.operation input{
+                height: 28px;
+                padding: 0 10px;
+                border-radius: 14px;
+                border: 0;
+                color: #fff;
+                margin-right: 10px;
+                font-size: 13px;
+                cursor: pointer;
+            }
+            .box>.operation input.save{
+                float: right;
+                margin-right: 10px;
+                background: url("${request.contextPath}/statics/kuajing/img/create_bg.png");
+                background-size: 100% 100%;
+            }
+            .box>.operation input.del{
+                margin-left: 10px;
+                background: #fecb9c;
+                border-radius: 5px;
+                color: #555;
+            }
+            .box>.operation input.inp{
+                border:1px solid #ddd;
+                border-radius: 5px;
+                color: #555;
+                cursor: auto;
             }
 
         </style>
@@ -47,12 +77,19 @@
 
         <!--<button class="save" >添加授权</button>-->
         <!--<a href="ruheAuthorize.html" target="_blank" style="float: right;margin-right: 20px;line-height: 30px;color: #34a4ee;">如何授权？</a>-->
-        <input class="save" type="button" value="添加UPC/EAN码" @click="addShouq">
+        <!--<input class="save" type="button" value="添加UPC/EAN码" @click="addShouq">-->
         <!--<input class="del" type="button" value="批量删除" @click="addShouq">-->
 
     </p>
 
-    <table>
+    <div class="operation">
+        <input class="inp" v-model="delValue" type="text" placeholder="请输入要删除的内容" onkeyup="this.value=this.value.replace(/[^\d]/g,'');">
+        <input class="del" type="button" value="批量删除" @click="">
+
+        <input class="save" type="button" value="添加UPC/EAN码" @click="addShouq">
+    </div>
+
+    <table style="margin-top: 10px">
         <tr>
             <th>类型</th>
             <th>UPC/EAN</th>
