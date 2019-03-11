@@ -793,6 +793,10 @@ var vm = new Vue({
         },
         // 上架、下架、审核通过、待审核
         changeauditstatusFunc:function (n,t) {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 100*1000});
+
             vm.getProIDs();
             // console.log(JSON.stringify(vm.activeProlist));
             // console.log(n);
@@ -812,6 +816,7 @@ var vm = new Vue({
                         console.log(r);
                         if (r.code === 0) {
                             layer.msg('操作成功');
+                            layer.close(index);
 
                         } else {
                             layer.alert(r.msg);
