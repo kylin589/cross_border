@@ -1225,9 +1225,12 @@ var vm = new Vue({
                 btn1: function (index) {
                     console.log(vm.allYUanGValue1);
                     layer.confirm('确定认领吗？',function () {
+                        var index1 = layer.load();
+                        var index1 = layer.load(1); //换了种风格
+                        var index1 = layer.load(2, {time: 100*1000});
                         $.ajax({
                             url: '../../product/claim/batchClaim',
-                            type: 'post',
+                            type: 'get',
                             // data:vm.xiugaiData,
                             data:JSON.stringify({
                                 'productIds':vm.xiugaiData.productIds,
@@ -1238,14 +1241,17 @@ var vm = new Vue({
                                 console.log(r);
                                 if (r.code === 0) {
                                     layer.close(index);
+                                    layer.close(index1);
                                     layer.msg('认领成功');
 
                                 } else {
                                     layer.alert(r.msg);
+                                    layer.close(index1);
                                 }
                             },
                             error: function () {
                                 layer.msg("网络故障");
+                                layer.close(index1);
                             }
                         })
                     })
