@@ -34,4 +34,9 @@ public class EanUpcServiceImpl extends ServiceImpl<EanUpcDao, EanUpcEntity> impl
         return eanUpcEntityList;
     }
 
+    @Override
+    public int selectMaxId() {
+        return baseMapper.selectMaxId();
+    }
+
 }

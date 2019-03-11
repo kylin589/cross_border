@@ -1,33 +1,24 @@
 package com.swjtu.trans.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swjtu.http.JDBC;
+import com.swjtu.http.ProxyUtils;
 import com.swjtu.lang.LANG;
 import com.swjtu.trans.AbstractTranslator;
-import com.swjtu.util.Util;
-import io.renren.modules.sys.entity.AgentIpEntity;
-import io.renren.modules.sys.service.AgentIpService;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 @RestController
 public final class GoogleTranslator extends AbstractTranslator {
@@ -37,7 +28,7 @@ public final class GoogleTranslator extends AbstractTranslator {
     private int port;
     public GoogleTranslator(){
         super(url);
-        Map<String, Object> map = JDBC.getOne();
+        Map<String, Object> map = ProxyUtils.getOne();
         ip = map.get("ip").toString();
         port = Integer.parseInt(map.get("port").toString());
     }

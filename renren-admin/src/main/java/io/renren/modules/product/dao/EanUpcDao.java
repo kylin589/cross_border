@@ -15,4 +15,7 @@ import java.util.List;
 public interface EanUpcDao extends BaseMapper<EanUpcEntity> {
 
     List<EanUpcEntity> selectByLimit(EanUpcEntity eanUpcEntity);
+
+    //批量删除
+    int selectMaxId();
 }

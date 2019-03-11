@@ -130,4 +130,13 @@ public class EanUpcController {
         eanUpcService.insertBatch(eanUpcEntities);
         return R.ok();
     }
+    /**
+     * 批量删除
+     */
+    @RequestMapping("/batchDelete")
+    public R batchDelete(@RequestParam int number){
+        int a = eanUpcService.selectMaxId();
+        eanUpcService.delete(new EntityWrapper<EanUpcEntity>().gt("ean_upc_id",a-number));
+        return R.ok();
+    }
 }

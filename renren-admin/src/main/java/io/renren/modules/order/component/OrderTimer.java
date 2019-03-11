@@ -259,7 +259,7 @@ public class OrderTimer {
                     for (int j = 0; j < listOrdersResponseDtos.get(i).getOrders().size(); j++) {
                         List<ListOrderItemsRequest> ListOrderItemsRequestRequests = new ArrayList<ListOrderItemsRequest>();
                         ListOrderItemsRequest ListOrderItemsRequest = new ListOrderItemsRequest();
-                        //113-9562786-3667458
+                        //304-4352
                         String AmazonOrderId = listOrdersResponseDtos.get(i).getOrders().get(j).getAmazonOrderId();
                         System.out.println("订单号:" + AmazonOrderId + "=================");
                         ListOrderItemsRequest.setAmazonOrderId(AmazonOrderId);

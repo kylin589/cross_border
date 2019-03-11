@@ -154,6 +154,40 @@ public class ProductsController extends AbstractController {
             ProductsEntity entity = productsService.selectById(productIds[i]);
             if ("AUDIT_STATE".equals(type)) {
                 entity.setAuditStatus(number);
+                //如果是审核通过
+                if(number.equals("001")){
+                    //设置主产品ean码
+                    EanUpcEntity mainEanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("state",0));
+                    mainEanUpcEntity.setState(1);
+                    eanUpcService.updateById(mainEanUpcEntity);
+                    entity.setEanCode(mainEanUpcEntity.getCode());
+                    //如果有变体，设置变体ean码
+                    List<VariantsInfoEntity> variantsInfosList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id",entity.getProductId()));
+                    if (variantsInfosList != null && variantsInfosList.size() != 0) {
+                        int size = variantsInfosList.size();
+                        EanUpcEntity eanUpcEntity = new EanUpcEntity();
+                        eanUpcEntity.setState(0);
+                        eanUpcEntity.setType("EAN");
+                        eanUpcEntity.setSize(size);
+                        //查出未使用的EAN码，修改为使用
+                        List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanUpcEntity);
+                        if (eanUpcEntities != null && eanUpcEntities.size() > 0 && eanUpcEntities.size() == variantsInfosList.size()) {
+                            for (int j = 0; j < eanUpcEntities.size(); j++) {
+                                eanUpcEntities.get(j).setState(1);
+                                eanUpcEntities.get(j).setProductId(entity.getProductId());
+                                eanUpcService.updateById(eanUpcEntities.get(j));
+                            }
+                        } else {
+                            return R.error("EAN码数量不足，尽快添加");
+                        }
+                        for (int j = 0; j < variantsInfosList.size(); j++) {
+                            String code = eanUpcEntities.get(j).getCode();
+                            VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(j);
+                            variantsInfoEntity.setEanCode(code);
+                        }
+                        variantsInfoService.updateBatchById(variantsInfosList);
+                    }
+                }
             }
             if ("SHELVE_STATE".equals(type)) {
                 entity.setShelveStatus(number);
@@ -165,6 +199,7 @@ public class ProductsController extends AbstractController {
             entity.setLastOperationUserId(getUserId());
             productsService.updateById(entity);
         }
+
         return R.ok();
     }
 
@@ -1104,7 +1139,7 @@ public class ProductsController extends AbstractController {
         //设置预处理时间
         productsEntity.setPretreatmentDate(1);
         //获取码
-        EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
+        /*EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
             String code = eanUpcEntity.getCode();
             //设置Ean码
@@ -1114,7 +1149,7 @@ public class ProductsController extends AbstractController {
             //关联产品id
             eanUpcEntity.setProductId(productId);
             eanUpcService.updateById(eanUpcEntity);
-        }
+        }*/
         //设置分类
         /*Long categoryThreeId = productsEntity.getCategoryThreeId();
         String s = categoryService.queryParentByChildIdAndCategory(categoryThreeId, productsEntity);
