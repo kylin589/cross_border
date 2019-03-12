@@ -59,8 +59,8 @@ var vm = new Vue({
                 contentType: "application/json",
                 // dataType: 'json',
                 success: function (r) {
-                    console.log('获取公司');
-                    console.log(r);
+                    // console.log('获取公司');
+                    // console.log(r);
                     if (r.code === 0) {
                         // layer.msg('操作成功');
                         vm.allGongsi = r.deptList;
@@ -68,7 +68,7 @@ var vm = new Vue({
                             deptId:'',
                             name:'全部'
                         })
-                        console.log(vm.allGongsi)
+                        // console.log(vm.allGongsi)
                         // vm.getPage();
 
                     } else {
@@ -89,6 +89,7 @@ var vm = new Vue({
                 },
                 dataType: 'json',
                 success: function (r) {
+                    console.log('moren');
                     if (r.code === 0) {
                         vm.statisticsProfit = r.dto.platformStatisticsDto;
                         vm.statistics = r.dto.userStatisticsDto;
@@ -110,7 +111,7 @@ var vm = new Vue({
                         allChart3(vm.allChart3Data);
                         shopChart3(vm.shopChart3Data);
                         shopChart2(vm.shopChart2Data);
-                        shopChart1(vm.shopChart1Data);
+                        // shopChart1(vm.shopChart1Data);
                     } else {
                         layer.alert(r.msg);
                     }
@@ -130,7 +131,7 @@ var vm = new Vue({
                 },
                 dataType: 'json',
                 success: function (r) {
-                    console.log(r)
+                    // console.log(r)
                     if (r.code === 0) {
                         vm.staff = r.userList;
                         vm.staff.unshift({
@@ -148,17 +149,18 @@ var vm = new Vue({
         },
         //平台利润查询
         oneLevelQueryPlatform:function (type) {
-            vm.timetype1=type;
+            this.timetype1=type;
             if(type == 'time'){
-                vm.pingtTime = true;
-            }else {vm.pingtTime = false;
+                this.pingtTime = true;
+            }else {
+                this.pingtTime = false;
                 $.ajax({
                     url: '../../sys/finance/oneLevelQueryPlatform',
                     type: 'post',
                     data:  JSON.stringify({
                         type:type,
-                        startDate:'',
-                        endDate:''
+                        startDate:this.value5,
+                        endDate:this.value6
                     }),
                     contentType: "application/json",
                     success: function (r) {
@@ -203,19 +205,19 @@ var vm = new Vue({
         },
         //总部员工查询
         oneLevelQueryUser:function (type) {
-            vm.timetype2=type;
+            this.timetype2=type;
             if(type == 'time'){
-                vm.zongbuTime = true;
+                this.zongbuTime = true;
             }else {
-                vm.zongbuTime = false;
+                this.zongbuTime = false;
                 $.ajax({
                     url: '../../sys/finance/oneLevelQueryUser',
                     type: 'post',
                     data:  JSON.stringify({
                         type:type,
-                        startDate:vm.value1,
-                        endDate:vm.value2,
-                        userId:vm.yuangonguserid
+                        startDate:this.value1,
+                        endDate:this.value2,
+                        userId:this.yuangonguserid
                     }),
                     contentType: "application/json",
                     success: function (r) {
@@ -281,19 +283,19 @@ var vm = new Vue({
         },
         //加盟商查询
         oneLevelQueryFranchisee:function (type) {
-            vm.timetype3=type;
+            this.timetype3=type;
             if(type == 'time'){
-                vm.jiamTime = true;
+                this.jiamTime = true;
             }else {
-                vm.jiamTime = false;
+                this.jiamTime = false;
                 $.ajax({
                     url: '../../sys/finance/oneLevelQueryFranchisee',
                     type: 'post',
                     data:  JSON.stringify({
                         type:type,
-                        startDate:vm.value3,
-                        endDate:vm.value3,
-                        deptId:vm.allGongsiValue
+                        startDate:this.value3,
+                        endDate:this.value4,
+                        deptId:this.allGongsiValue
                     }),
                     contentType: "application/json",
                     success: function (r) {
@@ -307,7 +309,7 @@ var vm = new Vue({
                             vm.shopChart2Data = vm.statisticsShop.profitRate;
                             shopChart3(vm.shopChart3Data,vm.statistics.name);
                             shopChart2(vm.shopChart2Data);
-                            shopChart1(vm.shopChart1Data);
+                            // shopChart1(vm.shopChart1Data);
                         } else {
                             layer.alert(r.msg);
                         }
@@ -342,7 +344,7 @@ var vm = new Vue({
                         vm.shopChart2Data = vm.statisticsShop.profitRate;
                         shopChart3(vm.shopChart3Data,vm.statistics.name);
                         shopChart2(vm.shopChart2Data);
-                        shopChart1(vm.shopChart1Data);
+                        // shopChart1(vm.shopChart1Data);
                     } else {
                         layer.alert(r.msg);
                     }
@@ -356,8 +358,11 @@ var vm = new Vue({
     },
     created:function(){
         this.getCouList();
-        this.oneLevelStatisticsDefault();
+        // this.oneLevelStatisticsDefault();
         this.selectOneLevelUserList();
+        this.oneLevelQueryPlatform('day');
+        this.oneLevelQueryUser('day');
+        this.oneLevelQueryFranchisee('day');
 
     },
     mounted:function () {

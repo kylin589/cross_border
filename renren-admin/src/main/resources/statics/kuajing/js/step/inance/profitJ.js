@@ -146,19 +146,19 @@ var vm = new Vue({
 
         //总部员工查询
         oneLevelQueryUser:function (type) {
-            vm.timetype2=type;
+            this.timetype2=type;
             if(type == 'time'){
-                vm.zongbuTime = true;
+                this.zongbuTime = true;
             }else {
-                vm.zongbuTime = false;
+                this.zongbuTime = false;
                 $.ajax({
                     url: '../../sys/finance/franchiseeQueryStatistics',
                     type: 'post',
                     data:  JSON.stringify({
                         type:type,
-                        startDate:vm.value1,
-                        endDate:vm.value2,
-                        userId:vm.yuangonguserid
+                        startDate:this.value1,
+                        endDate:this.value2,
+                        userId:this.yuangonguserid
                     }),
                     contentType: "application/json",
                     success: function (r) {
@@ -228,6 +228,7 @@ var vm = new Vue({
     created:function(){
         this.getCouList();
         this.oneLevelStatisticsDefault();
+        this.oneLevelQueryUser('day');
 
 
     },

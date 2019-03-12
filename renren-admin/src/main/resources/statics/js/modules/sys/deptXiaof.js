@@ -11,7 +11,7 @@ var vm = new Vue({
         // 当前页码
         proCurr:1,
         // 每页数量限制
-        pageLimit:12,
+        pageLimit:10,
         totalCount:0,
         xiaofList:[],
         couDetails:{
@@ -35,6 +35,7 @@ var vm = new Vue({
         }],
         // 所选员工的value
         allYUanGValue:'1-1',
+        orderId:'',
     },
     methods:{
         // 获取公司详情
@@ -78,8 +79,8 @@ var vm = new Vue({
                     count: vm.totalCount, //数据总数，从服务端得到
                     prev: '<i class="layui-icon layui-icon-left"></i>',
                     next: '<i class="layui-icon layui-icon-right"></i>',
-                    limits: [12, 24, 30],
-                    limit: 12,
+                    limits: [10, 20, 30],
+                    limit: vm.pageLimit,
                     layout: ['prev', 'page', 'next', 'limit', 'skip'],
                     jump: function (obj, first) {
                         //obj包含了当前分页的所有参数，比如：
@@ -144,10 +145,21 @@ var vm = new Vue({
             }else {
                 vm.couDetails.userId = '';
             }
+            // vm.couDetails.page = vm.page;
+            // vm.couDetails.limit = vm.limit;
             $.ajax({
                 url: '../../sys/consume/list',
                 type: 'get',
-                data: this.couDetails,
+                // data: this.couDetails,
+                data:{
+                    deptId:vm.couDetails.deptId,
+                    userId:vm.couDetails.userId,
+                    orderId:vm.orderId,
+                    abroadWaybill:'',
+                    type:vm.couDetails.type,
+                    page:vm.proCurr,
+                    limit:vm.pageLimit,
+                },
                 dataType: 'json',
                 success: function (r) {
                     console.log('消费记录')
@@ -166,7 +178,7 @@ var vm = new Vue({
             });
         },
         getauthorizeList1:function () {
-            console.log(this.couDetails);
+            // console.log(this.couDetails);
             if(vm.typeValue != '全部'){
                 vm.couDetails.type = vm.typeValue
             }else {
@@ -177,10 +189,20 @@ var vm = new Vue({
             }else {
                 vm.couDetails.userId = '';
             }
+            // vm.couDetails.page = vm.page;
+            // vm.couDetails.limit = vm.limit;
             $.ajax({
                 url: '../../sys/consume/list',
                 type: 'get',
-                data: this.couDetails,
+                data: {
+                    deptId:vm.couDetails.deptId,
+                    userId:vm.couDetails.userId,
+                    orderId:vm.couDetails.orderId,
+                    abroadWaybill:'',
+                    type:vm.couDetails.type,
+                    page:vm.proCurr,
+                    limit:vm.pageLimit,
+                },
                 dataType: 'json',
                 success: function (r) {
                     console.log('消费记录')

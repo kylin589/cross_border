@@ -126,7 +126,42 @@ var vm = new Vue({
                 type: 'get',
                 // data:vm.id,
                 // dataType:'json',
-                data:{deptId:vm.id},
+                data:{
+                    deptId:vm.id,
+                    page:vm.page,
+                    limit:vm.limit
+                },
+                contentType: "application/json",
+                success: function (r) {
+                    console.log('充值记录');
+                    console.log(r);
+                    if (r.code === 0) {
+                        // layer.msg('修改成功');
+                        vm.chongzhiList = r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                        vm.laypage();
+
+                    } else {
+                        layer.alert(r.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            })
+        },
+        // 获取充值记录
+        getchongzhiList1:function () {
+            $.ajax({
+                url: '../../sys/recharge/list',
+                type: 'get',
+                // data:vm.id,
+                // dataType:'json',
+                data:{
+                    deptId:vm.id,
+                    page:vm.page,
+                    limit:vm.limit
+                },
                 contentType: "application/json",
                 success: function (r) {
                     console.log('充值记录');
@@ -134,7 +169,6 @@ var vm = new Vue({
                     if (r.code === 0) {
                         // layer.msg('修改成功');
                         vm.chongzhiList = r.list;
-                        vm.laypage();
 
                     } else {
                         layer.alert(r.msg);
@@ -171,7 +205,7 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getauthorizeList1();
+                            vm.getchongzhiList1();
                         }
                     }
                 });
