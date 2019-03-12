@@ -37,7 +37,7 @@
         opacity : .4,
 
         // 是否一直在滚动模式
-        alwaysVisible : false,
+        alwaysVisible : true,
 
         // 当用户鼠标悬停是否应该隐藏滚动条，
         disableFadeOut : false,
