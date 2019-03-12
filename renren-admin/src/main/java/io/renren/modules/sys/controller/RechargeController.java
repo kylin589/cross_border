@@ -73,10 +73,9 @@ public class RechargeController extends AbstractController {
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("sys:recharge:list")
-    public R list(@RequestParam Long deptId){
-//        PageUtils page = rechargeService.queryPage(params);
-        List<RechargeEntity> list = rechargeService.selectList(new EntityWrapper<RechargeEntity>().eq("dept_id",deptId));
-        return R.ok().put("list", list);
+    public R list(@RequestParam Map<String, Object> params){
+        PageUtils page = rechargeService.queryPage(params);
+        return R.ok().put("page", page);
     }
 
     /**

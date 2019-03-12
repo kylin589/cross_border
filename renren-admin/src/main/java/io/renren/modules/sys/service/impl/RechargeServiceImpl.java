@@ -18,9 +18,10 @@ public class RechargeServiceImpl extends ServiceImpl<RechargeDao, RechargeEntity
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        String deptId = (String) params.get("deptId");
         Page<RechargeEntity> page = this.selectPage(
                 new Query<RechargeEntity>(params).getPage(),
-                new EntityWrapper<RechargeEntity>()
+                new EntityWrapper<RechargeEntity>().eq("dept_id",deptId)
         );
         return new PageUtils(page);
     }

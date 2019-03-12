@@ -774,21 +774,23 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         List<Long> ret = new ArrayList<Long>();
         for (int i = 0; i < list.size(); i++) {
             ProductsEntity product = list.get(i);
-            if (product.getCreateUserId().longValue() == userId.longValue()) {
-                if ("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())) {
-                    productsList.add(product);
-                    ret.add(product.getProductId());
-                } else {
-                    dto.setCode("error");
-                    if ((!"001".equals(product.getAuditStatus()))) {
-                        System.out.println("id==" + product.getProductId());
-                        dto.setMsg("有产品没有通过审核");
-                    } else if ((!"001".equals(product.getShelveStatus()))) {
-                        dto.setMsg("有产品没有上架");
+            if(product != null && product.getCreateUserId() != null){
+                if (product.getCreateUserId().longValue() == userId.longValue()) {
+                    if ("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())) {
+                        productsList.add(product);
+                        ret.add(product.getProductId());
                     } else {
-                        dto.setMsg("有产品没有通过审核/上架");
+                        dto.setCode("error");
+                        if ((!"001".equals(product.getAuditStatus()))) {
+                            System.out.println("id==" + product.getProductId());
+                            dto.setMsg("有产品没有通过审核");
+                        } else if ((!"001".equals(product.getShelveStatus()))) {
+                            dto.setMsg("有产品没有上架");
+                        } else {
+                            dto.setMsg("有产品没有通过审核/上架");
+                        }
+                        return dto;
                     }
-                    return dto;
                 }
             }
         }
@@ -798,30 +800,35 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     }
 
     @Override
-    public UploadProductDTO isNotCanUpload(List<Long> idList, Long userId) {
+    public UploadProductDTO isNotCanUpload(Long startId, Long endId, Long userId) {
         UploadProductDTO dto = new UploadProductDTO();
-        List<ProductsEntity> list = this.selectBatchIds(idList);
+        List<ProductsEntity> list = this.selectList(new EntityWrapper<ProductsEntity>().ge("product_id",startId).and().le("product_id",endId));
         List<ProductsEntity> productsList = new ArrayList<>();
+        List<Long> ret = new ArrayList<Long>();
         for (int i = 0; i < list.size(); i++) {
             ProductsEntity product = list.get(i);
-            if (product.getCreateUserId().longValue() == userId.longValue()) {
-                if ("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())) {
-                    productsList.add(product);
-                } else {
-                    dto.setCode("error");
-                    if ((!"001".equals(product.getAuditStatus()))) {
-                        System.out.println("id==" + product.getProductId());
-                        dto.setMsg("有产品没有通过审核");
-                    } else if ((!"001".equals(product.getShelveStatus()))) {
-                        dto.setMsg("有产品没有上架");
+            if(product != null && product.getCreateUserId() != null){
+                if (product.getCreateUserId().longValue() == userId.longValue()) {
+                    if ("001".equals(product.getAuditStatus()) && "001".equals(product.getShelveStatus())) {
+                        productsList.add(product);
+                        ret.add(product.getProductId());
                     } else {
-                        dto.setMsg("有产品没有通过审核/上架");
+                        dto.setCode("error");
+                        if ((!"001".equals(product.getAuditStatus()))) {
+                            System.out.println("id==" + product.getProductId());
+                            dto.setMsg("有产品没有通过审核");
+                        } else if ((!"001".equals(product.getShelveStatus()))) {
+                            dto.setMsg("有产品没有上架");
+                        } else {
+                            dto.setMsg("有产品没有通过审核/上架");
+                        }
+                        return dto;
                     }
-                    return dto;
                 }
             }
         }
         dto.setProductsList(productsList);
+        dto.setRet(ret);
         return dto;
     }
 

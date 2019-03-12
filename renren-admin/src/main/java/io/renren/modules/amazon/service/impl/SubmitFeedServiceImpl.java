@@ -949,8 +949,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
     @Override
     public String switchCountry(String templateName, Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode) {
-        String filePath = "";
-        switch (templateName) {
+        String filePath = generateProductXML.generateProductXMLByHomeImprovement(uploadId, merchantIdentifierText, productsList, countryCode);
+        /*switch (templateName) {
             // 家居装修/HomeImprovement
             case "HomeImprovement":
                 filePath = generateProductXML.generateProductXMLByHomeImprovement(uploadId, merchantIdentifierText, productsList, countryCode);
@@ -1088,7 +1088,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             default:
                 filePath = generateProductXML.generateDefaultProductXML(uploadId, merchantIdentifierText, productsList, countryCode);
                 break;
-        }
+        }*/
         return filePath;
     }
 }

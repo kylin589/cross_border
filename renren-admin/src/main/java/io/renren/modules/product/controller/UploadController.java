@@ -251,7 +251,7 @@ public class UploadController extends AbstractController {
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
         //idList:要上传的id列表
         List<Long> idList = new ArrayList<Long>();
-        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0) {
+        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0 && addUploadVM.getUploadIds()[0] != null) {
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()), getUserId());
             if ("ok".equals(dto1.getCode())) {
                 List productsList1 = dto1.getProductsList();
@@ -262,14 +262,8 @@ public class UploadController extends AbstractController {
             }
         }
 
-        List<Long> seList = new ArrayList<>();
         if (addUploadVM.getStartId() != null && addUploadVM.getEndId() != null) {
-            Long index = addUploadVM.getStartId();
-            while (index <= addUploadVM.getEndId()) {
-                seList.add(index);
-                index++;
-            }
-            UploadProductDTO dto2 = productsService.selectCanUploadProducts(seList, getUserId());
+            UploadProductDTO dto2 = productsService.isNotCanUpload(addUploadVM.getStartId(),addUploadVM.getEndId(), getUserId());
             if ("ok".equals(dto2.getCode())) {
                 List productsList2 = dto2.getProductsList();
                 ret.addAll(productsList2);
@@ -385,7 +379,7 @@ public class UploadController extends AbstractController {
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
         //idList:要上传的id列表
         List<Long> idList = new ArrayList<Long>();
-        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0) {
+        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0 && addUploadVM.getUploadIds()[0] != null) {
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()), getUserId());
             if ("ok".equals(dto1.getCode())) {
                 List productsList1 = dto1.getProductsList();
@@ -396,14 +390,8 @@ public class UploadController extends AbstractController {
             }
         }
 
-        List<Long> seList = new ArrayList<>();
         if (addUploadVM.getStartId() != null && addUploadVM.getEndId() != null) {
-            Long index = addUploadVM.getStartId();
-            while (index <= addUploadVM.getEndId()) {
-                seList.add(index);
-                index++;
-            }
-            UploadProductDTO dto2 = productsService.selectCanUploadProducts(seList, getUserId());
+            UploadProductDTO dto2 = productsService.isNotCanUpload(addUploadVM.getStartId(),addUploadVM.getEndId(), getUserId());
             if ("ok".equals(dto2.getCode())) {
                 List productsList2 = dto2.getProductsList();
                 ret.addAll(productsList2);
@@ -537,7 +525,7 @@ public class UploadController extends AbstractController {
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
         //idList:要上传的id列表
         List<Long> idList = new ArrayList<Long>();
-        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0) {
+        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0 && addUploadVM.getUploadIds()[0] != null) {
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()), getUserId());
             if ("ok".equals(dto1.getCode())) {
                 List productsList1 = dto1.getProductsList();
@@ -548,14 +536,8 @@ public class UploadController extends AbstractController {
             }
         }
 
-        List<Long> seList = new ArrayList<>();
         if (addUploadVM.getStartId() != null && addUploadVM.getEndId() != null) {
-            Long index = addUploadVM.getStartId();
-            while (index <= addUploadVM.getEndId()) {
-                seList.add(index);
-                index++;
-            }
-            UploadProductDTO dto2 = productsService.selectCanUploadProducts(seList, getUserId());
+            UploadProductDTO dto2 = productsService.isNotCanUpload(addUploadVM.getStartId(),addUploadVM.getEndId(), getUserId());
             if ("ok".equals(dto2.getCode())) {
                 List productsList2 = dto2.getProductsList();
                 ret.addAll(productsList2);
@@ -721,7 +703,7 @@ public class UploadController extends AbstractController {
         List<ProductsEntity> ret = new ArrayList<ProductsEntity>();
         //idList:要上传的id列表
         List<Long> idList = new ArrayList<Long>();
-        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0) {
+        if (addUploadVM.getUploadIds() != null && addUploadVM.getUploadIds().length >0 && addUploadVM.getUploadIds()[0] != null) {
             UploadProductDTO dto1 = productsService.selectCanUploadProducts(Arrays.asList(addUploadVM.getUploadIds()), getUserId());
             if ("ok".equals(dto1.getCode())) {
                 List productsList1 = dto1.getProductsList();
@@ -732,14 +714,8 @@ public class UploadController extends AbstractController {
             }
         }
 
-        List<Long> seList = new ArrayList<>();
         if (addUploadVM.getStartId() != null && addUploadVM.getEndId() != null) {
-            Long index = addUploadVM.getStartId();
-            while (index <= addUploadVM.getEndId()) {
-                seList.add(index);
-                index++;
-            }
-            UploadProductDTO dto2 = productsService.selectCanUploadProducts(seList, getUserId());
+            UploadProductDTO dto2 = productsService.isNotCanUpload(addUploadVM.getStartId(),addUploadVM.getEndId(), getUserId());
             if ("ok".equals(dto2.getCode())) {
                 List productsList2 = dto2.getProductsList();
                 ret.addAll(productsList2);
