@@ -319,13 +319,14 @@ var vm = new Vue({
                 if($(event.target).parent().parent().find('.logistics').length!=0){
                     $(event.target).parent().parent().find('.logistics').attr('data-ok','true');
                 }
+                ;
                 $.ajax({
                     // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
                     url: 'http://www.threeee.cn/domestic/updateLogistics',
                     type: 'get',
                     data: {
                         orderId:vm.orderid,
-                        waybill:d.waybill,
+                        waybill:$.trim(d.waybill),
                         domesticLogisticsId:d.domesticLogisticsId,
                         price:d.price
                     },
@@ -547,7 +548,7 @@ var vm = new Vue({
                             data: {
                                 orderId:vm.orderid,
                                 price:vm.caigou,
-                                waybill:vm.wulDanh,
+                                waybill:$.trim(vm.wulDanh),
                                 itemId:id
                             },
                             dataType: 'json',
