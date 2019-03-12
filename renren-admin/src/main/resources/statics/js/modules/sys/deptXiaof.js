@@ -12,6 +12,7 @@ var vm = new Vue({
         proCurr:1,
         // 每页数量限制
         pageLimit:12,
+        totalCount:0,
         xiaofList:[],
         couDetails:{
 
@@ -50,7 +51,7 @@ var vm = new Vue({
 
                         vm.couDetails = r.dept;
                         vm.getauthorizeList();
-                        vm.laypage();
+                        // vm.laypage();
                         vm.getManList();
 
 
@@ -63,6 +64,7 @@ var vm = new Vue({
                 }
             })
         },
+
         // 分页器
         laypage: function () {
             // var tempTotalCount;
@@ -89,7 +91,7 @@ var vm = new Vue({
                         //首次不执行
                         if (!first) {
                             //do something
-                            vm.getauthorizeList();
+                            vm.getauthorizeList1();
                         }
                     }
                 });
@@ -131,6 +133,39 @@ var vm = new Vue({
         },
         // 获取消费记录列表
         getauthorizeList:function () {
+            console.log(this.couDetails);
+            if(vm.typeValue != '全部'){
+                vm.couDetails.type = vm.typeValue
+            }else {
+                vm.couDetails.type = '';
+            }
+            if(vm.allYUanGValue != '1-1'){
+                vm.couDetails.userId = vm.allYUanGValue
+            }else {
+                vm.couDetails.userId = '';
+            }
+            $.ajax({
+                url: '../../sys/consume/list',
+                type: 'get',
+                data: this.couDetails,
+                dataType: 'json',
+                success: function (r) {
+                    console.log('消费记录')
+                    console.log(r);
+                    if (r.code === 0) {
+                        vm.xiaofList=r.page.list;
+                        vm.totalCount = r.page.totalCount;
+                        vm.laypage();
+                    } else {
+                        layer.alert(r.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                }
+            });
+        },
+        getauthorizeList1:function () {
             console.log(this.couDetails);
             if(vm.typeValue != '全部'){
                 vm.couDetails.type = vm.typeValue

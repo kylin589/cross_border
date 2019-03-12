@@ -603,6 +603,7 @@ var vm = new Vue({
         },
         //修改订单状态
         updateState:function (orderState) {
+            console.log(11111);
             var index = layer.load();
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
