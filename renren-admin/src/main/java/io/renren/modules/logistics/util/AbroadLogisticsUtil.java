@@ -61,9 +61,9 @@ public class AbroadLogisticsUtil {
         //推送订单
 //        pushOrder("1");
         //获取订单国际物流状态
-        getOrderDetail("026-9987555-9381968");
+        getOrderDetail("304-5083119-5033965");
         //获取转单号
-        getTrackWaybill("026-9987555-9381968");
+        getTrackWaybill("304-5083119-5033965");
         //获取物流价格
 //        getSaleDetail(new BigDecimal(2.5));
         //修改订单国际物流状态

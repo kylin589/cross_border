@@ -1410,8 +1410,11 @@ public class ProductsController extends AbstractController {
         }
         //设置主图片
         ImageAddressEntity mainImage = imageAddressService.selectOne(new EntityWrapper<ImageAddressEntity>().eq("product_id",products.getProductId()).eq("sort",0));
-        System.out.println("主图片id====" + mainImage.getImageId());
-        products.setMainImageId(mainImage.getImageId());
+
+        if(mainImage != null){
+            System.out.println("主图片id====" + mainImage.getImageId());
+            products.setMainImageId(mainImage.getImageId());
+        }
         //创建时间
         products.setCreateTime(new Date());
         //创建用户id
@@ -1708,9 +1711,13 @@ public class ProductsController extends AbstractController {
         }
         if(StringUtils.isNotBlank(products.getAuditStatus()) && "001".equals(products.getAuditStatus())){
             EanUpcEntity mainEanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("state",0));
-            mainEanUpcEntity.setState(1);
-            products.setEanCode(mainEanUpcEntity.getCode());
-            eanUpcService.updateById(mainEanUpcEntity);
+            if(mainEanUpcEntity != null){
+                mainEanUpcEntity.setState(1);
+                products.setEanCode(mainEanUpcEntity.getCode());
+                eanUpcService.updateById(mainEanUpcEntity);
+            }else{
+                return R.error("EAN码数量不足，尽快添加");
+            }
         }
         //批量删除变体信息
         variantsInfoService.delete(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId));
