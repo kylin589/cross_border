@@ -1225,6 +1225,9 @@ var vm = new Vue({
                 btn1: function (index) {
                     // console.log(vm.xiugaiData);
                     layer.confirm('确定认领吗？',function () {
+                        var index1 = layer.load();
+                        var index1 = layer.load(1); //换了种风格
+                        var index1 = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                         $.ajax({
                             url: '../../product/claim/batchClaim',
                             type: 'post',
@@ -1238,13 +1241,18 @@ var vm = new Vue({
                                 console.log(r);
                                 if (r.code === 0) {
                                     layer.close(index);
+                                    layer.close(index1);
                                     layer.msg('认领成功');
 
                                 } else {
+                                    layer.close(index);
+                                    layer.close(index1);
                                     layer.alert(r.msg);
                                 }
                             },
                             error: function () {
+                                layer.close(index);
+                                layer.close(index1);
                                 layer.msg("网络故障");
                             }
                         })

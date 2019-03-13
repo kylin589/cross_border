@@ -2680,6 +2680,16 @@ var vm = new Vue({
                 window.location.href = 'xmlListUP.html?id='+vm.id1;
             })
         },
+        returnFunc1:function () {
+            layer.confirm('确定返回吗？',function () {
+                window.location.href = 'xmlListUP1.html?id='+vm.id1;
+            })
+        },
+        returnFunc2:function () {
+            layer.confirm('确定返回吗？',function () {
+                window.location.href = 'xmlListUPAdmin.html?id='+vm.id1;
+            })
+        },
         // 中文标题翻译
         titleZhtoOther:function () {
 

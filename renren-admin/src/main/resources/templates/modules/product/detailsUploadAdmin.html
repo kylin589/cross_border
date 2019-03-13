@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑上传</title>
+    <#include "/header_kuajing.html">
+    <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/detailsProduct.css" media="all">
+    <link rel="stylesheet" href="${request.contextPath}/statics/kuajing/css/product/addUpload.css" media="all">
+    <style>
+        .pro_inf>span>p,
+        .pro_inf>p{
+            color: #ffa64c;
+            font-size: 13px;
+        }
+        .check span input{
+            margin-right: 8px;
+            margin-left: 15px;
+        }
+        .check span:nth-child(1) input{
+            margin-left: 0;
+        }
+
+
+        #fenleiTankuang div.con{
+            display: flex;
+            padding: 30px 10px 10px 10px;
+            height: 300px;
+        }
+        #fenleiTankuang div.con>div{
+            flex: 1;
+            /*border: 1px solid #bbb;*/
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 3px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        #fenleiTankuang div.con>div ul li{
+            color: #555;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 2px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        #fenleiTankuang div.con>div ul li.active{
+            /*color: #0f6ab4;*/
+            background: #dbedf7;
+        }
+        #fenleiTankuang{
+            display: none;
+        }
+        form>.fenleiCon{
+            display: none;
+        }
+        .dingsClass{
+            z-index:20000000!important;
+        }
+        .inner-content-div2{
+            height: 270px;
+            overflow-y: scroll;
+        }
+        /*input{*/
+            /*border:0;*/
+        }
+
+    </style>
+</head>
+<body>
+<div class="box" id="step" v-cloak>
+
+
+    <form>
+        <p>
+            <span class="layui-breadcrumb1" style="visibility: visible;">
+              <a href="allUpProductAdmin.html">上传产品 / </a>
+              <a><cite>添加上传</cite></a>
+            </span>
+
+            <input style="margin-right: 20px" type="button" class="save" value="重新上传" @click="addUpload"/>
+            <input type="button" class="save" value="定时上传" @click="timeUpFunc" />
+            <!--<button class="save">定时上传</button>-->
+        </p>
+
+        <div class="form_item">
+            <div class="item">
+                <div>
+                    <h4>导出产品</h4>
+                </div>
+                <div class="pro_inf daochu">
+                    <span>
+                        <label for="">开始编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.startId">
+                        <p>产品编号都是递增的，本次要导出产品起始编号</p>
+                    </span> &nbsp;&nbsp;&nbsp;&nbsp;
+                    <span>
+                        <label for="">结束编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.endId">
+                        <p>要导出产品的结束编号，结束编号起始编号</p>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="form_item">
+            <div class="item">
+                <div>
+                    <h4>产品ID</h4>
+                </div>
+                <div class="pro_inf">
+                    <span><textarea placeholder="产品ID" v-model="upProDetails.uploadEntity.uploadIds"></textarea></span><br>
+                    <p>填写产品ID后（逗号隔开，逗号为英文逗号，不能有空格），将只上传填写的ID列表，不填写则上传其他条件筛选出的产品，标准格式：12,123,456,789</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form_item">
+            <div class="item">
+                <div>
+                    <h4>授权店铺</h4>
+                </div>
+                <div class="pro_inf">
+                    <!--<select name="marketplace" id="marketplace" class="form-control" style="width: 200px" v-model="shopinfo">-->
+                        <!--<option value="">选择</option>-->
+                        <!--<option v-for="item in marketplace" :value="item">-->
+                            <!--{{ item.shopName }}-->
+                        <!--</option>-->
+                    <!--</select>-->
+
+                    <el-select v-model="shopinfo" placeholder="请选择店铺">
+                        <el-option
+                                v-for="item in marketplace"
+                                :key="item.grantShopId"
+                                :label="item.shopName"
+                                :value="item.grantShopId">
+                        </el-option>
+                    </el-select>
+
+                    <!--<span style="color: #666">{{upProDetails.uploadEntity.grantShop}}</span>-->
+
+                </div>
+            </div>
+            <div class="item">
+                <div>
+                    <h4>更新选项</h4>
+                </div>
+                <div class="pro_inf check" id="operateItem">
+
+                    <span><input type="checkbox" class="input_check" id="check3" value="all" v-model="inputche1" @click="allSelFunc"> 全部</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="0" v-model="inputche"> 基本信息</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="1" v-model="inputche"> 关系</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="2" v-model="inputche"> 图片</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="3" v-model="inputche"> 库存</span>
+                    <span><input type="checkbox" class="input_check" @change="aaa" value="4" v-model="inputche"> 价格</span>
+                    <p>如果只更新产品信息，则不需要选中上面选项</p>
+                </div>
+            </div>
+        </div>
+        <div class="form_item">
+            <div class="item">
+                <div>
+                    <h4>选择分类</h4>
+                </div>
+                <div class="pro_inf">
+                    <span><input type="text" class="changeType" style="width: 350px" placeholder="--选择--" @click="amazonOneCategory" v-model="amazonCategory"></span>
+                    <input type="text" v-model="nodeId" placeholder="分类节点id">
+                    <input type="button" value="历史选择" @click="lishiFunc" />
+                    <p>{{amazonAllCategory}}</p>
+                </div>
+            </div>
+            <div class="item">
+                <div>
+                    <h4>分类模板</h4>
+                </div>
+                <div class="pro_inf">
+                    <span>
+                        <el-select v-model="flModleValue" placeholder="请选择分类模版" @focus="selFlFunc" @change="chanFunc">
+                            <el-option
+                                    v-for="item in flModleList"
+                                    :key="item.templateId"
+                                    :label="item.templateDisplayName"
+                                    :value="item.templateId">
+                            </el-option>
+                        </el-select>
+                    </span>
+                </div>
+            </div>
+            <div class="item" v-if="modelAttr.length!=0">
+                <div>
+                    <h4>分类属性</h4>
+                </div>
+                <div class="pro_inf">
+
+                    <div v-for="item in modelAttr" style="width: 100%;">
+                        <label for="">{{item.fieldDisplayName}}：</label>
+                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 0" v-model="item.value">
+                        <!--<input type="text" :placeholder="item.fieldDisplayName" v-model="item.value">-->
+                        <input type="text" :placeholder="item.fieldDisplayName" v-if="item.isCustom == 1" disabled v-model="item.value">
+                        <br>
+                        <div class="valDiv">
+                            <div>
+                                <span class="title">可选值：</span>
+                            </div>
+                            <div>
+                                <span v-for="val in item.templateFieldValueDtos" class="val" :data-val="val.value" @click="clickValActive(item,$event)">{{val.cnValue}}</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--分类弹框-->
+        <div id="fenleiTankuang" style="">
+            <div class="con">
+                <div class="fenleiCon" v-for="(item,index) in leven">
+                    <div class="" style="width: 100%;margin: 0 auto;">
+                        <div class="inner-content-div2" style="">
+                            <!--要加滚动条的具体内容-->
+                            <ul>
+                                <li v-for='list in item' :data-index="index" :id="list.amazonCategoryId" :data-if="list.ifNext" @click="amazonItemCategory(list,$event)">{{ list.displayName }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <!--定时上传弹框-->
+        <div id="timeUp" style="display: none">
+            <h3>定时上传</h3>
+            <span>
+                <label for="">国家</label>
+                <span>{{grantCounty}}</span>
+            </span>
+            <br>
+            <span>
+                <label for="">选择时间</label>
+                <el-date-picker
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        format="yyyy-MM-dd HH:mm:ss"
+                        v-model="value9"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        popper-class="dingsClass"
+                >
+                </el-date-picker>
+            </span>
+            <!--<br>-->
+            <span style="color:#00a3e8;cursor:pointer;" @click="timeZoneConversion"> <i class="layui-icon layui-icon-fonts-code"></i> 转换</span>
+            <!--<p>2018-10-11 22:00:00</p>-->
+            <p>{{ changeTime }}</p>
+        </div>
+
+    </form>
+
+    <!--历史选择弹框-->
+    <div id="lishi" style="display: none">
+        <h3>历史选择</h3>
+        <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
+            <div class="inner-content-div2" style="">
+                <ul>
+                    <li v-for="item in lishiList" :id="item.amazonCategoryId" :data-allV="item.amazonAllCategory" :data-val="item.amazonCategory" @click="lishiSelFunc"> {{item.amazonAllCategory}} </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="${request.contextPath}/statics/kuajing/js/step/product/detailsUpload.js"></script>
+    <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>-->
+</div>
+</body>
+</html>

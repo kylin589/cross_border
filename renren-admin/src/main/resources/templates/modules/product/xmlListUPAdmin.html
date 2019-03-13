@@ -24,7 +24,7 @@
 <div class="box" id="step" v-cloak>
     <p>
         <span class="layui-breadcrumb" style="visibility: visible;">
-          <a href="upProduct.html">上传产品 / </a>
+          <a href="allUpProductAdmin.html">上传产品 / </a>
           <a><cite>报告列表</cite></a>
         </span>
     </p>
@@ -72,7 +72,7 @@
             <td>{{ item.creationTime }}</td>
             <td>{{ item.sku }}</td>
             <td>
-                <a v-if="JSON.stringify(item.sku) != 'null'" :href="'detailsProduct2_2.html?id='+item.productId+'id1='+id" style="color: #3776b4">产品详情</a>
+                <a v-if="JSON.stringify(item.sku) != 'null'" :href="'detailsProduct2.html?id='+item.productId+'id1='+id" style="color: #3776b4">产品详情</a>
             </td>
 
         </tr>
