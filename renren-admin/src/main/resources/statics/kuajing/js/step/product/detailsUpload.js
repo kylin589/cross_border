@@ -21,8 +21,8 @@ var vm = new Vue({
             uploadEntity:{}
         },
         value9:null,
-        startId: null,
-        endId: null,
+        startId: '',
+        endId: '',
         uploadIdsstr:'',
         uploadIds:[],
         // uploadIds:[],
@@ -66,8 +66,6 @@ var vm = new Vue({
                 },
                 dataType: 'json',
                 success: function (r) {
-                    console.log('详情');
-                    console.log(r);
                     if (r.code === 0) {
 
 
@@ -83,7 +81,6 @@ var vm = new Vue({
                         // vm.flModleValue = r.data.uploadEntity.amazonCategoryId;
                         vm.nodeId = r.data.uploadEntity.amazonCategoryNodeId;
                         vm.modelAttr = r.data.middleEntitys;
-                        console.log('111');
                         if(JSON.stringify(r.data.uploadEntity.operateItem) != 'null'){
                             console.log(r.data.uploadEntity.operateItem.split(','));
                             if(r.data.uploadEntity.operateItem.split(',').length == 5){
@@ -115,10 +112,22 @@ var vm = new Vue({
                                 })
                             }
                         }
+                        console.log(111111111);
+                        console.log(vm.upProDetails.uploadEntity.uploadIds);
+                        if(JSON.stringify(vm.upProDetails.uploadEntity.uploadIds) != 'null'){
+                            $('.startId').attr('disabled','disabled');
+                            $('.endId').attr('disabled','disabled');
+                            vm.upProDetails.uploadEntity.startId = '';
+                            vm.upProDetails.uploadEntity.endId = '';
+                        }else {
+                            if(vm.upProDetails.uploadEntity.startId !='' || vm.upProDetails.uploadEntity.endId != ''){
+                                $('.textareaId').attr('disabled','disabled');
+                            }
+
+                        }
 
 
                         vm.selFlFunc();
-                        console.log(vm.inputche);
                     } else {
                         layer.alert(r.message);
                     }
@@ -714,6 +723,33 @@ var vm = new Vue({
             // $(event.target).addClass('active');
             v.value = $(event.target).attr('data-val');
 
+        },
+        // 产品ID判断
+        changeId:function () {
+            if(vm.upProDetails.uploadEntity.startId == '' && vm.upProDetails.uploadEntity.endId == ''){
+                $('.textareaId').attr('disabled',false);
+            }else {
+                $('.textareaId').attr('disabled','disabled');
+
+            }
+        },
+        // changeId1:function () {
+        //     if(vm.upProDetails.uploadEntity.endId != ''){
+        //         $('.textareaId').attr('disabled','disabled');
+        //     }else {
+        //         $('.textareaId').attr('disabled',false);
+        //     }
+        // },
+        changeId2:function () {
+            if(vm.upProDetails.uploadEntity.uploadIds != ''){
+                console.log(2222);
+                $('.startId').attr('disabled','disabled');
+                $('.endId').attr('disabled','disabled');
+            }else {
+                console.log(11111);
+                $('.startId').attr('disabled',false);
+                $('.endId').attr('disabled',false);
+            }
         }
     },
     created:function () {
@@ -723,7 +759,6 @@ var vm = new Vue({
         var id = argsIndex[1];
         // console.log(id)
         this.id = parseInt(id);
-        console.log(this.id);
         this.getDetails();
         this.getmarketplace();
         // this.selFlFunc();

@@ -87,11 +87,11 @@
                 </div>
                 <div class="pro_inf daochu">
                     <span>
-                        <label for="">开始编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.startId">
+                        <label for="">开始编号：</label><input type="text" class="startId" placeholder="建议填写" @change="changeId" v-model="upProDetails.uploadEntity.startId">
                         <p>产品编号都是递增的，本次要导出产品起始编号</p>
                     </span> &nbsp;&nbsp;&nbsp;&nbsp;
                     <span>
-                        <label for="">结束编号：</label><input type="text" placeholder="建议填写" v-model="upProDetails.uploadEntity.endId">
+                        <label for="">结束编号：</label><input type="text" class="endId" placeholder="建议填写" @change="changeId" v-model="upProDetails.uploadEntity.endId">
                         <p>要导出产品的结束编号，结束编号起始编号</p>
                     </span>
                 </div>
@@ -103,7 +103,7 @@
                     <h4>产品ID</h4>
                 </div>
                 <div class="pro_inf">
-                    <span><textarea placeholder="产品ID" v-model="upProDetails.uploadEntity.uploadIds"></textarea></span><br>
+                    <span><textarea placeholder="产品ID" class="textareaId" @change="changeId2" v-model="upProDetails.uploadEntity.uploadIds"></textarea></span><br>
                     <p>填写产品ID后（逗号隔开，逗号为英文逗号，不能有空格），将只上传填写的ID列表，不填写则上传其他条件筛选出的产品，标准格式：12,123,456,789</p>
                 </div>
             </div>
