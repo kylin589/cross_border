@@ -16,8 +16,8 @@ var vm = new Vue({
     el:'#step',
     data:{
         value9:null,
-        startId: null,
-        endId: null,
+        startId: '',
+        endId: '',
         uploadIdsstr:'',
         uploadIds:[],
         grantShopId: 0,
@@ -841,6 +841,32 @@ var vm = new Vue({
             // console.log($(event.target).text());
             v.value = $(event.target).attr('data-index');
 
+        },
+
+        // 产品ID判断
+        changeId:function () {
+            if(vm.upProDetails.uploadEntity.startId == '' && vm.upProDetails.uploadEntity.endId == ''){
+                $('.textareaId').attr('disabled',false);
+            }else {
+                $('.textareaId').attr('disabled','disabled');
+
+            }
+        },
+        // changeId1:function () {
+        //     if(vm.endId != ''){
+        //         $('.textareaId').attr('disabled','disabled');
+        //     }else {
+        //         $('.textareaId').attr('disabled',false);
+        //     }
+        // },
+        changeId2:function () {
+            if(vm.uploadIdsstr != ''){
+                $('.startId').attr('disabled','disabled');
+                $('.endId').attr('disabled','disabled');
+            }else {
+                $('.startId').attr('disabled',false);
+                $('.endId').attr('disabled',false);
+            }
         }
     },
     created:function () {
