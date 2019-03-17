@@ -11,6 +11,7 @@ import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.util.FtpUtil;
 import io.renren.modules.util.UUIDUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -105,26 +106,20 @@ public class ImageAddressController extends AbstractController {
     @RequestMapping("/locationsave")
     //@RequiresPermissions("product:imageaddress:locationsave")
     public R locationSave(@RequestBody ImageAddressEntity[] images) {
-        /*for (int i = 0; i < images.length; i++) {
-            ImageAddressEntity imageAddressEntity = images[i];
-            imageAddressService.updateById(imageAddressEntity);
-            if (i == 0) {
-                ProductsEntity productsEntity = new ProductsEntity();
-                productsEntity.setProductId(images[i].getProductId());
-                productsEntity.setMainImageUrl(images[i].getImageUrl());
-                productsEntity.setMainImageId(imageAddressEntity.getImageId());
-                productsService.updateById(productsEntity);
+        if(images != null && images.length >0){
+            for(int i = 0; i < images.length; i++){
+
             }
-        }*/
-        for (ImageAddressEntity image : images) {
-            int sort = image.getSort();
-            imageAddressService.updateById(image);
-            if (sort == 0) {
-                ProductsEntity productsEntity = productsService.selectById(image.getProductId());
-                if(productsEntity != null){
-                    productsEntity.setMainImageUrl(image.getImageUrl());
-                    productsEntity.setMainImageId(image.getImageId());
-                    productsService.updateById(productsEntity);
+            for (ImageAddressEntity image : images) {
+                int sort = image.getSort();
+                imageAddressService.updateById(image);
+                if (sort == 0) {
+                    ProductsEntity productsEntity = productsService.selectById(image.getProductId());
+                    if(productsEntity != null){
+                        productsEntity.setMainImageUrl(image.getImageUrl());
+                        productsEntity.setMainImageId(image.getImageId());
+                        productsService.updateById(productsEntity);
+                    }
                 }
             }
         }
@@ -164,8 +159,8 @@ public class ImageAddressController extends AbstractController {
             String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
             String date = String.valueOf(calendar.get(Calendar.DATE));
             // 文件上传后是原始路径
-            // String filePath = "D:/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
-            String filePath = "/usr/linshi/images/" + productId + "/" + fileUUID + suffixName;
+             String filePath = "D:/images/"+year+"/"+month+"/"+date+"/"+productId + "/" + fileName;
+//            String filePath = "/usr/linshi/images/" + productId + "/" + fileUUID + suffixName;
             File dest = new File(filePath);
             if (!dest.getParentFile().exists()) {
                 // 检测是否存在目录不存在创建一个文件
@@ -193,8 +188,6 @@ public class ImageAddressController extends AbstractController {
             ImageIO.write(buffImg, "jpg", new File(filePath));
 
             */
-
-
             //保存到ftp上的文件名字
             String fileNameFTP = fileUUID + suffixName;
             //再把修改后的图片读取出来
@@ -219,6 +212,12 @@ public class ImageAddressController extends AbstractController {
                 imageAddressEntity.setSort(count);
                 imageAddressService.insert(imageAddressEntity);
                 Long id = imageAddressEntity.getImageId();
+                ProductsEntity productsEntity = productsService.selectById(productId);
+                if(productsEntity.getMainImageId() == null || StringUtils.isBlank(productsEntity.getMainImageUrl())){
+                    productsEntity.setMainImageId(id);
+                    productsEntity.setMainImageUrl(imageAddressEntity.getImageUrl());
+                    productsService.updateById(productsEntity);
+                }
                 return R.ok().put("url", urlOne).put("id", id);
             }
         } catch (IllegalStateException e) {
@@ -239,7 +238,7 @@ public class ImageAddressController extends AbstractController {
     @RequestMapping("/imageinfo")
     public R imageinfo(@RequestParam Long productId) throws Exception {
         List<ImageAddressEntity> imageInfo = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productId).eq("is_deleted", "0").orderBy("sort",true));
-        if (imageInfo != null && imageInfo.size() != 0) {
+/*        if (imageInfo != null && imageInfo.size() != 0) {
             ImageAddressEntity imageAddressEntity = imageInfo.get(0);
             String imageUrl = imageAddressEntity.getImageUrl();
             Long imageId = imageAddressEntity.getImageId();
@@ -248,7 +247,7 @@ public class ImageAddressController extends AbstractController {
             productsEntity.setMainImageUrl(imageUrl);
             productsEntity.setMainImageId(imageId);
             productsService.updateById(productsEntity);
-        }
+        }*/
         return R.ok().put("imageInfo", imageInfo);
     }
 
@@ -261,12 +260,30 @@ public class ImageAddressController extends AbstractController {
      */
     @RequestMapping("/updateimage")
     public R updateimage(@RequestBody Long[] imageIds) {
-        for (int i = 0; i < imageIds.length; i++) {
-            ImageAddressEntity addressEntity = imageAddressService.selectById(imageIds[i]);
-            addressEntity.setIsDeleted("1");
-            addressEntity.setLastOperationTime(new Date());
-            addressEntity.setLastOperationUserId(getUserId());
-            imageAddressService.updateById(addressEntity);
+        if(imageIds != null && imageIds.length >0){
+            for (int i = 0; i < imageIds.length; i++) {
+                ImageAddressEntity addressEntity = imageAddressService.selectById(imageIds[i]);
+                addressEntity.setIsDeleted("1");
+                addressEntity.setSort(999);
+                addressEntity.setLastOperationTime(new Date());
+                addressEntity.setLastOperationUserId(getUserId());
+                imageAddressService.updateById(addressEntity);
+            }
+            ImageAddressEntity imageAddress = imageAddressService.selectById(imageIds[0]);
+            ProductsEntity productsEntity = productsService.selectById(imageAddress.getProductId());
+            List<ImageAddressEntity> imageList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productsEntity.getProductId()).eq("is_deleted", "0").orderBy("sort",true));
+            if(imageList != null && imageList.size() >0){
+                ImageAddressEntity imageAddressEntity = imageList.get(0);
+                String imageUrl = imageAddressEntity.getImageUrl();
+                Long imageId = imageAddressEntity.getImageId();
+                productsEntity.setMainImageUrl(imageUrl);
+                productsEntity.setMainImageId(imageId);
+                productsService.updateById(productsEntity);
+            }else{
+                productsEntity.setMainImageId(null);
+                productsEntity.setMainImageUrl(null);
+                productsService.updateById(productsEntity);
+            }
         }
         return R.ok();
     }

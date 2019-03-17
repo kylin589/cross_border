@@ -116,7 +116,6 @@ public class OrderLogisticsTimer {
                         .eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT)
                         .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING)
                         .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED)
-                        .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH)
         );
         if(orderEntityList != null && orderEntityList.size() >0){
 //            new RefreshOrderThread(5548L).start();

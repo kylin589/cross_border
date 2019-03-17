@@ -53,6 +53,10 @@ public class VariantsInfoEntity implements Serializable {
      */
     private String imageUrl;
 
+    private Long userId;
+
+    private Long deptId;
+
     /**
      * 获取：产品ID
      */
@@ -176,5 +180,21 @@ public class VariantsInfoEntity implements Serializable {
      */
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
     }
 }
