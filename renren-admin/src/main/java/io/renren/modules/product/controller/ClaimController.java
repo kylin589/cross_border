@@ -96,14 +96,22 @@ public class ClaimController extends AbstractController{
         product.setProductId(null);
         product.setCreateUserId(userId);
         product.setDeptId(deptId);
+        product.setAuditStatus("002");
         product.setProductType("007");
+        product.setEanCode(null);
         productsService.insert(product);
         Long newProductId = product.getProductId();
+        product.setProductSku(toUser.getEnName() + "-" + toUser.getEnBrand() + "-" + newProductId);
+        productsService.updateById(product);
         //生成新的变体信息
         if(variantsInfoList != null && variantsInfoList.size() > 0){
             for(int i = 0; i<variantsInfoList.size(); i++){
                 variantsInfoList.get(i).setVariantId(null);
                 variantsInfoList.get(i).setProductId(newProductId);
+                variantsInfoList.get(i).setEanCode(null);
+                variantsInfoList.get(i).setVariantSku(null);
+                variantsInfoList.get(i).setUserId(userId);
+                variantsInfoList.get(i).setDeptId(deptId);
             }
             variantsInfoService.insertBatch(variantsInfoList);
         }
@@ -127,7 +135,7 @@ public class ClaimController extends AbstractController{
         Long userId = claimVM.getUserId();
         SysUserEntity toUser = userService.selectById(userId);
         Long deptId = toUser.getDeptId();
-        for(int i=0; i < productIds[i]; i++){
+        for(int i=0; i < productIds.length; i++){
             ProductsEntity product = productsService.selectById(productIds[i]);
 
             SysDeptEntity dept = deptService.selectById(product.getDeptId());
@@ -161,14 +169,22 @@ public class ClaimController extends AbstractController{
             product.setProductId(null);
             product.setCreateUserId(userId);
             product.setDeptId(deptId);
+            product.setAuditStatus("002");
             product.setProductType("007");
+            product.setEanCode(null);
             productsService.insert(product);
             Long newProductId = product.getProductId();
+            product.setProductSku(toUser.getEnName() + "-" + toUser.getEnBrand() + "-" + newProductId);
+            productsService.updateById(product);
             //生成新的变体信息
             if(variantsInfoList != null && variantsInfoList.size() > 0){
-                for(int x = 0; x<variantsInfoList.size(); x++){
+                for(int x = 0; x < variantsInfoList.size(); x++){
                     variantsInfoList.get(x).setVariantId(null);
                     variantsInfoList.get(x).setProductId(newProductId);
+                    variantsInfoList.get(x).setEanCode(null);
+                    variantsInfoList.get(x).setVariantSku(null);
+                    variantsInfoList.get(x).setUserId(userId);
+                    variantsInfoList.get(x).setDeptId(deptId);
                 }
                 variantsInfoService.insertBatch(variantsInfoList);
             }

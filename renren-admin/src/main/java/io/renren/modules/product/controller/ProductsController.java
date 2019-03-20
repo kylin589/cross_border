@@ -255,12 +255,8 @@ public class ProductsController extends AbstractController {
         productsEntity.setLastOperationUserId(getUserId());
         productsEntity.setLastOperationTime(new Date());
         //生成SKU
-        Long deptId = getDeptId();
-        SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
-        String companySku = sysDeptEntity.getCompanySku();
         SysUserEntity user = getUser();
-        String enBrand = user.getEnBrand();
-        String SKU = companySku + "-" + enBrand + "-" + productsEntity.getProductId();
+        String SKU = user.getEnName() + "-" + user.getEnBrand() + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
         //生成库存
         int IStock = (int) (200 + Math.random() * (300 - 200 + 1));
@@ -273,6 +269,9 @@ public class ProductsController extends AbstractController {
         productsEntity.setBrandName(user.getEnBrand());
         //设置预处理时间
         productsEntity.setPretreatmentDate(1);
+        productsEntity.setAuditStatus("002");
+        productsEntity.setShelveStatus("001");
+        productsEntity.setProductType("002");
         //获取Ean码
         /*EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
@@ -1122,12 +1121,8 @@ public class ProductsController extends AbstractController {
         //折扣系数
         productsEntity.setDiscount(new BigDecimal("1.00"));
         //生成SKU
-        Long deptId = getDeptId();
-        SysDeptEntity sysDeptEntity = sysDeptService.selectById(deptId);
-        String companySku = sysDeptEntity.getCompanySku();
         SysUserEntity user = getUser();
-        String enBrand = user.getEnBrand();
-        String SKU = companySku + "-" + enBrand + "-" + productsEntity.getProductId();
+        String SKU = user.getEnName() + "-" + user.getEnBrand() + "-" + productsEntity.getProductId();
         productsEntity.setProductSku(SKU);
         //生成库存
         int IStock = (int) (200 + Math.random() * (300 - 200 + 1));
@@ -1408,13 +1403,15 @@ public class ProductsController extends AbstractController {
             Long paramsId = colorVP.getParamsId();
             products.setColorId(paramsId);
         }
-        //设置主图片
-        ImageAddressEntity mainImage = imageAddressService.selectOne(new EntityWrapper<ImageAddressEntity>().eq("product_id",products.getProductId()).eq("sort",0));
-
-        if(mainImage != null){
-            System.out.println("主图片id====" + mainImage.getImageId());
-            products.setMainImageId(mainImage.getImageId());
-        }
+        //设置主图片，在上传图片步骤实现
+        /*List<ImageAddressEntity> imageList =imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id",products.getProductId()).eq("is_deleted", "0").orderBy("sort",true));
+        if(imageList != null && imageList.size() >0 ){
+            ImageAddressEntity mainImage = imageList.get(0);
+            if(mainImage != null){
+                System.out.println("主图片id====" + mainImage.getImageId());
+                products.setMainImageId(mainImage.getImageId());
+            }
+        }*/
         //创建时间
         products.setCreateTime(new Date());
         //创建用户id
@@ -1470,6 +1467,8 @@ public class ProductsController extends AbstractController {
                     variantsInfoEntity.setEanCode(code);
                     variantsInfoEntity.setVariantSku(correctionLaterString + "-" + code);
                     variantsInfoEntity.setProductId(products.getProductId());
+                    variantsInfoEntity.setUserId(getUserId());
+                    variantsInfoEntity.setDeptId(getDeptId());
                 }
                 variantsInfoService.insertBatch(variantsInfosList);
             }else{
@@ -1477,6 +1476,8 @@ public class ProductsController extends AbstractController {
                     VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
                     variantsInfoEntity.setVariantSku(correctionLaterString + "-" + i);
                     variantsInfoEntity.setProductId(products.getProductId());
+                    variantsInfoEntity.setUserId(getUserId());
+                    variantsInfoEntity.setDeptId(getDeptId());
                 }
                 variantsInfoService.insertBatch(variantsInfosList);
             }
@@ -1487,7 +1488,7 @@ public class ProductsController extends AbstractController {
         //根据产品id进行更新
         products.setProductSku(correctionLaterString);
         products.setCorrection(null);
-        productsService.updateAllColumnById(products);
+        productsService.updateById(products);
         return R.ok();
     }
 
@@ -1759,6 +1760,8 @@ public class ProductsController extends AbstractController {
                     variantsInfoEntity.setEanCode(code);
                     variantsInfoEntity.setVariantSku(correctionLaterString + "-" + i);
                     variantsInfoEntity.setProductId(products.getProductId());
+                    variantsInfoEntity.setUserId(getUserId());
+                    variantsInfoEntity.setDeptId(getDeptId());
                 }
                 variantsInfoService.insertBatch(variantsInfosList);
             }else{
@@ -1766,6 +1769,8 @@ public class ProductsController extends AbstractController {
                     VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
                     variantsInfoEntity.setVariantSku(correctionLaterString + "-" + i);
                     variantsInfoEntity.setProductId(products.getProductId());
+                    variantsInfoEntity.setUserId(getUserId());
+                    variantsInfoEntity.setDeptId(getDeptId());
                 }
                 variantsInfoService.insertBatch(variantsInfosList);
             }
@@ -1774,7 +1779,7 @@ public class ProductsController extends AbstractController {
         //根据产品id进行更新
         products.setProductSku(correctionLaterString);
         products.setCorrection(null);
-        productsService.updateAllColumnById(products);
+        productsService.updateById(products);
         return R.ok();
     }
 

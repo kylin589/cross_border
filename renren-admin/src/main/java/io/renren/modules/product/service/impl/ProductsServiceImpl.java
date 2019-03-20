@@ -105,7 +105,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         // 包含变体的商品
         int numberOfVariants = getNumberOfVariants(wrapper);
         // 变体总数
-        int variantsCount = getWariantsCount(wrapper);
+        int variantsCount = variantsInfoService.selectCount(new EntityWrapper<VariantsInfoEntity>().eq("user_id",userId));
         Map<String, Object> map = new HashMap<>(5);
         map.put("page", pageUtils);
         map.put("proCount", proCount);
@@ -142,6 +142,8 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         String productNumber = (String) params.get("productNumber");
         String qDeptId = (String) params.get("deptId");
         String userId = (String) params.get("userId");
+        // 变体总数
+        int variantsCount = 0;
         //条件构造器拼接条件
         EntityWrapper<ProductsEntity> wrapper = new EntityWrapper<>();
         //管理员
@@ -158,6 +160,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq(StringUtils.isNotBlank(qDeptId), "dept_id", qDeptId)
                     .eq("is_deleted", 0)
                     .orderBy(true, "product_id", false);//时间排序
+            variantsCount = variantsInfoService.selectCount(null);
         } else {
             //加盟商
             wrapper.eq(StringUtils.isNotBlank(category), "category_three_id", category)
@@ -172,6 +175,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
                     .eq("dept_id", deptId)
                     .eq("is_deleted", 0)
                     .orderBy(true, "product_id", false);//时间排序
+            variantsCount = variantsInfoService.selectCount(new EntityWrapper<VariantsInfoEntity>().eq("dept_id",deptId));
         }
         Page<ProductsEntity> page = this.selectPage(new Query<ProductsEntity>(params).getPage(), wrapper);
         PageUtils pageUtils = new PageUtils(page);
@@ -203,8 +207,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
 
     // 包含变体的商品
     int numberOfVariants = getNumberOfVariants(wrapper);
-    // 变体总数
-    int variantsCount = getWariantsCount(wrapper);
+
     Map<String, Object> map = new
             HashMap<>(5);
         map.put("page",pageUtils);

@@ -516,7 +516,7 @@ public class GenerateProductXML {
             }
 
             // 主产品图片
-            List<ImageAddressEntity> imageAddressEntityList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productsEntity.getProductId()).eq("is_deleted", "0"));
+            List<ImageAddressEntity> imageAddressEntityList = imageAddressService.selectList(new EntityWrapper<ImageAddressEntity>().eq("product_id", productsEntity.getProductId()).eq("is_deleted", "0").orderBy("sort",true));
             if (imageAddressEntityList != null || imageAddressEntityList.size() != 0) {
                 int temp = imageAddressEntityList.size();
                 if (temp > 8) {
