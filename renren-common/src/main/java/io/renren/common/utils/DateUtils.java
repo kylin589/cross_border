@@ -279,7 +279,7 @@ public class DateUtils {
      */
     public static XMLGregorianCalendar getTheDateNow10DaysShort() {
         Date currentTime = new Date();
-        currentTime = addDateDays(currentTime,-7);
+        currentTime = addDateDays(currentTime,-3);
         return xmlToDate(currentTime);
     }
     /**
@@ -303,7 +303,7 @@ public class DateUtils {
      */
     public static XMLGregorianCalendar getTheDateNowOneYearShort() {
         Date currentTime = new Date();
-        currentTime = addDateYears(currentTime,-1);
+        currentTime = addDateMonths(currentTime,-2);
         return xmlToDate(currentTime);
     }
 }

@@ -22,9 +22,11 @@ import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
+import io.renren.modules.product.entity.ProductOrderItemEntity;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.entity.VariantsInfoEntity;
 import io.renren.modules.product.service.OrderService;
+import io.renren.modules.product.service.ProductOrderItemService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.product.service.VariantsInfoService;
 import io.renren.modules.product.vm.OrderItemModel;
@@ -82,6 +84,7 @@ public class OldOrderTimer {
 
     @Value(("${mws-config.app-version}"))
     private String appVersion;
+
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
 
@@ -96,6 +99,10 @@ public class OldOrderTimer {
 
     @Autowired
     private ProductsService productsService;
+
+    @Autowired
+    private ProductOrderItemService productOrderItemService;
+
     /**
      * 获得店铺授权列表信息
      */
@@ -111,6 +118,7 @@ public class OldOrderTimer {
             shoplist=amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("region",grant.getRegion()).eq("grant_id",grant.getGrantId()));
             for(AmazonGrantShopEntity shop:shoplist){
                 String shopName = shop.getShopName();
+                map.put("region",shop.getRegion());
                 map.put("sellerId",sellerId);
                 map.put("mwsAuthToken",mwsAuthToken);
                 map.put("shopname",shop.getShopName());
@@ -124,7 +132,9 @@ public class OldOrderTimer {
             }
         }
     }
-
+    /**
+     * 获得店铺授权列表信息
+     */
     public void getSingleShopGrantlist(String userId){
         List<AmazonGrantEntity> grantList = amazonGrantService.selectList(new EntityWrapper<AmazonGrantEntity>().eq("user_id",userId));
         Map map=new HashMap();
@@ -137,6 +147,7 @@ public class OldOrderTimer {
             shoplist=amazonGrantShopService.selectList(new EntityWrapper<AmazonGrantShopEntity>().eq("region",grant.getRegion()).eq("grant_id",grant.getGrantId()));
             for(AmazonGrantShopEntity shop:shoplist){
                 String shopName = shop.getShopName();
+                map.put("region",shop.getRegion());
                 map.put("sellerId",sellerId);
                 map.put("mwsAuthToken",mwsAuthToken);
                 map.put("shopname",shop.getShopName());
@@ -179,7 +190,6 @@ public class OldOrderTimer {
             accessKey=auAccessKey;
             secretKey=auSecretKey;
         }
-
         String serviceURL = (String) map.get("serviceURL");
         marketplaceId.add((String) map.get("marketplaceId"));
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
@@ -249,6 +259,7 @@ public class OldOrderTimer {
                     for (int j = 0; j < listOrdersResponseDtos.get(i).getOrders().size(); j++) {
                         List<ListOrderItemsRequest> ListOrderItemsRequestRequests = new ArrayList<ListOrderItemsRequest>();
                         ListOrderItemsRequest ListOrderItemsRequest = new ListOrderItemsRequest();
+                        //304-4352
                         String AmazonOrderId = listOrdersResponseDtos.get(i).getOrders().get(j).getAmazonOrderId();
                         System.out.println("订单号:" + AmazonOrderId + "=================");
                         ListOrderItemsRequest.setAmazonOrderId(AmazonOrderId);
@@ -318,6 +329,7 @@ public class OldOrderTimer {
                                     orderModel.setBuyDate(timeStamep);
                                 }
                                 String orderStatus=listOrdersResponseDtos.get(i).getOrders().get(j).getOrderStatus();
+
                                 orderModel.setOrderStatus(orderStatus);
                                 //订单总量
                                 int ordernumber=Integer.parseInt(listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsShipped())+Integer.parseInt(listOrdersResponseDtos.get(i).getOrders().get(j).getNumberOfItemsUnshipped());
@@ -363,7 +375,6 @@ public class OldOrderTimer {
                                     String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict;
                                     addressEntity.setShipAddressLine1("");
                                     addressEntity.setShipAddressDetail(detail);
-
                                 }
                                 if (shipcity != null) {
                                     addressEntity.setShipCity(shipcity);
@@ -412,74 +423,76 @@ public class OldOrderTimer {
                                 }
                                 System.out.println("======================" + orderModel + "=====================");
                                 orderModel.setProductShipAddressEntity(addressEntity);
-                                for (int m = 0; m < orderItemResponseDtos.get(k).getOrderItems().size(); m++) {
+                                if(orderItemResponseDtos.get(k)!=null && orderItemResponseDtos.get(k).getOrderItems()!=null) {
+                                    for (int m = 0; m < orderItemResponseDtos.get(k).getOrderItems().size(); m++) {
 
-                                    //获取订单商品编号
-                                    String orderItemId = orderItemResponseDtos.get(k).getOrderItems().get(m).getOrderItemId();
+                                        //获取订单商品编号
+                                        String orderItemId = orderItemResponseDtos.get(k).getOrderItems().get(m).getOrderItemId();
 
-                                    System.out.println("店铺id===================" + shopId);
-                                    String titlename = orderItemResponseDtos.get(k).getOrderItems().get(m).getTitle();
-                                    System.out.println("商品名称:" + titlename + "==================");
-                                    String product_asin = orderItemResponseDtos.get(k).getOrderItems().get(m).getASIN();
-                                    System.out.println("商品asin码:" + product_asin + "==================");
-                                    String product_sku = orderItemResponseDtos.get(k).getOrderItems().get(m).getSellerSKU();
-                                    System.out.println("商品sku:" + product_sku + "==================");
-                                    int orderItemNumber = orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
-                                    //根据商品sku获取图片连接的url的方法
-                                    String img_url = this.getImageUrl(product_sku, product_asin, sellerId, mwsAuthToken, serviceURL, marketplaceId,accessKey,secretKey);
-                                    System.out.println("商品图片:"+img_url+"======================");
-                                    //获取商品价格
-                                    String productPrice="0.00";
-                                    if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
-                                        productPrice=orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
-                                    }else{
-                                        productPrice="0.00";
+                                        System.out.println("店铺id===================" + shopId);
+                                        String titlename = orderItemResponseDtos.get(k).getOrderItems().get(m).getTitle();
+                                        System.out.println("商品名称:" + titlename + "==================");
+                                        String product_asin = orderItemResponseDtos.get(k).getOrderItems().get(m).getASIN();
+                                        System.out.println("商品asin码:" + product_asin + "==================");
+                                        String product_sku = orderItemResponseDtos.get(k).getOrderItems().get(m).getSellerSKU();
+                                        System.out.println("商品sku:" + product_sku + "==================");
+                                        int orderItemNumber = orderItemResponseDtos.get(k).getOrderItems().get(m).getQuantityOrdered();
+                                        //根据商品sku获取图片连接的url的方法
+                                        String img_url = this.getImageUrl(product_sku, product_asin, sellerId, mwsAuthToken, serviceURL, marketplaceId,accessKey,secretKey);
+                                        System.out.println("商品图片url"+img_url+"====================");
+                                        //获取商品价格
+                                        String productPrice="0.00";
+                                        if(orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice()!=null){
+                                            productPrice = orderItemResponseDtos.get(k).getOrderItems().get(m).getItemPrice().getAmount();
+                                        }else{
+                                            productPrice ="0.00";
+                                        }
+                                        System.out.println("订单商品配送数量：" + orderItemNumber + "============");
+                                        OrderItemModel orderItemModel = new OrderItemModel();
+                                        //获得订单商品sku
+                                        //进行数据库表查询根据AmazonOrderId，有就更新，没有就插入
+                                        if (AmazonOrderId != null) {
+                                            orderItemModel.setAmazonOrderId(AmazonOrderId);
+                                        }
+                                        if (orderItemId != null) {
+                                            orderItemModel.setOrderItemId(orderItemId);
+                                        } else {
+                                            orderItemModel.setOrderItemId("");
+                                        }
+                                        if (titlename != null) {
+                                            orderItemModel.setProductTitle(titlename);
+                                        } else {
+                                            orderItemModel.setProductTitle("");
+                                        }
+                                        if (product_asin != null) {
+                                            orderItemModel.setProductAsin(product_asin);
+                                        } else {
+                                            orderItemModel.setProductAsin("");
+                                        }
+                                        if (product_sku != null) {
+                                            orderItemModel.setProductSku(product_sku);
+                                        } else {
+                                            orderItemModel.setProductSku("");
+                                        }
+                                        if (img_url != null) {
+                                            orderItemModel.setProductImageUrl(img_url);
+                                        } else {
+                                            orderItemModel.setProductImageUrl("");
+                                        }
+                                        if (productPrice != null) {
+                                            BigDecimal itemPrice = new BigDecimal(productPrice);
+                                            orderItemModel.setProductPrice(itemPrice);
+                                        } else {
+                                            orderItemModel.setProductPrice(new BigDecimal(0));//订单总费用
+                                        }
+                                        //订单商品数量
+                                        orderItemModel.setOrderItemNumber(orderItemNumber);
+                                        //订单商品更新日期
+                                        orderItemModel.setUpdatetime(new Date());
+                                        orderItemModels.add(orderItemModel);
+                                        orderModel.setOrderItemModels(orderItemModels);
+                                        orderModel.setProductImageUrl(img_url);
                                     }
-                                    System.out.println("订单商品配送数量：" + orderItemNumber + "============");
-                                    OrderItemModel orderItemModel=new OrderItemModel();
-                                    //获得订单商品sku
-                                    //进行数据库表查询根据AmazonOrderId，有就更新，没有就插入
-                                    if(AmazonOrderId!=null){
-                                        orderItemModel.setAmazonOrderId(AmazonOrderId);
-                                    }
-                                    if (orderItemId != null) {
-                                        orderItemModel.setOrderItemId(orderItemId);
-                                    } else {
-                                        orderItemModel.setOrderItemId("");
-                                    }
-                                    if (titlename != null) {
-                                        orderItemModel.setProductTitle(titlename);
-                                    } else {
-                                        orderItemModel.setProductTitle("");
-                                    }
-                                    if (product_asin != null) {
-                                        orderItemModel.setProductAsin(product_asin);
-                                    } else {
-                                        orderItemModel.setProductAsin("");
-                                    }
-                                    if (product_sku != null) {
-                                        orderItemModel.setProductSku(product_sku);
-                                    } else {
-                                        orderItemModel.setProductSku("");
-                                    }
-                                    if (img_url != null) {
-                                        orderItemModel.setProductImageUrl(img_url);
-                                    } else {
-                                        orderItemModel.setProductImageUrl("");
-                                    }
-                                    if (productPrice != null) {
-                                        BigDecimal itemPrice=new BigDecimal(productPrice);
-                                        orderItemModel.setProductPrice(itemPrice);
-                                    } else {
-                                        orderItemModel.setProductPrice(new BigDecimal(0));//订单总费用
-                                    }
-                                    //订单商品数量
-                                    orderItemModel.setOrderItemNumber(orderItemNumber);
-                                    //订单商品更新日期
-                                    orderItemModel.setUpdatetime(new Date());
-                                    orderItemModels.add(orderItemModel);
-                                    orderModel.setOrderItemModels(orderItemModels);
-
                                 }
                                 orderModelList.add(orderModel);
                                 System.out.println("=============" + orderModelList.size() + "========================");
@@ -502,11 +515,11 @@ public class OldOrderTimer {
      * @param product_sku
      */
     public String getImageUrl(String product_sku,String product_asin,String sellerld,String token,String sericeUrl,List marketplaceId,String accessKey,String secretKey){
-        String img_url =null;
+        /*String img_url =null;
         //根据sku去新库的变体表中获取变体信息
         VariantsInfoEntity skuInfo=variantsInfoService.selectOne(new EntityWrapper<VariantsInfoEntity>().eq("variant_sku",product_sku) );
         if(skuInfo!=null) {
-            img_url = skuInfo.getImageUrl().split(",")[0];//获取图片url
+          img_url = skuInfo.getImageUrl().split(",")[0];//获取图片url
         }
         //如果获取不到，则到产品实体类中查询获取
         if(!StringUtils.isNotBlank(img_url)){
@@ -519,8 +532,10 @@ public class OldOrderTimer {
                 return getProductinfoTest(sellerld,token,product_asin,marketplaceId,accessKey,secretKey,sericeUrl);
             }
         }
-        return img_url;
+        return img_url;*/
+        return getProductinfoTest(sellerld,token,product_asin,marketplaceId,accessKey,secretKey,sericeUrl);
     }
+
 
     public String getProductinfoTest(String sellerld,String token,String product_asin,List marketplacedId,String accessKey,String secrectKey,String serviceUrl) {
         MarketplaceWebServiceProductsConfig config = new MarketplaceWebServiceProductsConfig();
@@ -1066,6 +1081,30 @@ public class OldOrderTimer {
             responseList.add(xresponse);
         }
         return responseList;
+    }
+
+    /**
+     * 根据订单商品id去实体类表进行查询，若有则更新，无则进行插入
+     * @param orderItemId
+     */
+    public ProductOrderItemEntity getOrderItem(String orderItemId){
+        //根据orderItemId去实体类对应的表中查询
+        ProductOrderItemEntity productOrderItemEntity=productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id",orderItemId) );
+        if(productOrderItemEntity!=null) {
+            return productOrderItemEntity;
+        }
+        //如果获取不到，则到产品实体类中查询获取
+     /*   if(!StringUtils.isNotBlank(img_url)){
+            ProductsEntity productsEntity= productsService.selectOne(new EntityWrapper<ProductsEntity>().eq("main_image_url",product_sku));
+            if(productsEntity!=null){
+                img_url=productsEntity.getMainImageUrl();
+            }
+            if(!StringUtils.isNotBlank(img_url)){
+                //如果新库获取不到，就到旧库里获取，调用商品获取的接口
+                return getProductinfoTest(sellerld,token,product_asin,marketplaceId);
+            }
+        }*/
+        return null;
     }
 
 

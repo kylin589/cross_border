@@ -691,7 +691,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             String amazonOrderId = orderModel.getAmazonOrderId();
             if(StringUtils.isNotBlank(amazonOrderId)) {
                 //判断该订单是否存在
-                OrderEntity orderEntity = this.selectOne(new EntityWrapper<OrderEntity>().eq("amazon_order_id", amazonOrderId));
+                OrderEntity orderEntity = this.selectOne(new EntityWrapper<OrderEntity>().like("amazon_order_id", amazonOrderId));
                 //订单状态
                 String modelStatus = orderModel.getOrderStatus();
                 if (orderEntity == null) {
