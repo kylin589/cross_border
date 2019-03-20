@@ -2345,6 +2345,7 @@ var vm = new Vue({
         },
         // 修改保存
         savePro:function () {
+            // vm.saveXc();
             // var arr = {
             //     'a':'aa',
             //     'b':'bb',
@@ -2498,32 +2499,88 @@ var vm = new Vue({
                         var index = layer.load();
                         var index = layer.load(1); //换了种风格
                         var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-                        $.ajax({
-                            type: 'post',
-                            url: '../../product/products/modifyproduct',
-                            contentType: "application/json",
-                            data: JSON.stringify(vm.proDetails),
-                            success: function (r) {
-                                console.log('修改产品');
-                                console.log(r);
-                                console.log(vm.proDetails);
-                                if (r.code == 0) {
-                                    layer.close(index);
-                                    layer.close(index1);
-                                    vm.getProDetails();
 
-                                    // window.location.href = 'myProduct.html?page='+vm.page;
+                        var arr = [];
+                        var el = $('.imgDiv>div');
+                        // console.log($(".imgDiv>div"));
+                        for(var i = 0;i<el.length;i++){
+                            for(var j = 0;j<el.length;j++){
+                                var _index = el.eq(j).attr('data-index');
+                                // console.log(_index);
+                                if(_index == i){
+                                    arr.push({
+                                        'imageId':vm.proAlbum[j].imgId,
+                                        'imageUrl':vm.proAlbum[j].url,
+                                        'isDeleted':vm.proAlbum[j].isDeleted,
+                                        'createUserId':vm.proAlbum[j].createUserId,
+                                        'createTime':vm.proAlbum[j].createTime,
+                                        'lastOperationTime':vm.proAlbum[j].lastOperationTime,
+                                        'lastOperationUserId':vm.proAlbum[j].lastOperationUserId,
+                                        'productId':vm.proAlbum[j].productId,
+                                        'status':vm.proAlbum[j].status,
+                                        'uid':vm.proAlbum[j].uid,
+                                        'sort':_index
+                                    })
+                                }
+                            }
+
+
+                        }
+
+                        $.ajax({
+                            url: '../../product/imageaddress/locationsave',
+                            type: 'post',
+                            data: JSON.stringify(arr),
+                            // dataType: 'json',
+                            contentType: "application/json",
+                            success: function (r) {
+                                // console.log(r);
+                                if (r.code === 0) {
+                                    // console.log('产品相册保存');
+                                    // console.log(r);
+                                    $('.imgDiv>div').removeClass('active');
+                                    vm.getProAlbum();
+                                    // location=location;
+                                    $.ajax({
+                                        type: 'post',
+                                        url: '../../product/products/modifyproduct',
+                                        contentType: "application/json",
+                                        data: JSON.stringify(vm.proDetails),
+                                        success: function (r) {
+                                            console.log('修改产品');
+                                            console.log(r);
+                                            console.log(vm.proDetails);
+                                            if (r.code == 0) {
+                                                layer.close(index);
+                                                layer.close(index1);
+                                                vm.getProDetails();
+
+                                                // window.location.href = 'myProduct.html?page='+vm.page;
+
+                                            } else {
+                                                layer.close(index);
+                                                alert(r.msg);
+                                            }
+                                        },
+                                        error:function () {
+                                            layer.msg("网络故障");
+                                            layer.close(index);
+                                        }
+                                    });
 
                                 } else {
-                                    layer.close(index);
-                                    alert(r.msg);
+                                    layer.alert(r.msg);
+                                    layer.close(index1);
                                 }
                             },
-                            error:function () {
+                            error: function () {
                                 layer.msg("网络故障");
-                                layer.close(index);
+                                layer.close(index1);
                             }
-                        });
+                        })
+
+
+
 
 
 

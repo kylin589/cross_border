@@ -228,6 +228,7 @@ var vm = new Vue({
         //添加授权令牌
         addShouqlingpan:function(item){
             vm.amazonGrant = item;
+            console.log(vm.amazonGrant);
             layer.open({
                 type: 1,
                 title: false,
@@ -240,9 +241,7 @@ var vm = new Vue({
                     $.ajax({
                         url: '../../amazon/amazongrant/update',
                         type: 'post',
-                        data: JSON.stringify({
-                            amazonGrant:vm.amazonGrant
-                        }),
+                        data: JSON.stringify(vm.amazonGrant),
                         // dataType: 'json',
                         contentType: "application/json",
                         success: function (r) {
