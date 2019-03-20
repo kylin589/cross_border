@@ -269,6 +269,9 @@ public class ProductsController extends AbstractController {
         productsEntity.setBrandName(user.getEnBrand());
         //设置预处理时间
         productsEntity.setPretreatmentDate(1);
+        productsEntity.setAuditStatus("002");
+        productsEntity.setShelveStatus("001");
+        productsEntity.setProductType("002");
         //获取Ean码
         /*EanUpcEntity eanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("type", "EAN").eq("state", 0).orderBy(true, "state", true));
         if (eanUpcEntity != null) {
@@ -1485,7 +1488,7 @@ public class ProductsController extends AbstractController {
         //根据产品id进行更新
         products.setProductSku(correctionLaterString);
         products.setCorrection(null);
-        productsService.updateAllColumnById(products);
+        productsService.updateById(products);
         return R.ok();
     }
 
@@ -1776,7 +1779,7 @@ public class ProductsController extends AbstractController {
         //根据产品id进行更新
         products.setProductSku(correctionLaterString);
         products.setCorrection(null);
-        productsService.updateAllColumnById(products);
+        productsService.updateById(products);
         return R.ok();
     }
 

@@ -316,7 +316,10 @@ public class UploadController extends AbstractController {
         uploadEntity.setUploadState(0);
         //添加到上传表
         uploadService.insert(uploadEntity);
-
+        for(ProductsEntity x : ret){
+            x.setIsUpload(1);
+        }
+        productsService.updateBatchById(ret);
         List<TemplateCategoryFieldsEntity> fieldsEntityList = addUploadVM.getFieldsEntityList();
         for (int i = 0; i < fieldsEntityList.size(); i++) {
             FieldMiddleEntity middleEntity = new FieldMiddleEntity();
