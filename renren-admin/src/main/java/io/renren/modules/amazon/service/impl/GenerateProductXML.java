@@ -1937,19 +1937,30 @@ public class GenerateProductXML {
                 Element parentage = variationData.addElement("Parentage");
                 parentage.addText("parent");
                 Element variationTheme = variationData.addElement("VariationTheme");
-                if (productsEntity.getColorId() != null && productsEntity.getSizeId() != null) {
+//                if (productsEntity.getColorId() != null && productsEntity.getSizeId() != null) {
+                Long colorId = productsEntity.getColorId();
+                Long sizeId = productsEntity.getSizeId();
+                VariantParameterEntity colorVP = null;
+                VariantParameterEntity sizeVP = null;
+                if(colorId != null){
+                    colorVP = variantParameterService.selectById(colorId);
+                }
+                if(sizeId != null){
+                    sizeVP = variantParameterService.selectById(sizeId);
+                }
+                if (colorVP != null && sizeVP != null) {
                     variationThemeStr = "Size-Color";
                     variationTheme.addText(variationThemeStr);
                     /*Element colorMap = variationTheme.addElement("ColorMap");
                     colorMap.addText("white");
                     Element sizeMap = variationTheme.addElement("SizeMap");
                     sizeMap.addText("free");*/
-                } else if (productsEntity.getColorId() != null) {
+                } else if (colorVP != null) {
                     variationThemeStr = "Color";
                     variationTheme.addText(variationThemeStr);
                     /*Element colorMap = variationTheme.addElement("ColorMap");
                     colorMap.addText("white");*/
-                } else if (productsEntity.getSizeId() != null) {
+                } else if (sizeVP != null) {
                     variationThemeStr = "Size";
                     variationTheme.addText(variationThemeStr);
                     /*EElement sizeMap = variationTheme.addElement("SizeMap");

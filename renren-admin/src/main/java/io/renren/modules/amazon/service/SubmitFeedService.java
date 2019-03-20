@@ -161,4 +161,9 @@ public interface SubmitFeedService {
      * @return
      */
     String switchCountry(String templateName, Long uploadId, String merchantIdentifierText, List<ProductsEntity> productsList, String countryCode);
+
+
+    void test1();
+
+    void test2();
 }
