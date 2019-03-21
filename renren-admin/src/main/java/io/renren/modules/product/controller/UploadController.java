@@ -1,5 +1,6 @@
 package io.renren.modules.product.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.renren.common.utils.PageUtils;
@@ -352,7 +353,14 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setDeptId(getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
-        submitFeedService.submitFeed(uploadEntity);
+        //判断用户是否有上传线程
+        UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 1).eq("user_id",getUserId()));
+        if(currentUpload == null){
+            System.out.println("-------------------" + "用户：" + getUser().getUsername() + "当前没有上传项，现在开始上传。上传id为" + uploadEntity.getUploadId() + "-------------------");
+            submitFeedService.submitFeed(uploadEntity);
+        }else{
+            System.out.println("-------------------" + "用户：" + getUser().getUsername() + "有上传项在进行。上传id为：" + currentUpload.getUploadId() + "-------------------");
+        }
         return R.ok();
     }
 
@@ -479,7 +487,14 @@ public class UploadController extends AbstractController {
             categoryHistoryNew.setDeptId(getDeptId());
             amazonCategoryHistoryService.insert(categoryHistoryNew);
         }
-        submitFeedService.submitFeed(uploadEntity);
+        //判断用户是否有上传线程
+        UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 1).eq("user_id",getUserId()));
+        if(currentUpload == null){
+            System.out.println("-------------------" + "用户：" + getUser().getUsername() + "当前没有上传项，现在开始上传。上传id为" + uploadEntity.getUploadId() + "-------------------");
+            submitFeedService.submitFeed(uploadEntity);
+        }else{
+            System.out.println("-------------------" + "用户：" + getUser().getUsername() + "有上传项在进行。上传id为：" + currentUpload.getUploadId() + "-------------------");
+        }
         return R.ok();
     }
 
@@ -489,10 +504,8 @@ public class UploadController extends AbstractController {
      */
     @RequestMapping("/againUploadByButton")
     public R againUploadByButton(Long uploadId) {
-        // 查找基本信息
-        UploadEntity uploadEntity = new UploadEntity();
-        uploadEntity.setUploadId(uploadId);
-        uploadEntity = uploadService.selectById(uploadEntity);
+        // 查找基本信息;
+        UploadEntity uploadEntity = uploadService.selectById(uploadId);
         uploadEntity.setUploadState(0);
         uploadEntity.setUpdateTime(new Date());
         uploadEntity.setUserId(getUserId());
@@ -505,7 +518,14 @@ public class UploadController extends AbstractController {
         if (uploadEntity.getUploadProductsIds() != null) {
             List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
             uploadEntity.setUploadProductsList(productsService.selectBatchIds(ids));
-            submitFeedService.submitFeed(uploadEntity);
+            //判断用户是否有上传线程
+            UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 1).eq("user_id",getUserId()));
+            if(currentUpload == null){
+                System.out.println("-------------------" + "用户：" + getUser().getUsername() + "当前没有上传项，现在开始上传。上传id为" + uploadEntity.getUploadId() + "-------------------");
+                submitFeedService.submitFeed(uploadEntity);
+            }else{
+                System.out.println("-------------------" + "用户：" + getUser().getUsername() + "有上传项在进行。上传id为：" + currentUpload.getUploadId() + "-------------------");
+            }
         } else {
             return R.error("请填写正确的上传产品编码");
         }
