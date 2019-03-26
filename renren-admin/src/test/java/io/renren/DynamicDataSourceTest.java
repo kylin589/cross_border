@@ -2,6 +2,7 @@ package io.renren;
 
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.renren.modules.amazon.service.SubmitFeedService;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.logistics.service.DomesticLogisticsService;
 import io.renren.modules.product.entity.*;
@@ -46,18 +47,25 @@ public class DynamicDataSourceTest {
     private EanUpcService eanUpcService;
     @Autowired
     private VariantsInfoService variantsInfoService;
-
+    @Autowired
+    private SubmitFeedService submitFeedService;
     @Test
     public void tongbuOrder(){
-        List<VariantsInfoEntity> list = variantsInfoService.selectList(null);
-        for(VariantsInfoEntity variantsInfoEntity : list){
-            ProductsEntity product = productsService.selectById(variantsInfoEntity.getProductId());
-            if(product != null && product.getCreateUserId() != null && product.getDeptId() != null){
-                variantsInfoEntity.setDeptId(product.getDeptId());
-                variantsInfoEntity.setUserId(product.getCreateUserId());
-            }
-        }
-        variantsInfoService.updateBatchById(list);
+
+        System.out.println("start");
+        submitFeedService.test1();
+        System.out.println("end1");
+        submitFeedService.test2();
+        System.out.println("end2");
+//        List<VariantsInfoEntity> list = variantsInfoService.selectList(null);
+//        for(VariantsInfoEntity variantsInfoEntity : list){
+//            ProductsEntity product = productsService.selectById(variantsInfoEntity.getProductId());
+//            if(product != null && product.getCreateUserId() != null && product.getDeptId() != null){
+//                variantsInfoEntity.setDeptId(product.getDeptId());
+//                variantsInfoEntity.setUserId(product.getCreateUserId());
+//            }
+//        }
+//        variantsInfoService.updateBatchById(list);
 //        List<OrderEntity> orderEntityList = orderService.selectList(null);
 //        List<ProductOrderItemEntity> list = new ArrayList<ProductOrderItemEntity>();
 //        for(OrderEntity orderEntity : orderEntityList){

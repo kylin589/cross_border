@@ -279,6 +279,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     }else{
                         System.out.println("-------------------当前上传项:" + uploadEntity.getUploadId() + "结束。" + "用户：" + userService.selectById(uploadEntity.getUserId()).getUsername() + "当前有等待上传项，线程继续-------------------");
                         submitFeed(currentUpload);
+                        return;
                     }
                 }
 
@@ -479,9 +480,11 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 0).eq("user_id",uploadEntity.getUserId()));
             if(currentUpload == null){
                 System.out.println("-------------------当前上传项:" + uploadEntity.getUploadId() + "结束。" + "用户：" + userService.selectById(uploadEntity.getUserId()).getUsername() + "当前没有等待上传项，线程结束-------------------");
+                return;
             }else{
                 System.out.println("-------------------当前上传项:" + uploadEntity.getUploadId() + "结束。" + "用户：" + userService.selectById(uploadEntity.getUserId()).getUsername() + "当前有等待上传项，线程继续-------------------");
                 submitFeed(currentUpload);
+                return;
             }
         }catch (Exception ex){
             System.out.println("错误为：" +ex);
@@ -505,6 +508,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             }else{
                 System.out.println("-------------------当前上传项:" + uploadEntity.getUploadId() + "结束。" + "用户：" + userService.selectById(uploadEntity.getUserId()).getUsername() + "当前有等待上传项，线程继续-------------------");
                 submitFeed(currentUpload);
+                return;
             }
         }
 
@@ -655,7 +659,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     System.out.println("Request ID: " + exception.getRequestId());
                     System.out.print("XML: " + exception.getXML());
                     System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
-                    if(exception.getStatusCode() == 443 || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode()) || exception.getMessage().indexOf("Invalid seller id") != -1 ){
+                    if(exception.getStatusCode() == 443 || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode()) || exception.getMessage().indexOf("Invalid seller id") != -1 || exception.getStatusCode() == -1){
                         return null;
                     }
                 } else {

@@ -21,10 +21,15 @@ import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.amazon.service.SubmitFeedService;
+import io.renren.modules.product.entity.UploadEntity;
+import io.renren.modules.product.service.UploadService;
 import io.renren.modules.sys.entity.SysRoleEntity;
+import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysRoleDeptService;
 import io.renren.modules.sys.service.SysRoleMenuService;
 import io.renren.modules.sys.service.SysRoleService;
+import io.renren.modules.sys.service.SysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +54,12 @@ public class SysRoleController extends AbstractController {
 	private SysRoleMenuService sysRoleMenuService;
 	@Autowired
 	private SysRoleDeptService sysRoleDeptService;
+	@Autowired
+	private UploadService uploadService;
+	@Autowired
+	private SysUserService userService;
+	@Autowired
+	private SubmitFeedService submitFeedService;
 	
 	/**
 	 * 角色列表
@@ -132,6 +143,25 @@ public class SysRoleController extends AbstractController {
 	public R delete(@RequestBody Long[] roleIds){
 		sysRoleService.deleteBatch(roleIds);
 		
+		return R.ok();
+	}
+	/**
+	 * 恢复上传
+	 */
+	@RequestMapping("/upload")
+	public R upload(){
+		System.out.println("-----------------------------------------upload-----------------------------------------");
+		List<SysUserEntity> userList = userService.selectList(null);
+		for(SysUserEntity user : userList){
+			//判断用户是否有上传线程
+			UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 1).eq("user_id",getUserId()));
+			if(currentUpload == null){
+				UploadEntity uploadEntity = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 0).eq("user_id",user.getUserId()));
+				if(uploadEntity != null){
+					submitFeedService.submitFeed(uploadEntity);
+				}
+			}
+		}
 		return R.ok();
 	}
 }

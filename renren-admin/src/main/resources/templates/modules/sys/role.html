@@ -22,6 +22,7 @@
 			<#if shiro.hasPermission("sys:role:delete")>
 			<a class="btn del" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
 			</#if>
+			<a class="btn del" @click="upload"><i class="fa fa-trash-o"></i>&nbsp;恢复上传</a>
 		</div>
 	    <table id="jqGrid"></table>
 	    <div id="jqGridPager"></div>
