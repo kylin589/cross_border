@@ -43,8 +43,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -519,7 +517,7 @@ public class OrderController extends AbstractController{
         //准备订单国际物流上传信息模型
         SendDataMoedl sendDataMoedl = synchronizationXuModel(order,abroadLogistics);
         // 将运单号同步到亚马逊平台
-        amazonUpdateLogistics(sendDataMoedl,orderId);
+        orderService.amazonUpdateLogistics(sendDataMoedl,orderId);
         return R.ok().put("abroadLogistics",abroadLogistics);
     }
     /**
@@ -528,9 +526,7 @@ public class OrderController extends AbstractController{
      */
     @RequestMapping("/synchronization")
     public R synchronization(@RequestParam Long orderId){
-//        Long orderId = orderVM.getOrderId();
         OrderEntity order = orderService.selectById(orderId);
-        order.getAmazonOrderId();
         AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
         if(abroadLogistics == null){
             abroadLogistics = new AbroadLogisticsEntity();
@@ -550,7 +546,6 @@ public class OrderController extends AbstractController{
             System.out.println(order.getBuyDate());
             abroadLogistics.setShipTime(new Date());
             abroadLogisticsService.insert(abroadLogistics);
-
             //设置国际物流单号
             order.setAbroadWaybill(abroadWaybill);
             orderService.updateById(order);
@@ -572,7 +567,7 @@ public class OrderController extends AbstractController{
             sendDataMoedl = synchronizationZhenModel(order,abroadLogistics);
         }
         // 将运单号同步到亚马逊平台
-        amazonUpdateLogistics(sendDataMoedl,orderId);
+        orderService.amazonUpdateLogistics(sendDataMoedl,orderId);
         return R.ok("正在同步，请稍后查看");
     }
 
@@ -692,14 +687,7 @@ public class OrderController extends AbstractController{
         SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
         return sendDataMoedl;
     }
-    /**
-     * 上传国际物流信息到amazon
-     * @param sendDataMoedl
-     */
-//    @Async("taskExecutor")
-    public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl,Long orderId){
-        new AmazonUpdateLogisticsThread(sendDataMoedl,orderId).start();
-    }
+
     /**
      * 手动更新订单状态
      * orderVM: orderId,
@@ -716,13 +704,15 @@ public class OrderController extends AbstractController{
             OrderModel orderModel = orderService.updateOrderAmazonStatus(amazonOrderId,orderEntity);
             if(orderModel != null){
                 //amazon状态更新
-                new RefreshAmazonStateThread(orderEntity,orderModel).start();
+//                new RefreshAmazonStateThread(orderEntity,orderModel).start();
+                orderService.RefreshAmazonState(orderEntity,orderModel);
             }
         }else{
             //不为取消订单时执行
             if(!ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(status) && !ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH.equals(status) && !ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN.equals(abStatus)){
                 //国际物流更新
-                new RefreshOrderThread(orderId).start();
+//                new RefreshOrderThread(orderId).start();
+                orderService.RefreshOrder(orderId);
             }
         }
         return R.ok();
@@ -731,7 +721,7 @@ public class OrderController extends AbstractController{
     /**
      * 更新亚马逊订单的方法
      */
-    class AmazonUpdateLogisticsThread extends Thread{
+   /* class AmazonUpdateLogisticsThread extends Thread{
         private SendDataMoedl sendDataMoedl;
         private Long orderId;
 
@@ -767,9 +757,9 @@ public class OrderController extends AbstractController{
                 }
             }
 
-            /**
+            *//**
              * 根据List数组，生成XML数据
-             */
+             *//*
             String resultXml = XmlUtils.getXmlFromList(list);
             //打印生成xml数据
             FileWriter outdata = null;
@@ -844,13 +834,13 @@ public class OrderController extends AbstractController{
 
             }
         }
-    }
+    }*/
     /**
      * 刷新订单亚马逊状态线程
      * 手动刷新订单时调用
      * 状态为亚马逊状态时
      */
-    class RefreshAmazonStateThread extends Thread {
+    /*class RefreshAmazonStateThread extends Thread {
 
         private OrderEntity orderEntity;
 
@@ -866,7 +856,7 @@ public class OrderController extends AbstractController{
             String modelStatus = orderModel.getOrderStatus();
             //更新订单
             //获取状态判断是否为取消
-            /*if (ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)) {
+            *//*if (ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)) {
                 orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
                 orderEntity.setOrderState("取消");
             } else {
@@ -902,7 +892,7 @@ public class OrderController extends AbstractController{
                         productShipAddressService.updateById(productShipAddressEntity);
                     }
                 }
-            }*/
+            }*//*
             //更新订单
             List<OrderItemModel> orderItemModels=orderModel.getOrderItemModels();
             if(orderItemModels!=null && orderItemModels.size()>0) {
@@ -927,7 +917,7 @@ public class OrderController extends AbstractController{
                     productOrderItemService.updateById(productOrderItemEntity);
                 }
             }
-            /*String orderItemId=orderModel.getOrderItemId();
+            *//*String orderItemId=orderModel.getOrderItemId();
             ProductOrderItemEntity productOrderItemEntity=productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id",orderItemId));
 
             ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",productOrderItemEntity.getProductSku()));
@@ -938,7 +928,7 @@ public class OrderController extends AbstractController{
             }
 
             orderEntity.setProductTitle(orderModel.getTitlename());
-*/
+*//*
             orderEntity.setCountryCode(orderModel.getCountry());
             //设置汇率
             BigDecimal rate = new BigDecimal(0.00);
@@ -1001,7 +991,7 @@ public class OrderController extends AbstractController{
                 }
             }
         }
-    }
+    }*/
 
     /**
      * 获取单个订单的方法
@@ -1060,7 +1050,7 @@ public class OrderController extends AbstractController{
      * 刷新订单国际物流线程
      * 手动刷新订单时且状态不为亚马逊状态时调用
      */
-    class RefreshOrderThread extends Thread   {
+  /*  class RefreshOrderThread extends Thread   {
         private Long orderId;
         public RefreshOrderThread(Long orderId) {
             this.orderId = orderId;
@@ -1219,10 +1209,10 @@ public class OrderController extends AbstractController{
                     //同步转单号
                     if(StringUtils.isNotBlank(abroadLogisticsEntity.getTrackWaybill()) && abroadLogisticsEntity.getIsSynchronization() == 0){
                         SendDataMoedl sendDataMoedl = synchronizationZhenModel(orderEntity,abroadLogisticsEntity);
-                        amazonUpdateLogistics(sendDataMoedl,orderId);
+                        orderService.amazonUpdateLogistics(sendDataMoedl,orderId);
                     }
                 }
             }
         }
-    }
+    }*/
 }

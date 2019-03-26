@@ -170,7 +170,16 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
             } catch (Exception e) {
                 if (e.getCause() instanceof MarketplaceWebServiceException) {
                     MarketplaceWebServiceException exception = MarketplaceWebServiceException.class.cast(e.getCause());
+                    System.out.println("Caught Exception: " + exception.getMessage());
+                    System.out.println("Response Status Code: " + exception.getStatusCode());
+                    System.out.println("Error Code: " + exception.getErrorCode());
+                    System.out.println("Error Type: " + exception.getErrorType());
+                    System.out.println("Request ID: " + exception.getRequestId());
                     System.out.print("XML: " + exception.getXML());
+                    System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
+                    if(exception.getStatusCode() == 443 || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode()) || exception.getMessage().indexOf("Invalid seller id") != -1 ){
+                        return null;
+                    }
                 } else {
                     e.printStackTrace();
                 }
@@ -239,8 +248,19 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
             System.out.println( request.getFeedSubmissionResultOutputStream().toString() );
             System.out.println(response.getResponseHeaderMetadata());
         } catch (MarketplaceWebServiceException ex) {
-            System.out.print("XML: " + ex.getXML());
-
+            if (ex.getCause() instanceof MarketplaceWebServiceException) {
+                MarketplaceWebServiceException exception = MarketplaceWebServiceException.class.cast(ex.getCause());
+                System.out.println("Caught Exception: " + exception.getMessage());
+                System.out.println("Response Status Code: " + exception.getStatusCode());
+                System.out.println("Error Code: " + exception.getErrorCode());
+                System.out.println("Error Type: " + exception.getErrorType());
+                System.out.println("Request ID: " + exception.getRequestId());
+                System.out.print("XML: " + exception.getXML());
+                System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
+                if (exception.getStatusCode() == 443 || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode()) || exception.getMessage().indexOf("Invalid seller id") != -1) {
+                    return null;
+                }
+            }
         }
         return md5;
     }
