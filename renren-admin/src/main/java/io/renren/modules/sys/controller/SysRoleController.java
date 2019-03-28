@@ -152,9 +152,10 @@ public class SysRoleController extends AbstractController {
 	public R upload(){
 		System.out.println("-----------------------------------------upload-----------------------------------------");
 		List<SysUserEntity> userList = userService.selectList(null);
+		StringBuffer stringBuffer = new StringBuffer();
 		for(SysUserEntity user : userList){
 			//判断用户是否有上传线程
-			UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 1).eq("user_id",getUserId()));
+			UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 1).eq("user_id",user.getUserId()));
 			if(currentUpload == null){
 				UploadEntity uploadEntity = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 0).eq("user_id",user.getUserId()));
 				if(uploadEntity != null){
@@ -162,6 +163,7 @@ public class SysRoleController extends AbstractController {
 				}
 			}
 		}
+		System.out.println("userid:" + stringBuffer.toString());
 		return R.ok();
 	}
 }

@@ -427,6 +427,11 @@ public class OrderController extends AbstractController{
     @RequestMapping("/updateState")
     public R updateState(@RequestBody OrderVM orderVM){
         if("物流仓库未签收".equals(orderVM.getOrderState())){
+            //获取可用余额
+            SysDeptEntity dept = deptService.selectById(getDeptId());
+            if(dept.getAvailableBalance().compareTo(new BigDecimal(500.00)) != 1){
+                return R.error("余额不足，请联系公司管理员及时充值后再次尝试");
+            }
             //推送订单
             Map<String,String> result = orderService.pushOrder(orderVM.getOrderId());
             if("false".equals(result.get("code"))){
@@ -471,13 +476,11 @@ public class OrderController extends AbstractController{
      */
     @RequestMapping("/createAbroadWaybill")
     public R createAbroadWaybill(@RequestBody OrderVM orderVM){
-
         //获取可用余额
-        SysDeptEntity dept = deptService.selectById(getDeptId());
+/*        SysDeptEntity dept = deptService.selectById(getDeptId());
         if(dept.getAvailableBalance().compareTo(new BigDecimal(50.00)) != 1){
             return R.error("余额不足，请联系公司管理员及时充值后再次尝试");
-        }
-
+        }*/
         Long orderId = orderVM.getOrderId();
         AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
 

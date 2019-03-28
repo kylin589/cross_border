@@ -457,7 +457,7 @@ public class GenerateProductXML {
         }
         // 生成文件路径
         String path = fileStoragePath;
-        String filePath = FileUtil.generateFilePath(path, "Product");
+        String filePath = FileUtil.generateFilePath(path, "Product", uploadId);
 
         try {
             XMLUtil.writeXMLToFile(document, filePath);
@@ -478,7 +478,7 @@ public class GenerateProductXML {
      * @return XML路径
      * @author zjr
      */
-    public String generateImagesXML(List<ProductsEntity> productsList, String merchantIdentifierText) {
+    public String generateImagesXML(List<ProductsEntity> productsList, String merchantIdentifierText, Long uploadId) {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("AmazonEnvelope");
         root.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").addAttribute("xsi:noNamespaceSchemaLocation", "https://images-na.ssl-images-amazon.com/images/G/01/rainier/help/xsd/release_1_9/amzn-envelope.xsd");
@@ -554,7 +554,7 @@ public class GenerateProductXML {
                         viImageUrls = Arrays.asList(variantsInfoEntity.getImageUrl().split(","));
                     } else {
                         for (int k = 0; k < imageAddressEntityList.size(); k++) {
-                            viImageUrls.add(imageAddressEntityList.get(i).getImageUrl());
+                            viImageUrls.add(imageAddressEntityList.get(k).getImageUrl());
                         }
                     }
 
@@ -589,7 +589,7 @@ public class GenerateProductXML {
 
         // 生成文件路径
         String path = fileStoragePath;
-        String filePath = FileUtil.generateFilePath(path, "Images");
+        String filePath = FileUtil.generateFilePath(path, "Images", uploadId);
 
         try {
             XMLUtil.writeXMLToFile(document, filePath);
@@ -610,7 +610,7 @@ public class GenerateProductXML {
      * @return xml路径
      * @author zjr
      */
-    public String generateInventoryXML(List<ProductsEntity> productsList, String merchantIdentifierText) {
+    public String generateInventoryXML(List<ProductsEntity> productsList, String merchantIdentifierText, Long uploadId) {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("AmazonEnvelope");
         root.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").addAttribute("xsi:noNamespaceSchemaLocation", "https://images-na.ssl-images-amazon.com/images/G/01/rainier/help/xsd/release_1_9/amzn-envelope.xsd");
@@ -667,7 +667,7 @@ public class GenerateProductXML {
 
         // 生成文件路径
         String path = fileStoragePath;
-        String filePath = FileUtil.generateFilePath(path, "Inventory");
+        String filePath = FileUtil.generateFilePath(path, "Inventory", uploadId);
 
         try {
             XMLUtil.writeXMLToFile(document, filePath);
@@ -689,7 +689,7 @@ public class GenerateProductXML {
      * @return xml路径
      * @author zjr
      */
-    public String generatePricesXML(String countryCode, List<ProductsEntity> productsList, String merchantIdentifierText) {
+    public String generatePricesXML(String countryCode, List<ProductsEntity> productsList, String merchantIdentifierText, Long uploadId) {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("AmazonEnvelope");
         root.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").addAttribute("xsi:noNamespaceSchemaLocation", "https://images-na.ssl-images-amazon.com/images/G/01/rainier/help/xsd/release_1_9/amzn-envelope.xsd");
@@ -810,7 +810,7 @@ public class GenerateProductXML {
 
         // 生成文件路径
         String path = fileStoragePath;
-        String filePath = FileUtil.generateFilePath(path, "Prices");
+        String filePath = FileUtil.generateFilePath(path, "Prices", uploadId);
 
         try {
             XMLUtil.writeXMLToFile(document, filePath);
@@ -831,7 +831,7 @@ public class GenerateProductXML {
      * @return xml路径
      * @author zjr
      */
-    public String generateRelationshipsXML(List<ProductsEntity> productsList, String merchantIdentifierText) {
+    public String generateRelationshipsXML(List<ProductsEntity> productsList, String merchantIdentifierText, Long uploadId) {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("AmazonEnvelope");
         root.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").addAttribute("xsi:noNamespaceSchemaLocation", "https://images-na.ssl-images-amazon.com/images/G/01/rainier/help/xsd/release_1_9/amzn-envelope.xsd");
@@ -873,7 +873,7 @@ public class GenerateProductXML {
 
         // 生成文件路径
         String path = fileStoragePath;
-        String filePath = FileUtil.generateFilePath(path, "Relationships");
+        String filePath = FileUtil.generateFilePath(path, "Relationships", uploadId);
 
         try {
             XMLUtil.writeXMLToFile(document, filePath);
@@ -1704,7 +1704,7 @@ public class GenerateProductXML {
         }
         // 生成文件路径
         String path = fileStoragePath;
-        String filePath = FileUtil.generateFilePath(path, "ProductByClothing");
+        String filePath = FileUtil.generateFilePath(path, "ProductByClothing",uploadId);
 
         try {
             XMLUtil.writeXMLToFile(document, filePath);
@@ -2500,7 +2500,7 @@ public class GenerateProductXML {
         }
         // 生成文件路径
         String path = fileStoragePath;
-        String filePath = FileUtil.generateFilePath(path, "ProductByHomeImprovement");
+        String filePath = FileUtil.generateFilePath(path, "ProductByHomeImprovement", uploadId);
 
         try {
             XMLUtil.writeXMLToFile(document, filePath);

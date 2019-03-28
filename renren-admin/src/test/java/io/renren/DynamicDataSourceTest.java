@@ -51,12 +51,22 @@ public class DynamicDataSourceTest {
     private SubmitFeedService submitFeedService;
     @Test
     public void tongbuOrder(){
-
         System.out.println("start");
         submitFeedService.test1();
-        System.out.println("end1");
         submitFeedService.test2();
-        System.out.println("end2");
+        System.out.println("end1");
+        /*ThreadGroup currentGroup =
+                Thread.currentThread().getThreadGroup();
+        int noThreads = currentGroup.activeCount();
+        Thread[] lstThreads = new Thread[noThreads];
+        currentGroup.enumerate(lstThreads);
+        int count = 0;
+        for (int i = 0; i < noThreads; i++){
+            if(lstThreads[i].getName().indexOf("taskExecutor") != -1){
+                count += 1;
+            }
+        }
+        System.out.println("线程数量：" + count);*/
 //        List<VariantsInfoEntity> list = variantsInfoService.selectList(null);
 //        for(VariantsInfoEntity variantsInfoEntity : list){
 //            ProductsEntity product = productsService.selectById(variantsInfoEntity.getProductId());

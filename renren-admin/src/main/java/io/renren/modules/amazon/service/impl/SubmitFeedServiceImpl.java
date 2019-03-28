@@ -201,22 +201,22 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                         break;
                     // 1 关系
                     case "1":
-                        String relationshipsPath = generateProductXML.generateRelationshipsXML(productsEntityList, merchantId);
+                        String relationshipsPath = generateProductXML.generateRelationshipsXML(productsEntityList, merchantId, uploadId);
                         filePathMap.put("1", relationshipsPath);
                         break;
                     // 2 图片
                     case "2":
-                        String imagesPath = generateProductXML.generateImagesXML(productsEntityList, merchantId);
+                        String imagesPath = generateProductXML.generateImagesXML(productsEntityList, merchantId, uploadId);
                         filePathMap.put("2", imagesPath);
                         break;
                     // 3 库存
                     case "3":
-                        String inventoryPath = generateProductXML.generateInventoryXML(productsEntityList, merchantId);
+                        String inventoryPath = generateProductXML.generateInventoryXML(productsEntityList, merchantId, uploadId);
                         filePathMap.put("3", inventoryPath);
                         break;
                     // 4 价格
                     case "4":
-                        String pricesPath = generateProductXML.generatePricesXML(countryCode, productsEntityList, merchantId);
+                        String pricesPath = generateProductXML.generatePricesXML(countryCode, productsEntityList, merchantId, uploadId);
                         filePathMap.put("4", pricesPath);
                         break;
                     default:
@@ -249,7 +249,16 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                                 List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
                                 tempList.add(productFeedSubmissionInfoDto);
                                 updateFeedUpload(uploadId, tempList, 3);
-                                break;
+                                //判断用户是否有等待上传线程
+                                UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 0).eq("user_id",uploadEntity.getUserId()));
+                                if(currentUpload == null){
+                                    System.out.println("-------------------当前上传项:" + uploadEntity.getUploadId() + "结束。" + "用户：" + userService.selectById(uploadEntity.getUserId()).getUsername() + "当前没有等待上传项，线程结束-------------------");
+                                    return;
+                                }else{
+                                    System.out.println("-------------------当前上传项:" + uploadEntity.getUploadId() + "结束。" + "用户：" + userService.selectById(uploadEntity.getUserId()).getUsername() + "当前有等待上传项，线程继续-------------------");
+                                    submitFeed(currentUpload);
+                                    return;
+                                }
                             }
 
                         } catch (InterruptedException e) {
@@ -1143,16 +1152,102 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 e.printStackTrace();
             }
         }
+        return;
     }
 
     @Override
     @Async("taskExecutor")
     public void test2() {
-        for(int i=0; i < 5; i++){
+        for(int i=0; i < 10; i++){
             try {
-                Thread.sleep(1 * 4 * 1000);
+                Thread.sleep(1 * 3 * 1000);
                 System.out.println("线程2正在执行");
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        ThreadGroup currentGroup =
+                Thread.currentThread().getThreadGroup();
+        int noThreads = currentGroup.activeCount();
+        Thread[] lstThreads = new Thread[noThreads];
+        currentGroup.enumerate(lstThreads);
+        int count = 0;
+        for (int i = 0; i < noThreads; i++){
+            if(lstThreads[i].getName().indexOf("taskExecutor") != -1){
+                count += 1;
+                System.out.println("线程名字：" + lstThreads[i].getName());
+            }
+        }
+        System.out.println("线程数量：" + count);
+    }
+    @Override
+    @Async("taskExecutor")
+    public void test3() {
+        Future<String> future;
+
+        for(int i=0; i < 10; i++){
+            try {
+                future = new AsyncResult<String>("success:" + i);
+                System.out.println("future:" + future);
+                Thread.sleep(1 * 3 * 1000);
+                System.out.println("线程3正在执行");
+            } catch (InterruptedException e) {
+                future = new AsyncResult<String>("error");
+                System.out.println("线程终止");
+                e.printStackTrace();
+            }
+        }
+    }
+    @Override
+    @Async("taskExecutor")
+    public void test4() {
+        Future<String> future;
+
+        for(int i=0; i < 10; i++){
+            try {
+                future = new AsyncResult<String>("success:" + i);
+                System.out.println("future:" + future);
+                Thread.sleep(1 * 3 * 1000);
+                System.out.println("线程4正在执行");
+            } catch (InterruptedException e) {
+                future = new AsyncResult<String>("error");
+                System.out.println("线程终止");
+                e.printStackTrace();
+            }
+        }
+    }
+    @Override
+    @Async("taskExecutor")
+    public void test5() {
+        Future<String> future;
+
+        for(int i=0; i < 10; i++){
+            try {
+                future = new AsyncResult<String>("success:" + i);
+                System.out.println("future:" + future);
+                Thread.sleep(1 * 3 * 1000);
+                System.out.println("线程5正在执行");
+            } catch (InterruptedException e) {
+                future = new AsyncResult<String>("error");
+                System.out.println("线程终止");
+                e.printStackTrace();
+            }
+        }
+    }
+    @Override
+    @Async("taskExecutor")
+    public void test6() {
+        Future<String> future;
+
+        for(int i=0; i < 10; i++){
+            try {
+                future = new AsyncResult<String>("success:" + i);
+                System.out.println("future:" + future);
+                Thread.sleep(1 * 3 * 1000);
+                System.out.println("线程6正在执行");
+            } catch (InterruptedException e) {
+                future = new AsyncResult<String>("error");
+                System.out.println("线程终止");
                 e.printStackTrace();
             }
         }

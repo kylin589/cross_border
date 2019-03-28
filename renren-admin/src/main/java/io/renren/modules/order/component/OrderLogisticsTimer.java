@@ -382,8 +382,7 @@ public class OrderLogisticsTimer {
         String resultXml = XmlUtils.getXmlFromList(list);
         //打印生成xml数据
         FileWriter outdata = null;
-        FileUtil.generateFilePath(fileStoragePath,"shipping");
-        String filePath = FileUtil.generateFilePath(fileStoragePath,"shipping");
+        String filePath = FileUtil.generateFilePath(fileStoragePath,"shipping",orderId);
         String feedType="_POST_ORDER_FULFILLMENT_DATA_";
         try {
             outdata = new FileWriter(filePath);
