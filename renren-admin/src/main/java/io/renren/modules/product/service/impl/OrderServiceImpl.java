@@ -1612,7 +1612,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      * @param sendDataMoedl
      */
     @Override
-    @Async("taskExecutor")
     public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl, Long orderId){
         List<Shipping> list = sendDataMoedl.getList();
         List<String> serviceURL = sendDataMoedl.getServiceURL();
@@ -1719,7 +1718,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
-    @Async("taskExecutor")
     public void RefreshAmazonState(OrderEntity orderEntity, OrderModel orderModel) {
         String modelStatus = orderModel.getOrderStatus();
         //更新订单
@@ -1861,7 +1859,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
-    @Async("taskExecutor")
     public void RefreshOrder(Long orderId) {
         //订单对象
         OrderEntity orderEntity = orderService.selectById(orderId);

@@ -152,12 +152,7 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
         }
         for (Future<GetFeedSubmissionListResponse> future : responses) {
             while (!future.isDone()) {
-                try {
-                    Thread.sleep(2*60*1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    continue;
-                }
+              Thread.yield();
             }
             try {
                 GetFeedSubmissionListResponse response = future.get();

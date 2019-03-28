@@ -108,6 +108,7 @@ public class OrderLogisticsTimer {
     /**
      * 更新订单物流信息
      */
+    @Async("taskExecutor")
     public void getOrderLogistics(){
         Date startDate = DateUtils.getTheDateNow1MonthsShort();
         List<OrderEntity> orderEntityList = orderService.selectList(
@@ -126,7 +127,7 @@ public class OrderLogisticsTimer {
         }
 
     }
-    @Async("taskExecutor")
+
     public void refreshOrder(Long orderId){
         //订单对象
         OrderEntity orderEntity = orderService.selectById(orderId);
@@ -348,7 +349,6 @@ public class OrderLogisticsTimer {
      * 上传国际物流信息到amazon
      * @param sendDataMoedl
      */
-    @Async("taskExecutor")
     public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl,Long orderId){
         List<Shipping> list = sendDataMoedl.getList();
         List<String> serviceURL = sendDataMoedl.getServiceURL();
