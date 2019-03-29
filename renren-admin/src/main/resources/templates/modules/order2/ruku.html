@@ -45,32 +45,88 @@
 
     <table>
         <tr>
-
-            
-            <th>当天汇率</th>
-            <th>采购价</th>
-            <th>国际运费</th>
-            <th>平台佣金</th>
-            <th>利润</th>
-            <th>利润率</th>
-
+            <th>
+                <input type="checkbox"  v-model='isok' @click='demo'>
+            </th>
+            <th>订单号</th>
+            <th>亚马逊单号</th>
 
             <th>状态</th>
-            <th>异常状态</th>
+            <!--<th>异常状态</th>-->
             <!--<th>退货费用</th>-->
-            <th style="width: 100px">下单时间</th>
+            <th style="width: 100px">更新时间时间</th>
+            <th>店铺名</th>
             <th>操作</th>
         </tr>
         <tr v-for = '(item,index) in prolist'>
+            <td class="orderchenc">
+                <input type="checkbox" :value='item.orderid' v-model='allcheck[index]' @change='demo2(item.orderId)'>
+            </td>
+            <td>
+                {{ item.orderId }}<br/>
+                <span class="brSpan">
 
+                    <span v-if="item.countryCode == 'US'">
+                        <img src="../../statics/kuajing/img/american.png" alt="">
+                        美国
+                    </span>
+                    <span v-if="item.countryCode == 'JP'">
+                        <img src="../../statics/kuajing/img/riben.jpg" alt="">
+                        日本
+                    </span>
+                    <span v-if="item.countryCode == 'ES'">
+                        <img src="../../statics/kuajing/img/xibanya.jpg" alt="">
+                        西班牙
+                    </span>
+                    <span v-if="item.countryCode == 'FR'">
+                        <img src="../../statics/kuajing/img/faguo.jpg" alt="">
+                        法国
+                    </span>
+                    <span v-if="item.countryCode == 'GB'">
+                        <img src="../../statics/kuajing/img/yingg.jpg" alt="">
+                        英国
+                    </span>
+                    <span v-if="item.countryCode == 'IT'">
+                        <img src="../../statics/kuajing/img/yidali.jpg" alt="">
+                        意大利</span>
+                    <span v-if="item.countryCode == 'DE'">
+                        <img src="../../statics/kuajing/img/deguo.jpg" alt="">
+                        德国</span>
+                    <span v-if="item.countryCode == 'BR'">
+                        <img src="../../statics/kuajing/img/baxi.jpg" alt="">
+                        巴西</span>
+                    <span v-if="item.countryCode == 'CA'">
+                        <img src="../../statics/kuajing/img/jianada.jpg" alt="">
+                        加拿大</span>
+                    <span v-if="item.countryCode == 'MX'">
+                        <img src="../../statics/kuajing/img/moxige.jpg" alt="">
+                        墨西哥</span>
+                    <span v-if="item.countryCode == 'AU'">
+                        <img src="../../statics/kuajing/img/aodaliya.jpg" alt="">
+                        澳大利亚</span>
+                </span></td>
+            <td><a :href="'orderDetails.html?orderid='+item.orderId+'page='+proCurr">{{ item.amazonOrderId }}</a> <br/>
+                <span class="brSpan">
+                    <img style="width: 15px;height: 15px;" src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
+                    {{ item.shopName }}
+                    <span v-if="item.countryCode == 'US'">美国</span>
+                    <span v-if="item.countryCode == 'JP'">日本</span>
+                    <span v-if="item.countryCode == 'FR'">法国</span>
+                    <span v-if="item.countryCode == 'ES'">西班牙</span>
+                    <span v-if="item.countryCode == 'GB'">英国</span>
+                    <span v-if="item.countryCode == 'IT'">意大利</span>
+                    <span v-if="item.countryCode == 'DE'">德国</span>
+                    <span v-if="item.countryCode == 'BR'">巴西</span>
+                    <span v-if="item.countryCode == 'CA'">加拿大</span>
+                    <span v-if="item.countryCode == 'MX'">墨西哥</span>
+                    <span v-if="item.countryCode == 'AU'">澳大利亚</span>
+
+                </span>
+            </td>
             
-            <td>{{item.momentRate}}</td>
-            <td>{{item.purchasePrice }}</td>
+
             <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.interFreight}}</td>
-            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
-            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
-            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
-            <td v-if="!(item.orderState == '国际已发货' || item.orderState == '完成')">--</td>
+
             <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.platformCommissions}}</td>
             <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.orderProfit}}</td>
             <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.profitRate}}</td>
@@ -113,6 +169,7 @@
                 <span v-if="JSON.stringify(item.abnormalStatus) == 'null' "></span>
             </td>
             <!--<td>{{item.accountMoneyCny}}</td>-->
+            <td style="width: 100px;color: #999;">{{ item.buyDate }}</td>
             <td style="width: 100px;color: #999;">{{ item.buyDate }}</td>
             <td>
                 <span style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="shuaxin(item.orderId)">入库</span>

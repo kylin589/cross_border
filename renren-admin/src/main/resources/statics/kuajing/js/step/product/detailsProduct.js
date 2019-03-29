@@ -2486,7 +2486,7 @@ var vm = new Vue({
 
                         console.log('11111111');
                         // console.log(v.join(','));
-                        vm.proDetails.variantsInfos[i].variantId = i;
+                        // vm.proDetails.variantsInfos[i].variantId = i;
                         vm.proDetails.variantsInfos[i].eanCode = t.code;
                         vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
                         vm.proDetails.variantsInfos[i].variantSku = t.sku;
@@ -2494,7 +2494,7 @@ var vm = new Vue({
                         vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
                     })
                     // console.log(vm.proDetails.variantsInfos);
-
+                    console.log(vm.proDetails);
                     layer.confirm('确定修改吗？', function(index1){
                         var index = layer.load();
                         var index = layer.load(1); //换了种风格
@@ -2502,6 +2502,7 @@ var vm = new Vue({
 
                         var arr = [];
                         var el = $('.imgDiv>div');
+
                         // console.log($(".imgDiv>div"));
                         for(var i = 0;i<el.length;i++){
                             for(var j = 0;j<el.length;j++){

@@ -2467,7 +2467,7 @@ var vm = new Vue({
 
                         console.log('11111111');
                         // console.log(v.join(','));
-                        vm.proDetails.variantsInfos[i].variantId = i;
+                        // vm.proDetails.variantsInfos[i].variantId = i;
                         vm.proDetails.variantsInfos[i].eanCode = t.code;
                         vm.proDetails.variantsInfos[i].variantAddPrice = parseInt(t.addPrice);
                         vm.proDetails.variantsInfos[i].variantSku = t.sku;

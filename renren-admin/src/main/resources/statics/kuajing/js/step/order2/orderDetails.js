@@ -94,6 +94,9 @@ window.onload = function (ev) {
 var vm = new Vue({
     el:'#step',
     data:{
+        wuliuType:0,
+        wuliuSize:0,
+        wuliuLuxian:0,
         orderid:null,
         page:null,
         orderDetails:{
@@ -752,13 +755,34 @@ var vm = new Vue({
         magSku:function () {
             layer.msg('暂无该产品')
         },
-        aa:function () {
+        // 添加国际物流
+        addguojiWul:function () {
             layer.open({
                 type: 1,
                 title: false,
                 content: $('#addorder'), //这里content是一个普通的String
                 skin: 'openClass',
-                area: ['800px', '420px'],
+                area: ['900px', '420px'],
+                shadeClose: true,
+                btn: ['添加','取消'],
+                btn1: function (index1) {
+
+
+                },
+                btn2: function (index1) {
+
+
+                }
+            });
+        },
+        // 国际物流明细
+        detailsguojiWul:function () {
+            layer.open({
+                type: 1,
+                title: false,
+                content: $('#detailsorder'), //这里content是一个普通的String
+                skin: 'openClass',
+                area: ['900px', '420px'],
                 shadeClose: true,
                 btn: ['添加','取消'],
                 btn1: function (index1) {
