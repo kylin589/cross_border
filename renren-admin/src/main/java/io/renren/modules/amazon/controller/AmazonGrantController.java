@@ -73,6 +73,7 @@ public class AmazonGrantController extends AbstractController {
     @RequestMapping("/update")
 //    @RequiresPermissions("amazon:amazongrant:update")
     public R update(@RequestBody AmazonGrantEntity amazonGrant) {
+        System.out.println("amazonGrant=" + amazonGrant);
         //ValidatorUtils.validateEntity((amazonGrant);
         amazonGrantService.updateAllColumnById(amazonGrant);//全部更新
 

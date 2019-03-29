@@ -157,6 +157,28 @@ var vm = new Vue({
                 });
             });
         },
+        upload: function () {
+            var roleIds = getSelectedRows();
+            if(roleIds == null){
+                return ;
+            }
+            confirm('确定要恢复上传吗？', function(){
+                $.ajax({
+                    type: "POST",
+                    url: baseURL + "sys/role/upload",
+                    contentType: "application/json",
+                    success: function(r){
+                        if(r.code == 0){
+                            alert('操作成功', function(){
+                                vm.reload();
+                            });
+                        }else{
+                            alert(r.msg);
+                        }
+                    }
+                });
+            });
+        },
         getRole: function(roleId){
             $.get(baseURL + "sys/role/info/"+roleId, function(r){
                 vm.role = r.role;

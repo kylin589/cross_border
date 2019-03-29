@@ -1,6 +1,7 @@
 package io.renren.modules.product.service;
 
 import com.baomidou.mybatisplus.service.IService;
+import io.renren.modules.logistics.entity.SendDataMoedl;
 import io.renren.modules.product.entity.OrderEntity;
 import io.renren.modules.product.vm.OrderModel;
 import io.renren.modules.sys.dto.FranchiseeStatisticsDto;
@@ -102,5 +103,22 @@ public interface OrderService extends IService<OrderEntity> {
      * @return
      */
     OrderModel updateOrderAmazonStatus(String AmazonOrderId, OrderEntity orderEntity);
+
+    /**
+     * 同步物流订单号的方法
+     * @param sendDataMoedl
+     * @param orderId
+     */
+    void amazonUpdateLogistics(SendDataMoedl sendDataMoedl,Long orderId);
+
+    /**
+     * amazon状态更新
+     */
+    void RefreshAmazonState(OrderEntity orderEntity,OrderModel orderModel);
+
+    /**
+     * 国际物流更新
+     */
+    void RefreshOrder(Long orderId);
 }
 

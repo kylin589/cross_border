@@ -16,7 +16,7 @@ public class FileUtil {
         }
     }
 
-    public static String generateFilePath(String path, String fileType) {
+    public static String generateFilePath(String path, String fileType, Long uploadId) {
         Calendar calendar = Calendar.getInstance();
         String year = calendar.get(Calendar.YEAR) + "/";
         String month = (calendar.get(Calendar.MONTH)) + 1 + "/";
@@ -26,22 +26,22 @@ public class FileUtil {
             file.mkdirs();
         }
 
-        Random random = new Random();
-        int length = 10;
-        String numstr = "123456789";
-        String chastr_b = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String chastr_s = "abcdefghijklmnopqrstuvwxyz";
-        String specil = "_";
-        String base = numstr + chastr_b + chastr_s + specil;
-        StringBuffer sb = new StringBuffer();
-
-        sb.append(chastr_b.charAt(random.nextInt(chastr_b.length())));
-        for (int i = 0; i < length - 2; i++) {
-            int num = random.nextInt(base.length());
-            sb.append(base.charAt(num));
-        }
+//        Random random = new Random();
+//        int length = 10;
+//        String numstr = "123456789";
+//        String chastr_b = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//        String chastr_s = "abcdefghijklmnopqrstuvwxyz";
+//        String specil = "_";
+//        String base = numstr + chastr_b + chastr_s + specil;
+//        StringBuffer sb = new StringBuffer();
+//
+//        sb.append(chastr_b.charAt(random.nextInt(chastr_b.length())));
+//        for (int i = 0; i < length - 2; i++) {
+//            int num = random.nextInt(base.length());
+//            sb.append(base.charAt(num));
+//        }
         //追加最后一个数字
-        sb.append(numstr.charAt(random.nextInt(numstr.length())));
-        return path + sb.toString() + specil + fileType + ".xml";
+//        sb.append(numstr.charAt(random.nextInt(numstr.length())));
+        return path + uploadId.toString() + fileType + ".xml";
     }
 }
