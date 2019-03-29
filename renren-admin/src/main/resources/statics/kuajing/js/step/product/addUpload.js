@@ -845,7 +845,7 @@ var vm = new Vue({
 
         // 产品ID判断
         changeId:function () {
-            if(vm.upProDetails.uploadEntity.startId == '' && vm.upProDetails.uploadEntity.endId == ''){
+            if(vm.startId == '' && vm.endId == ''){
                 $('.textareaId').attr('disabled',false);
             }else {
                 $('.textareaId').attr('disabled','disabled');
