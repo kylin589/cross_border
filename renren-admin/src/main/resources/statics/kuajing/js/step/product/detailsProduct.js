@@ -2526,58 +2526,60 @@ var vm = new Vue({
 
 
                         }
-
                         $.ajax({
-                            url: '../../product/imageaddress/locationsave',
                             type: 'post',
-                            data: JSON.stringify(arr),
-                            // dataType: 'json',
+                            url: '../../product/products/modifyproduct',
                             contentType: "application/json",
+                            data: JSON.stringify(vm.proDetails),
                             success: function (r) {
-                                // console.log(r);
-                                if (r.code === 0) {
-                                    // console.log('产品相册保存');
-                                    // console.log(r);
-                                    $('.imgDiv>div').removeClass('active');
-                                    vm.getProAlbum();
-                                    // location=location;
+                                console.log('修改产品');
+                                console.log(r);
+                                console.log(vm.proDetails);
+                                if (r.code == 0) {
+
                                     $.ajax({
+                                        url: '../../product/imageaddress/locationsave',
                                         type: 'post',
-                                        url: '../../product/products/modifyproduct',
+                                        data: JSON.stringify(arr),
+                                        // dataType: 'json',
                                         contentType: "application/json",
-                                        data: JSON.stringify(vm.proDetails),
                                         success: function (r) {
-                                            console.log('修改产品');
-                                            console.log(r);
-                                            console.log(vm.proDetails);
-                                            if (r.code == 0) {
+                                            // console.log(r);
+                                            if (r.code === 0) {
+                                                // console.log('产品相册保存');
+                                                // console.log(r);
+                                                $('.imgDiv>div').removeClass('active');
+                                                vm.getProAlbum();
                                                 layer.close(index);
                                                 layer.close(index1);
                                                 vm.getProDetails();
+                                                // location=location;
 
-                                                // window.location.href = 'myProduct.html?page='+vm.page;
 
                                             } else {
-                                                layer.close(index);
-                                                alert(r.msg);
+                                                layer.alert(r.msg);
+                                                layer.close(index1);
                                             }
                                         },
-                                        error:function () {
-                                            layer.msg("网络故障");
+                                        error: function () {
                                             layer.close(index);
+                                            layer.msg("网络故障");
+                                            layer.close(index1);
                                         }
-                                    });
+                                    })
+                                    // window.location.href = 'myProduct.html?page='+vm.page;
 
                                 } else {
-                                    layer.alert(r.msg);
-                                    layer.close(index1);
+                                    layer.close(index);
+                                    alert(r.msg);
                                 }
                             },
-                            error: function () {
+                            error:function () {
                                 layer.msg("网络故障");
-                                layer.close(index1);
+                                layer.close(index);
                             }
-                        })
+                        });
+
 
 
 
