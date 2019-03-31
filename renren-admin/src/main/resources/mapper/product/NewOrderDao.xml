@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.product.dao.NewOrderDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.product.entity.NewOrderEntity" id="newOrderMap">
+                    <result property="orderId" column="order_id"/>
+                    <result property="amazonOrderId" column="amazon_order_id"/>
+                    <result property="orderItemId" column="order_item_id"/>
+                    <result property="buyDate" column="buy_date"/>
+                    <result property="orderStatus" column="order_status"/>
+                    <result property="orderState" column="order_state"/>
+                    <result property="abnormalStatus" column="abnormal_status"/>
+                    <result property="abnormalState" column="abnormal_state"/>
+                    <result property="countryCode" column="country_code"/>
+                    <result property="rateCode" column="rate_code"/>
+                    <result property="shopId" column="shop_id"/>
+                    <result property="shopName" column="shop_name"/>
+                    <result property="productId" column="product_id"/>
+                    <result property="productTitle" column="product_title"/>
+                    <result property="productSku" column="product_sku"/>
+                    <result property="productImageUrl" column="product_image_url"/>
+                    <result property="productAsin" column="product_asin"/>
+                    <result property="orderNumber" column="order_number"/>
+                    <result property="momentRate" column="moment_rate"/>
+                    <result property="purchasePrice" column="purchase_price"/>
+                    <result property="orderMoney" column="order_money"/>
+                    <result property="orderMoneyCny" column="order_money_cny"/>
+                    <result property="amazonCommission" column="amazon_commission"/>
+                    <result property="amazonCommissionCny" column="amazon_commission_cny"/>
+                    <result property="accountMoney" column="account_money"/>
+                    <result property="accountMoneyCny" column="account_money_cny"/>
+                    <result property="interFreight" column="inter_freight"/>
+                    <result property="platformCommissions" column="platform_commissions"/>
+                    <result property="orderProfit" column="order_profit"/>
+                    <result property="returnCost" column="return_cost"/>
+                    <result property="profitRate" column="profit_rate"/>
+                    <result property="domesticWaybill" column="domestic_waybill"/>
+                    <result property="abroadWaybill" column="abroad_waybill"/>
+                    <result property="userId" column="user_id"/>
+                    <result property="deptId" column="dept_id"/>
+                    <result property="updateTime" column="update_time"/>
+                    <result property="isOld" column="is_old"/>
+            </resultMap>
+
+
+</mapper>

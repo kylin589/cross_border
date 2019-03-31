@@ -1,5 +1,6 @@
 package io.renren.modules.product.vm;
 
+import io.renren.modules.order.entity.NewProductShipAddressEntity;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 
 import java.math.BigDecimal;
@@ -68,6 +69,8 @@ public class OrderModel {
     }
 
     private ProductShipAddressEntity productShipAddressEntity;//地址信息
+
+
 
     private List<OrderItemModel> orderItemModels;//订单商品信息列表
 
