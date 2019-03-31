@@ -136,6 +136,19 @@ public class OrderTimer {
      * 获得店铺授权列表信息
      */
     public void getSingleShopGrantlist(String userId){
+        ThreadGroup currentGroup =
+                Thread.currentThread().getThreadGroup();
+        int noThreads = currentGroup.activeCount();
+        Thread[] lstThreads = new Thread[noThreads];
+        currentGroup.enumerate(lstThreads);
+        int count = 0;
+        for (int i = 0; i < noThreads; i++){
+            if(lstThreads[i].getName().indexOf("taskExecutor") != -1){
+                count += 1;
+                System.out.println("线程名字：" + lstThreads[i].getName());
+            }
+        }
+        System.out.println("线程数量：" + count);
         List<AmazonGrantEntity> grantList = amazonGrantService.selectList(new EntityWrapper<AmazonGrantEntity>().eq("user_id",userId));
         Map map=new HashMap();
         List<AmazonGrantShopEntity> shoplist=null;

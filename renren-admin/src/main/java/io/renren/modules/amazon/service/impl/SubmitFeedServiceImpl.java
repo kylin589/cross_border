@@ -109,6 +109,12 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
     private static Map<String, String> uploadTypeMap;
 
+    private static <E>  List<E> transferArrayToList(E[] array){
+        List<E> transferedList = new ArrayList<>();
+        Arrays.stream(array).forEach(arr -> transferedList.add(arr));
+        return transferedList;
+    }
+
     static {
         Map map = new HashMap<String, String>();
         // 0 基本信息
@@ -144,7 +150,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             if (uploadEntity.getUploadProductsList() != null) {
                 productsEntityList = uploadEntity.getUploadProductsList();
             } else {
-                List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
+                List<String> ids = transferArrayToList(uploadEntity.getUploadProductsIds().split(","));
                 productsEntityList = productsService.selectBatchIds(ids);
             }
 
@@ -166,7 +172,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             String countryCode = amazonGrantShopEntity.getCountryCode();
             // 操作项
             String[] operateItemStr = uploadEntity.getOperateItem().split(",");
-            List<String> operateItemList = Arrays.asList(operateItemStr);
+            List<String> operateItemList = new ArrayList<String>();
+            operateItemList = transferArrayToList(operateItemStr);
             // 模板名称
             String templateName = "";
             if (uploadEntity.getAmazonTemplateId() == 0) {
@@ -176,14 +183,19 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             } else {
                 templateName = templateService.selectById(uploadEntity.getAmazonTemplateId()).getTemplateName();
             }
-
-            // 判断是否是单商品上传
-            if (productsEntityList.size() == 1) {
-                Long pId = productsEntityList.get(0).getProductId();
-                List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", pId).orderBy(true, "variant_sort", true));
-                if (variantsInfoEntityList.size() == 0) {
-                    operateItemList.remove("1");
+            boolean haveV = false;
+            // 判断是否有变体
+            int vCount = 0;
+            for(ProductsEntity pro : productsEntityList){
+                vCount = variantsInfoService.selectCount(new EntityWrapper<VariantsInfoEntity>().eq("product_id",pro.getProductId()));
+                if(vCount > 0){
+                    haveV = true;
+                    break;
                 }
+            }
+            if(!haveV){
+                operateItemList.remove("1");
+//                uploadTypeMap.remove("1");
             }
 
 
@@ -298,6 +310,9 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                                 }
                             }
                             if(tempStatus == 3){
+                                List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
+                                tempList.add(productFeedSubmissionInfoDto);
+                                updateFeedUpload(uploadId, tempList, 3);
                                 //判断用户是否有等待上传线程
                                 UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 0).eq("user_id",uploadEntity.getUserId()));
                                 if(currentUpload == null){
@@ -385,7 +400,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
                 try {
                     // 设置睡眠的时间 2 分钟
-                    Thread.sleep(2 * 60 * 1000);
+                    Thread.sleep(5 * 60 * 1000);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -724,7 +739,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     System.out.println("Request ID: " + exception.getRequestId());
                     System.out.print("XML: " + exception.getXML());
                     System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
-                    if(exception.getStatusCode() == 443 || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode()) || exception.getMessage().indexOf("Invalid seller id") != -1 || exception.getStatusCode() == -1){
+                    if(exception.getStatusCode() == 443 ||  "InvalidAccessKeyId".equals(exception.getErrorCode()) || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode()) || exception.getMessage().indexOf("Invalid seller id") != -1 || exception.getStatusCode() == -1){
                         return null;
                     }
                 } else {

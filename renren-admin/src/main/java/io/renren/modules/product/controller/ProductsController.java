@@ -1694,6 +1694,12 @@ public class ProductsController extends AbstractController {
                 products.setJapanIntroduction(japanPRE.getIntroductionId());
             }
         }
+        //设置主图片
+        ImageAddressEntity mainImage = imageAddressService.selectOne(new EntityWrapper<ImageAddressEntity>().eq("sort",0).eq("is_deleted",0).eq("product_id",products.getProductId()));
+        if(mainImage != null){
+            products.setMainImageId(mainImage.getImageId());
+            products.setMainImageUrl(mainImage.getImageUrl());
+        }
         //最后的操作时间
         products.setLastOperationTime(new Date());
         //获取最后操作用户id
@@ -1710,7 +1716,20 @@ public class ProductsController extends AbstractController {
             Long paramsId = colorVP.getParamsId();
             products.setColorId(paramsId);
         }
-        if(StringUtils.isNotBlank(products.getAuditStatus()) && "001".equals(products.getAuditStatus())){
+        //批量删除变体信息
+//        variantsInfoService.delete(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId));
+        //获得修正
+        String correction = products.getCorrection();
+        StringBuffer correctionLater = new StringBuffer();
+        String productSku = products.getProductSku();
+        correctionLater.append(productSku);
+        List<VariantsInfoEntity> variantsInfosList = products.getVariantsInfos();
+        //判断修正是否为空，不为空修改所有ean码
+        if (StringUtils.isNotBlank(correction)) {
+            products.setCorrection(correction);
+            correctionLater.append("-");
+            correctionLater.append(correction);
+            String correctionLaterString = correctionLater.toString();
             EanUpcEntity mainEanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("state",0));
             if(mainEanUpcEntity != null){
                 mainEanUpcEntity.setState(1);
@@ -1719,26 +1738,10 @@ public class ProductsController extends AbstractController {
             }else{
                 return R.error("EAN码数量不足，尽快添加");
             }
-        }
-        //批量删除变体信息
-        variantsInfoService.delete(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId));
-        //获得修正
-        String correction = products.getCorrection();
-        StringBuffer correctionLater = new StringBuffer();
-        String productSku = products.getProductSku();
-        correctionLater.append(productSku);
-        //判断修正是否为空
-        if (StringUtils.isNotBlank(correction)) {
-            products.setCorrection(correction);
-            correctionLater.append("-");
-            correctionLater.append(correction);
-        }
-        String correctionLaterString = correctionLater.toString();
-        //插入变体信息
-        List<VariantsInfoEntity> variantsInfosList = products.getVariantsInfos();
-        if (variantsInfosList != null && variantsInfosList.size() != 0) {
-            int size = variantsInfosList.size();
-            if(StringUtils.isNotBlank(products.getAuditStatus()) && "001".equals(products.getAuditStatus())){
+            //插入变体信息
+            variantsInfoService.delete(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId));
+            if (variantsInfosList != null && variantsInfosList.size() != 0) {
+                int size = variantsInfosList.size();
                 EanUpcEntity eanUpcEntity = new EanUpcEntity();
                 eanUpcEntity.setState(0);
                 eanUpcEntity.setType("EAN");
@@ -1763,27 +1766,78 @@ public class ProductsController extends AbstractController {
                     variantsInfoEntity.setUserId(getUserId());
                     variantsInfoEntity.setDeptId(getDeptId());
                 }
-                variantsInfoService.insertBatch(variantsInfosList);
-            }else{
-                for (int i = 0; i < variantsInfosList.size(); i++) {
-                    VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
-                    variantsInfoEntity.setVariantSku(correctionLaterString + "-" + i);
-                    variantsInfoEntity.setProductId(products.getProductId());
-                    variantsInfoEntity.setUserId(getUserId());
-                    variantsInfoEntity.setDeptId(getDeptId());
-                }
+                eanUpcEntities.clear();
                 variantsInfoService.insertBatch(variantsInfosList);
             }
-
+            //根据产品id进行更新
+            products.setProductSku(correctionLaterString);
+        }else{
+            //修正为空时，判断是否有ean，没有则生成
+            if(StringUtils.isBlank(products.getEanCode())){
+                EanUpcEntity mainEanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("state",0));
+                if(mainEanUpcEntity != null){
+                    mainEanUpcEntity.setState(1);
+                    products.setEanCode(mainEanUpcEntity.getCode());
+                    eanUpcService.updateById(mainEanUpcEntity);
+                }else{
+                    return R.error("EAN码数量不足，尽快添加");
+                }
+            }
+            if (variantsInfosList != null && variantsInfosList.size() != 0) {
+                if(variantsInfosList.get(0).getVariantId() != null){
+                    EanUpcEntity vEanUpcEntity = null;
+                    for (int i = 0; i < variantsInfosList.size(); i++) {
+                        if(StringUtils.isBlank(variantsInfosList.get(i).getEanCode())){
+                            vEanUpcEntity = eanUpcService.selectOne(new EntityWrapper<EanUpcEntity>().eq("state",0));
+                            if(vEanUpcEntity != null){
+                                vEanUpcEntity.setState(1);
+                                variantsInfosList.get(i).setEanCode(vEanUpcEntity.getCode());
+                                eanUpcService.updateById(vEanUpcEntity);
+                            }else{
+                                return R.error("EAN码数量不足，尽快添加");
+                            }
+                        }
+                    }
+                    variantsInfoService.updateBatchById(variantsInfosList);
+                }else{
+                    variantsInfoService.delete(new EntityWrapper<VariantsInfoEntity>().eq("product_id", productId));
+                    int size = variantsInfosList.size();
+                    EanUpcEntity eanUpcEntity = new EanUpcEntity();
+                    eanUpcEntity.setState(0);
+                    eanUpcEntity.setType("EAN");
+                    eanUpcEntity.setSize(size);
+                    //查出未使用的EAN码，修改为使用
+                    List<EanUpcEntity> eanUpcEntities = eanUpcService.selectByLimit(eanUpcEntity);
+                    if (eanUpcEntities != null && eanUpcEntities.size() > 0 && eanUpcEntities.size() == variantsInfosList.size()) {
+                        for (int i = 0; i < eanUpcEntities.size(); i++) {
+                            eanUpcEntities.get(i).setState(1);
+                            eanUpcEntities.get(i).setProductId(products.getProductId());
+                            eanUpcService.updateById(eanUpcEntities.get(i));
+                        }
+                    } else {
+                        return R.error("EAN码数量不足，尽快添加");
+                    }
+                    for (int i = 0; i < variantsInfosList.size(); i++) {
+                        String code = eanUpcEntities.get(i).getCode();
+                        VariantsInfoEntity variantsInfoEntity = variantsInfosList.get(i);
+                        variantsInfoEntity.setEanCode(code);
+                        variantsInfoEntity.setVariantSku(productSku + "-" + i);
+                        variantsInfoEntity.setProductId(products.getProductId());
+                        variantsInfoEntity.setUserId(getUserId());
+                        variantsInfoEntity.setDeptId(getDeptId());
+                    }
+                    eanUpcEntities.clear();
+                    variantsInfoService.insertBatch(variantsInfosList);
+                }
+            }
+            //根据产品id进行更新
+            products.setProductSku(productSku);
         }
-        //根据产品id进行更新
-        products.setProductSku(correctionLaterString);
+        variantsInfosList.clear();
         products.setCorrection(null);
         productsService.updateById(products);
         return R.ok();
     }
-
-
     /**
      * @methodname: costFreight 成本运费
      * @param: [productsEntity]
