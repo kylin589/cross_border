@@ -805,7 +805,7 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
     @Override
     public UploadProductDTO isNotCanUpload(Long startId, Long endId, Long userId) {
         UploadProductDTO dto = new UploadProductDTO();
-        List<ProductsEntity> list = this.selectList(new EntityWrapper<ProductsEntity>().ge("product_id",startId).and().le("product_id",endId));
+        List<ProductsEntity> list = this.selectList(new EntityWrapper<ProductsEntity>().ge("product_id",startId).and().le("product_id",endId).eq("is_deleted",0));
         List<ProductsEntity> productsList = new ArrayList<>();
         List<Long> ret = new ArrayList<Long>();
         for (int i = 0; i < list.size(); i++) {
