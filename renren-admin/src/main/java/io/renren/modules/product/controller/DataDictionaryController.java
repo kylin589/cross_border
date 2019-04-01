@@ -15,6 +15,7 @@ import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.service.SysUserRoleService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class DataDictionaryController extends AbstractController {
     @Autowired
     private ProductsService productsService;
     @Autowired
+    @Lazy
     private OrderService orderService;
     @Autowired
     private SysUserRoleService userRoleService;

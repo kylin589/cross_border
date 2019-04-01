@@ -207,6 +207,11 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
 */
         String md5 = null;
         while(md5 == null){
+            try {
+                Thread.sleep(2 * 60 * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             md5 = invokeGetFeedSubmissionResult(service, request);
             System.out.println("响应结果:=============================="+md5);
         }

@@ -30,6 +30,7 @@ import io.renren.modules.sys.service.SysDeptService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +44,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
 
 @Component("OrderLogisticsTimer")
 public class OrderLogisticsTimer {
@@ -81,6 +81,7 @@ public class OrderLogisticsTimer {
     @Value(("${mws-config.app-version}"))
     private String appVersion;
     @Autowired
+    @Lazy
     private OrderService orderService;
     @Autowired
     private ProductOrderItemService ProductOrderItemService;

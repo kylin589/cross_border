@@ -33,6 +33,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,6 +61,7 @@ public class SysLoginController extends AbstractController {
     @Autowired
     private SysDeptService deptService;
     @Autowired
+    @Lazy
     private OrderService orderService;
     @Autowired
     private EanUpcService eanUpcService;
