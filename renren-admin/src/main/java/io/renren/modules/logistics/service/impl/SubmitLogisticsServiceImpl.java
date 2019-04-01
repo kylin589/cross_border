@@ -208,7 +208,7 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
         String md5 = null;
         while(md5 == null){
             try {
-                Thread.sleep(2 * 60 * 1000);
+                Thread.sleep(2*60*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
