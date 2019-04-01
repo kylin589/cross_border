@@ -314,33 +314,29 @@
                         <h4>运单信息</h4>
                     </div>
                     <div class="pro_inf">
-                        <span><label for="">中文：</label><input type="text" placeholder="中文"></span>
-                        <span><label for="">英文：</label><input type="text" placeholder="英文"></span><br>
-                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）"></span>
+                        <span><label for="">中文：</label><input type="text" placeholder="中文" v-model="wuliuDetails.chineseName"></span>
+                        <span><label for="">英文：</label><input type="text" placeholder="英文" v-model="wuliuDetails.englishName"></span><br>
+                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="wuliuDetails.weight"></span>
                         <span style="width: 370px"><label for="">体积（cm）：</label>
-                            <input class="size_input" type="text" placeholder="长（CM）"> *
-                            <input class="size_input" type="text" placeholder="宽（CM）"> *
-                            <input class="size_input" type="text" placeholder="高（CM）">
+                            <input class="size_input" type="text" placeholder="长（CM）" v-model="wuliuDetails.length"> *
+                            <input class="size_input" type="text" placeholder="宽（CM）" v-model="wuliuDetails.width"> *
+                            <input class="size_input" type="text" placeholder="高（CM）" v-model="wuliuDetails.height">
                         </span><br>
                         <span style="width: auto"><label for="">物流：</label>
+
                             <select name="" :value="wuliuType">
-                                <option value="0">--选择--</option>
-                                <option value="云途">云途</option>
-                                <option value="三态">三态</option>
-                            </select>
-                            <select name="" :value="wuliuSize">
-                                <option value="0">--选择--</option>
-                                <option value="大包">大包</option>
-                                <option value="小包">小包</option>
+                                <option value="0">云途小包</option>
+                                <option value="1">三态大包</option>
+
                             </select>
                             <select name="" :value="wuliuLuxian">
                                 <option value="0">--选择--</option>
-                                <option v-for="item in guojilogistics" :value="item.value">{{ item.name }}</option>
+                                <option v-for="item in guojilogistics" :value="item.name">{{ item.name }}</option>
                             </select>
                         </span>
-                        <input type="button" value="生成运单号"><br>
-                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="addyundanhao" disabled></span>
-                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="addzhuizonghao" disabled></span>
+                        <input type="button" value="生成运单号" @click="createdNum"><br>
+                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" v-model="wuliuDetails.addyundanhao" disabled></span>
+                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" v-model="wuliuDetails.addzhuizonghao" disabled></span>
 
                     </div>
                 </div>
@@ -400,8 +396,8 @@
                             </select>
                         </span>
                         <input type="button" value="生成运单号"><br>
-                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="addyundanhao" disabled></span>
-                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="addzhuizonghao" disabled></span>
+                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="wuliuDetails.addyundanhao" disabled></span>
+                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="wuliuDetails.addzhuizonghao" disabled></span>
                         <br>
                         <span><label for="">备注信息：</label><textarea placeholder="备注"></textarea></span>
                     </div>

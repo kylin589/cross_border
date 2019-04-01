@@ -156,7 +156,7 @@
                 </span></td>
             <td class="imgtd" v-if="item.productImageUrl"><img :src="item.productImageUrl" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
             <td class="imgtd" v-if="!item.productImageUrl"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
-            <td><a :href="'orderDetailsCK.html?orderid='+item.orderId+'page='+proCurr">{{ item.amazonOrderId }}</a> <br/>
+            <td><a :href="'orderDetailsCK.html?orderid='+item.orderId+'page='+proCurr" style="cursor: pointer">{{ item.amazonOrderId }}</a> <br/>
                 <span class="brSpan">
                     <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
                     {{ item.shopName }}
@@ -282,5 +282,13 @@
 <script src="${request.contextPath}/statics/kuajing/js/step/order2/allOrder.js"></script>
 <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
 <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/tuozhaiduoxuan.js"></script>-->
+<script src="${request.contextPath}/statics/kuajing/js/layui.js?t=1"></script>
+<script>
+    layui.config({
+        base: '${request.contextPath}/statics/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index','console');
+</script>
 </body>
 </html>

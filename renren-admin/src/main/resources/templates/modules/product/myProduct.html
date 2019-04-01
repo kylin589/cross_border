@@ -136,7 +136,7 @@
             <img v-if="JSON.stringify(item.mainImageUrl) == 'null'" src="${request.contextPath}/statics/kuajing/img/img1.jpg">
             <h3 v-if="item.productTitle != ' ' "><a :lay-href="'modules/product/detailsProduct.html?id='+item.productId+'page='+proCurr" layadmin-event="message" :lay-text="item.productId"><el-tag v-if="item.isUpload == 1" size="mini">上传</el-tag> {{ item.productTitle }}</a></h3>
             <!--<h3 v-if="item.productTitle != ' ' "><a :href="'detailsProduct.html?id='+item.productId+'page='+proCurr" :lay-href="'detailsProduct.html?id='+item.productId+'page='+proCurr" layadmin-event="message" lay-text="消费记录"><el-tag v-if="item.isUpload == 1" size="mini">上传</el-tag> {{ item.productTitle }}</a></h3>-->
-            <h3 v-if="item.productTitle == ' ' "><a :href="'detailsProduct.html?id='+item.productId+'page='+proCurr"><el-tag v-if="item.isUpload == 1" size="mini">上传</el-tag> 产品标题</a></h3>
+            <h3 v-if="item.productTitle == ' ' "><a :lay-href="'modules/product/detailsProduct.html?id='+item.productId+'page='+proCurr" layadmin-event="message" :lay-text="item.productId"><el-tag v-if="item.isUpload == 1" size="mini">上传</el-tag> 产品标题</a></h3>
             <div class="footer">
                 <p>时间：{{ item.createTime }}</p>
                 <p>编号：{{ item.productId }}</p>

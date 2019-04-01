@@ -95,8 +95,17 @@ var vm = new Vue({
     el:'#step',
     data:{
         wuliuType:0,
-        wuliuSize:0,
         wuliuLuxian:0,
+        wuliuDetails:{
+            chineseName:'',
+            englishName:'',
+            weight:'',
+            length:'',
+            width:'',
+            height:'',
+            addyundanhao:'',
+            addzhuizonghao:'',
+        },
         orderid:null,
         page:null,
         orderDetails:{
@@ -110,61 +119,27 @@ var vm = new Vue({
         waybill:[],
         domesticLogisticsId:null,
         price:[],
-        guojilogistics:[{
-            value:1,
-            name:'中美专线(特惠)[USZXR]'
-        },{
-            value:2,
-            name:'中美专线(标快)[USZMTK]'
-        },{
-            value:3,
-            name:'云途中欧专线挂号[EUDDP]'
-        }],
+        guojilogistics:[
+            {
+                value:1,
+                name:'中美专线(特惠)[USZXR]'
+            },{
+                value:2,
+                name:'中美专线(标快)[USZMTK]'
+            },{
+                value:3,
+                name:'云途中欧专线挂号[EUDDP]'
+            }
+        ],
         intLog:{
             num:123123,
             num1:123214,
             circuit:'10 nicolson drive ',
             date:'2018-10-26'
         },
-        remark:[{
-            title:'2018-10-11',
-            name:'小明',
-            con:'深刻搭街坊世界杯s'
-        }],
-        operationLog:[{
-            date:'2018-10-28',
-            name:'小明',
-            con:'时间发货：深刻搭街坊世界杯s'
-        },{
-            date:'2018-10-28',
-            name:'小明',
-            con:'时间发货：深刻搭街坊世界杯s'
-        },{
-            date:'2018-10-28',
-            name:'小明',
-            con:'时间发货：深刻搭街坊世界杯s'
-        }],
-        addyundanhao:'123424',
-        addzhuizonghao:'34564',
-        logistics:[
-           /* {
-                context:'客户已签收',
-                time:'2018-11-10 10:00:00'
-            },
-            {
-                context:'客户已签收',
-                time:'2018-11-10 10:00:00'
-            },
-            {
-                context:'客户已签收',
-                time:'2018-11-10 10:00:00'
-            }*/
-            // {
-            //     context:'暂无物流信息',
-            //     time:new Date()
-            // }
-
-        ],
+        remark:[],
+        operationLog:[],
+        logistics:[],
         remark:'',
         remarkType:'',
         caigou:'',
@@ -792,6 +767,41 @@ var vm = new Vue({
                 btn2: function (index1) {
 
 
+                }
+            });
+        },
+        // 生成运单号
+        createdNum:function () {
+            $.ajax({
+                url: 'http://api.yunexpress.com/LMS.API/api/WayBill/BatchAdd',
+                type: 'post',
+                data: JSON.stringify({
+                    amazonOrderId:vm.orderid,
+                    packageType:vm.wuliuType,
+                    channelName:vm.wuliuLuxian,
+                    chineseName:vm.wuliuDetails.chineseName,
+                    englishName:vm.wuliuDetails.englishName,
+                    length:vm.wuliuDetails.length,
+                    width:vm.wuliuDetails.width,
+                    height:vm.wuliuDetails.height,
+                    weight:vm.wuliuDetails.weight,
+                }),
+                contentType: "application/json",
+                success: function (r) {
+                    console.log('生成单号');
+                    console.log(r);
+                    if (r.code === 0) {
+                        // layer.msg('操作成功');
+                        // layer.close(index);
+                        // vm.getOrderInfo();
+                    } else {
+                        layer.alert(r.msg);
+                        // layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    // layer.close(index);
                 }
             });
         }

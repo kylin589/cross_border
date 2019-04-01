@@ -2475,7 +2475,7 @@ var vm = new Vue({
                         vm.proDetails.variantsInfos[i].imageUrl = string.slice(0,string.length-1);
                     })
 
-                    layer.confirm('确定修改吗？', function(index){
+                    layer.confirm('确定修改吗？', function(index1){
                         var index = layer.load();
                         var index = layer.load(1); //换了种风格
                         var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
