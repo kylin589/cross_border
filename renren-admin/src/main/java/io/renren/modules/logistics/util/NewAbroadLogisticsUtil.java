@@ -13,10 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 对接新的物流接口的工具类
@@ -57,6 +54,21 @@ public class NewAbroadLogisticsUtil {
     //线上获取运费明细
     public final static String xs_yt_getShippingFeeDetail=xs_yt_url+"WayBill/GetShippingFeeDetail?wayBillNumber=";
 
+    /**
+     * 随机生成电话号码的方法
+     * @return
+     */
+    public static String getTel(){
+        for (int i = 0; i < 9; i++) {//9代表循环九次，产生九个随机号码
+            String number = "139";//定义电话号码以139开头
+            Random random = new Random();//定义random，产生随机数
+            for (int j = 0; j < 8; j++) { //生成0~9 随机数
+                number += random.nextInt(9);
+            }
+            return number;
+        }
+        return null;
+    }
 
     /**
      * 生成token的方法(Base86编码)
@@ -526,7 +538,7 @@ public class NewAbroadLogisticsUtil {
     public static void main(String[] args) {
 //        pushOrder();
 //          printOrder();
-        getOrderInfo("","","303-7832993-5749169");
+//        getOrderInfo("","","303-7832993-5749169");
 
     }
 
