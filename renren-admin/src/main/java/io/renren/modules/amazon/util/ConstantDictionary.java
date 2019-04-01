@@ -44,6 +44,7 @@ public interface ConstantDictionary {
          * 完成
          */
         String ORDER_STATE_FINISH = "Finish";
+
         /**
          * 取消订单
          */
@@ -64,11 +65,64 @@ public interface ConstantDictionary {
          * 问题
          */
         String ORDER_STATE_PROBLEM = "Problem";
+
+
+
+
+        /**
+         * 待付款
+         */
+        String NEW_ORDER_STATE_PENDING = "Pending";
+        /**
+         * 已付款
+         */
+        String NEW_ORDER_STATE_UNSHIPPED = "Unshipped";
+        /**
+         * 虚发货
+         */
+        String NEW_ORDER_STATE_SHIPPED = "Shipped";
+        /**
+         * 国内物流已采购
+         */
+        String NEW_ORDER_STATE_PURCHASED = "Purchased";
+        /**
+         * 国内物流已发货
+         */
+        String NEW_ORDER_STATE_TOBESHIPPED = "InShipped";
+        /**
+         * 仓库已入库
+         */
+        String NEW_ORDER_STATE_WAREHOUSING = "Warehousing";
+        /**
+         * 国际已发货
+         */
+        String NEW_ORDER_STATE_INTLSHIPPED = "IntlShipped";
+        /**
+         * 完成
+         */
+        String NEW_ORDER_STATE_FINISH = "Finish";
+
+        /**
+         * 取消订单
+         */
+        String NEW_ORDER_STATE_CANCELED = "Canceled";
+
+
+        /**
+         * 退货
+         */
+        String NEW_ORDER_STATE_RETURN = "Return";
+
+
+
         /**
          * AMAZON获取到的订单状态
          * 待付款、已付款、虚发货
          */
         String[] AMAZON_ORDER_STATE = {ORDER_STATE_PENDING, ORDER_STATE_UNSHIPPED, ORDER_STATE_SHIPPED};
+
+        String[] NEW_AMAZON_ORDER_STATE = {ORDER_STATE_PENDING, ORDER_STATE_UNSHIPPED, ORDER_STATE_SHIPPED};
+
         /**
          * 订单异常状态
          * 缺货、退货、补发、问题

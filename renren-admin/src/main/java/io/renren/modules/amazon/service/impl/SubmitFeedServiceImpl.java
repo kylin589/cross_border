@@ -109,6 +109,12 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
     private static Map<String, String> uploadTypeMap;
 
+    private static <E>  List<E> transferArrayToList(E[] array){
+        List<E> transferedList = new ArrayList<>();
+        Arrays.stream(array).forEach(arr -> transferedList.add(arr));
+        return transferedList;
+    }
+
     static {
         Map map = new HashMap<String, String>();
         // 0 基本信息
@@ -144,7 +150,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             if (uploadEntity.getUploadProductsList() != null) {
                 productsEntityList = uploadEntity.getUploadProductsList();
             } else {
-                List<String> ids = Arrays.asList(uploadEntity.getUploadProductsIds().split(","));
+                List<String> ids = transferArrayToList(uploadEntity.getUploadProductsIds().split(","));
                 productsEntityList = productsService.selectBatchIds(ids);
             }
 
@@ -166,6 +172,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             String countryCode = amazonGrantShopEntity.getCountryCode();
             // 操作项
             String[] operateItemStr = uploadEntity.getOperateItem().split(",");
+            List<String> operateItemList = new ArrayList<String>();
+            operateItemList = transferArrayToList(operateItemStr);
             // 模板名称
             String templateName = "";
             if (uploadEntity.getAmazonTemplateId() == 0) {
@@ -175,25 +183,28 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             } else {
                 templateName = templateService.selectById(uploadEntity.getAmazonTemplateId()).getTemplateName();
             }
-
-            // 判断是否是单商品上传
-            if (productsEntityList.size() == 1) {
-                Long pId = productsEntityList.get(0).getProductId();
-                List<VariantsInfoEntity> variantsInfoEntityList = variantsInfoService.selectList(new EntityWrapper<VariantsInfoEntity>().eq("product_id", pId).orderBy(true, "variant_sort", true));
-                if (variantsInfoEntityList.size() == 0) {
-                    //没有变体，不生成关系XML
-                    for (int i = 0; i < operateItemStr.length; i++) {
-                        if ("1".equals(operateItemStr[i])) {
-                            operateItemStr[i] = "-1";
-                        }
-                    }
+            boolean haveV = false;
+            // 判断是否有变体
+            int vCount = 0;
+            for(ProductsEntity pro : productsEntityList){
+                vCount = variantsInfoService.selectCount(new EntityWrapper<VariantsInfoEntity>().eq("product_id",pro.getProductId()));
+                if(vCount > 0){
+                    haveV = true;
+                    break;
                 }
             }
+            if(!haveV){
+                operateItemList.remove("1");
+//                uploadTypeMap.remove("1");
+            }
+
+
+
 
             // 生成xml文件路径
             Map<String, String> filePathMap = new HashMap<>();
-            for (int i = 0; i < operateItemStr.length; i++) {
-                switch (operateItemStr[i]) {
+            for (int i = 0; i < operateItemList.size(); i++) {
+                switch (operateItemList.get(i)) {
                     // 0 基本信息
                     case "0":
                         String productPath = switchCountry(templateName, uploadId, merchantId, productsEntityList, countryCode);
@@ -230,9 +241,11 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 // 产品信息上传
                 productFeedSubmissionInfoDto = submitProductFeed(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap.get("0"), filePathMap.get("0"), marketplaceIdList);
                 if(productFeedSubmissionInfoDto != null){
+                    uploadEntity.setProductsResultStatus(1);
+                    uploadEntity.setProductsSubmitId(productFeedSubmissionInfoDto.getFeedSubmissionId());
+                    uploadService.updateById(uploadEntity);
                     //使用FeedSubmissionId获取的亚马逊对于xml的处理状态
                     while (true) {
-
                         try {
                             // 设置睡眠的时间 120 秒
                             Thread.sleep(2 * 60 * 1000);
@@ -243,9 +256,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                             // 成功
                             if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(1)) {
                                 break;
-                            }
-                            // 出现如下三种情况，总状态变失败。
-                            if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(3)) {
+                            } else if (productFeedSubmissionInfoDto.getFeedProcessingStatus().equals(3)) {
+                                // 出现如下三种情况，总状态变失败。
                                 List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
                                 tempList.add(productFeedSubmissionInfoDto);
                                 updateFeedUpload(uploadId, tempList, 3);
@@ -260,7 +272,64 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                                     return;
                                 }
                             }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    List<FeedSubmissionInfoDto> oneList = new ArrayList<FeedSubmissionInfoDto>();
+                    oneList.add(productFeedSubmissionInfoDto);
+                    List<FeedSubmissionResultDto> oneResultList = new ArrayList<FeedSubmissionResultDto>();
+                    while (true) {
+                        oneResultList = getFeedSubmissionResultAsync(uploadId, fileStoragePath, serviceURL, merchantId, sellerDevAuthToken, oneList);
+                        if(oneResultList.size() > 0 && oneResultList.get(0) != null){
+                            String submissionId = productFeedSubmissionInfoDto.getFeedSubmissionId();
+                            Calendar calendar = Calendar.getInstance();
+                            String year = calendar.get(Calendar.YEAR) + "/";
+                            String month = (calendar.get(Calendar.MONTH)) + 1 + "/";
+                            // 返回结果路径
+                            String tempPath = fileStoragePath + year + month + "FeedSubmissionResult/" + submissionId + "_SubmissionResult.xml";
+                            AnalysisFeedSubmissionResultDto analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(tempPath);
+                            int tempStatus = 1;
+                            tempStatus = judgementState(analysisFeedSubmissionResultDto);
+                            uploadEntity.setProductsResultStatus(tempStatus);
+                            uploadService.updateById(uploadEntity);
+                            List<ResultXMLDto> resultXMLDtoList = analysisFeedSubmissionResultDto.getResultXMLDtoList();
+                            if (resultXMLDtoList.size() != 0) {
+                                for (int k = 0; k < resultXMLDtoList.size(); k++) {
+                                    ResultXmlEntity resultXmlEntity = new ResultXmlEntity();
+                                    resultXmlEntity.setSku(resultXMLDtoList.get(k).getSku());
+                                    resultXmlEntity.setProductId(productsService.queryIdBySku(resultXMLDtoList.get(k).getSku()));
+                                    resultXmlEntity.setUploadId(uploadId);
+                                    resultXmlEntity.setType("基本信息");
+                                    resultXmlEntity.setState(tempStatus);
+                                    resultXmlEntity.setResult(resultXMLDtoList.get(k).getResultDescription());
+                                    resultXmlEntity.setResultType(resultXMLDtoList.get(k).getResultCode());
+                                    resultXmlEntity.setResultCode(resultXMLDtoList.get(k).getResultMessageCode());
+                                    resultXmlEntity.setCreationTime(new Date());
+                                    resultXmlService.insert(resultXmlEntity);
+                                }
+                            }
+                            if(tempStatus == 3){
+                                List<FeedSubmissionInfoDto> tempList = new ArrayList<>();
+                                tempList.add(productFeedSubmissionInfoDto);
+                                updateFeedUpload(uploadId, tempList, 3);
+                                //判断用户是否有等待上传线程
+                                UploadEntity currentUpload = uploadService.selectOne(new EntityWrapper<UploadEntity>().eq("upload_state", 0).eq("user_id",uploadEntity.getUserId()));
+                                if(currentUpload == null){
+                                    System.out.println("-------------------当前上传项:" + uploadEntity.getUploadId() + "结束。" + "用户：" + userService.selectById(uploadEntity.getUserId()).getUsername() + "当前没有等待上传项，线程结束-------------------");
+                                    return;
+                                }else{
+                                    System.out.println("-------------------当前上传项:" + uploadEntity.getUploadId() + "结束。" + "用户：" + userService.selectById(uploadEntity.getUserId()).getUsername() + "当前有等待上传项，线程继续-------------------");
+                                    submitFeed(currentUpload);
+                                    return;
+                                }
+                            }
+                            break;
+                        }
 
+                        // 设置睡眠的时间 60 秒
+                        try {
+                            Thread.sleep(2 * 60 * 1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -300,11 +369,11 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
                 feedSubmissionInfoDtoList = submitFeedAsync(uploadId, serviceURL, merchantId, sellerDevAuthToken, uploadTypeMap, filePathMap, marketplaceIdList);
 
-                if (productFeedSubmissionInfoDto != null) {
-                    feedSubmissionInfoDtoList.add(productFeedSubmissionInfoDto);
-                }
-
-                if (feedSubmissionInfoDtoList.size() == filePathMap.size()) {
+//                if (productFeedSubmissionInfoDto != null) {
+//                    feedSubmissionInfoDtoList.add(productFeedSubmissionInfoDto);
+//                }
+                operateItemList.remove("0");
+                if (feedSubmissionInfoDtoList.size() == operateItemList.size() ) {
                     break;
                 }
 
@@ -331,7 +400,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
 
                 try {
                     // 设置睡眠的时间 2 分钟
-                    Thread.sleep(2 * 60 * 1000);
+                    Thread.sleep(5 * 60 * 1000);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -352,12 +421,13 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
             // 总状态改为正在上传,并改子状态
             updateFeedUpload(uploadId, feedSubmissionInfoDtoList, 1);
 
-            try {
+            //留个纪念
+           /* try {
                 // 设置睡眠的时间 5 分钟
                 Thread.sleep(5 * 60 * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             // 获取报告
             List<FeedSubmissionResultDto> feedSubmissionResultDtos;
@@ -370,8 +440,8 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 }
 
                 try {
-                    // 设置睡眠的时间 3 分钟
-                    Thread.sleep(3 * 60 * 1000);
+                    // 设置睡眠的时间 2 分钟
+                    Thread.sleep(2 * 60 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -390,9 +460,9 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 for (int j = 0; j < feedSubmissionResultDtos.size(); j++) {
                     if (submissionId.equals(feedSubmissionResultDtos.get(j).getFeedSubmissionId())) {
                         switch (feedSubmissionInfoDtoList.get(i).getFeedType()) {
-                            case "_POST_PRODUCT_DATA_":
-                                pathMap.put("基本信息", tempPath);
-                                break;
+//                            case "_POST_PRODUCT_DATA_":
+//                                pathMap.put("基本信息", tempPath);
+//                                break;
                             case "_POST_PRODUCT_RELATIONSHIP_DATA_":
                                 pathMap.put("关系", tempPath);
                                 break;
@@ -421,13 +491,13 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                 String type = null;
                 int tempStatus = 1;
                 switch (entry.getKey()) {
-                    case "基本信息":
-                        type = "基本信息";
-                        analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("基本信息"));
-                        // 子状态判断
-                        tempStatus = judgementState(analysisFeedSubmissionResultDto);
-                        uploadEntity.setProductsResultStatus(tempStatus);
-                        break;
+//                    case "基本信息":
+//                        type = "基本信息";
+//                        analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("基本信息"));
+//                        // 子状态判断
+//                        tempStatus = judgementState(analysisFeedSubmissionResultDto);
+//                        uploadEntity.setProductsResultStatus(tempStatus);
+//                        break;
                     case "关系":
                         type = "关系";
                         analysisFeedSubmissionResultDto = XMLUtil.analysisFeedSubmissionResult(pathMap.get("关系"));
@@ -554,13 +624,14 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
         submitFeedRequestList.add(request);
         List<FeedSubmissionInfoDto> feedSubmissionInfoDtoList = invokeSubmitFeedAsync(uploadId, service, submitFeedRequestList);
         if(feedSubmissionInfoDtoList != null){
-            while (feedSubmissionInfoDtoList.size() == 0) {
-                feedSubmissionInfoDtoList = invokeSubmitFeedAsync(uploadId, service, submitFeedRequestList);
+            if (feedSubmissionInfoDtoList.size() == 0) {
                 try {
                     Thread.sleep(60 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+//                feedSubmissionInfoDtoList = invokeSubmitFeedAsync(uploadId, service, submitFeedRequestList);
+                return submitProductFeed(uploadId, serviceURL, merchantId, sellerDevAuthToken, feedType, filePath, marketplaceIdList);
             }
             return feedSubmissionInfoDtoList.get(0);
         }else{
@@ -668,7 +739,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     System.out.println("Request ID: " + exception.getRequestId());
                     System.out.print("XML: " + exception.getXML());
                     System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
-                    if(exception.getStatusCode() == 443 || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode()) || exception.getMessage().indexOf("Invalid seller id") != -1 || exception.getStatusCode() == -1){
+                    if(exception.getStatusCode() == 443 ||  "InvalidAccessKeyId".equals(exception.getErrorCode()) || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode()) || exception.getMessage().indexOf("Invalid seller id") != -1 || exception.getStatusCode() == -1){
                         return null;
                     }
                 } else {
@@ -815,6 +886,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                                     temp = 0;
                                     break;
                                 default:
+                                    temp = 0;
                                     break;
                             }
                             feedSubmissionInfoDto.setFeedProcessingStatus(temp);

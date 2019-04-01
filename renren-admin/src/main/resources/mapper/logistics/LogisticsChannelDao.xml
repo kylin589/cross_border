@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.logistics.dao.LogisticsChannelDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.logistics.entity.LogisticsChannelEntity" id="logisticsChannelMap">
+                    <result property="channelId" column="channel_id"/>
+                    <result property="packageType" column="package_type"/>
+                    <result property="channelName" column="channel_name"/>
+                    <result property="channelCode" column="channel_code"/>
+                    <result property="remark" column="remark"/>
+    </resultMap>
+</mapper>
