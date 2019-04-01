@@ -30,13 +30,7 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      * @return
      */
     Map<String, Object> queryMyPage(Map<String, Object> params, Long userId);
-    /**
-     * 我的订单(旧)
-     * @param params
-     * @param userId 用户id
-     * @return
-     */
-    Map<String, Object> queryOldMyPage(Map<String, Object> params, Long userId);
+
     /**
      * 所有订单
      * @param params
@@ -44,64 +38,64 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      * @return
      */
     Map<String, Object> queryAllPage(Map<String, Object> params, Long deptId);
-    /**
-     * 所有订单(旧)
-     * @param params
-     * @param deptId 公司id
-     * @return
-     */
-    Map<String, Object> queryOldAllPage(Map<String, Object> params, Long deptId);
 
     /**
      * 修改状态
      */
     boolean updateState(Long orderId, String orderState);
+
     /**
      * 推送订单
      */
     Map<String,String> pushOrder(String  amazonOrderId, int packageType, String channelName, String chineseName, String englishName, int length,int width,int height,BigDecimal weight);
+
     /**
      * 修改异常状态
      */
     boolean updateAbnormalState(Long[] orderIds, String abnormalStatus, String abnormalState);
+
     /**
      * 更新订单列表
      */
-    void updateOrder(List<OrderModel> orderModelList);
+//    void updateOrder(List<OrderModel> orderModelList);
     /**
      * 获取以往订单
      */
-    void updateOldOrder(List<OrderModel> orderModelList);
+//    void updateOldOrder(List<OrderModel> orderModelList);
     /**
      * 国际已发货
      * 扣款
      * 生成运费记录、服务费记录
      */
     void internationalShipments(NewOrderEntity neworderEntity);
+
     /**
      * 扣款，并生成运费记录和服务费记录
      * @param
      */
     void deduction(NewOrderEntity neworderEntity);
+
     /**
      * 查询总部员工统计
      */
-    UserStatisticsDto oneLevelUserStatistics(StatisticsVM vm);
+//    UserStatisticsDto oneLevelUserStatistics(StatisticsVM vm);
+
     /**
      * 查询总部加盟商统计
      */
-    FranchiseeStatisticsDto oneLevelFranchiseeStatistics(StatisticsVM vm);
+//    FranchiseeStatisticsDto oneLevelFranchiseeStatistics(StatisticsVM vm);
+
     /**
      * 查询平台利润统计
      */
-    PlatformStatisticsDto platformStatistics(StatisticsVM vm);
+//    PlatformStatisticsDto platformStatistics(StatisticsVM vm);
 
     /**
      * 根据订单id进行更新订单Amazon状态
      * @param AmazonOrderId
      * @return
      */
-    OrderModel updateOrderAmazonStatus(String AmazonOrderId, NewOrderEntity neworderEntity);
+//    OrderModel updateOrderAmazonStatus(String AmazonOrderId, NewOrderEntity neworderEntity);
 
     /**
      * 同步物流订单号的方法
@@ -113,12 +107,12 @@ public interface NewOrderService extends IService<NewOrderEntity> {
     /**
      * amazon状态更新
      */
-    void RefreshAmazonState(NewOrderEntity neworderEntity, OrderModel orderModel);
+//    void RefreshAmazonState(NewOrderEntity neworderEntity, OrderModel orderModel);
 
     /**
      * 国际物流更新
      */
-    void RefreshOrder(Long orderId);
+//    void RefreshOrder(Long orderId);
 
     /**
      * 删除订单

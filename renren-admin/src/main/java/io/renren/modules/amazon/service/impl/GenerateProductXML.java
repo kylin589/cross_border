@@ -710,7 +710,7 @@ public class GenerateProductXML {
         Element merchantIdentifier = header.addElement("MerchantIdentifier");
         merchantIdentifier.addText(merchantIdentifierText);
         Element messageType = root.addElement("MessageType");
-        messageType.addText("Prices");
+        messageType.addText("Inventory");
         int messageId = 1;
         for (int i = 0; i < productsList.size(); i++) {
 

@@ -99,6 +99,7 @@ public class ClaimController extends AbstractController{
         product.setAuditStatus("002");
         product.setProductType("007");
         product.setEanCode(null);
+        product.setIsUpload(0);
         productsService.insert(product);
         Long newProductId = product.getProductId();
         product.setProductSku(toUser.getEnName() + "-" + toUser.getEnBrand() + "-" + newProductId);
