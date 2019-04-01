@@ -56,11 +56,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import io.renren.common.utils.PageUtils;
@@ -76,6 +72,7 @@ import static io.renren.modules.product.controller.OrderController.invokeGetOrde
  * @email 594340717@qq.com
  * @date 2019-03-28 14:50:57
  */
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("amazon/neworder")
 public class NewOrderController extends AbstractController {
