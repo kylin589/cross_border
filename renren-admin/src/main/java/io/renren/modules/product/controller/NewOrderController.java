@@ -12,6 +12,7 @@ import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConf
 import com.amazonservices.mws.orders._2013_09_01.model.GetOrderRequest;
 import com.amazonservices.mws.orders._2013_09_01.model.GetOrderResponse;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.google.gson.JsonArray;
 import io.renren.common.utils.DateUtils;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.entity.AmazonGrantEntity;
@@ -43,6 +44,7 @@ import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.service.NoticeService;
 import io.renren.modules.sys.service.SysDeptService;
+import net.sf.json.JSONArray;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -635,8 +637,11 @@ public class NewOrderController extends AbstractController {
         List<String> list=newOrderService.getShippingMethodCode(orderVM.getPackageType());
         if(CollectionUtils.isEmpty(list)){
             return R.error("物流信息不存在");
+        }else{
+            JSONArray jsonArray = JSONArray.fromObject(list);
+            return  R.ok(jsonArray.toString());
         }
-        return  R.ok();
+
     }
 
 
