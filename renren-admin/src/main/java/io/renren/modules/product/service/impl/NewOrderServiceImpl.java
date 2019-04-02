@@ -425,9 +425,10 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
             ApplicationInfos omsOrderDetail=new ApplicationInfos();
             omsOrderDetail.setApplicationName(productOrderItemEntity.getProductTitle());
-            omsOrderDetail.setQty(productOrderItemEntity.getOrderItemNumber());
-            omsOrderDetail.setUnitPrice(productOrderItemEntity.getProductPrice());
-            BigDecimal unitweight=new BigDecimal(1.02);//测试用
+            omsOrderDetail.setQty(1);
+            BigDecimal UnitPrice=new BigDecimal(1);//测试用
+            omsOrderDetail.setUnitPrice(UnitPrice);
+            BigDecimal unitweight=new BigDecimal(1);//测试用
             omsOrderDetail.setUnitWeight(unitweight);
             NewOrderEntity newOrderEntity=this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id",productOrderItemEntity.getAmazonOrderId()));
             omsOrderDetail.setProductUrl(productOrderItemEntity.getProductImageUrl()==null ? newOrderEntity.getProductImageUrl():productOrderItemEntity.getProductImageUrl());
