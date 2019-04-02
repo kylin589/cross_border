@@ -39,6 +39,7 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      */
     Map<String, Object> queryAllPage(Map<String, Object> params, Long deptId);
 
+    PageUtils queryNewAllPage(Map<String, Object> params);
     /**
      * 修改状态
      */
@@ -128,5 +129,9 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      * 获取保存推送订单信息
      */
     Map<String,String>  getShippingFeeDetail(String orderNumber);
+    /*
+     * 获取运输代码
+     */
+    List<String>  getShippingMethodCode(int type);
 }
 

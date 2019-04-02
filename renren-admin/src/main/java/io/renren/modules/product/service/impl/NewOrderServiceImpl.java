@@ -110,16 +110,16 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     NewProductShipAddressService newProductShipAddressService;
     @Autowired
     NewOrderService newOrderService;
-     @Autowired
+    @Autowired
     NewOrderItemService newOrderItemService;
     @Autowired
     private SysDeptService deptService;
-     @Autowired
-     private DomesticLogisticsService domesticLogisticsService;
+    @Autowired
+    private DomesticLogisticsService domesticLogisticsService;
     @Autowired
     private ProductsService productsService;
-     @Autowired
-     private LogisticsChannelService logisticsChannelService;
+    @Autowired
+    private LogisticsChannelService logisticsChannelService;
     @Autowired
     private ProductShipAddressService productShipAddressService;
     @Autowired
@@ -363,6 +363,31 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     }
 
     @Override
+    public PageUtils queryNewAllPage(Map<String, Object> params){
+        //国内物流单号
+        String domesticWaybill = (String) params.get("domesticWaybill");
+        //国外物流单号
+        String abroadWaybill = (String) params.get("abroadWaybill");
+        //亚马逊单号
+        String amazonOrderId = (String)params.get("amazonOrderId");
+        //订单id
+        String orderIdStr = (String) params.get("orderId");
+        Long orderId = 0L;
+        if(StringUtils.isNotBlank(orderIdStr)){
+            orderId = Long.parseLong(orderIdStr);
+        }
+        //查询条件
+        EntityWrapper<NewOrderEntity> wrapper = new EntityWrapper<NewOrderEntity>();
+        wrapper.eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill);
+        return new PageUtils(this.selectPage(
+                new Query<NewOrderEntity>(params).getPage(),
+                wrapper
+        ));
+    }
+    @Override
     //修改状态
     public boolean updateState(Long orderId, String orderState) {
         String orderStatus = dataDictionaryService.selectOne(
@@ -378,17 +403,14 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         return false;
     }
     @Override
-    public Map<String,String> pushOrder(String amazonOrderId, int packageType, String channelName, String chineseName, String englishName, int length, int width, int height, BigDecimal weight){
+    public Map<String,String> pushOrder(String amazonOrderId, int packageType, String channelCode, String chineseName, String englishName, int length, int width, int height, BigDecimal weight){
         NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", amazonOrderId));
         NewProductShipAddressEntity newshipAddressEntity = newProductShipAddressService.selectOne(new EntityWrapper<NewProductShipAddressEntity>().eq("amazon_order_id",amazonOrderId));
         ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("order_id", newshipAddressEntity.getOrderId()));
         //推送--订单基本信息
         OrderRequestData omsOrder = new OrderRequestData();
         omsOrder.setOrderNumber(amazonOrderId);
-        LogisticsChannelEntity logisticsChannelEntity=logisticsChannelService.selectOne(new EntityWrapper<LogisticsChannelEntity>().eq("channel_name",channelName));
-        if(logisticsChannelEntity!=null){
-            omsOrder.setShippingMethodCode(logisticsChannelEntity.getChannelCode());//测试用的
-        }
+        omsOrder.setShippingMethodCode(channelCode);//测试用的
         omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
         omsOrder.setWeight(weight);
         //推送--订单详情
@@ -825,6 +847,19 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     @Override
     public Map<String,String>  getShippingFeeDetail(String orderNumber) {
        return NewAbroadLogisticsUtil.getShippingFeeDetail("","",orderNumber);
+    }
+
+    @Override
+    public  List<String>  getShippingMethodCode(int type) {
+        List<String> result =new  ArrayList<>();
+        List<LogisticsChannelEntity> channelilist = logisticsChannelService.selectList(new EntityWrapper<LogisticsChannelEntity>().eq("package_type", type));
+        for (LogisticsChannelEntity logisticsChannelEntity:channelilist){
+            String key=logisticsChannelEntity.getChannelName();
+            String value=logisticsChannelEntity.getChannelCode();
+            String str=key+":"+value;
+            result.add(str);
+        }
+        return result;
     }
 
     /**

@@ -21,7 +21,7 @@ public class AsyncConfig {
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // 核心线程数10：线程池创建时候初始化的线程数
-        executor.setCorePoolSize(500);
+        executor.setCorePoolSize(1000);
         // 最大线程数20：线程池最大的线程数，只有在缓冲队列满了之后才会申请超过核心线程数的线程
         executor.setMaxPoolSize(3000);
         // 缓冲队列200：用来缓冲执行任务的队列
