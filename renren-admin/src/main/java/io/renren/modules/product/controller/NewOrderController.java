@@ -632,16 +632,10 @@ public class NewOrderController extends AbstractController {
      * 获取物流专线代码接口
      */
     @RequestMapping("/getShippingMethodCode")
-    public R getShippingMethodCode(@RequestBody OrderVM orderVM){
+    public R getShippingMethodCode(@RequestParam int type){
         //先调用获取物流专线代码的方法
-        List<String> list=newOrderService.getShippingMethodCode(orderVM.getPackageType());
-        if(CollectionUtils.isEmpty(list)){
-            return R.error("物流信息不存在");
-        }else{
-            JSONArray jsonArray = JSONArray.fromObject(list);
-            return  R.ok(jsonArray.toString());
-        }
-
+        List<LogisticsChannelEntity> channelilist = logisticsChannelService.selectList(new EntityWrapper<LogisticsChannelEntity>().eq("package_type", type));
+        return R.ok().put("channelilist",channelilist);
     }
 
 
