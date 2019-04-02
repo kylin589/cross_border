@@ -645,7 +645,7 @@ public class NewOrderController extends AbstractController {
         String  amazonOrderId=orderVM.getAmazonOrderId();
         //推送订单
         if(orderVM.getPackageType() == 0){
-            Map<String,String> result = newOrderService.pushOrder(amazonOrderId,orderVM.getPackageType(),orderVM.getChannelCode(),orderVM.getChineseName(),orderVM.getEnglishName(),orderVM.getLength(),orderVM.getWidth(),orderVM.getHeight(),orderVM.getWeight());
+            Map<String,String> result = newOrderService.pushOrder(amazonOrderId,orderVM.getPackageType(),orderVM.getChannelCode(),orderVM.channelName,orderVM.getEnglishName(),orderVM.getLength(),orderVM.getWidth(),orderVM.getHeight(),orderVM.getWeight());
             if("false".equals(result.get("code")) || "0".equals(result.get("Status"))){
                 return R.error("订单推送失败,错误原因：" + result.get("msg"));
             }else{
