@@ -412,8 +412,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     @Override
     public Map<String,String> pushOrder(String amazonOrderId, int packageType, String channelCode, String chineseName, String englishName, int length, int width, int height, BigDecimal weight){
         NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", amazonOrderId));
-        NewProductShipAddressEntity newshipAddressEntity = newProductShipAddressService.selectOne(new EntityWrapper<NewProductShipAddressEntity>().eq("amazon_order_id",amazonOrderId));
-        ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("order_id", newshipAddressEntity.getOrderId()));
+        ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", amazonOrderId));
         //推送--订单基本信息
         OrderRequestData omsOrder = new OrderRequestData();
         omsOrder.setOrderNumber(amazonOrderId);
