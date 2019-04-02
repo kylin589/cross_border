@@ -111,6 +111,10 @@ public class OrderController extends AbstractController{
     @Autowired
     private ProductOrderItemService productOrderItemService;
     @Autowired
+    private NewOrderService newOrderService;
+    @Autowired
+    private NewOrderItemService newOrderItemService;
+    @Autowired
     private ProductShipAddressService productShipAddressService;
     @Autowired
     private DomesticLogisticsService domesticLogisticsService;
@@ -485,8 +489,8 @@ public class OrderController extends AbstractController{
             return R.error("余额不足，请联系公司管理员及时充值后再次尝试");
         }*/
         Long orderId = orderVM.getOrderId();
+        String amazonOrderId=orderVM.getAmazonOrderId();
         AbroadLogisticsEntity abroadLogistics = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
-
         Random random = new Random();
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("YT3");
@@ -495,10 +499,21 @@ public class OrderController extends AbstractController{
         }
         //生成国际物流单号
         String abroadWaybill = stringBuffer.toString();
-        OrderEntity order = orderService.selectById(orderId);
+        OrderEntity order = orderService.selectOne(new EntityWrapper<OrderEntity>().eq("amazon_order_id",amazonOrderId));
         //设置状态为虚发货
         order.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_SHIPPED);
         order.setOrderState("虚发货");
+        //进行逻辑判断（走虚发货步骤时判断，新物流则查询旧订单中是否有，有则删除所有关联信息；旧物流则查询新订单中是否有该订单，有则删除所有关联信息。）
+        NewOrderEntity neworderEntity=newOrderService.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id",amazonOrderId));
+        if(order !=null && neworderEntity!=null){
+            List<NewOrderItemEntity>  newOrderItemEntities=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",order.getAmazonOrderId()));
+            if(newOrderItemEntities.size()>0){
+                for(NewOrderItemEntity newOrderItemEntity:newOrderItemEntities){
+                    newOrderItemService.deleteById(newOrderItemEntity.getItemId());
+                }
+            }
+            newOrderService.deleteById(neworderEntity.getOrderId());
+        }
         //设置国际物流单号
         order.setAbroadWaybill(abroadWaybill);
         if(abroadLogistics != null){
@@ -510,7 +525,7 @@ public class OrderController extends AbstractController{
         }else{
             //生成国际物流对象
             abroadLogistics = new AbroadLogisticsEntity();
-            abroadLogistics.setOrderId(orderId);
+            abroadLogistics.setOrderId(order.getOrderId());
             abroadLogistics.setAbroadWaybill(abroadWaybill);
             abroadLogistics.setIsSynchronization(2);//表示正在同步中
             abroadLogistics.setCreateTime(new Date());
@@ -523,7 +538,7 @@ public class OrderController extends AbstractController{
         //准备订单国际物流上传信息模型
         SendDataMoedl sendDataMoedl = synchronizationXuModel(order,abroadLogistics);
         // 将运单号同步到亚马逊平台
-        orderService.amazonUpdateLogistics(sendDataMoedl,orderId);
+        orderService.amazonUpdateLogistics(sendDataMoedl,order.getOrderId());
         return R.ok().put("abroadLogistics",abroadLogistics);
     }
     /**
