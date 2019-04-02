@@ -94,7 +94,7 @@ window.onload = function (ev) {
 var vm = new Vue({
     el:'#step',
     data:{
-        wuliuType:0,
+        wuliuType:null,
         value8:null,
         wuliuDetails:{
             chineseName:'',
@@ -121,14 +121,7 @@ var vm = new Vue({
         domesticLogisticsId:null,
         price:[],
         guojilogistics:[
-            {
-                channelCode:'2222',
-                channelName:'222222'
-            },
-            {
-                channelCode:'333',
-                channelName:'33333'
-            }
+
         ],
         intLog:{
             num:123123,
@@ -731,7 +724,6 @@ var vm = new Vue({
         },
         // 添加国际物流
         addguojiWul:function () {
-            vm.getWuliuXianl();
             layer.open({
                 type: 1,
                 title: false,
@@ -744,7 +736,8 @@ var vm = new Vue({
             });
         },
         // 国际物流明细
-        detailsguojiWul:function () {
+        detailsguojiWul:function (i) {
+            vm.getWlDetails = vm.abroadLogistics[i];
             layer.open({
                 type: 1,
                 title: false,
@@ -765,12 +758,15 @@ var vm = new Vue({
         },
         // 生成运单号
         createdNum:function () {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../amazon/neworder/createAbroadWaybill',
                 type: 'post',
                 data: JSON.stringify({
                     amazonOrderId:vm.orderDetails.amazonOrderId,
-                    packageType:vm.wuliuType,
+                    packageType:parseInt(vm.wuliuType),
                     channelName:vm.value8,
                     // channelName:vm.wuliuLuxian,
                     chineseName:vm.wuliuDetails.chineseName,
@@ -786,50 +782,57 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === '0') {
                         // layer.msg('操作成功');
-                        // layer.close(index);
+                        layer.close(index);
                         // vm.getOrderInfo();
                     } else {
                         layer.alert(r.msg);
-                        // layer.close(index);
+                        layer.close(index);
                     }
                 },
                 error: function () {
                     layer.msg("网络故障");
-                    // layer.close(index);
+                    layer.close(index);
                 }
             });
         },
         // 获取物流线路的下拉
         getWuliuXianl:function () {
-
-            $.ajax({
-                url: '../../amazon/neworder/getShippingMethodCode',
-                type: 'get',
-                data: {
-                    type:vm.wuliuType
-                },
-                dataType: 'json',
-                // contentType: "application/json",
-                success: function (r) {
-                    console.log('线路下拉');
-                    console.log(r);
-                    if (r.code == '0') {
-                        // layer.msg('操作成功');
-                        // layer.close(index);
-                        // vm.getOrderInfo();
-                        vm.guojilogistics = r.channelilist;
-                        vm.wuliuLuxian = vm.guojilogistics[0].channelName;
-                        console.log(vm.guojilogistics);
-                    } else {
-                        layer.alert(r.msg);
+            // if(vm.wuliuType != 0 || vm.wuliuType != 1){
+            //     vm.wuliuType = 0;
+            // }
+            if(vm.wuliuType){
+                $.ajax({
+                    url: '../../amazon/neworder/getShippingMethodCode',
+                    type: 'get',
+                    data: {
+                        type:vm.wuliuType
+                    },
+                    dataType: 'json',
+                    // contentType: "application/json",
+                    success: function (r) {
+                        console.log('线路下拉');
+                        console.log(r);
+                        if (r.code == '0') {
+                            // layer.msg('操作成功');
+                            // layer.close(index);
+                            // vm.getOrderInfo();
+                            vm.guojilogistics = r.channelilist;
+                            vm.wuliuLuxian = vm.guojilogistics[0].channelName;
+                            console.log(vm.guojilogistics);
+                        } else {
+                            layer.alert(r.msg);
+                            // layer.close(index);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
                         // layer.close(index);
                     }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                    // layer.close(index);
-                }
-            });
+                });
+            }else {
+                layer.msg('请先选择订单包裹类型');
+            }
+
         },
         // 物流明细
         getWuliuDetails:function(){
@@ -888,9 +891,7 @@ var vm = new Vue({
                 }
             });
         },
-        changea:function () {
-            console.log(vm.wuliuLuxian);
-        }
+
     },
     created:function () {
         var url = decodeURI(window.location.href);

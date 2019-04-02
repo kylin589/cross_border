@@ -19,6 +19,10 @@
                 color: #fff;
                 border-radius: 3px;
             }
+
+            .search1>div{
+                width: 250px;
+            }
             .search1 input{
                 width: 240px;
             }
@@ -35,11 +39,30 @@
         <!--</select>-->
 
 
-        <input type="text" placeholder="订单id" v-model="orderId">
-        <input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">
-
-        <input type="text" class="sousuoAreaInput" placeholder="国内物流单号" v-model="domesticWaybill">
-        <input type="text" placeholder="国际物流单号" v-model="abroadWaybill">
+        <!--<input type="text" placeholder="订单id" v-model="orderId">-->
+        <el-input
+                placeholder="订单id"
+                v-model="orderId"
+                clearable>
+        </el-input>
+        <!--<input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">-->
+        <el-input
+                placeholder="亚马逊订单id"
+                v-model="amazonOrderId"
+                clearable>
+        </el-input>
+        <!--<input type="text" class="sousuoAreaInput" placeholder="国内物流单号" v-model="domesticWaybill">-->
+        <el-input
+                placeholder="国内物流单号"
+                v-model="domesticWaybill"
+                clearable>
+        </el-input>
+        <!--<input type="text" placeholder="国际物流单号" v-model="abroadWaybill">-->
+        <el-input
+                placeholder="国际物流单号"
+                v-model="abroadWaybill"
+                clearable>
+        </el-input>
 
 
         <!--<button class="sousuo" @click="getOrderlist('')">搜索</button>-->
