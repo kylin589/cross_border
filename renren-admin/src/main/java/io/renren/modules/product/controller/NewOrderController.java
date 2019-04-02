@@ -654,12 +654,12 @@ public class NewOrderController extends AbstractController {
                 String abroadWaybill = result.get("WayBillNumber");
                 //获取国际追踪号
                 String track_waybill=result.get("TrackingNumber");
-                NewOrderEntity neworder = newOrderService.selectById(orderId);
+                NewOrderEntity neworder = newOrderService.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id",amazonOrderId));
                 //设置状态为虚发货
                 neworder.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_SHIPPED);
                 neworder.setOrderState("虚发货");
                 //进行逻辑判断（走虚发货步骤时判断，新物流则查询旧订单中是否有，有则删除所有关联信息；旧物流则查询新订单中是否有该订单，有则删除所有关联信息。）
-                OrderEntity orderEntity=orderService.selectById(orderId);
+                OrderEntity orderEntity=orderService.selectOne(new EntityWrapper<OrderEntity>().eq("amazon_order_id",amazonOrderId));
                 if(neworder !=null && orderEntity!=null){
                     List<ProductOrderItemEntity>  productOrderItemEntities=productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id",orderEntity.getAmazonOrderId()));
                     if(productOrderItemEntities.size()>0){
@@ -667,7 +667,7 @@ public class NewOrderController extends AbstractController {
                             productOrderItemService.deleteById(productOrderItemEntity.getItemId());
                         }
                     }
-                    orderService.deleteById(orderId);
+                    orderService.deleteById(orderEntity.getOrderId());
                 }
                 //设置国际物流单号
                 neworder.setAbroadWaybill(abroadWaybill);
@@ -694,7 +694,7 @@ public class NewOrderController extends AbstractController {
                 }else{
                     //生成国际物流对象
                     newabroadLogistics = new NewOrderAbroadLogisticsEntity();
-                    newabroadLogistics.setOrderId(orderId);
+                    newabroadLogistics.setOrderId(neworder.getOrderId());
                     newabroadLogistics.setLength(orderVM.getLength());
                     newabroadLogistics.setWidth(orderVM.getWidth());
                     newabroadLogistics.setHeight(orderVM.getHeight());
@@ -720,7 +720,7 @@ public class NewOrderController extends AbstractController {
                 //准备订单国际物流上传信息模型
                 SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder,newabroadLogistics,"Yun Express");
                 // 将运单号同步到亚马逊平台
-                newOrderService.amazonUpdateLogistics(sendDataMoedl,orderId);
+                newOrderService.amazonUpdateLogistics(sendDataMoedl,neworder.getOrderId());
                 return R.ok().put("newabroadLogistics",newabroadLogistics);
             }
         }else{
