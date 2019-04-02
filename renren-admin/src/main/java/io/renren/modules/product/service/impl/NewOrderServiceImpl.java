@@ -372,6 +372,11 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         String amazonOrderId = (String)params.get("amazonOrderId");
         //订单id
         String orderIdStr = (String) params.get("orderId");
+        //状态标识
+        String orderStatus = (String) params.get("orderStatus");
+        //异常状态标识
+        String abnormalStatus = (String) params.get("abnormalStatus");
+
         Long orderId = 0L;
         if(StringUtils.isNotBlank(orderIdStr)){
             orderId = Long.parseLong(orderIdStr);
@@ -381,7 +386,9 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         wrapper.eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
                 .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
                 .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
-                .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill);
+                .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
+                .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus);
         return new PageUtils(this.selectPage(
                 new Query<NewOrderEntity>(params).getPage(),
                 wrapper
