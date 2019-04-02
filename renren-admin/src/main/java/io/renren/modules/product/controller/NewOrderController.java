@@ -1145,55 +1145,11 @@ public class NewOrderController extends AbstractController {
         outfile.println(resultXml);// 输出String
         outfile.flush();// 输出缓冲区的数据
         outfile.close();
-//         List<Object> responseList =listOrdersAsyncService.invokeListOrders(client,requestList);
-        //进行数据上传(步骤一)
+        //进行数据上传
         String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0), sellerId, mwsAuthToken, feedType, filePath, accessKey, secretKey);
-        //进行数据上传(步骤二)
-        List<String> feedSubmissionIds = submitLogisticsService.getFeedSubmissionList(serviceURL.get(0), sellerId, mwsAuthToken, feedSubmissionId, accessKey, secretKey);
-        System.out.println("==========================" + feedSubmissionIds.get(0) + "=============================");
-        if (feedSubmissionIds.size() > 0 && feedSubmissionIds != null) {
-            //进行数据上传(步骤三)
-            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0), sellerId, mwsAuthToken, feedSubmissionIds.get(0), accessKey, secretKey);
             NewOrderAbroadLogisticsEntity newabroadLogisticsEntity = newOrderAbroadLogisticsService.selectOne(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id", orderId));
-            String amazonOrderId = newOrderService.selectById(orderId).getAmazonOrderId();
-            //从后代调用接口获取亚马逊后台的订单状态
-            String orderStatus = "";
-            MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
-            config.setServiceURL(serviceURL.get(0));
-            MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
-                    "my_test", "1.0", config, null);
-            List<GetOrderRequest> requestList = new ArrayList<GetOrderRequest>();
-            GetOrderRequest request = new GetOrderRequest();
-            request.setSellerId(sellerId);
-            request.setMWSAuthToken(mwsAuthToken);
-            List<String> amazonOrderIds = new ArrayList<String>();
-            amazonOrderIds.add(amazonOrderId);
-            request.setAmazonOrderId(amazonOrderIds);
-            requestList.add(request);
-            List<Object> responseList = invokeGetOrder(client, requestList);
-            Boolean isSuccess = false;
-            GetOrderResponse getOrderResponse = null;
-            for (Object tempResponse : responseList) {
-                // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
-                String className = tempResponse.getClass().getName();
-                if ((GetOrderResponse.class.getName()).equals(className) == true) {
-                    System.out.println("responseList 类型是 GetOrderResponse。");
-                    GetOrderResponse response = (GetOrderResponse) tempResponse;
-                    System.out.println(response.toXML());
-                    orderStatus = response.toXML();
-                    if (orderStatus.contains("<OrderStatus>")) {
-                        orderStatus = orderStatus.substring(orderStatus.indexOf("<OrderStatus>"), orderStatus.indexOf("</OrderStatus>")).replace("<OrderStatus>", "");
-                    }
-                    isSuccess = true;
-                } else {
-                    System.out.println("responseList 类型是 MarketplaceWebServiceOrderException。");
-                    isSuccess = false;
-                    continue;
-                }
-            }
-
             //判读亚马逊后台订单的状态
-            if ("Shipped".equals(orderStatus)) {
+            if (StringUtils.isNotBlank(feedSubmissionId)) {
                 newabroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
                 newOrderAbroadLogisticsService.updateById(newabroadLogisticsEntity);
             } else {
@@ -1204,6 +1160,6 @@ public class NewOrderController extends AbstractController {
 
         }
 
-    }
+
 
 }
