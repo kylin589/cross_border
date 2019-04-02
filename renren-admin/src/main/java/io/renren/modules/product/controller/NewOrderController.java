@@ -338,6 +338,7 @@ public class NewOrderController extends AbstractController {
         if(newshipAddress == null){
             orderDTO.setShipAddress(new ProductShipAddressEntity());
         }
+        orderDTO.setShipAddress(newshipAddress);
 //        List<NewOrderDomesticLogisticsEntity> domesticLogisticsList = newOrderDomesticLogisticsService.selectList(
 //                new EntityWrapper<NewOrderDomesticLogisticsEntity>().eq("order_id",orderId)
 //        );
