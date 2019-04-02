@@ -168,7 +168,7 @@ var vm = new Vue({
             // console.log(this.endDate);
             this.orderStatus = orderStatus;
             $.ajax({
-                url: '../../product/order/getMyList',
+                url: '../../amazon/neworder/getMyList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -218,7 +218,7 @@ var vm = new Vue({
             // console.log(this.endDate);
             this.orderStatus = orderStatus;
             $.ajax({
-                url: '../../product/order/getMyList',
+                url: '../../amazon/neworder/getMyList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -268,7 +268,7 @@ var vm = new Vue({
             // console.log(this.endDate);
             this.orderStatus1 = orderStatus;
             $.ajax({
-                url: '../../product/order/getMyList',
+                url: '../../amazon/neworder/getMyList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -314,7 +314,7 @@ var vm = new Vue({
             console.log(this.endDate);
             // this.orderStatus = orderStatus;
             $.ajax({
-                url: '../../product/order/getMyList',
+                url: '../../amazon/neworder/getMyList',
                 type: 'post',
                 data: {
                     'page': this.proCurr,
@@ -354,7 +354,7 @@ var vm = new Vue({
         getOrderStatenum:function (event) {
             // $(event.target).
             $.ajax({
-                url: '../../product/datadictionary/myOrderStateList',
+                url: '../../product/datadictionary/allNewOrderStateList',
                 type: 'get',
                 data: {},
                 dataType: 'json',
@@ -604,7 +604,7 @@ var vm = new Vue({
         // this.laypage();
         this.getOrderStatenum();
         this.getYichangList();
-        this.myShopList();
+        // this.myShopList();
 
     }
 })

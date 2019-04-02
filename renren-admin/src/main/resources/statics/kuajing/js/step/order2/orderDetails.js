@@ -196,7 +196,7 @@ var vm = new Vue({
         getOrderInfo:function () {
             console.log(this.orderid);
             $.ajax({
-                url: '../../product/order/getOrderInfo',
+                url: '../../amazon/neworder/getOrderInfo',
                 type: 'get',
                 data: {
                     orderId:this.orderid
@@ -733,6 +733,7 @@ var vm = new Vue({
         },
         // 添加国际物流
         addguojiWul:function () {
+            vm.getWuliuXianl();
             layer.open({
                 type: 1,
                 title: false,
@@ -805,15 +806,13 @@ var vm = new Vue({
 
             $.ajax({
                 url: '../../amazon/neworder/getShippingMethodCode',
-                type: 'post',
-                data: JSON.stringify({
-                    amazonOrderId:vm.orderDetails.amazonOrderId,
-                }),
+                type: 'get',
+                data: vm.wuliuType,
                 contentType: "application/json",
                 success: function (r) {
                     console.log('线路下拉');
                     console.log(r);
-                    if (r.code === '0') {
+                    if (r.code == '0') {
                         // layer.msg('操作成功');
                         // layer.close(index);
                         // vm.getOrderInfo();

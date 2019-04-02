@@ -21,14 +21,14 @@
 <div class="box" id="step" v-cloak>
 
     <form>
-        <!--<p>-->
-            <!--<span class="layui-breadcrumb1" style="visibility: visible;">-->
+        <p>
+            <span class="layui-breadcrumb1" style="visibility: visible;">
               <!--<a :href="'myOrder.html?page='+page">订单列表 / </a>-->
-              <!--<a><cite>订单详情</cite></a>-->
-            <!--</span>-->
+              <a><cite>订单详情</cite></a>
+            </span>
 
             <!--<input type="button" class="return" @click="returnFunc" value="返回" />-->
-        <!--</p>-->
+        </p>
 
         <div class="form_item one">
             <div class="item">
@@ -373,26 +373,26 @@
                     </div>
                     <div class="pro_inf">
                         <span><label for="">运单状态：</label><span style="color: #00a3e8"> {{ getWlDetails.state }} </span></span><br>
-                        <span><label for="">中文：</label><input type="text" placeholder="中文" v-model="getWlDetails.chineseName"></span>
-                        <span><label for="">英文：</label><input type="text" placeholder="英文" v-model="getWlDetails.englishName"></span><br>
-                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="getWlDetails.weight"></span>
+                        <span><label for="">中文：</label><input type="text" placeholder="中文" v-model="getWlDetails.chineseName" disabled></span>
+                        <span><label for="">英文：</label><input type="text" placeholder="英文" v-model="getWlDetails.englishName" disabled></span><br>
+                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="getWlDetails.weight" disabled></span>
                         <span style="width: 370px"><label for="">体积（cm）：</label>
-                            <input class="size_input" type="text" placeholder="长（CM）" v-model="getWlDetails.length"> *
-                            <input class="size_input" type="text" placeholder="宽（CM）" v-model="getWlDetails.width"> *
-                            <input class="size_input" type="text" placeholder="高（CM）" v-model="getWlDetails.height">
+                            <input class="size_input" type="text" placeholder="长（CM）" v-model="getWlDetails.length" disabled> *
+                            <input class="size_input" type="text" placeholder="宽（CM）" v-model="getWlDetails.width" disabled> *
+                            <input class="size_input" type="text" placeholder="高（CM）" v-model="getWlDetails.height" disabled>
                         </span><br>
                         <span style="width: auto"><label for="">物流：</label>
-                            <select name="" :value="wuliuType">
+                            <select name="" v-model="wuliuType" disabled>
                                 <option value="0">云途小包</option>
                                 <option value="1">三态大包</option>
 
                             </select>
-                            <select name="" v-model="getWlDetails.">
+                            <select name="" v-model="wuliuLuxian" disabled>
                                 <option value="0">--选择--</option>
                                 <option v-for="item in guojilogistics" :value="item.value">{{ item.name }}</option>
                             </select>
                         </span>
-                        <input type="button" value="生成运单号"><br>
+                        <!--<input type="button" value="生成运单号"><br>-->
                         <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="getWlDetails.addyundanhao" disabled></span>
                         <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="getWlDetails.addzhuizonghao" disabled></span>
                         <br>

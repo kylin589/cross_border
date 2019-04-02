@@ -19,13 +19,16 @@
                 color: #fff;
                 border-radius: 3px;
             }
+            .search1 input{
+                width: 240px;
+            }
         </style>
         </head>
 <body>
 <div class="box" id="step" v-cloak>
 
     <!--搜索区域-->
-    <div class="search1">
+    <div class="search1" style="text-align: center">
         <!--<select name="remark_type" class="sousuoAreaInput" v-model="shopName">-->
             <!--<option value="" selected="selected">店铺名称</option>-->
             <!--<option :value="item.shopName" v-for="item in shopList">{{item.shopName}}</option>-->
@@ -37,19 +40,10 @@
 
         <input type="text" class="sousuoAreaInput" placeholder="国内物流单号" v-model="domesticWaybill">
         <input type="text" placeholder="国际物流单号" v-model="abroadWaybill">
-        <div style="display: inline-block;">
-            <el-date-picker
-                    value-format="yyyy-MM-dd hh:mm:ss"
-                    format="yyyy-MM-dd"
-                    v-model="value9"
-                    type="daterange"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    default-value="">
-            </el-date-picker>
-        </div>
 
-        <button class="sousuo" @click="getOrderlist('')">搜索</button>
+
+        <!--<button class="sousuo" @click="getOrderlist('')">搜索</button>-->
+        <button class="sousuo" style="background: #00a3e8;color: #fff" @click="getOrderlist('')"><i class="el-icon-search"></i> 查询</button>
 
     </div>
     <!--筛选区域-->
@@ -61,13 +55,13 @@
                 <li  v-for="(item,index) in orderStateList" :class="item.color"  @click="getOrderlist2(item.dataNumber,index+1)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
             </ul>
         </div>
-        <!--<div class="audit">-->
-            <!--<span>异常状态</span>-->
-            <!--<ul class="yichangUl">-->
-                <!--<li class="red action" @click="getOrderlist3('',0)">全部 <span>({{ allOrderCount1 }})</span></li>-->
-                <!--<li  v-for="(item,index) in orderStateListyc" :class="item.color"  @click="getOrderlist3(item.dataNumber,index+1)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>-->
-            <!--</ul>-->
-        <!--</div>-->
+        <div class="audit">
+            <span>异常状态</span>
+            <ul class="yichangUl">
+                <li class="red action" @click="getOrderlist3('',0)">全部 <span>({{ allOrderCount1 }})</span></li>
+                <li  v-for="(item,index) in orderStateListyc" :class="item.color"  @click="getOrderlist3(item.dataNumber,index+1)">{{item.dataContent}}<span>（{{ item.count }}）</span></li>
+            </ul>
+        </div>
 
     </div>
 
@@ -156,7 +150,7 @@
                 </span></td>
             <td class="imgtd" v-if="item.productImageUrl"><img :src="item.productImageUrl" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
             <td class="imgtd" v-if="!item.productImageUrl"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
-            <td><a :href="'orderDetailsCK.html?orderid='+item.orderId+'page='+proCurr" style="cursor: pointer">{{ item.amazonOrderId }}</a> <br/>
+            <td><a :lay-href="'modules/order2/orderDetailsCK.html?orderid='+item.orderId+'page='+proCurr" layadmin-event="message" :lay-text="item.orderId" style="cursor: pointer">{{ item.amazonOrderId }}</a> <br/>
                 <span class="brSpan">
                     <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
                     {{ item.shopName }}
@@ -245,8 +239,9 @@
                 <span style="font-size: 13px;color: #666">{{item.deptName}}</span><br>
                 <span style="font-size: 13px;color: #666">操作人:{{item.userName}}</span>
             </td>
-            <td>
-                <span style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="shuaxin(item.orderId)">手动刷新</span>
+            <td style="width: 70px;">
+                <span v-if="item.orderStatus =='InShipped'" style="color: #00b6e5;font-size: 13px;cursor:pointer;padding-right: 6px;" @click="ruku(item.orderId)">入库</span>
+                <span v-if="item.orderStatus =='Warehousing'" style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="chuku(item.orderId)">出库</span>
             </td>
         </tr>
     </table>
@@ -279,7 +274,7 @@
 
 <div class="bigImgDiv"></div>
 
-<script src="${request.contextPath}/statics/kuajing/js/step/order2/allOrder.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/step/order2/allOrderCK.js"></script>
 <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
 <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/tuozhaiduoxuan.js"></script>-->
 <script src="${request.contextPath}/statics/kuajing/js/layui.js?t=1"></script>
