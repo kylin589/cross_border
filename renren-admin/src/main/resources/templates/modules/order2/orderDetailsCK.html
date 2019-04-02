@@ -142,7 +142,7 @@
                         <!--&lt;!&ndash;<input class="addguojiyundan" type="button" value="刷新" @click="getOrderInfo">&ndash;&gt;-->
                     <!--</p>-->
                     <!--<div>-->
-                    <div style="margin-bottom: 20px" v-for="item in orderDetails.abroadLogistics">
+                    <div style="margin-bottom: 20px" v-for="(item,index) in orderDetails.abroadLogisticsList">
                         <span><label for="" style="width: 106px">国际物流单号：</label><span>{{ item.abroadWaybill }}</span></span>
                         <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ item.trackWaybill }}</span></span>
                         <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
@@ -171,7 +171,7 @@
                                 <span v-if="item.isDeleted == 0" @click="deleWuliu(item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer">作废</span>
                                 <span v-if="item.isDeleted == 1" v-if="deleWuliu(item.isDeleted == 1" style="color: #00a3e8;cursor: pointer">已作废</span>
                                 <span style="color: #00a3e8;cursor: pointer;margin: 0 10px">打印</span>
-                                <span @click="detailsguojiWul" style="color: #00a3e8;cursor: pointer">明细</span>
+                                <span @click="detailsguojiWul(index)" style="color: #00a3e8;cursor: pointer">明细</span>
                             </p>
                         </div>
                     </div>
@@ -398,19 +398,19 @@
                             <input class="size_input" type="text" placeholder="高（CM）" v-model="getWlDetails.height" disabled>
                         </span><br>
                         <span style="width: auto"><label for="">物流：</label>
-                            <select name="" v-model="wuliuType" disabled>
+                            <select name="" v-model="getWlDetails.packageType" disabled>
                                 <option value="0">云途小包</option>
                                 <option value="1">三态大包</option>
 
                             </select>
-                            <select name="" disabled>
+                            <select name="" v-model="getWlDetails.channelName" disabled>
                                 <option value="0">--选择--</option>
                                 <option v-for="item in guojilogistics" :value="item.value">{{ item.name }}</option>
                             </select>
                         </span>
                         <!--<input type="button" value="生成运单号"><br>-->
-                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="getWlDetails.addyundanhao" disabled></span>
-                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="getWlDetails.addzhuizonghao" disabled></span>
+                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="getWlDetails.abroadWaybill" disabled></span>
+                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="getWlDetails.trackWaybill" disabled></span>
                         <br>
                         <span><label for="">备注信息：</label><textarea placeholder="备注"></textarea></span>
                     </div>

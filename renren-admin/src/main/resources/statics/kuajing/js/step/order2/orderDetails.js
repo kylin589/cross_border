@@ -701,7 +701,7 @@ var vm = new Vue({
         },
         // 国际物流明细
         detailsguojiWul:function (i) {
-            vm.getWlDetails = vm.abroadLogistics[i];
+            vm.getWlDetails = vm.orderDetails.abroadLogisticsList[i];
             layer.open({
                 type: 1,
                 title: false,
@@ -744,10 +744,12 @@ var vm = new Vue({
                 success: function (r) {
                     console.log('生成单号');
                     console.log(r);
-                    if (r.code === '0') {
+                    if (r.code == '0') {
                         layer.msg('操作成功');
                         layer.close(index);
                         vm.getOrderInfo();
+                        vm.wuliuDetails.addyundanhao = r.newabroadLogistics.abroadWaybill;
+                        vm.wuliuDetails.addzhuizonghao = r.newabroadLogistics.trackWaybill;
                     } else {
                         layer.alert(r.msg);
                         layer.close(index);
@@ -803,11 +805,12 @@ var vm = new Vue({
 
             $.ajax({
                 url: '../../amazon/neworder/getShippingFeeDetail',
-                type: 'post',
-                data: JSON.stringify({
+                type: 'get',
+                data: {
                     amazonOrderId:vm.orderDetails.amazonOrderId,
-                }),
-                contentType: "application/json",
+                },
+                dataType: 'json',
+                // contentType: "application/json",
                 success: function (r) {
                     console.log('线路下拉');
                     console.log(r);
@@ -834,11 +837,12 @@ var vm = new Vue({
             var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../amazon/neworder/deleteLogisticAbroad',
-                type: 'post',
-                data: JSON.stringify({
-                    abroadLogisticsId:id,
-                }),
-                contentType: "application/json",
+                type: 'get',
+                data: {
+                    abroad_logistics_id:id,
+                },
+                dataType: 'json',
+                // contentType: "application/json",
                 success: function (r) {
                     console.log('作废');
                     console.log(r);
@@ -849,12 +853,12 @@ var vm = new Vue({
                         // vm.getWlDetails
                     } else {
                         layer.alert(r.msg);
-                        // layer.close(index);
+                        layer.close(index);
                     }
                 },
                 error: function () {
                     layer.msg("网络故障");
-                    // layer.close(index);
+                    layer.close(index);
                 }
             });
         },

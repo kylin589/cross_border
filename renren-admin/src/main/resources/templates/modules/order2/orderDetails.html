@@ -140,7 +140,7 @@
                         <!--&lt;!&ndash;<input class="addguojiyundan" type="button" value="刷新" @click="getOrderInfo">&ndash;&gt;-->
                     <!--</p>-->
                     <!--<div>-->
-                    <div style="margin-bottom: 20px" v-for="item in orderDetails.abroadLogistics">
+                    <div style="margin-bottom: 20px" v-for="(item,index) in orderDetails.abroadLogisticsList">
                         <span><label for="" style="width: 106px">国际物流单号：</label><span>{{ item.abroadWaybill }}</span></span>
                         <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ item.trackWaybill }}</span></span>
                         <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
@@ -169,7 +169,7 @@
                                 <span v-if="item.isDeleted == 0" @click="deleWuliu(item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer">作废</span>
                                 <span v-if="item.isDeleted == 1" v-if="deleWuliu(item.isDeleted == 1" style="color: #00a3e8;cursor: pointer">已作废</span>
                                 <span style="color: #00a3e8;cursor: pointer;margin: 0 10px">打印</span>
-                                <span @click="detailsguojiWul" style="color: #00a3e8;cursor: pointer">明细</span>
+                                <span @click="detailsguojiWul(index)" style="color: #00a3e8;cursor: pointer">明细</span>
                             </p>
                         </div>
                     </div>
