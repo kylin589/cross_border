@@ -23,6 +23,16 @@ public class OrderVM {
 
     public int packageType;//包裹类型 0-（云途小包）1-（三泰大包）
     public String channelName;//物流运输专线名称
+
+    public String getChannelCode() {
+        return channelCode;
+    }
+
+    public void setChannelCode(String channelCode) {
+        this.channelCode = channelCode;
+    }
+
+    public String channelCode;//物流运输专线代码
     public String orderState;
     public String chineseName; //包裹中文名
     public String englishName; //包裹英文名

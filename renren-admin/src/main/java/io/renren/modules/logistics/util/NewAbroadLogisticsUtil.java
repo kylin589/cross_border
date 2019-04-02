@@ -1,8 +1,10 @@
 package io.renren.modules.logistics.util;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.renren.modules.logistics.DTO.OrderWayBill;
+import io.renren.modules.logistics.entity.LogisticsChannelEntity;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import okhttp3.*;
@@ -228,7 +230,6 @@ public class NewAbroadLogisticsUtil {
        }
          return map;
    }
-
 
 
     /**
@@ -498,7 +499,6 @@ public class NewAbroadLogisticsUtil {
                         String value=jsonObject.getString(key);
                         if (key.equals("ResultCode") && !"0000".equals(value)) {
                             map.put("code", "false");
-                            map.put("msg", "提交失败，请检查参数格式是否正确");
                         }
                         if (key.equals("ResultCode") && "0000".equals(value)) {
                             System.out.println("提交成功");
@@ -510,6 +510,7 @@ public class NewAbroadLogisticsUtil {
                             List<OrderWayBill> list=new Gson().fromJson(value2,type);
                             if(list != null && list.size() >0){
                                 if(list.get(0) != null){
+                                    map.put("msg",list.get(0).getFeedback());
                                     map.put("Status",list.get(0).getStatus());//运单请求 1-请求成功，0-请求失败
 //                                map.put("TrackStatus",orderWayBill.getTrackStatus());//获得追踪号状态 1-已产生跟踪号 2-等待后续更新跟踪号 3-不需要跟踪号
                                     map.put("wayBillNumber",list.get(0).getWayBillNumber());//获得运单号
@@ -520,6 +521,7 @@ public class NewAbroadLogisticsUtil {
                                     }
                                 }else{
                                     map.put("Status","0");//运单请求 1-请求成功，0-请求失败
+
                                 }
 
                             }
@@ -534,6 +536,8 @@ public class NewAbroadLogisticsUtil {
         }
         return  map;
     }
+
+
 
     public static void main(String[] args) {
 //        pushOrder();
