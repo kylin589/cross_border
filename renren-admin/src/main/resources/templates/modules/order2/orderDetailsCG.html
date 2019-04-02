@@ -142,42 +142,40 @@
                         <!--&lt;!&ndash;<input class="addguojiyundan" type="button" value="刷新" @click="getOrderInfo">&ndash;&gt;-->
                     <!--</p>-->
                     <!--<div>-->
-                    <div>
-                        <span><label for="" style="width: 106px">国际物流单号：</label><span>{{ orderDetails.abroadLogistics.abroadWaybill }}</span></span>
-                        <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ orderDetails.abroadLogistics.trackWaybill }}</span></span>
+                    <div style="margin-bottom: 20px" v-for="item in orderDetails.abroadLogistics">
+                        <span><label for="" style="width: 106px">国际物流单号：</label><span>{{ item.abroadWaybill }}</span></span>
+                        <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ item.trackWaybill }}</span></span>
                         <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
-                        <span><label for="" style="width: 80px">国际运费：</label><span>{{ orderDetails.abroadLogistics.interFreight }}</span></span>
-                        <span><label for="">物流公司：</label><span>{{ orderDetails.abroadLogistics.destTransportCompany }}</span></span>
-                        <span><label for="">物流渠道：</label><span>{{ orderDetails.abroadLogistics.destChannel }}</span></span>
-
-                        <span><label for="">国内查询跟踪号：</label><span>{{ orderDetails.abroadLogistics.domesticTrackWaybill }}</span></span>
-                        <span><label for="">服务查询网址：</label><span>{{ orderDetails.abroadLogistics.serviceQueryUrl }}</span></span>
-                        <span><label for="">联系电话：</label><span>{{ orderDetails.abroadLogistics.mobile }}</span></span>
-                        <span><label for="">目的地查询网址：</label><span>{{ orderDetails.abroadLogistics.destQueryUrl }}</span></span>
+                        <span><label for="" style="width: 80px">国际运费：</label><span>{{ item.interFreight }}</span></span>
+                        <span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>
+                        <span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>
 
                         <div class="fr">
-                            <span v-if="orderDetails.abroadLogistics.state">物流状态：{{orderDetails.abroadLogistics.state}}</span>
-                            <span v-if="!orderDetails.abroadLogistics.state" style="margin-right: 10px">物流状态：暂无状态</span>
+                            <span v-if="item.state">物流状态：{{item.state}}</span>
+                            <span v-if="!item.state" style="margin-right: 10px">物流状态：暂无状态</span>
 
                             <!--<span>{{ orderDetails.abroadLogistics.state }}</span>-->
-                            <span>{{ orderDetails.abroadLogistics.shipTime }}</span>
+                            <span>{{ item.shipTime }}</span>
                             <p>
-                                <a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>
-                                <template v-if="orderDetails.abroadLogistics.isSynchronization == 0">
+                                <!--<a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>-->
+                                <template v-if="item.isSynchronization == 0">
                                     <a v-if="orderDetails.orderState == '虚发货' || orderDetails.orderState == '仓库已入库' || orderDetails.orderState == '国际已发货'" href="javascript:;" @click="tongbu">同步</a>
                                 </template>
 
-                                <span v-if="orderDetails.abroadLogistics.isSynchronization == 1" href="javascript:;" >已同步</span>
-                                <span v-if="orderDetails.abroadLogistics.isSynchronization == 2" href="javascript:;" >正在同步</span>
+                                <span v-if="item.isSynchronization == 1" href="javascript:;" >已同步</span>
+                                <span v-if="item.isSynchronization == 2" href="javascript:;" >正在同步</span>
+                                <span v-if="item.isSynchronization == 0" href="javascript:;" >未同步</span>
                                 <!--<a href="javascript:;" class="detailsOrderA">明细</a>-->
                             </p>
                             <p style="display: block;">
-                                <span style="color: #00a3e8;cursor: pointer">作废</span>
-                                <span style="color: #00a3e8;cursor: pointer">打印</span>
+                                <span v-if="item.isDeleted == 0" @click="deleWuliu(item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer">作废</span>
+                                <span v-if="item.isDeleted == 1" v-if="deleWuliu(item.isDeleted == 1" style="color: #00a3e8;cursor: pointer">已作废</span>
+                                <span style="color: #00a3e8;cursor: pointer;margin: 0 10px">打印</span>
                                 <span @click="detailsguojiWul" style="color: #00a3e8;cursor: pointer">明细</span>
                             </p>
                         </div>
                     </div>
+
                     <!--<div v-if="!orderDetails.abroadLogistics.abroadWaybill" style="color: #666">-->
                         <!--暂无物流状态-->
                     <!--</div>-->

@@ -115,25 +115,25 @@
                 <div>
                     <h4>国际物流</h4>
                 </div>
-                <div class="pro_inf chengben">
+                <div class="pro_inf chengben" v-for="item in orderDetails.abroadLogistics">
                     <!--<p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addorder"></p>-->
                     <div>
-                        <span><label for="" style="width: 106px">国际物流单号：</label><span>{{ orderDetails.abroadLogistics.abroadWaybill }}</span></span>
-                        <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ orderDetails.abroadLogistics.trackWaybill }}</span></span>
+                        <span><label for="" style="width: 106px">国际物流单号：</label><span>{{ item.abroadWaybill }}</span></span>
+                        <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ item.trackWaybill }}</span></span>
                         <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
-                        <span><label for="" style="width: 80px">国际运费：</label><span>{{ orderDetails.abroadLogistics.interFreight }}</span></span>
-                        <span><label for="">物流公司：</label><span>{{ orderDetails.abroadLogistics.destTransportCompany }}</span></span>
-                        <span><label for="">物流渠道：</label><span>{{ orderDetails.abroadLogistics.destChannel }}</span></span>
+                        <span><label for="" style="width: 80px">国际运费：</label><span>{{ item.interFreight }}</span></span>
+                        <span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>
+                        <span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>
 
-                        <span><label for="">国内查询跟踪号：</label><span>{{ orderDetails.abroadLogistics.domesticTrackWaybill }}</span></span>
-                        <span><label for="">服务查询网址：</label><span>{{ orderDetails.abroadLogistics.serviceQueryUrl }}</span></span>
-                        <span><label for="">联系电话：</label><span>{{ orderDetails.abroadLogistics.mobile }}</span></span>
-                        <span><label for="">目的地查询网址：</label><span>{{ orderDetails.abroadLogistics.destQueryUrl }}</span></span>
+                        <span><label for="">国内查询跟踪号：</label><span>{{ item.domesticTrackWaybill }}</span></span>
+                        <span><label for="">服务查询网址：</label><span>{{ item.serviceQueryUrl }}</span></span>
+                        <span><label for="">联系电话：</label><span>{{ item.mobile }}</span></span>
+                        <span><label for="">目的地查询网址：</label><span>{{ item.destQueryUrl }}</span></span>
                         <div class="fr">
-                            <span v-if="orderDetails.abroadLogistics.state">物流状态：{{orderDetails.abroadLogistics.state}}</span>
-                            <span v-if="!orderDetails.abroadLogistics.state" style="margin-right: 10px">物流状态：暂无状态</span>
+                            <span v-if="item.state">物流状态：{{item.state}}</span>
+                            <span v-if="!item.state" style="margin-right: 10px">物流状态：暂无状态</span>
                             <!--<span>{{ orderDetails.abroadLogistics.state }}</span>-->
-                            <span>{{ orderDetails.abroadLogistics.shipTime }}</span>
+                            <span>{{ item.shipTime }}</span>
                         </div>
                     </div>
 

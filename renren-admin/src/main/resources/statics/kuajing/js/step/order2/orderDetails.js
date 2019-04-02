@@ -136,6 +136,7 @@ var vm = new Vue({
         remarkType:'',
         caigou:'',
         wulDanh:'',
+        wuliuGongsi:'',
         isLookWuliu:true,
         quxiaoJijian:null,
         islogistics:false,
@@ -292,41 +293,22 @@ var vm = new Vue({
                 ;
                 $.ajax({
                     // url: 'http://39.106.131.222:8000/domestic/updateLogistics',
-                    url: 'http://www.threeee.cn/domestic/updateLogistics',
-                    type: 'get',
-                    data: {
+                    url: '../../amazon/neworderdomesticlogistics/updateLogistics',
+                    type: 'post',
+                    data: JSON.stringify({
                         orderId:vm.orderid,
                         waybill:$.trim(d.waybill),
                         domesticLogisticsId:d.domesticLogisticsId,
-                        price:d.price
-                    },
-                    dataType: 'json',
+                        price:d.price,
+                        logisticsCompany:d.logisticsCompany
+                    }),
+                    // dataType: 'json',
+                    contentType: "application/json",
                     success: function (r) {
                         console.log(r);
                         if (r.code === 0) {
-                            $.ajax({
-                                url: '../../order/remark/updateLog',
-                                type: 'get',
-                                data: {
-                                    orderId:vm.orderid,
-                                },
-                                dataType: 'json',
-                                success: function (r) {
-                                    console.log(r);
-                                    if (r.code === 0) {
-                                        layer.msg('修改成功');
-                                        vm.getOrderInfo();
-                                    } else {
-                                        layer.alert(r.msg);
-                                    }
-                                },
-                                error: function () {
-                                    layer.msg("网络故障");
-                                }
-                            });
-
-
-
+                            layer.msg('修改成功');
+                            vm.getOrderInfo();
                         } else {
                             layer.alert(r.msg);
                         }
@@ -496,15 +478,14 @@ var vm = new Vue({
         },
         // 添加国内物流
         addWuliuFunc:function (id) {
-            if(vm.orderDetails.abroadLogistics.isSynchronization != 1){
-                layer.msg('订单还未同步，请同步后再添加物流信息')
-            }else {
+            if(vm.orderDetails.orderState == '虚发货' || vm.orderDetails.orderState == '国内物流已采购' || vm.orderDetails.orderState == '国内物流已发货'){
+
                 layer.open({
                     type: 1,
                     title: false,
                     content: $('#addWul'), //这里content是一个普通的String
                     skin: 'openClass',
-                    area: ['400px', '220px'],
+                    area: ['400px', '280px'],
                     shadeClose: true,
                     btn: ['添加','取消'],
                     btn1: function (index1) {
@@ -513,43 +494,24 @@ var vm = new Vue({
                         var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
                         $.ajax({
                             // url: 'http://39.106.131.222:8000/domestic/getLogisticsCompany',
-                            url: 'http://www.threeee.cn/domestic/getLogisticsCompany',
-                            type: 'get',
-                            data: {
+                            url: '../../amazon/neworderdomesticlogistics/addLogistics',
+                            type: 'post',
+                            data: JSON.stringify({
                                 orderId:vm.orderid,
-                                price:vm.caigou,
+                                price:parseInt(vm.caigou),
                                 waybill:$.trim(vm.wulDanh),
-                                itemId:id
-                            },
-                            dataType: 'json',
+                                itemId:id,
+                                logisticsCompany:vm.wuliuGongsi
+                            }),
+                            // dataType: 'json',
+                            contentType: "application/json",
                             success: function (r) {
                                 console.log(r);
                                 if (r.code === 0) {
-                                    $.ajax({
-                                        url: '../../order/remark/addLog',
-                                        type: 'get',
-                                        data: {
-                                            "orderId":vm.orderid,
-                                        },
-                                        dataType: 'json',
-                                        success: function (r) {
-                                            console.log(r);
-                                            if (r.code === 0) {
-                                                layer.msg("添加成功");
-                                                layer.close(index);
-                                                layer.close(index1);
-                                                vm.getOrderInfo();
-                                                ;                                        } else {
-                                                layer.alert(r.msg);
-                                                layer.close(index);
-                                            }
-                                        },
-                                        error: function () {
-                                            layer.msg("网络故障");
-                                            layer.close(index);
-
-                                        }
-                                    });
+                                    layer.msg("添加成功");
+                                    layer.close(index);
+                                    layer.close(index1);
+                                    vm.getOrderInfo();
                                 } else {
                                     layer.alert(r.msg);
                                     layer.close(index);
@@ -568,6 +530,8 @@ var vm = new Vue({
 
                     }
                 });
+            }else {
+                layer.msg('订单还未同步，请同步后再添加物流信息')
             }
 
         },
@@ -760,7 +724,7 @@ var vm = new Vue({
         createdNum:function () {
             var index = layer.load();
             var index = layer.load(1); //换了种风格
-            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+            var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../amazon/neworder/createAbroadWaybill',
                 type: 'post',
@@ -781,9 +745,9 @@ var vm = new Vue({
                     console.log('生成单号');
                     console.log(r);
                     if (r.code === '0') {
-                        // layer.msg('操作成功');
+                        layer.msg('操作成功');
                         layer.close(index);
-                        // vm.getOrderInfo();
+                        vm.getOrderInfo();
                     } else {
                         layer.alert(r.msg);
                         layer.close(index);
@@ -865,6 +829,9 @@ var vm = new Vue({
         },
         // 物流作废
         deleWuliu:function (id) {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../amazon/neworder/deleteLogisticAbroad',
                 type: 'post',
@@ -876,8 +843,8 @@ var vm = new Vue({
                     console.log('作废');
                     console.log(r);
                     if (r.code === '0') {
-                        // layer.msg('操作成功');
-                        // layer.close(index);
+                        layer.msg('操作成功');
+                        layer.close(index);
                         // vm.getOrderInfo();
                         // vm.getWlDetails
                     } else {
