@@ -306,6 +306,7 @@ public class OrderTimer {
                                 List<OrderItemModel> orderItemModels=new ArrayList<>();
                                 orderModel.setAmazonOrderId(AmazonOrderId);
                                 ProductShipAddressEntity addressEntity = new ProductShipAddressEntity();
+                                addressEntity.setAmazonOrderId(AmazonOrderId);
                                 String shipname = listOrdersResponseDtos.get(i).getOrders().get(j).getName();
                                 System.out.println("收件人姓名:" + shipname + "==========");
                                 String shipaddress1 = listOrdersResponseDtos.get(i).getOrders().get(j).getAddressLine1();
