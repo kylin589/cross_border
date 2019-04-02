@@ -397,19 +397,19 @@
                             <input class="size_input" type="text" placeholder="高（CM）" v-model="getWlDetails.height" disabled>
                         </span><br>
                         <span style="width: auto"><label for="">物流：</label>
-                            <select name="" v-model="wuliuType" disabled>
+                            <select name="" v-model="getWlDetails.packageType" disabled>
                                 <option value="0">云途小包</option>
                                 <option value="1">三态大包</option>
 
                             </select>
-                            <select name="" disabled>
+                            <select name="" v-model="getWlDetails.channelName" disabled>
                                 <option value="0">--选择--</option>
                                 <option v-for="item in guojilogistics" :value="item.value">{{ item.name }}</option>
                             </select>
                         </span>
                         <!--<input type="button" value="生成运单号"><br>-->
-                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="getWlDetails.addyundanhao" disabled></span>
-                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="getWlDetails.addzhuizonghao" disabled></span>
+                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="getWlDetails.abroadWaybill" disabled></span>
+                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="getWlDetails.trackWaybill" disabled></span>
                         <br>
                         <span><label for="">备注信息：</label><textarea placeholder="备注"></textarea></span>
                     </div>
