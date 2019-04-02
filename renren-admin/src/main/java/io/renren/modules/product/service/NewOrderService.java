@@ -45,10 +45,6 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      */
     boolean updateState(Long orderId, String orderState);
 
-    /**
-     * 推送订单
-     */
-    Map<String,String> pushOrder(String  amazonOrderId, int packageType, String channelName, String chineseName, String englishName, int length,int width,int height,BigDecimal weight);
 
     /**
      * 修改异常状态
@@ -115,6 +111,12 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      */
 //    void RefreshOrder(Long orderId);
 
+
+    /**
+     * 推送订单
+     */
+    Map<String,String> pushOrder(String  amazonOrderId, int packageType, String channelCode, String channelName, String englishName, int length, int width, int height, BigDecimal weight);
+
     /**
      * 删除订单
      */
@@ -125,13 +127,19 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      */
     void printOrder(String orderNumber);
 
+
     /**
      * 获取保存推送订单信息
      */
     Map<String,String>  getShippingFeeDetail(String orderNumber);
+
     /*
      * 获取运输代码
      */
     List<String>  getShippingMethodCode(int type);
+
+
+
+
 }
 

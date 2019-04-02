@@ -1,5 +1,4 @@
 package io.renren.modules.product.service.impl;
-
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsync;
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsyncClient;
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConfig;
@@ -23,15 +22,15 @@ import io.renren.modules.logistics.entity.*;
 import io.renren.modules.logistics.entity.Message;
 import io.renren.modules.logistics.service.AbroadLogisticsService;
 import io.renren.modules.logistics.service.DomesticLogisticsService;
+import io.renren.modules.logistics.service.LogisticsChannelService;
 import io.renren.modules.logistics.service.SubmitLogisticsService;
 import io.renren.modules.logistics.util.AbroadLogisticsUtil;
+import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
 import io.renren.modules.logistics.util.XmlUtils;
 import io.renren.modules.order.component.OrderTimer;
-import io.renren.modules.order.entity.NewProductShipAddressEntity;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.service.NewProductShipAddressService;
 import io.renren.modules.order.service.ProductShipAddressService;
-import io.renren.modules.product.controller.OrderController;
 import io.renren.modules.product.dao.OrderDao;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
@@ -121,6 +120,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Lazy
     private OrderService orderService;
     @Autowired
+    private NewOrderService newOrderService;
+    @Autowired
+    private LogisticsChannelService logisticsChannelService;
+    @Autowired
     private AbroadLogisticsService abroadLogisticsService;
     @Autowired
     private AmazonRateService amazonRateService;
@@ -142,8 +145,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private AmazonGrantService amazonGrantService;
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
-    @Autowired
-    private NewOrderService newOrderService;
     @Autowired
     private NewOrderItemService newOrderItemService;
     @Value(("${file.path}"))
@@ -1743,55 +1744,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         outfile.println(resultXml);// 输出String
         outfile.flush();// 输出缓冲区的数据
         outfile.close();
-//         List<Object> responseList =listOrdersAsyncService.invokeListOrders(client,requestList);
         //进行数据上传(步骤一)
         String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
-        //进行数据上传(步骤二)
-        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId,accessKey,secretKey);
-        System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
-        if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
-            //进行数据上传(步骤三)
-            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0),accessKey,secretKey);
             AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
-            String amazonOrderId=orderService.selectById(orderId).getAmazonOrderId();
-            //从后代调用接口获取亚马逊后台的订单状态
-            String orderStatus="";
-            MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
-            config.setServiceURL(serviceURL.get(0));
-            MarketplaceWebServiceOrdersAsyncClient client = new MarketplaceWebServiceOrdersAsyncClient(accessKey, secretKey,
-                    "my_test", "1.0", config, null);
-            List<GetOrderRequest> requestList = new ArrayList<GetOrderRequest>();
-            GetOrderRequest request = new GetOrderRequest();
-            request.setSellerId(sellerId);
-            request.setMWSAuthToken(mwsAuthToken);
-            List<String> amazonOrderIds = new ArrayList<String>();
-            amazonOrderIds.add(amazonOrderId);
-            request.setAmazonOrderId(amazonOrderIds);
-            requestList.add(request);
-            List<Object> responseList=invokeGetOrder(client,requestList);
-            Boolean isSuccess = false;
-            GetOrderResponse getOrderResponse = null;
-            for (Object tempResponse : responseList) {
-                // Object 转换 ListOrdersResponse 还是 MarketplaceWebServiceOrdersException
-                String className = tempResponse.getClass().getName();
-                if ((GetOrderResponse.class.getName()).equals(className) == true) {
-                    System.out.println("responseList 类型是 GetOrderResponse。");
-                    GetOrderResponse response = (GetOrderResponse) tempResponse;
-                    System.out.println(response.toXML());
-                    orderStatus=response.toXML();
-                    if(orderStatus.contains("<OrderStatus>")){
-                        orderStatus= orderStatus.substring(orderStatus.indexOf("<OrderStatus>"),orderStatus.indexOf("</OrderStatus>")).replace("<OrderStatus>","");
-                    }
-                    isSuccess = true;
-                } else {
-                    System.out.println("responseList 类型是 MarketplaceWebServiceOrderException。");
-                    isSuccess = false;
-                    continue;
-                }
-            }
-
             //判读亚马逊后台订单的状态
-            if("Shipped".equals(orderStatus)){
+            if(StringUtils.isNotBlank(feedSubmissionId)){
                 abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
                 abroadLogisticsService.updateById(abroadLogisticsEntity);
             }else{
@@ -1800,7 +1757,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 abroadLogisticsService.updateById(abroadLogisticsEntity);
             }
 
-        }
     }
 
     @Override
@@ -2110,55 +2066,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }
     }
 
-    /**
-    * 获取单个订单的方法
-    * @param client
-    * @param requestList
-    * @return
-    */
-    public  List<Object> invokeGetOrder(MarketplaceWebServiceOrdersAsync client, List<GetOrderRequest> requestList) {
-    // Call the service async.
-    List<Future<GetOrderResponse>> futureList =
-            new ArrayList<Future<GetOrderResponse>>();
-    for (GetOrderRequest request : requestList) {
-        Future<GetOrderResponse> future =
-                client.getOrderAsync(request);
-        futureList.add(future);
-    }
-    List<Object> responseList = new ArrayList<Object>();
-    for (Future<GetOrderResponse> future : futureList) {
-        Object xresponse;
-        try {
-            GetOrderResponse response = future.get();
-            ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
-            // We recommend logging every the request id and timestamp of every call.
-            System.out.println("Response:");
-            System.out.println("RequestId: " + rhmd.getRequestId());
-            System.out.println("Timestamp: " + rhmd.getTimestamp());
-            String responseXml = response.toXML();
-            System.out.println(responseXml);
-            xresponse = response;
-
-            xresponse = response;
-        } catch (ExecutionException ee) {
-            Throwable cause = ee.getCause();
-            if (cause instanceof MarketplaceWebServiceOrdersException) {
-                // Exception properties are important for diagnostics.
-                MarketplaceWebServiceOrdersException ex =
-                        (MarketplaceWebServiceOrdersException) cause;
-                ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
-
-                xresponse = ex;
-            } else {
-                xresponse = cause;
-            }
-        } catch (Exception e) {
-            xresponse = e;
-        }
-        responseList.add(xresponse);
-    }
-    return responseList;
-    }
 
     /**
      * 真实发货信息 ——封装物流信息
@@ -2218,10 +2125,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
         return sendDataMoedl;
     }
-
-
-
-
 
 
 
