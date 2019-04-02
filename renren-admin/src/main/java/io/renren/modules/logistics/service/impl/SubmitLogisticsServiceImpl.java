@@ -128,7 +128,7 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
     }
 
 
-    //2018/12/27 步骤二：得到上传数据列表
+  /*  //2018/12/27 步骤二：得到上传数据列表
     @Override
     public List<String> getFeedSubmissionList(String serviceURL, String merchantId, String sellerDevAuthToken, String feedSubmissionId,String accessKey,String secretKey) {
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
@@ -182,16 +182,16 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
         }
         return feedSubmissionIds;
     }
+*/
 
-
-    //步骤三： 得到返回结果
+   /* //步骤三： 得到返回结果
     @Override
     public void getFeedSubmissionResult(String serviceURL, String merchantId, String sellerDevAuthToken, String feedSubmissionId,String accessKey,String secretKey) {
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
         config.setServiceURL(serviceURL);
         MarketplaceWebService service = new MarketplaceWebServiceClient(accessKey, secretKey,
                 "mws", "1.1", config);
-        /*List<GetFeedSubmissionResultRequest>    requests=new ArrayList<GetFeedSubmissionResultRequest>();*/
+        *//*List<GetFeedSubmissionResultRequest>    requests=new ArrayList<GetFeedSubmissionResultRequest>();*//*
         GetFeedSubmissionResultRequest request = new GetFeedSubmissionResultRequest();
         request.setMerchant(merchantId);
         request.setMWSAuthToken(sellerDevAuthToken);
@@ -202,9 +202,9 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
         }catch (FileNotFoundException e){
             e.getStackTrace();
         }
-/*
+*//*
         requests.add(request);
-*/
+*//*
         String md5 = null;
         while(md5 == null){
             try {
@@ -215,7 +215,7 @@ public class SubmitLogisticsServiceImpl implements SubmitLogisticsService{
             md5 = invokeGetFeedSubmissionResult(service, request);
             System.out.println("响应结果:=============================="+md5);
         }
-    }
+    }*/
 
     public static String invokeGetFeedSubmissionResult(MarketplaceWebService service, GetFeedSubmissionResultRequest request) {
         String md5 = null;

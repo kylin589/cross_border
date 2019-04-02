@@ -12,6 +12,7 @@ import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.vm.StatisticsVM;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
