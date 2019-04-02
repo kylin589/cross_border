@@ -28,10 +28,8 @@ import io.renren.modules.amazon.util.FileUtil;
 import io.renren.modules.logistics.entity.*;
 import io.renren.modules.logistics.service.*;
 import io.renren.modules.logistics.util.XmlUtils;
-import io.renren.modules.order.entity.NewProductShipAddressEntity;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.entity.RemarkEntity;
-import io.renren.modules.order.service.NewProductShipAddressService;
 import io.renren.modules.order.service.ProductShipAddressService;
 import io.renren.modules.order.service.RemarkService;
 import io.renren.modules.product.dto.NewOrderDTO;
@@ -115,8 +113,6 @@ public class NewOrderController extends AbstractController {
     private ProductOrderItemService productOrderItemService;
     @Autowired
     private ProductShipAddressService productShipAddressService;
-    @Autowired
-    private NewProductShipAddressService newproductShipAddressService;
     @Autowired
     private NewOrderAbroadLogisticsService newOrderAbroadLogisticsService;
     @Autowired
@@ -336,18 +332,13 @@ public class NewOrderController extends AbstractController {
         orderDTO.setShopName(neworderEntity.getShopName());
         orderDTO.setOrderNumber(neworderEntity.getOrderNumber());
         orderDTO.setPurchasePrice(neworderEntity.getPurchasePrice());
-        NewProductShipAddressEntity newshipAddress = newproductShipAddressService.selectOne(
-                new EntityWrapper<NewProductShipAddressEntity>().eq("amazon_order_id",AmazonOrderId)
+        ProductShipAddressEntity newshipAddress = productShipAddressService.selectOne(
+                new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id",AmazonOrderId)
         );
         if(newshipAddress == null){
             orderDTO.setShipAddress(new ProductShipAddressEntity());
-        }else{
-            ProductShipAddressEntity shipAddress=productShipAddressService.selectOne(
-                    new EntityWrapper<ProductShipAddressEntity>().eq("order_id",newshipAddress.getOrderId())
-            );
-            orderDTO.setShipAddress(shipAddress);
         }
-
+        orderDTO.setShipAddress(newshipAddress);
 //        List<NewOrderDomesticLogisticsEntity> domesticLogisticsList = newOrderDomesticLogisticsService.selectList(
 //                new EntityWrapper<NewOrderDomesticLogisticsEntity>().eq("order_id",orderId)
 //        );

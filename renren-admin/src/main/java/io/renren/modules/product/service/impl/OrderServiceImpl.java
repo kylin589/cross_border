@@ -918,20 +918,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         newOrderService.insert(neworderEntity);
                         //新增收货人信息
                         ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
-
-                        if (productShipAddressEntity != null) {//判断返回值是否有收件人信息
-                            ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
-                                    new EntityWrapper<ProductShipAddressEntity>().eq("order_id", orderEntity.getOrderId())
-                            );
-
-                            if (shipAddress == null) {
-                                productShipAddressEntity=new ProductShipAddressEntity();
-                                if(orderEntity.getOrderId()==neworderEntity.getOrderId()){
-                                    productShipAddressEntity.setOrderId(neworderEntity.getOrderId());
-                                    productShipAddressEntity.setAmazonOrderId(neworderEntity.getAmazonOrderId());
-                                }
-                                productShipAddressService.insert(productShipAddressEntity);
-                            }
+                        if (productShipAddressEntity != null) {//判断返回值是否有收件人信
+                            productShipAddressEntity.setOrderId(orderEntity.getOrderId());
+                            productShipAddressService.insert(productShipAddressEntity);
                         }
                     }
                 } else {
@@ -1060,15 +1049,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                         if (productShipAddressEntity != null) {
                                             //判断返回值是否有收件人信息
                                             ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
-                                                    new EntityWrapper<ProductShipAddressEntity>().eq("order_id", neworderEntity.getOrderId())
+                                                    new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", productShipAddressEntity.getAmazonOrderId())
                                             );
                                             if (shipAddress == null) {
                                                 productShipAddressEntity.setOrderId(neworderEntity.getOrderId());
-                                                productShipAddressEntity.setAmazonOrderId(neworderEntity.getAmazonOrderId());
                                                 productShipAddressService.insert(productShipAddressEntity);
                                             } else {
-                                                productShipAddressEntity.setOrderId(shipAddress.getOrderId());
-                                                productShipAddressEntity.setAmazonOrderId(shipAddress.getAmazonOrderId());
                                                 productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
                                                 productShipAddressService.updateById(productShipAddressEntity);
                                             }
