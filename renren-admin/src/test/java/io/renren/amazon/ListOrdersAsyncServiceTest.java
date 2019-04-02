@@ -4,14 +4,33 @@ package io.renren.amazon;
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsyncClient;
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConfig;
 import com.amazonservices.mws.orders._2013_09_01.model.*;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.DateUtils;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.service.ListOrdersAsyncService;
+import io.renren.modules.logistics.DTO.ApplicationInfos;
+import io.renren.modules.logistics.DTO.OrderRequestData;
+import io.renren.modules.logistics.DTO.SenderInfo;
+import io.renren.modules.logistics.DTO.ShippingInfo;
 import io.renren.modules.logistics.entity.*;
 import io.renren.modules.logistics.entity.Message;
+import io.renren.modules.logistics.service.DomesticLogisticsService;
+import io.renren.modules.logistics.service.LogisticsChannelService;
 import io.renren.modules.logistics.service.SubmitLogisticsService;
+import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
 import io.renren.modules.logistics.util.XmlUtils;
+import io.renren.modules.order.entity.NewProductShipAddressEntity;
+import io.renren.modules.order.entity.ProductShipAddressEntity;
+import io.renren.modules.order.service.NewProductShipAddressService;
+import io.renren.modules.order.service.ProductShipAddressService;
+import io.renren.modules.product.entity.NewOrderEntity;
+import io.renren.modules.product.entity.NewOrderItemEntity;
+import io.renren.modules.product.service.NewOrderItemService;
+import io.renren.modules.product.service.NewOrderService;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +42,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -53,9 +70,22 @@ public class ListOrdersAsyncServiceTest {
     @Autowired
     private ListOrdersAsyncService listOrdersAsyncService;
     @Autowired
+    private LogisticsChannelService logisticsChannelService;
+    @Autowired
     private SubmitLogisticsService submitLogisticsService;
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
+    @Autowired
+    private ProductShipAddressService productShipAddressService;
+    @Autowired
+    private DomesticLogisticsService domesticLogisticsService;
+    @Autowired
+    private NewOrderService newOrderService;
+    @Autowired
+    private NewOrderItemService newOrderItemService;
+    @Autowired
+    private NewProductShipAddressService newProductShipAddressService;
+
     @Test
     @Ignore
     public void invokeListFeedsTest() {
@@ -134,22 +164,13 @@ public class ListOrdersAsyncServiceTest {
         // TODO: 2018/12/26 数据上传
         String feedSubmissionId=submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
         //进行数据上传(步骤二)
-        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId,accessKey,secretKey);
-        System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
-        if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
-            //进行数据上传(步骤三)
-            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0),accessKey,secretKey);
-        }
+////        List<String> feedSubmissionIds=submitLogisticsService.getFeedSubmissionList(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionId,accessKey,secretKey);
+//        System.out.println("=========================="+feedSubmissionIds.get(0)+"=============================");
+//        if(feedSubmissionIds.size()>0 && feedSubmissionIds!=null){
+//            //进行数据上传(步骤三)
+//            submitLogisticsService.getFeedSubmissionResult(serviceURL.get(0),sellerId,mwsAuthToken,feedSubmissionIds.get(0),accessKey,secretKey);
+//        }
     }
-
-
-
-
-
-
-
-
-
 
     @Test
     @Ignore
@@ -189,10 +210,6 @@ public class ListOrdersAsyncServiceTest {
 
     }
 
-
-
-
-
     @Test
     @Ignore
     public void listOrderByNextTokenAsyncTest() {
@@ -218,6 +235,7 @@ public class ListOrdersAsyncServiceTest {
     }
 
     @Test
+    @Ignore
     public void getOrderAsyncTest() {
 
         MarketplaceWebServiceOrdersConfig config = new MarketplaceWebServiceOrdersConfig();
@@ -338,4 +356,104 @@ public class ListOrdersAsyncServiceTest {
         listOrdersAsyncService.invokeGetServiceStatus(client, requestList);
 
     }
+    @Test
+    public void push(){
+        NewAbroadLogisticsUtil.pushOrder();
+    }
+
+    @Test
+    @Ignore
+    public  void pushOrder() {
+        String amazonOrderId="303-7832993-5749169";
+        NewOrderEntity neworderEntity =newOrderService.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id",amazonOrderId));
+        NewProductShipAddressEntity newProductShipAddressEntity=newProductShipAddressService.selectOne(new EntityWrapper<NewProductShipAddressEntity>().eq("amazon_order_id",amazonOrderId));
+
+        ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("order_id",newProductShipAddressEntity.getOrderId()));
+
+        //推送--订单基本信息
+        OrderRequestData omsOrder = new OrderRequestData();
+        omsOrder.setOrderNumber(amazonOrderId);
+        List<DomesticLogisticsEntity> domesticLogisticsEntitys = domesticLogisticsService.selectList(new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",neworderEntity.getOrderId()));
+        StringBuffer deanname = new StringBuffer("");
+        StringBuffer supplyexpressno = new StringBuffer("");
+        for(int i = 0; i < domesticLogisticsEntitys.size(); i++){
+            if(StringUtils.isNotBlank(domesticLogisticsEntitys.get(i).getLogisticsCompany())){
+                deanname.append(domesticLogisticsEntitys.get(i).getLogisticsCompany());
+                deanname.append(",");
+                supplyexpressno.append(domesticLogisticsEntitys.get(i).getWaybill());
+                supplyexpressno.append(",");
+            }
+        }
+        if(StringUtils.isNotBlank(deanname.toString())){
+            omsOrder.setShippingMethodCode(deanname.substring(0,deanname.length()-1));//测试用的
+        }else{
+            omsOrder.setShippingMethodCode("GBZXR");
+        }
+        omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
+        BigDecimal weight= new BigDecimal(1);
+        omsOrder.setWeight(weight);
+        omsOrder.setTrackingNumber(supplyexpressno.toString());
+//        //设置时间
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS+08:00");
+//        omsOrder.setOrder_date(sdf.format(orderEntity.getBuyDate()));
+//        omsOrder.setOrder_memo(shipAddressEntity.getShipCountry());
+        //推送--订单详情
+
+        List<ApplicationInfos> omsOrderDetails = new ArrayList<>();
+        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
+        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
+            ApplicationInfos omsOrderDetail=new ApplicationInfos();
+            omsOrderDetail.setApplicationName(productOrderItemEntity.getProductTitle());
+            omsOrderDetail.setQty(productOrderItemEntity.getOrderItemNumber());
+            omsOrderDetail.setUnitPrice(productOrderItemEntity.getProductPrice());
+            BigDecimal unitweight=new BigDecimal(1);//测试用
+            omsOrderDetail.setUnitWeight(unitweight);
+            omsOrderDetail.setProductUrl(productOrderItemEntity.getProductImageUrl());
+            omsOrderDetail.setSku(productOrderItemEntity.getProductSku());
+            omsOrderDetails.add(omsOrderDetail);
+
+        }
+
+           //推送—收货人信息
+            ShippingInfo shippingInfo=new ShippingInfo();
+            shippingInfo.setCountryCode(shipAddressEntity.getShipCountry());
+            shippingInfo.setShippingFirstName(shipAddressEntity.getShipName());
+            shippingInfo.setShippingAddress(shipAddressEntity.getShipAddressDetail());
+            shippingInfo.setShippingCity(shipAddressEntity.getShipCity());
+            shippingInfo.setShippingState(shipAddressEntity.getShipRegion());
+            shippingInfo.setShippingZip(shipAddressEntity.getShipZip());
+            shippingInfo.setShippingPhone(shipAddressEntity.getShipTel());
+           ApplicationInfos[] applicationInfos=new ApplicationInfos[omsOrderDetails.size()];
+           omsOrder.setShippingInfo(shippingInfo);
+           omsOrder.setApplicationInfos(omsOrderDetails.toArray(applicationInfos));
+           SenderInfo senderInfo=new SenderInfo();//默认空值，不是必填参数
+           omsOrder.setSenderInfo(senderInfo);
+           JSONArray omsOrderJson = JSONArray.fromObject(omsOrder);
+//            NewAbroadLogisticsUtil.pushOrder(omsOrderJson.toString());
+    }
+
+    public  List<String>  getShippingMethodCode(int type) {
+        List<String> result =new  ArrayList<>();
+        List<LogisticsChannelEntity> channelilist = logisticsChannelService.selectList(new EntityWrapper<LogisticsChannelEntity>().eq("package_type", type));
+         for (LogisticsChannelEntity logisticsChannelEntity:channelilist){
+             String key=logisticsChannelEntity.getChannelName();
+             String value=logisticsChannelEntity.getChannelCode();
+             String str=key+":"+value;
+             result.add(str);
+         }
+        return result;
+    }
+    @Test
+    public void test(){
+        List<String> list= getShippingMethodCode(0);
+        for (int i=0;i<list.size();i++){
+            System.out.println(list.get(i));
+        }
+
+
+    }
+
+
+
+
 }
