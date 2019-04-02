@@ -1797,6 +1797,10 @@ public class ProductsController extends AbstractController {
                                 return R.error("EAN码数量不足，尽快添加");
                             }
                         }
+                        variantsInfosList.get(i).setVariantSku(productSku + "-" + i);
+                        variantsInfosList.get(i).setProductId(products.getProductId());
+                        variantsInfosList.get(i).setUserId(getUserId());
+                        variantsInfosList.get(i).setDeptId(getDeptId());
                     }
                     variantsInfoService.updateBatchById(variantsInfosList);
                 }else{

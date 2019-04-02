@@ -16,5 +16,10 @@ import java.util.Map;
 public interface CookieLogService extends IService<CookieLogEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 更新用户公司信息
+     */
+    void Calculation(Long userId,Long deptId);
 }
 

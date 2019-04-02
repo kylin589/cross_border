@@ -4,35 +4,28 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsync;
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersAsyncClient;
 import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersConfig;
-import com.amazonservices.mws.orders._2013_09_01.MarketplaceWebServiceOrdersException;
 import com.amazonservices.mws.orders._2013_09_01.model.GetOrderRequest;
 import com.amazonservices.mws.orders._2013_09_01.model.GetOrderResponse;
-import com.amazonservices.mws.orders._2013_09_01.model.ResponseHeaderMetadata;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.renren.common.utils.DateUtils;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.entity.AmazonMarketplaceEntity;
+import io.renren.modules.logistics.entity.NewOrderDomesticLogisticsEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.service.AmazonMarketplaceService;
+import io.renren.modules.logistics.service.NewOrderDomesticLogisticsService;
 import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.amazon.util.FileUtil;
-import io.renren.modules.logistics.DTO.ReceiveOofayData;
 import io.renren.modules.logistics.entity.*;
 import io.renren.modules.logistics.service.*;
-import io.renren.modules.logistics.util.AbroadLogisticsUtil;
 import io.renren.modules.logistics.util.XmlUtils;
 import io.renren.modules.order.entity.NewProductShipAddressEntity;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
@@ -41,7 +34,6 @@ import io.renren.modules.order.service.NewProductShipAddressService;
 import io.renren.modules.order.service.ProductShipAddressService;
 import io.renren.modules.order.service.RemarkService;
 import io.renren.modules.product.dto.NewOrderDTO;
-import io.renren.modules.product.dto.OrderDTO;
 import io.renren.modules.product.entity.*;
 import io.renren.modules.product.service.*;
 import io.renren.modules.product.vm.OrderItemModel;
@@ -51,16 +43,13 @@ import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.service.NoticeService;
 import io.renren.modules.sys.service.SysDeptService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import io.renren.common.utils.PageUtils;
@@ -76,6 +65,7 @@ import static io.renren.modules.product.controller.OrderController.invokeGetOrde
  * @email 594340717@qq.com
  * @date 2019-03-28 14:50:57
  */
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("amazon/neworder")
 public class NewOrderController extends AbstractController {
@@ -121,14 +111,14 @@ public class NewOrderController extends AbstractController {
     private OrderService orderService;
     @Autowired
     private ProductOrderItemService productOrderItemService;
-
     @Autowired
     private ProductShipAddressService productShipAddressService;
     @Autowired
     private NewProductShipAddressService newproductShipAddressService;
     @Autowired
     private NewOrderAbroadLogisticsService newOrderAbroadLogisticsService;
-
+    @Autowired
+    private NewOrderDomesticLogisticsService newOrderDomesticLogisticsService;
     @Autowired
     private RemarkService remarkService;
     @Autowired
@@ -166,6 +156,107 @@ public class NewOrderController extends AbstractController {
         return R.ok().put("page", map.get("page")).put("orderCounts",map.get("orderCounts"));
     }
 
+    /**
+     * 获取物流列表-查询
+     * @param params
+     * @return
+     */
+    @RequestMapping("/depotOrderList")
+    public R depotOrderList(@RequestParam Map<String, Object> params){
+        PageUtils page = newOrderService.queryNewAllPage(params);
+        return R.ok().put("page",page);
+    }
+    /**
+     * 列表入库
+     * @param
+     * @return
+     */
+    @RequestMapping("/listruku")
+    public R listruku(@RequestParam Long orderId){
+        NewOrderEntity orderEntity = newOrderService.selectById(orderId);
+        List<NewOrderDomesticLogisticsEntity> domesticList = newOrderDomesticLogisticsService.selectList(new EntityWrapper<NewOrderDomesticLogisticsEntity>().eq("waybill",orderEntity.getDomesticWaybill()));
+        for(NewOrderDomesticLogisticsEntity dom : domesticList){
+            dom.setState("已入库");
+        }
+        newOrderDomesticLogisticsService.updateBatchById(domesticList);
+        List<NewOrderDomesticLogisticsEntity> domesticList1 = newOrderDomesticLogisticsService.selectList(new EntityWrapper<NewOrderDomesticLogisticsEntity>().eq("order_id",orderId));
+        if(domesticList.size() == domesticList1.size()) {
+            orderEntity.setOrderStatus("Warehousing");
+            orderEntity.setOrderState("仓库已入库");
+            newOrderService.updateById(orderEntity);
+        }
+        return R.ok("入库成功");
+    }
+    /**
+     * 列表入库
+     * @param
+     * @return
+     */
+    @RequestMapping("/formruku")
+    public R formruku(@RequestBody NewOrderDomesticLogisticsEntity domestic){
+        Long orderId = domestic.getOrderId();
+        String waybill = domestic.getWaybill();
+        if(orderId != null && StringUtils.isNotBlank(waybill)){
+            List<NewOrderDomesticLogisticsEntity> domesticList = newOrderDomesticLogisticsService.selectList(new EntityWrapper<NewOrderDomesticLogisticsEntity>().eq("waybill",waybill));
+            for(NewOrderDomesticLogisticsEntity dom : domesticList){
+                dom.setState("已入库");
+            }
+            newOrderDomesticLogisticsService.updateBatchById(domesticList);
+            List<NewOrderDomesticLogisticsEntity> domesticList1 = newOrderDomesticLogisticsService.selectList(new EntityWrapper<NewOrderDomesticLogisticsEntity>().eq("order_id",orderId));
+            if(domesticList.size() == domesticList1.size()){
+                NewOrderEntity orderEntity = newOrderService.selectById(orderId);
+                orderEntity.setOrderStatus("Warehousing");
+                orderEntity.setOrderState("仓库已入库");
+                newOrderService.updateById(orderEntity);
+            }
+        }
+        return R.ok("入库成功");
+    }
+    /**
+     * 列表出库
+     * @param
+     * @return
+     */
+    @RequestMapping("/listchuku")
+    public R listchuku(@RequestParam Long orderId){
+        //订单id
+        NewOrderEntity orderEntity = newOrderService.selectById(orderId);
+        NewOrderAbroadLogisticsEntity abroad = newOrderAbroadLogisticsService.selectOne(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("abroad_waybill",orderEntity.getAbroadWaybill()));
+        if(abroad.getIsDeleted() == 1){
+            return R.error("出库失败，运单已销毁");
+        }else{
+            abroad.setState("已出库");
+            newOrderAbroadLogisticsService.updateById(abroad);
+            orderEntity.setOrderStatus("IntlShipped");
+            orderEntity.setOrderState("仓库已出库");
+            newOrderService.updateById(orderEntity);
+        }
+        return R.ok();
+    }
+    /**
+     * 列表出库
+     * @param
+     * @return
+     */
+    @RequestMapping("/formchuku")
+    public R formchuku(@RequestBody NewOrderAbroadLogisticsEntity abroad){
+        if(abroad.getIsDeleted() == 1){
+            return R.error("此运单已销毁");
+        }else{
+            Long orderId = abroad.getOrderId();
+            if(orderId != null){
+                abroad.setState("已出库");
+                newOrderAbroadLogisticsService.updateById(abroad);
+                NewOrderEntity orderEntity = newOrderService.selectById(orderId);
+                orderEntity.setOrderStatus("IntlShipped");
+                orderEntity.setOrderState("仓库已出库");
+                newOrderService.updateById(orderEntity);
+            }else{
+                return R.error();
+            }
+        }
+        return R.ok();
+    }
     /**
      * 所有订单
      */
@@ -534,6 +625,22 @@ public class NewOrderController extends AbstractController {
         return R.error();
     }
 
+
+    /**
+     * 获取物流专线代码接口
+     */
+    @RequestMapping("/getShippingMethodCode")
+    public R getShippingMethodCode(@RequestBody OrderVM orderVM){
+        //先调用获取物流专线代码的方法
+        List<String> list=newOrderService.getShippingMethodCode(orderVM.getPackageType());
+        if(CollectionUtils.isEmpty(list)){
+            return R.error("物流信息不存在");
+        }
+        return  R.ok();
+    }
+
+
+
     /**
      * 生成国际运单号
      * orderVM: orderId,
@@ -550,8 +657,8 @@ public class NewOrderController extends AbstractController {
         String  amazonOrderId=orderVM.getAmazonOrderId();
         //推送订单
         if(orderVM.getPackageType() == 0){
-            Map<String,String> result = newOrderService.pushOrder(amazonOrderId,orderVM.getPackageType(),orderVM.getChannelName(),orderVM.getChineseName(),orderVM.getEnglishName(),orderVM.getLength(),orderVM.getWidth(),orderVM.getHeight(),orderVM.getWeight());
-            if("false".equals(result.get("code")) || "1".equals(result.get("Status"))){
+            Map<String,String> result = newOrderService.pushOrder(amazonOrderId,orderVM.getPackageType(),orderVM.getChannelCode(),orderVM.getChineseName(),orderVM.getEnglishName(),orderVM.getLength(),orderVM.getWidth(),orderVM.getHeight(),orderVM.getWeight());
+            if("false".equals(result.get("code")) || "0".equals(result.get("Status"))){
                 return R.error("订单推送失败,错误原因：" + result.get("msg"));
             }else{
                 NewOrderAbroadLogisticsEntity newabroadLogistics = newOrderAbroadLogisticsService.selectOne(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id",orderId));

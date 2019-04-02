@@ -21,6 +21,7 @@ import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
+import io.renren.modules.amazon.service.SubmitFeedService;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.product.entity.ProductOrderItemEntity;
 import io.renren.modules.product.entity.ProductsEntity;
@@ -34,6 +35,7 @@ import io.renren.modules.product.vm.OrderModel;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +49,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import static io.renren.modules.amazon.util.XMLUtil.*;
-
 
 @Component("OldOrderTimer")
 public class OldOrderTimer {
@@ -92,6 +93,7 @@ public class OldOrderTimer {
     private AmazonGrantService amazonGrantService;
 
     @Autowired
+    @Lazy
     private OrderService orderService;
 
     @Autowired
@@ -102,6 +104,7 @@ public class OldOrderTimer {
 
     @Autowired
     private ProductOrderItemService productOrderItemService;
+
 
     /**
      * 获得店铺授权列表信息
@@ -499,7 +502,8 @@ public class OldOrderTimer {
                                 if(orderModelList.size() > 0){
 //                                    orderService.updateOrder(orderModelList);
                                     System.out.println("执行更新");
-                                    new SaveOrUpdateOldOrderThread(orderModelList).start();
+//                                    new SaveOrUpdateOldOrderThread(orderModelList).start();
+                                    orderService.updateOldOrder(orderModelList);
                                 }
                             }
                         }
@@ -1153,7 +1157,7 @@ public class OldOrderTimer {
      * 更新订单线程
      * 定时获取到订单后执行
      */
-    class SaveOrUpdateOldOrderThread extends Thread   {
+/*    class SaveOrUpdateOldOrderThread extends Thread   {
         private List<OrderModel> list;
         public SaveOrUpdateOldOrderThread(List<OrderModel> list) {
             this.list = list;
@@ -1163,5 +1167,5 @@ public class OldOrderTimer {
         public void run() {
             orderService.updateOldOrder(list);
         }
-    }
+    }*/
 }

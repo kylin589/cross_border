@@ -8,6 +8,9 @@ import com.amazonservices.mws.orders._2013_09_01.model.GetOrderRequest;
 import com.amazonservices.mws.orders._2013_09_01.model.GetOrderResponse;
 import com.amazonservices.mws.orders._2013_09_01.model.ResponseHeaderMetadata;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.Query;
 import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
@@ -38,6 +41,7 @@ import io.renren.modules.sys.dto.PlatformStatisticsDto;
 import io.renren.modules.sys.dto.UserStatisticsDto;
 import io.renren.modules.sys.entity.ConsumeEntity;
 import io.renren.modules.sys.entity.SysDeptEntity;
+import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.ConsumeService;
 import io.renren.modules.sys.service.SysDeptService;
 import io.renren.modules.sys.service.SysUserService;
@@ -106,16 +110,16 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     NewProductShipAddressService newProductShipAddressService;
     @Autowired
     NewOrderService newOrderService;
-     @Autowired
+    @Autowired
     NewOrderItemService newOrderItemService;
     @Autowired
     private SysDeptService deptService;
-     @Autowired
-     private DomesticLogisticsService domesticLogisticsService;
+    @Autowired
+    private DomesticLogisticsService domesticLogisticsService;
     @Autowired
     private ProductsService productsService;
-     @Autowired
-     private LogisticsChannelService logisticsChannelService;
+    @Autowired
+    private LogisticsChannelService logisticsChannelService;
     @Autowired
     private ProductShipAddressService productShipAddressService;
     @Autowired
@@ -138,26 +142,253 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     private String fileStoragePath;
     @Override
     public Map<String, Object> queryMyPage(Map<String, Object> params, Long userId) {
-        return null;
-    }
+        //店铺名称
+        String shopName = (String) params.get("shopName");
+        //状态标识
+        String orderStatus = (String) params.get("orderStatus");
+        //异常状态标识
+        String abnormalStatus = (String) params.get("abnormalStatus");
+        //订单id
+        String orderIdStr = (String) params.get("orderId");
+        Long orderId = 0L;
+        if(StringUtils.isNotBlank(orderIdStr)){
+            orderId = Long.parseLong(orderIdStr);
+        }
+        //亚马逊订单id
+        String amazonOrderId = (String) params.get("amazonOrderId");
+        //产品id
+        String productIdStr = (String)params.get("productId");
+        Long productId = 0L;
+        if(StringUtils.isNotBlank(productIdStr)){
+            productId = Long.parseLong(productIdStr);
+        }
+        //产品sku
+        String productSku = (String) params.get("productSku");
+        //asin码
+        String productAsin = (String) params.get("productAsin");
+        //国内物流单号
+        String domesticWaybill = (String) params.get("domesticWaybill");
+        //国外物流单号
+        String abroadWaybill = (String) params.get("abroadWaybill");
+        //开始时间
+        String startDate = (String) params.get("startDate");
+        //结束时间
+        String endDate = (String) params.get("endDate");
+        //查询条件
+        EntityWrapper<NewOrderEntity> wrapper = new EntityWrapper<NewOrderEntity>();
+        wrapper.like(StringUtils.isNotBlank(shopName), "shop_name", shopName)
+                .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus)
+                .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
+                .like(StringUtils.isNotBlank(productSku), "product_sku", productSku)
+                .like(StringUtils.isNotBlank(productAsin), "product_asin", productAsin)
+                .eq(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                .eq(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
+                .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                .eq("user_id",userId)
+                .orderBy("buy_date",false);
 
-    @Override
-    public Map<String, Object> queryOldMyPage(Map<String, Object> params, Long userId) {
-        return null;
+        Page<NewOrderEntity> page = this.selectPage(
+                new Query<NewOrderEntity>(params).getPage(),
+                wrapper
+        );
+        PageUtils pageUtils = new PageUtils(page);
+        Map<String, Object> condition = new HashMap<>(2);
+        condition.put("userId",userId);
+        OrderStatisticsEntity orderCounts = baseMapper.statisticsOrderCounts(condition);
+
+        if(orderCounts == null){
+            orderCounts = new OrderStatisticsEntity();
+        }
+        //订单数
+        int orderCount = this.selectCount(new EntityWrapper<NewOrderEntity>().eq("user_id",userId));
+        orderCounts.setOrderCount(orderCount);
+        //核算订单数
+        int completeCounts = this.selectCount(new EntityWrapper<NewOrderEntity>().eq("user_id",userId).andNew().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH).or().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED));
+        orderCounts.setOrderCounts(completeCounts);
+        //总金额
+        String orderMoney = baseMapper.salesVolumeStatistics(condition);
+        if(StringUtils.isNotBlank(orderMoney)){
+            orderCounts.setOrderMoney(new BigDecimal(orderMoney));
+        }
+        //退货数
+        int returnCounts = this.selectCount(new EntityWrapper<NewOrderEntity>().eq("abnormal_status",ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+        orderCounts.setReturnCounts(returnCounts);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("page",pageUtils);
+        map.put("orderCounts",orderCounts);
+        return map;
     }
 
     @Override
     public Map<String, Object> queryAllPage(Map<String, Object> params, Long deptId) {
-        return null;
+        //公司
+        String qDeptId = (String) params.get("deptId");
+        //用户
+        String userId = (String) params.get("userId");
+        //店铺名称
+        String shopName = (String) params.get("shopName");
+        //状态标识
+        String orderStatus = (String) params.get("orderStatus");
+        //异常状态标识
+        String abnormalStatus = (String) params.get("abnormalStatus");
+        //订单id
+        String orderIdStr = (String) params.get("orderId");
+        Long orderId = 0L;
+        if(StringUtils.isNotBlank(orderIdStr)){
+            orderId = Long.parseLong(orderIdStr);
+        }
+        //亚马逊订单id
+        String amazonOrderId = (String) params.get("amazonOrderId");
+        //产品id
+        String productIdStr = (String)params.get("productId");
+        Long productId = 0L;
+        if(StringUtils.isNotBlank(productIdStr)){
+            productId = Long.parseLong(productIdStr);
+        }
+        //产品sku
+        String productSku = (String) params.get("productSku");
+        //asin码
+        String productAsin = (String) params.get("productAsin");
+        //国内物流单号
+        String domesticWaybill = (String) params.get("domesticWaybill");
+        //国外物流单号
+        String abroadWaybill = (String) params.get("abroadWaybill");
+        //开始时间
+        String startDate = (String) params.get("startDate");
+        //结束时间
+        String endDate = (String) params.get("endDate");
+        //查询条件
+        EntityWrapper<NewOrderEntity> wrapper = new EntityWrapper<NewOrderEntity>();
+        if(deptId == 1L){
+            wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
+                    .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                    .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus)
+                    .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                    .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                    .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
+                    .like(StringUtils.isNotBlank(productSku), "product_sku", productSku)
+                    .like(StringUtils.isNotBlank(productAsin), "product_asin", productAsin)
+                    .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                    .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
+                    .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                    .eq(StringUtils.isNotBlank(userId),"user_id",userId)
+                    .eq(StringUtils.isNotBlank(qDeptId),"dept_id",qDeptId)
+                    .orderBy("buy_date",false);
+        }else{
+            wrapper.eq(StringUtils.isNotBlank(shopName), "shop_name", shopName)
+                    .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
+                    .eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                    .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                    .eq(StringUtils.isNotBlank(productIdStr), "product_id", productId)
+                    .like(StringUtils.isNotBlank(productSku), "product_sku", productSku)
+                    .like(StringUtils.isNotBlank(productAsin), "product_asin", productAsin)
+                    .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                    .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
+                    .ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
+                    .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
+                    .eq(StringUtils.isNotBlank(userId),"user_id",userId)
+                    .eq("dept_id",deptId)
+                    .orderBy("buy_date",false);
+        }
+
+
+        Page<NewOrderEntity> page = this.selectPage(
+                new Query<NewOrderEntity>(params).getPage(),
+                wrapper
+        );
+        List<NewOrderEntity> orderEntityList = page.getRecords();
+        for(NewOrderEntity NewOrderEntity : orderEntityList){
+            SysUserEntity sysUserEntity = userService.selectById(NewOrderEntity.getUserId());
+            SysDeptEntity sysDeptEntity = deptService.selectById(NewOrderEntity.getDeptId());
+            if(sysDeptEntity != null){
+                NewOrderEntity.setDeptName(sysDeptEntity.getName());
+            }
+            if(sysUserEntity != null){
+                NewOrderEntity.setUserName(sysUserEntity.getDisplayName());
+            }
+        }
+        PageUtils pageUtils = new PageUtils(page);
+        OrderStatisticsEntity orderCounts = new OrderStatisticsEntity();
+        Map<String, Object> condition = new HashMap<>(1);
+        if(deptId == 1L){
+            //总公司
+            if(baseMapper.statisticsOrderCounts(condition) != null){
+                orderCounts = baseMapper.statisticsOrderCounts(condition);
+            }
+            //订单数
+            int orderCount = this.selectCount(new EntityWrapper<NewOrderEntity>());
+            orderCounts.setOrderCount(orderCount);
+            //核算订单数
+            int completeCounts = this.selectCount(new EntityWrapper<NewOrderEntity>().eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
+            orderCounts.setOrderCounts(completeCounts);
+            //总金额
+            String orderMoney = baseMapper.salesVolumeStatistics(condition);
+            if(StringUtils.isNotBlank(orderMoney)){
+                orderCounts.setOrderMoney(new BigDecimal(orderMoney));
+            }
+            //退货数
+            int returnCounts = this.selectCount(new EntityWrapper<NewOrderEntity>().eq("abnormal_status",ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+            orderCounts.setReturnCounts(returnCounts);
+        }else{
+            //加盟商
+            condition.put("deptId",deptId);
+            if(baseMapper.statisticsOrderCounts(condition) != null){
+                orderCounts = baseMapper.statisticsOrderCounts(condition);
+            }
+            //订单数
+            int orderCount = this.selectCount(new EntityWrapper<NewOrderEntity>().eq("dept_id",deptId));
+            orderCounts.setOrderCount(orderCount);
+            //核算订单数
+            int completeCounts = this.selectCount(new EntityWrapper<NewOrderEntity>().eq("dept_id",deptId).eq("order_status",ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH));
+            orderCounts.setOrderCounts(completeCounts);
+            //总金额
+            String orderMoney = baseMapper.salesVolumeStatistics(condition);
+            if(StringUtils.isNotBlank(orderMoney)){
+                orderCounts.setOrderMoney(new BigDecimal(orderMoney));
+            }
+            //退货数
+            int returnCounts = this.selectCount(new EntityWrapper<NewOrderEntity>().eq("dept_id",deptId).eq("abnormal_status",ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN));
+            orderCounts.setReturnCounts(returnCounts);
+        }
+
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("page",pageUtils);
+        map.put("orderCounts",orderCounts);
+        return map;
     }
 
     @Override
-    public Map<String, Object> queryOldAllPage(Map<String, Object> params, Long deptId) {
-        return null;
+    public PageUtils queryNewAllPage(Map<String, Object> params){
+        //国内物流单号
+        String domesticWaybill = (String) params.get("domesticWaybill");
+        //国外物流单号
+        String abroadWaybill = (String) params.get("abroadWaybill");
+        //亚马逊单号
+        String amazonOrderId = (String)params.get("amazonOrderId");
+        //订单id
+        String orderIdStr = (String) params.get("orderId");
+        Long orderId = 0L;
+        if(StringUtils.isNotBlank(orderIdStr)){
+            orderId = Long.parseLong(orderIdStr);
+        }
+        //查询条件
+        EntityWrapper<NewOrderEntity> wrapper = new EntityWrapper<NewOrderEntity>();
+        wrapper.eq(StringUtils.isNotBlank(orderIdStr), "order_id", orderId)
+                .like(StringUtils.isNotBlank(amazonOrderId), "amazon_order_id", amazonOrderId)
+                .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
+                .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill);
+        return new PageUtils(this.selectPage(
+                new Query<NewOrderEntity>(params).getPage(),
+                wrapper
+        ));
     }
-
-
     @Override
+    //修改状态
     public boolean updateState(Long orderId, String orderState) {
         String orderStatus = dataDictionaryService.selectOne(
                 new EntityWrapper<DataDictionaryEntity>()
@@ -172,17 +403,14 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         return false;
     }
     @Override
-    public Map<String,String> pushOrder(String amazonOrderId, int packageType, String channelName, String chineseName, String englishName, int length, int width, int height, BigDecimal weight){
+    public Map<String,String> pushOrder(String amazonOrderId, int packageType, String channelCode, String chineseName, String englishName, int length, int width, int height, BigDecimal weight){
         NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", amazonOrderId));
         NewProductShipAddressEntity newshipAddressEntity = newProductShipAddressService.selectOne(new EntityWrapper<NewProductShipAddressEntity>().eq("amazon_order_id",amazonOrderId));
         ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("order_id", newshipAddressEntity.getOrderId()));
         //推送--订单基本信息
         OrderRequestData omsOrder = new OrderRequestData();
         omsOrder.setOrderNumber(amazonOrderId);
-        LogisticsChannelEntity logisticsChannelEntity=logisticsChannelService.selectOne(new EntityWrapper<LogisticsChannelEntity>().eq("channel_name",channelName));
-        if(logisticsChannelEntity!=null){
-            omsOrder.setShippingMethodCode(logisticsChannelEntity.getChannelCode());//测试用的
-        }
+        omsOrder.setShippingMethodCode(channelCode);//测试用的
         omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
         omsOrder.setWeight(weight);
         //推送--订单详情
@@ -208,6 +436,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         shippingInfo.setShippingAddress(shipAddressEntity.getShipAddressDetail());
         shippingInfo.setShippingCity(shipAddressEntity.getShipCity());
         shippingInfo.setShippingState(shipAddressEntity.getShipRegion());
+        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel()==null?NewAbroadLogisticsUtil.getTel():shipAddressEntity.getShipTel());
         shippingInfo.setShippingZip(shipAddressEntity.getShipZip());
         shippingInfo.setShippingPhone(shipAddressEntity.getShipTel());
         ApplicationInfos[] applicationInfos = new ApplicationInfos[omsOrderDetails.size()];
@@ -285,62 +514,51 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     }
 
     @Override
-    public void updateOrder(List<OrderModel> orderModelList) {
-
-    }
-
-    @Override
-    public void updateOldOrder(List<OrderModel> orderModelList) {
-
-    }
-
-    @Override
     public void internationalShipments(NewOrderEntity neworderEntity) {
 
     }
 
     @Override
     public void deduction(NewOrderEntity neworderEntity) {
-        List<ConsumeEntity> consumeList = consumeService.selectList(new EntityWrapper<ConsumeEntity>().eq("order_id",neworderEntity.getOrderId()));
-        if(consumeList == null || consumeList.size() == 0){
-            //扣款
-            SysDeptEntity dept = deptService.selectById(neworderEntity.getDeptId());
-            //原来余额
-            BigDecimal oldBalance = dept.getBalance();
-            BigDecimal nowBalance = oldBalance.subtract(neworderEntity.getInterFreight()).subtract(neworderEntity.getPlatformCommissions());
-            dept.setBalance(nowBalance);
-            deptService.updateById(dept);
-            //生成运费记录
-            ConsumeEntity consumeEntity1 = new ConsumeEntity();
-            consumeEntity1.setDeptId(neworderEntity.getDeptId());
-            consumeEntity1.setDeptName(deptService.selectById(neworderEntity.getDeptId()).getName());
-            consumeEntity1.setUserId(neworderEntity.getUserId());
-            consumeEntity1.setUserName(userService.selectById(neworderEntity.getUserId()).getDisplayName());
-            consumeEntity1.setType("物流费");
-            consumeEntity1.setOrderId(neworderEntity.getOrderId());
-            consumeEntity1.setMoney(neworderEntity.getInterFreight());
-            consumeEntity1.setBeforeBalance(oldBalance);
-            consumeEntity1.setAfterBalance(oldBalance.subtract(neworderEntity.getInterFreight()));
-            consumeEntity1.setAbroadWaybill(neworderEntity.getAbroadWaybill());
-            consumeEntity1.setCreateTime(new Date());
-            consumeService.insert(consumeEntity1);
-            //生成服务费记录
-            ConsumeEntity consumeEntity2 = new ConsumeEntity();
-            consumeEntity2.setDeptId(neworderEntity.getDeptId());
-            consumeEntity2.setDeptName(deptService.selectById(neworderEntity.getDeptId()).getName());
-            consumeEntity2.setUserId(neworderEntity.getUserId());
-            consumeEntity2.setUserName(userService.selectById(neworderEntity.getUserId()).getDisplayName());
-            consumeEntity2.setType("服务费");
-            consumeEntity2.setOrderId(neworderEntity.getOrderId());
-            consumeEntity2.setMoney(neworderEntity.getPlatformCommissions());
-            consumeEntity2.setBeforeBalance(oldBalance.subtract(neworderEntity.getInterFreight()));
-            consumeEntity2.setAfterBalance(nowBalance);
-            consumeEntity2.setCreateTime(new Date());
-            consumeService.insert(consumeEntity2);
-        }
+        //扣款
+        SysDeptEntity dept = deptService.selectById(neworderEntity.getDeptId());
+        //原来余额
+        BigDecimal oldBalance = dept.getBalance();
+        BigDecimal nowBalance = oldBalance.subtract(neworderEntity.getInterFreight()).subtract(neworderEntity.getPlatformCommissions());
+        dept.setBalance(nowBalance);
+        deptService.updateById(dept);
+        //生成运费记录
+        ConsumeEntity consumeEntity1 = new ConsumeEntity();
+        consumeEntity1.setAmazonOrderId(neworderEntity.getAmazonOrderId());
+        consumeEntity1.setDeptId(neworderEntity.getDeptId());
+        consumeEntity1.setDeptName(deptService.selectById(neworderEntity.getDeptId()).getName());
+        consumeEntity1.setUserId(neworderEntity.getUserId());
+        consumeEntity1.setUserName(userService.selectById(neworderEntity.getUserId()).getDisplayName());
+        consumeEntity1.setType("物流费");
+        consumeEntity1.setOrderId(neworderEntity.getOrderId());
+        consumeEntity1.setMoney(neworderEntity.getInterFreight());
+        consumeEntity1.setBeforeBalance(oldBalance);
+        consumeEntity1.setAfterBalance(oldBalance.subtract(neworderEntity.getInterFreight()));
+        consumeEntity1.setAbroadWaybill(neworderEntity.getAbroadWaybill());
+        consumeEntity1.setCreateTime(new Date());
+        consumeService.insert(consumeEntity1);
+        //生成服务费记录
+        ConsumeEntity consumeEntity2 = new ConsumeEntity();
+        consumeEntity2.setAmazonOrderId(neworderEntity.getAmazonOrderId());
+        consumeEntity2.setDeptId(neworderEntity.getDeptId());
+        consumeEntity2.setDeptName(deptService.selectById(neworderEntity.getDeptId()).getName());
+        consumeEntity2.setUserId(neworderEntity.getUserId());
+        consumeEntity2.setUserName(userService.selectById(neworderEntity.getUserId()).getDisplayName());
+        consumeEntity2.setType("服务费");
+        consumeEntity2.setOrderId(neworderEntity.getOrderId());
+        consumeEntity2.setMoney(neworderEntity.getPlatformCommissions());
+        consumeEntity2.setBeforeBalance(oldBalance.subtract(neworderEntity.getInterFreight()));
+        consumeEntity2.setAfterBalance(nowBalance);
+        consumeEntity2.setCreateTime(new Date());
+        consumeService.insert(consumeEntity2);
     }
 
-    @Override
+    /*@Override
     public UserStatisticsDto oneLevelUserStatistics(StatisticsVM vm) {
         UserStatisticsDto dto = new UserStatisticsDto();
         Map<String, Object> params = new HashMap<String,Object>();
@@ -376,7 +594,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         if(StringUtils.isNotBlank(vm.getUserId())){
             params.put("userIdId",vm.getUserId());
         }
-        EntityWrapper orderWrapper = new EntityWrapper<OrderEntity>();
+        EntityWrapper orderWrapper = new EntityWrapper<NewOrderEntity>();
         orderWrapper.ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
                 .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                 .eq(StringUtils.isNotBlank(vm.getDeptId()),"dept_id",vm.getDeptId())
@@ -401,9 +619,9 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
             dto.setProfitRate(dto.getProfit().divide(dto.getSalesVolume(),2,BigDecimal.ROUND_HALF_UP));
         }
         return dto;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public FranchiseeStatisticsDto oneLevelFranchiseeStatistics(StatisticsVM vm) {
         FranchiseeStatisticsDto dto = new FranchiseeStatisticsDto();
         Map<String, Object> params = new HashMap<String,Object>();
@@ -439,7 +657,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         if(StringUtils.isNotBlank(vm.getUserId())){
             params.put("userIdId",vm.getUserId());
         }
-        EntityWrapper orderWrapper = new EntityWrapper<OrderEntity>();
+        EntityWrapper orderWrapper = new EntityWrapper<NewOrderEntity>();
         orderWrapper.ge(StringUtils.isNotBlank(startDate), "buy_date", startDate)
                 .le(StringUtils.isNotBlank(endDate), "buy_date", endDate)
                 .eq(StringUtils.isNotBlank(vm.getDeptId()),"dept_id",vm.getDeptId())
@@ -456,9 +674,9 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
             dto.setProfitRate(dto.getProfit().divide(dto.getSalesVolume(),2,BigDecimal.ROUND_HALF_UP));
         }
         return dto;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public PlatformStatisticsDto platformStatistics(StatisticsVM vm) {
         Map<String, Object> params = new HashMap<String,Object>();
         String type = vm.getType();
@@ -503,12 +721,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         platformStatisticsDto.setUserProfit(userProfit);
         platformStatisticsDto.setAllProfit(allProfit);
         return platformStatisticsDto;
-    }
-
-    @Override
-    public OrderModel updateOrderAmazonStatus(String AmazonOrderId, NewOrderEntity neworderEntity) {
-        return null;
-    }
+    }*/
 
     @Override
     public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl, Long orderId) {
@@ -617,306 +830,6 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     }
 
     @Override
-    public void RefreshAmazonState(NewOrderEntity neworderEntity, OrderModel orderModel) {
-        String modelStatus = orderModel.getOrderStatus();
-        //更新订单
-        //获取状态判断是否为取消
-            /*if (ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)) {
-                orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
-                orderEntity.setOrderState("取消");
-            } else {
-                //获取当前订单状态判断是否为待付款、已付款、虚发货
-                if (Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(orderEntity.getOrderState())) {
-                    //获取返回状态判断是否为待付款、已付款、虚发货
-                    if (Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE).contains(modelStatus)) {
-                        //判断两个状态不想等时更改状态
-                        if (!modelStatus.equals(orderEntity.getOrderState())) {
-                            orderEntity.setOrderStatus(modelStatus);
-                            String orderState = dataDictionaryService.selectOne(
-                                    new EntityWrapper<DataDictionaryEntity>()
-                                            .eq("data_type", "AMAZON_ORDER_STATE")
-                                            .eq("data_number", modelStatus)
-                            ).getDataContent();
-                            orderEntity.setOrderState(orderState);
-                            orderService.updateById(orderEntity);
-                        }
-                    }
-                }
-                //新增/修改收货人信息
-                ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
-                if(productShipAddressEntity != null){//判断返回值是否有收件人信息
-                    ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
-                            new EntityWrapper<ProductShipAddressEntity>().eq("order_id",orderEntity.getOrderId())
-                    );
-                    if(shipAddress == null){
-                        productShipAddressEntity.setOrderId(orderEntity.getOrderId());
-                        productShipAddressService.insert(productShipAddressEntity);
-                    }else{
-                        productShipAddressEntity.setOrderId(shipAddress.getOrderId());
-                        productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
-                        productShipAddressService.updateById(productShipAddressEntity);
-                    }
-                }
-            }*/
-        //更新订单
-        List<OrderItemModel> orderItemModels=orderModel.getOrderItemModels();
-        if(orderItemModels!=null && orderItemModels.size()>0) {
-            for (OrderItemModel orderItemModel : orderItemModels) {
-                //判断该商品是否存在
-                NewOrderItemEntity productOrderItemEntity = newOrderItemService.selectOne(new EntityWrapper<NewOrderItemEntity>().eq("order_item_id", orderItemModel.getOrderItemId()));
-                //存在更新
-                ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku", orderItemModel.getProductSku()));
-                if (StringUtils.isNotBlank(orderItemModel.getProductImageUrl())) {
-                    productOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
-                } else if (productsEntity != null) {
-                    productOrderItemEntity.setProductImageUrl(productsEntity.getMainImageUrl());
-                }
-                //更新订单商品
-//                            orderEntity.setProductTitle(orderModel.getTitlename());
-//                            orderEntity.setCountryCode(orderModel.getCountry());
-                productOrderItemEntity.setProductTitle(orderItemModel.getProductTitle());
-                productOrderItemEntity.setProductSku(orderItemModel.getProductSku());
-                productOrderItemEntity.setProductAsin(orderItemModel.getProductAsin());
-                productOrderItemEntity.setProductPrice(orderItemModel.getProductPrice());
-                productOrderItemEntity.setUpdatetime(new Date());
-                newOrderItemService.updateById(productOrderItemEntity);
-            }
-        }
-            /*String orderItemId=orderModel.getOrderItemId();
-            ProductOrderItemEntity productOrderItemEntity=productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id",orderItemId));
-
-            ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku",productOrderItemEntity.getProductSku()));
-            if(StringUtils.isNotBlank(productOrderItemEntity.getProductImageUrl())){
-                orderEntity.setProductImageUrl(productOrderItemEntity.getProductImageUrl());
-            }else if(productsEntity != null){
-                orderEntity.setProductImageUrl(productsEntity.getMainImageUrl());
-            }
-
-            orderEntity.setProductTitle(orderModel.getTitlename());
-*/
-        neworderEntity.setCountryCode(orderModel.getCountry());
-        //设置汇率
-        BigDecimal rate = new BigDecimal(0.00);
-        String rateCode = orderModel.getCurrencyCode();
-        if(StringUtils.isNotBlank(rateCode)){
-            rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code",rateCode)).getRate();
-        }
-        BigDecimal orderMoney = orderModel.getOrderMoney();
-        if(orderMoney.compareTo(new BigDecimal("0.00")) != 0){
-            neworderEntity.setOrderMoney(orderMoney);
-            neworderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
-            //获取Amazon佣金（外币）
-            BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15).setScale(2,BigDecimal.ROUND_HALF_UP));
-            neworderEntity.setAmazonCommission(amazonCommission);
-            neworderEntity.setAmazonCommissionCny(amazonCommission.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
-            //到账金额
-            BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
-            neworderEntity.setAccountMoney(accountMoney);
-            neworderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2,BigDecimal.ROUND_HALF_UP));
-        }
-        //获取状态判断是否为取消
-        if(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_CANCELED.equals(modelStatus)){
-            neworderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_CANCELED);
-            neworderEntity.setOrderState("取消");
-        }else{
-            String orderStatus = neworderEntity.getOrderStatus();
-            //获取当前订单状态判断是否为待付款、已付款、虚发货
-            List amazonStateList = Arrays.asList(ConstantDictionary.OrderStateCode.NEW_AMAZON_ORDER_STATE);
-            if(amazonStateList.contains(orderStatus)){
-                //获取返回状态判断是否为待付款、已付款、虚发货
-                if(amazonStateList.contains(modelStatus)){
-                    //判断两个状态不想等时更改状态
-                    if(!modelStatus.equals(orderStatus)){
-                        neworderEntity.setOrderStatus(modelStatus);
-                        String orderState = dataDictionaryService.selectOne(
-                                new EntityWrapper<DataDictionaryEntity>()
-                                        .eq("data_type","AMAZON_ORDER_STATE")
-                                        .eq("data_number",modelStatus)
-                        ).getDataContent();
-
-                        neworderEntity.setOrderState(orderState);
-                        newOrderService.updateById(neworderEntity);
-                        //新增/修改收货人信息
-                        ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
-                        if(productShipAddressEntity != null){//判断返回值是否有收件人信息
-                            ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
-                                    new EntityWrapper<ProductShipAddressEntity>().eq("order_id",neworderEntity.getOrderId())
-                            );
-                            if(shipAddress == null){
-                                productShipAddressEntity.setOrderId(neworderEntity.getOrderId());
-                                productShipAddressService.insert(productShipAddressEntity);
-                            }else{
-                                productShipAddressEntity.setOrderId(shipAddress.getOrderId());
-                                productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
-                                productShipAddressService.updateById(productShipAddressEntity);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void RefreshOrder(Long orderId) {
-        //订单对象
-        NewOrderEntity neworderEntity = newOrderService.selectById(orderId);
-        //国际物流对象
-        NewOrderAbroadLogisticsEntity newabroadLogisticsEntity = newOrderAbroadLogisticsService.selectOne(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id",orderId));
-        if(newabroadLogisticsEntity == null){
-            newabroadLogisticsEntity = new NewOrderAbroadLogisticsEntity();
-        }
-        String amazonOrderId = neworderEntity.getAmazonOrderId();
-        String abnormalStatus = neworderEntity.getAbnormalStatus();
-        String orderStatus = neworderEntity.getOrderStatus();
-//            BigDecimal momentRate = orderEntity.getMomentRate();
-        //不属于退货
-        if(!ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_RETURN.equals(abnormalStatus) || neworderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
-            Map<String,Object> map = AbroadLogisticsUtil.getOrderDetail(amazonOrderId);
-            if("true".equals(map.get("code"))){
-                neworderEntity.setUpdateTime(new Date());
-                ReceiveOofayData receiveOofayData = (ReceiveOofayData)map.get("receiveOofayData");
-                //如果订单状态在物流仓库未签收和仓库已入库时，更新订单的国际物流信息
-                if(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_WAREHOUSING.equals(orderStatus)){
-                    int status = 0;
-                    //状态转变为仓库已入库
-                    if(receiveOofayData.isWarehousing ){
-                        neworderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_WAREHOUSING);
-                        neworderEntity.setOrderState("仓库已入库");
-                        newabroadLogisticsEntity.setState("仓库已入库");
-                    }else{
-                        if(StringUtils.isNotBlank(receiveOofayData.getStatusStr())){
-                            status = Integer.parseInt(receiveOofayData.getStatusStr());
-                            if(status == 3){
-                                newabroadLogisticsEntity.setState("出库");
-                                //国际已发货
-                                newOrderService.internationalShipments(neworderEntity);
-                            }
-                        }
-                    }
-                    newabroadLogisticsEntity.setUpdateTime(new Date());
-                }
-                //设置国际物流公司
-                if(StringUtils.isNotBlank(receiveOofayData.getDestTransportCompany())){
-                    System.out.println("物流公司：" + receiveOofayData.getDestTransportCompany());
-                    newabroadLogisticsEntity.setDestTransportCompany(receiveOofayData.getDestTransportCompany());
-                    //设置国际物流渠道
-                    if(StringUtils.isNotBlank(receiveOofayData.getDestChannel())){
-                        newabroadLogisticsEntity.setDestChannel(receiveOofayData.getDestChannel());
-                    }else{
-                        newabroadLogisticsEntity.setDestChannel("Standard");
-                    }
-                }
-                //设置国内跟踪号
-                if(StringUtils.isNotBlank(receiveOofayData.getDomesticTrackWaybill())){
-                    newabroadLogisticsEntity.setDomesticTrackWaybill(receiveOofayData.getDomesticTrackWaybill());
-                }
-                //设置发货时间
-                if(StringUtils.isNotBlank(receiveOofayData.getShipTime())){
-                    DateFormat df= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                    Date shipTime = null;
-                    try {
-                        shipTime = df.parse(receiveOofayData.getShipTime());
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    newabroadLogisticsEntity.setShipTime(shipTime);
-                }
-                //设置实际重量
-                if(StringUtils.isNotBlank(receiveOofayData.getActualWeight()) && !"0.0".equals(receiveOofayData.getActualWeight())){
-                    newabroadLogisticsEntity.setActualWeight(receiveOofayData.getActualWeight());
-                }
-                //设置目的地查询网址
-                if(StringUtils.isNotBlank(receiveOofayData.getDestQueryUrl())){
-                    newabroadLogisticsEntity.setDestQueryUrl(receiveOofayData.getDestQueryUrl());
-                }
-                //设置服务查询网址
-                if(StringUtils.isNotBlank(receiveOofayData.getServiceQueryUrl())){
-                    newabroadLogisticsEntity.setServiceQueryUrl(receiveOofayData.getServiceQueryUrl());
-                }
-                //设置联系电话
-                if(StringUtils.isNotBlank(receiveOofayData.getMobile())){
-                    newabroadLogisticsEntity.setMobile(receiveOofayData.getMobile());
-                }
-                //有运费
-                if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && new BigDecimal(receiveOofayData.getInterFreight()).compareTo(new BigDecimal(0.00)) == 1 && neworderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
-                    //计算国际运费、平台佣金、利润
-                    //国际运费
-                    BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
-                    newabroadLogisticsEntity.setInterFreight(interFreight);
-                    neworderEntity.setInterFreight(interFreight);
-                    //到账金额(人民币)
-                    BigDecimal accountMoney = neworderEntity.getAccountMoneyCny();
-                    //平台佣金
-                    BigDecimal companyPoint = deptService.selectById(neworderEntity.getDeptId()).getCompanyPoints();
-                    BigDecimal platformCommissions = accountMoney.multiply(companyPoint).setScale(2,BigDecimal.ROUND_HALF_UP);
-                    neworderEntity.setPlatformCommissions(platformCommissions);
-                    //利润 到账-国际运费-采购价-平台佣金
-                    BigDecimal orderProfit = accountMoney.subtract(neworderEntity.getPurchasePrice()).subtract(interFreight).subtract(platformCommissions).setScale(2,BigDecimal.ROUND_HALF_UP);
-                    neworderEntity.setOrderProfit(orderProfit);
-                    //利润率
-                    BigDecimal profitRate = orderProfit.divide(neworderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
-                    neworderEntity.setProfitRate(profitRate);
-                    newOrderService.deduction(neworderEntity);
-                }
-                //判断状态为国际已发货或已完成
-                else if(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_INTLSHIPPED.equals(orderStatus) || ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_FINISH.equals(orderStatus)){
-                    //判断订单数据中国际运费是否为空
-                    if(neworderEntity.getInterFreight().compareTo(new BigDecimal(0.00)) == 0){
-                        neworderEntity.setUpdateTime(new Date());
-                        //有运费
-
-                        if(StringUtils.isNotBlank(receiveOofayData.getInterFreight()) && new BigDecimal(receiveOofayData.getInterFreight()).compareTo(new BigDecimal(0.00)) == 1){
-                            //计算国际运费、平台佣金、利润
-                            //国际运费
-                            BigDecimal interFreight = new BigDecimal(receiveOofayData.getInterFreight());
-                            newabroadLogisticsEntity.setInterFreight(interFreight);
-                            neworderEntity.setInterFreight(interFreight);
-                            //到账金额(人民币)
-                            BigDecimal accountMoney = neworderEntity.getAccountMoneyCny();
-                            //平台佣金
-                            BigDecimal companyPoint = deptService.selectById(neworderEntity.getDeptId()).getCompanyPoints();
-                            BigDecimal platformCommissions = accountMoney.multiply(companyPoint).setScale(2,BigDecimal.ROUND_HALF_UP);
-                            neworderEntity.setPlatformCommissions(platformCommissions);
-                            //利润 到账-国际运费-采购价-平台佣金
-                            BigDecimal orderProfit = accountMoney.subtract(neworderEntity.getPurchasePrice()).subtract(interFreight).subtract(platformCommissions).setScale(2,BigDecimal.ROUND_HALF_UP);
-                            neworderEntity.setOrderProfit(orderProfit);
-                            //利润率
-                            BigDecimal profitRate = orderProfit.divide(neworderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
-                            neworderEntity.setProfitRate(profitRate);
-                            newOrderService.deduction(neworderEntity);
-                        }
-                    }
-
-                    //设置转单号
-                    if(StringUtils.isBlank(newabroadLogisticsEntity.getTrackWaybill())){
-                        Map<String,String> trackWaybillMap = AbroadLogisticsUtil.getTrackWaybill(amazonOrderId);
-                        if("true".equals(trackWaybillMap.get("code"))){
-                            String trackWaybill = trackWaybillMap.get("trackWaybill");
-                            if(StringUtils.isNotBlank(trackWaybill)){
-                                newabroadLogisticsEntity.setTrackWaybill(trackWaybill);
-                                newabroadLogisticsEntity.setIsSynchronization(0);
-                            }
-                        }
-                    }
-                }
-                if(newabroadLogisticsEntity.getOrderId() == null){
-                    newabroadLogisticsEntity.setOrderId(orderId);
-                    newOrderAbroadLogisticsService.insert(newabroadLogisticsEntity);
-                }else{
-                    newOrderAbroadLogisticsService.updateById(newabroadLogisticsEntity);
-                }
-                newOrderService.insertOrUpdate(neworderEntity);
-                //同步转单号
-                if(StringUtils.isNotBlank(newabroadLogisticsEntity.getTrackWaybill()) && newabroadLogisticsEntity.getIsSynchronization() == 0){
-                    SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworderEntity,newabroadLogisticsEntity);
-                    amazonUpdateLogistics(sendDataMoedl,orderId);
-                }
-            }
-        }
-    }
-
-    @Override
     public Map<String,String> DeleteOrder(String type,String wayBillNumber) {
         String  jsonStr="{\"Type\":"+"\""+type+"\",\"OrderNumber\":"+wayBillNumber+"\"}";
         return NewAbroadLogisticsUtil.delOrder(jsonStr);
@@ -934,6 +847,19 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     @Override
     public Map<String,String>  getShippingFeeDetail(String orderNumber) {
        return NewAbroadLogisticsUtil.getShippingFeeDetail("","",orderNumber);
+    }
+
+    @Override
+    public  List<String>  getShippingMethodCode(int type) {
+        List<String> result =new  ArrayList<>();
+        List<LogisticsChannelEntity> channelilist = logisticsChannelService.selectList(new EntityWrapper<LogisticsChannelEntity>().eq("package_type", type));
+        for (LogisticsChannelEntity logisticsChannelEntity:channelilist){
+            String key=logisticsChannelEntity.getChannelName();
+            String value=logisticsChannelEntity.getChannelCode();
+            String str=key+":"+value;
+            result.add(str);
+        }
+        return result;
     }
 
     /**

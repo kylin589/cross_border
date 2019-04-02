@@ -33,6 +33,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,19 +59,7 @@ public class SysLoginController extends AbstractController {
     @Autowired
     private Producer producer;
     @Autowired
-    private SysDeptService deptService;
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private EanUpcService eanUpcService;
-    @Autowired
-    private NoticeService noticeService;
-    @Autowired
-    private SysUserRoleService sysUserRoleService;
-    @Autowired
-    private SysRoleService roleService;
-    @Autowired
-    private SysUserService sysUserService;
+    private CookieLogService cookieLogService;
 
     @RequestMapping("captcha.jpg")
     public void captcha(HttpServletResponse response) throws IOException {
@@ -113,7 +102,7 @@ public class SysLoginController extends AbstractController {
             return R.error("账户验证失败");
         }
 
-        new CalculationThread().start();
+        cookieLogService.Calculation(getUserId(),getDeptId());
         return R.ok();
 
         // 管理员和员工分离登录时使用
@@ -148,60 +137,6 @@ public class SysLoginController extends AbstractController {
         }
 */
 
-    }
-
-    class CalculationThread extends Thread {
-        @Override
-        public void run() {
-
-            //总部查询MEN码
-            if (getUserId() == 1L) {
-                int count = eanUpcService.selectCount(new EntityWrapper<EanUpcEntity>().eq("state", 0));
-                if (count < 1000) {
-                    NoticeEntity notice = new NoticeEntity();
-                    notice.setDeptId(getDeptId());
-                    notice.setUserId(getUserId());
-                    notice.setNoticeContent("UPC/EAN码已不足，请及时添加。");
-                    notice.setCreateTime(new Date());
-                    notice.setNoticeType("UPC/EAN");
-                    noticeService.insert(notice);
-                }
-            }
-            SysDeptEntity dept = deptService.selectById(getDeptId());
-            //未发货订单
-            int unshippedNumber = orderService.selectCount(
-                    new EntityWrapper<OrderEntity>().in("order_status", ConstantDictionary.OrderStateCode.UNLIQUIDATED_ORDER_STATE).andNew()
-                            .ne("abnormal_status", ConstantDictionary.OrderStateCode.ORDER_STATE_RETURN).andNew().ne("inter_freight",0)
-            );
-            dept.setUnshippedNumber(unshippedNumber);
-            //未结算订单数(国际已发货)
-            int unliquidatedNumber = orderService.selectCount(
-                    new EntityWrapper<OrderEntity>().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED).eq("dept_id",dept.getDeptId())
-            );
-            dept.setUnliquidatedNumber(unliquidatedNumber);
-            //预计费用
-            BigDecimal estimatedCost = new BigDecimal(unshippedNumber * 50);
-            dept.setEstimatedCost(estimatedCost);
-            //可用余额
-            BigDecimal availableBalance = dept.getBalance().subtract(estimatedCost).setScale(2, BigDecimal.ROUND_HALF_UP);
-            if (availableBalance.compareTo(new BigDecimal(50)) == -1) {
-                SysRoleEntity roleEntity = roleService.selectOne(new EntityWrapper<SysRoleEntity>().eq("role_name", "加盟商管理员"));
-                if (sysUserRoleService.selectCount(new EntityWrapper<SysUserRoleEntity>().eq("user_id", getUserId()).eq("role_id", roleEntity.getRoleId())) > 0) {
-                    NoticeEntity notice = new NoticeEntity();
-                    notice.setDeptId(getDeptId());
-                    notice.setUserId(getUserId());
-                    notice.setNoticeContent("公司可用余额不足，为避免订单出现异常，请及时充值。");
-                    notice.setCreateTime(new Date());
-                    notice.setNoticeType("余额");
-                    noticeService.insert(notice);
-                }
-            }
-            dept.setAvailableBalance(availableBalance);
-            //预计还可生成单数
-            int estimatedOrder = availableBalance.divide(new BigDecimal(50), 0, BigDecimal.ROUND_HALF_DOWN).intValue();
-            dept.setEstimatedOrder(estimatedOrder);
-            deptService.updateById(dept);
-        }
     }
 
     /**

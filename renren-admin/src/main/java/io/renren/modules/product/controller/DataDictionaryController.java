@@ -6,15 +6,18 @@ import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.product.entity.DataDictionaryEntity;
+import io.renren.modules.product.entity.NewOrderEntity;
 import io.renren.modules.product.entity.OrderEntity;
 import io.renren.modules.product.entity.ProductsEntity;
 import io.renren.modules.product.service.DataDictionaryService;
+import io.renren.modules.product.service.NewOrderService;
 import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.service.ProductsService;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.service.SysUserRoleService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -37,7 +40,11 @@ public class DataDictionaryController extends AbstractController {
     @Autowired
     private ProductsService productsService;
     @Autowired
+    @Lazy
     private OrderService orderService;
+    @Autowired
+    @Lazy
+    private NewOrderService newOrderService;
     @Autowired
     private SysUserRoleService userRoleService;
     /**
@@ -220,6 +227,29 @@ public class DataDictionaryController extends AbstractController {
         return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
     }
     /**
+     * @methodname: myOrderStateList 我的订单状态获取
+     * @return: io.renren.common.utils.R
+     * @auther: wdh
+     * @date: 2018/12/3 10:02
+     */
+    @RequestMapping("/myNewOrderStateList")
+    public R myNewOrderStateList() {
+        List<DataDictionaryEntity> orderStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "NEW_AMAZON_ORDER_STATE").orderBy(true, "data_sort", true));
+        List<DataDictionaryEntity> abnormalStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "ORDER_ABNORMAL_STATE").orderBy(true, "data_sort", true));
+        //定义一个变量 全部的总和
+        int allOrderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("user_id",getUserId()));
+        for (DataDictionaryEntity orderState : orderStateList) {
+            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("order_status",orderState.getDataNumber()).eq("user_id",getUserId()));
+            orderState.setCount(orderCount);
+        }
+        for(DataDictionaryEntity abnormalState : abnormalStateList){
+            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("abnormal_status",abnormalState.getDataNumber()).eq("user_id",getUserId()));
+            abnormalState.setCount(orderCount);
+        }
+        orderStateList.addAll(abnormalStateList);
+        return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
+    }
+    /**
      * @methodname: myOrderStateList 我的订单状态获取(旧)
      * @return: io.renren.common.utils.R
      * @auther: wdh
@@ -260,6 +290,29 @@ public class DataDictionaryController extends AbstractController {
         }
         for (DataDictionaryEntity abnormalState : abnormalStateList) {
             int orderCount = orderService.selectCount(new EntityWrapper<OrderEntity>().eq("abnormal_status",abnormalState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()).eq("is_old",0));
+            abnormalState.setCount(orderCount);
+        }
+        orderStateList.addAll(abnormalStateList);
+        return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
+    }
+    /**
+     * @methodname: myOrderStateList 所有订单状态获取
+     * @return: io.renren.common.utils.R
+     * @auther: wdh
+     * @date: 2018/12/3 10:02
+     */
+    @RequestMapping("/allNewOrderStateList")
+    public R allNewOrderStateList() {
+        List<DataDictionaryEntity> orderStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "NEW_AMAZON_ORDER_STATE").orderBy(true, "data_sort", true));
+        List<DataDictionaryEntity> abnormalStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "ORDER_ABNORMAL_STATE").orderBy(true, "data_sort", true));
+        //定义一个变量 全部的总和
+        int allOrderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq(getDeptId()!=1L,"dept_id",getDeptId()));
+        for (DataDictionaryEntity orderState : orderStateList) {
+            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("order_status",orderState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()).eq("is_old",0));
+            orderState.setCount(orderCount);
+        }
+        for (DataDictionaryEntity abnormalState : abnormalStateList) {
+            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("abnormal_status",abnormalState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()).eq("is_old",0));
             abnormalState.setCount(orderCount);
         }
         orderStateList.addAll(abnormalStateList);

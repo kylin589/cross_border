@@ -1,8 +1,10 @@
 package io.renren.modules.logistics.util;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.renren.modules.logistics.DTO.OrderWayBill;
+import io.renren.modules.logistics.entity.LogisticsChannelEntity;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import okhttp3.*;
@@ -13,10 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 对接新的物流接口的工具类
@@ -57,6 +56,21 @@ public class NewAbroadLogisticsUtil {
     //线上获取运费明细
     public final static String xs_yt_getShippingFeeDetail=xs_yt_url+"WayBill/GetShippingFeeDetail?wayBillNumber=";
 
+    /**
+     * 随机生成电话号码的方法
+     * @return
+     */
+    public static String getTel(){
+        for (int i = 0; i < 9; i++) {//9代表循环九次，产生九个随机号码
+            String number = "139";//定义电话号码以139开头
+            Random random = new Random();//定义random，产生随机数
+            for (int j = 0; j < 8; j++) { //生成0~9 随机数
+                number += random.nextInt(9);
+            }
+            return number;
+        }
+        return null;
+    }
 
     /**
      * 生成token的方法(Base86编码)
@@ -216,7 +230,6 @@ public class NewAbroadLogisticsUtil {
        }
          return map;
    }
-
 
 
     /**
@@ -486,7 +499,6 @@ public class NewAbroadLogisticsUtil {
                         String value=jsonObject.getString(key);
                         if (key.equals("ResultCode") && !"0000".equals(value)) {
                             map.put("code", "false");
-                            map.put("msg", "提交失败，请检查参数格式是否正确");
                         }
                         if (key.equals("ResultCode") && "0000".equals(value)) {
                             System.out.println("提交成功");
@@ -498,6 +510,7 @@ public class NewAbroadLogisticsUtil {
                             List<OrderWayBill> list=new Gson().fromJson(value2,type);
                             if(list != null && list.size() >0){
                                 if(list.get(0) != null){
+                                    map.put("msg",list.get(0).getFeedback());
                                     map.put("Status",list.get(0).getStatus());//运单请求 1-请求成功，0-请求失败
 //                                map.put("TrackStatus",orderWayBill.getTrackStatus());//获得追踪号状态 1-已产生跟踪号 2-等待后续更新跟踪号 3-不需要跟踪号
                                     map.put("wayBillNumber",list.get(0).getWayBillNumber());//获得运单号
@@ -508,6 +521,7 @@ public class NewAbroadLogisticsUtil {
                                     }
                                 }else{
                                     map.put("Status","0");//运单请求 1-请求成功，0-请求失败
+
                                 }
 
                             }
@@ -523,10 +537,12 @@ public class NewAbroadLogisticsUtil {
         return  map;
     }
 
+
+
     public static void main(String[] args) {
 //        pushOrder();
 //          printOrder();
-        getOrderInfo("","","303-7832993-5749169");
+//        getOrderInfo("","","303-7832993-5749169");
 
     }
 

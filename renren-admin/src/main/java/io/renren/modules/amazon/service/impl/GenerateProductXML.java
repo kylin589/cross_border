@@ -270,22 +270,33 @@ public class GenerateProductXML {
 
                 Element variationTheme = variationData.addElement("VariationTheme");
                 System.out.println(productsEntity.getProductId());
-                if (productsEntity.getColorId() != null && productsEntity.getSizeId() != null) {
+
+                Long colorId = productsEntity.getColorId();
+                Long sizeId = productsEntity.getSizeId();
+                VariantParameterEntity colorVP = null;
+                VariantParameterEntity sizeVP = null;
+                if(colorId != null){
+                    colorVP = variantParameterService.selectById(colorId);
+                }
+                if(sizeId != null){
+                    sizeVP = variantParameterService.selectById(sizeId);
+                }
+                if (colorVP != null && sizeVP != null) {
                     variationThemeStr = "Size-Color";
                     variationTheme.addText(variationThemeStr);
-                    /*Element colorMap = variationData.addElement("ColorMap");
-                    colorMap.addText("white");*/
-                    /*Element sizeMap = variationData.addElement("SizeMap");
+                    /*Element colorMap = variationTheme.addElement("ColorMap");
+                    colorMap.addText("white");
+                    Element sizeMap = variationTheme.addElement("SizeMap");
                     sizeMap.addText("free");*/
-                } else if (productsEntity.getColorId() != null) {
+                } else if (colorVP != null) {
                     variationThemeStr = "Color";
                     variationTheme.addText(variationThemeStr);
-                    /*Element colorMap = variationData.addElement("ColorMap");
+                    /*Element colorMap = variationTheme.addElement("ColorMap");
                     colorMap.addText("white");*/
-                } else if (productsEntity.getSizeId() != null) {
+                } else if (sizeVP != null) {
                     variationThemeStr = "Size";
                     variationTheme.addText(variationThemeStr);
-                    /*Element sizeMap = variationData.addElement("SizeMap");
+                    /*EElement sizeMap = variationTheme.addElement("SizeMap");
                     sizeMap.addText("free");*/
                 }
 
@@ -427,8 +438,8 @@ public class GenerateProductXML {
                         case "Color":
                             Element vieColor1 = vieVariationData.addElement("Color");
                             vieColor1.addText(variantsInfoEntity.getVariantCombination());
-                            /*Element colorMap2 = vieVariationData.addElement("ColorMap");
-                            colorMap2.addText("white");*/
+                            Element colorMap2 = vieVariationData.addElement("ColorMap");
+                            colorMap2.addText("white");
                             break;
                         case "Size":
                             Element vieSize2 = vieVariationData.addElement("Size");

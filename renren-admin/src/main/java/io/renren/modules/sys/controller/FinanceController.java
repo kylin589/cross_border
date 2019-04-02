@@ -8,6 +8,7 @@ import io.renren.modules.sys.dto.StatisticsDto;
 import io.renren.modules.sys.dto.UserStatisticsDto;
 import io.renren.modules.sys.vm.StatisticsVM;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sys/finance")
 public class FinanceController extends AbstractController{
     @Autowired
+    @Lazy
     private OrderService orderService;
 
     /**

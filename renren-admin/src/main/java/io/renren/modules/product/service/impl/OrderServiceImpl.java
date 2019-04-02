@@ -53,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -115,6 +116,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Autowired
     private SysDeptService deptService;
     @Autowired
+    @Lazy
     private OrderService orderService;
     @Autowired
     private AbroadLogisticsService abroadLogisticsService;
@@ -1456,6 +1458,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     //根据订单id进行更新订单Amazon状态
     @Override
+    @Async("taskExecutor")
     public OrderModel updateOrderAmazonStatus(String AmazonOrderId, OrderEntity orderEntity) {
         AmazonGrantShopEntity amazonGrantShopEntity = amazonGrantShopService.selectOne(new EntityWrapper<AmazonGrantShopEntity>().eq("user_id",orderEntity.getUserId()).eq("country_code",orderEntity.getCountryCode()));
         if(amazonGrantShopEntity != null && amazonGrantShopEntity.getGrantId() != null){
@@ -1605,13 +1608,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         return null;
     }
 
-
-
     /**
      * 上传国际物流信息到amazon
      * @param sendDataMoedl
      */
     @Override
+    @Async("taskExecutor")
     public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl, Long orderId){
         List<Shipping> list = sendDataMoedl.getList();
         List<String> serviceURL = sendDataMoedl.getServiceURL();
@@ -1718,6 +1720,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
+    @Async("taskExecutor")
     public void RefreshAmazonState(OrderEntity orderEntity, OrderModel orderModel) {
         String modelStatus = orderModel.getOrderStatus();
         //更新订单
@@ -1859,7 +1862,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
+    @Async("taskExecutor")
     public void RefreshOrder(Long orderId) {
+        try {
+            Thread.sleep(5*60*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //订单对象
         OrderEntity orderEntity = orderService.selectById(orderId);
         //国际物流对象

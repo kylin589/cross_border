@@ -69,6 +69,11 @@ public class ConsumeEntity implements Serializable {
 	private Date createTime;
 
 	/**
+	 * 亚马逊订单号
+	 */
+	private String amazonOrderId;
+
+	/**
 	 * 设置：公司消费id
 	 */
 	public void setCompanyConsumeId(Long companyConsumeId) {
@@ -211,5 +216,13 @@ public class ConsumeEntity implements Serializable {
 	 */
 	public Date getCreateTime() {
 		return createTime;
+	}
+
+	public String getAmazonOrderId() {
+		return amazonOrderId;
+	}
+
+	public void setAmazonOrderId(String amazonOrderId) {
+		this.amazonOrderId = amazonOrderId;
 	}
 }
