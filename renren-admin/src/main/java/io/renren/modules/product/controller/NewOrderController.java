@@ -48,6 +48,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
@@ -104,6 +105,7 @@ public class NewOrderController extends AbstractController {
     @Value(("${mws-config.app-version}"))
     private String appVersion;
     @Autowired
+    @Lazy
     private NewOrderService newOrderService;
     @Autowired
     private NewOrderItemService newOrderItemService;
@@ -344,12 +346,9 @@ public class NewOrderController extends AbstractController {
 //        );
 //        orderDTO.setDomesticLogisticsList(domesticLogisticsList);
         //国际物流
-        NewOrderAbroadLogisticsEntity newabroadLogistics = newOrderAbroadLogisticsService.selectOne(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id",orderId));
-        if(newabroadLogistics == null){
-            orderDTO.setAbroadLogistics(new NewOrderAbroadLogisticsEntity());
-        }else{
-            orderDTO.setAbroadLogistics(newabroadLogistics);
-        }
+        List<NewOrderAbroadLogisticsEntity> newabroadLogisticsList = new ArrayList<NewOrderAbroadLogisticsEntity>();
+        newabroadLogisticsList = newOrderAbroadLogisticsService.selectList(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id",orderId));
+        orderDTO.setAbroadLogisticsList(newabroadLogisticsList);
         for (NewOrderItemEntity newproductOrderItemEntity:productOrderItemEntitys) {
             ProductsEntity productsEntity = productsService.selectById(newproductOrderItemEntity.getProductId());
             if(StringUtils.isBlank(newproductOrderItemEntity.getProductTitle()) && productsEntity != null){
@@ -671,56 +670,30 @@ public class NewOrderController extends AbstractController {
                 }
                 //设置国际物流单号
                 neworder.setAbroadWaybill(abroadWaybill);
-                if(newabroadLogistics != null){
-                    newabroadLogistics.setAbroadWaybill(abroadWaybill);
-                    newabroadLogistics.setTrackWaybill(track_waybill);
-                    newabroadLogistics.setLength(orderVM.getLength());
-                    newabroadLogistics.setWidth(orderVM.getWidth());
-                    newabroadLogistics.setHeight(orderVM.getHeight());
-                    newabroadLogistics.setWeight(orderVM.getWeight());
-                    newabroadLogistics.setChineseName(orderVM.getChineseName());
-                    newabroadLogistics.setEnglishName(orderVM.getEnglishName());
-                    newabroadLogistics.setPackageType(orderVM.getPackageType());
-                    newabroadLogistics.setChannelName(orderVM.getChannelName());
-                    LogisticsChannelEntity logisticsChannelEntity=logisticsChannelService.selectOne(new EntityWrapper<LogisticsChannelEntity>().eq("channel_name",orderVM.getChannelName()));
-                    if(logisticsChannelEntity!=null){
-                        newabroadLogistics.setChannelCode(logisticsChannelEntity.getChannelCode());//测试用的
-                    }
-                    newabroadLogistics.setAbroadWaybill(abroadWaybill);
-                    newabroadLogistics.setIsSynchronization(2);//表示正在同步中
-                    newabroadLogistics.setUpdateTime(new Date());
-                    newabroadLogistics.setShipTime(new Date());
-                    newOrderAbroadLogisticsService.updateById(newabroadLogistics);
-                }else{
-                    //生成国际物流对象
-                    newabroadLogistics = new NewOrderAbroadLogisticsEntity();
-                    newabroadLogistics.setOrderId(neworder.getOrderId());
-                    newabroadLogistics.setLength(orderVM.getLength());
-                    newabroadLogistics.setWidth(orderVM.getWidth());
-                    newabroadLogistics.setHeight(orderVM.getHeight());
-                    newabroadLogistics.setWeight(orderVM.getWeight());
-                    newabroadLogistics.setChineseName(orderVM.getChineseName());
-                    newabroadLogistics.setEnglishName(orderVM.getEnglishName());
-                    newabroadLogistics.setPackageType(orderVM.getPackageType());
-                    newabroadLogistics.setChannelName(orderVM.getChannelName());
-                    LogisticsChannelEntity logisticsChannelEntity=logisticsChannelService.selectOne(new EntityWrapper<LogisticsChannelEntity>().eq("channel_name",orderVM.getChannelName()));
-                    if(logisticsChannelEntity!=null){
-                        newabroadLogistics.setChannelCode(logisticsChannelEntity.getChannelCode());//测试用的
-                    }
-                    newabroadLogistics.setAbroadWaybill(abroadWaybill);
-                    newabroadLogistics.setTrackWaybill(track_waybill);
-                    newabroadLogistics.setIsSynchronization(2);//表示正在同步中
-                    newabroadLogistics.setCreateTime(new Date());
-                    newabroadLogistics.setUpdateTime(new Date());
-                    newabroadLogistics.setShipTime(new Date());
+                //生成国际物流对象
+                newabroadLogistics = new NewOrderAbroadLogisticsEntity();
+                newabroadLogistics.setOrderId(neworder.getOrderId());
+                newabroadLogistics.setLength(orderVM.getLength());
+                newabroadLogistics.setWidth(orderVM.getWidth());
+                newabroadLogistics.setHeight(orderVM.getHeight());
+                newabroadLogistics.setWeight(orderVM.getWeight());
+                newabroadLogistics.setChineseName(orderVM.getChineseName());
+                newabroadLogistics.setEnglishName(orderVM.getEnglishName());
+                newabroadLogistics.setPackageType(orderVM.getPackageType());
+                newabroadLogistics.setChannelName(orderVM.getChannelName());
+                newabroadLogistics.setAbroadWaybill(abroadWaybill);
+                newabroadLogistics.setTrackWaybill(track_waybill);
+                newabroadLogistics.setIsSynchronization(2);//表示正在同步中
+                newabroadLogistics.setCreateTime(new Date());
+                newabroadLogistics.setUpdateTime(new Date());
+                newabroadLogistics.setShipTime(new Date());
+                newOrderAbroadLogisticsService.insert(newabroadLogistics);
 
-                    newOrderAbroadLogisticsService.insert(newabroadLogistics);
-                }
                 newOrderService.updateById(neworder);
                 //准备订单国际物流上传信息模型
-                SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder,newabroadLogistics,"Yun Express");
-                // 将运单号同步到亚马逊平台
-                newOrderService.amazonUpdateLogistics(sendDataMoedl,neworder.getOrderId());
+//                SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder,newabroadLogistics,"Yun Express");
+//                // 将运单号同步到亚马逊平台
+//                newOrderService.amazonUpdateLogistics(sendDataMoedl,neworder.getOrderId());
                 return R.ok().put("newabroadLogistics",newabroadLogistics);
             }
         }else{

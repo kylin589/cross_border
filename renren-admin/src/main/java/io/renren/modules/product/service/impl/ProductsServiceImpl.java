@@ -354,13 +354,13 @@ public class ProductsServiceImpl extends ServiceImpl<ProductsDao, ProductsEntity
         // 包含变体的商品
         int numberOfVariants = getNumberOfVariants(wrapper);
         // 变体总数
-        int variantsCount = getWariantsCount(wrapper);
+//        int variantsCount = getWariantsCount(wrapper);
         Map<String, Object> map = new HashMap<>(5);
         map.put("page", pageUtils);
         map.put("proCount", proCount);
         map.put("approvedCount", approvedCount);
         map.put("numberOfVariants", numberOfVariants);
-        map.put("variantsCount", variantsCount);
+        map.put("variantsCount", 0);
         return map;
     }
 

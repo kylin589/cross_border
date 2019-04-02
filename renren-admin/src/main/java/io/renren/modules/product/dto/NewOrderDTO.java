@@ -95,7 +95,7 @@ public class NewOrderDTO {
     /**
      * 国际物流
      */
-    private NewOrderAbroadLogisticsEntity abroadLogistics;
+    private List<NewOrderAbroadLogisticsEntity> abroadLogisticsList;
     /**
      * 当天汇率
      */
@@ -399,12 +399,12 @@ public class NewOrderDTO {
         this.orderProductList = orderProductList;
     }
 
-    public NewOrderAbroadLogisticsEntity getAbroadLogistics() {
-        return abroadLogistics;
+    public List<NewOrderAbroadLogisticsEntity> getAbroadLogisticsList() {
+        return abroadLogisticsList;
     }
 
-    public void setAbroadLogistics(NewOrderAbroadLogisticsEntity abroadLogistics) {
-        this.abroadLogistics = abroadLogistics;
+    public void setAbroadLogisticsList(List<NewOrderAbroadLogisticsEntity> abroadLogisticsList) {
+        this.abroadLogisticsList = abroadLogisticsList;
     }
 
     public Long getProductId() {
