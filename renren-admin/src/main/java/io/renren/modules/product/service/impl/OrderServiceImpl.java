@@ -27,7 +27,9 @@ import io.renren.modules.logistics.service.SubmitLogisticsService;
 import io.renren.modules.logistics.util.AbroadLogisticsUtil;
 import io.renren.modules.logistics.util.XmlUtils;
 import io.renren.modules.order.component.OrderTimer;
+import io.renren.modules.order.entity.NewProductShipAddressEntity;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
+import io.renren.modules.order.service.NewProductShipAddressService;
 import io.renren.modules.order.service.ProductShipAddressService;
 import io.renren.modules.product.controller.OrderController;
 import io.renren.modules.product.dao.OrderDao;
@@ -125,6 +127,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Autowired
     private ProductShipAddressService productShipAddressService;
     @Autowired
+    private NewProductShipAddressService newProductShipAddressService;
+    @Autowired
     private ProductOrderItemService productOrderItemService;
     @Autowired
     private SysUserService userService;
@@ -138,6 +142,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private AmazonGrantService amazonGrantService;
     @Autowired
     private AmazonGrantShopService amazonGrantShopService;
+    @Autowired
+    private NewOrderService newOrderService;
+    @Autowired
+    private NewOrderItemService newOrderItemService;
     @Value(("${file.path}"))
     private String fileStoragePath;
     @Override
@@ -747,106 +755,142 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             if(StringUtils.isNotBlank(amazonOrderId)) {
                 //判断该订单是否存在
                 OrderEntity orderEntity = this.selectOne(new EntityWrapper<OrderEntity>().like("amazon_order_id", amazonOrderId));
+                NewOrderEntity neworderEntity = newOrderService.selectOne(new EntityWrapper<NewOrderEntity>().like("amazon_order_id", amazonOrderId));
                 //订单状态
                 String modelStatus = orderModel.getOrderStatus();
-                if (orderEntity == null) {
+                if (orderEntity == null && neworderEntity==null) {
                     //新增订单
-                    if (!"Canceled".equals(modelStatus)) {
+                    if (!"Canceled".equals(modelStatus) && !"Shipped".equals(modelStatus)) {
                         //设置基本属性
                         orderEntity = new OrderEntity();
+                        neworderEntity=new NewOrderEntity();
                         orderEntity.setAmazonOrderId(amazonOrderId);
+                        neworderEntity.setAmazonOrderId(amazonOrderId);
                         //判断该订单的订单商品列表是否存在
                        List<OrderItemModel> orderItemModels=orderModel.getOrderItemModels();
                        if(orderItemModels!=null && orderItemModels.size()>0){
                            for (OrderItemModel orderItemModel:orderItemModels) {
                                 //判断该商品是否存在
                               ProductOrderItemEntity productOrderItemEntity=productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id",orderItemModel.getOrderItemId()));
+                              NewOrderItemEntity newOrderItemEntity=newOrderItemService.selectOne(new EntityWrapper<NewOrderItemEntity>().eq("order_item_id",orderItemModel.getOrderItemId()));
                                //如果不存在
-                               if(productOrderItemEntity==null){
+                               if(productOrderItemEntity==null && newOrderItemEntity==null){
                                    productOrderItemEntity=new ProductOrderItemEntity();
+                                   newOrderItemEntity=new NewOrderItemEntity();
                                    if(orderModel.getAmazonOrderId()!=null){
                                        productOrderItemEntity.setAmazonOrderId(orderItemModel.getAmazonOrderId());
+                                       newOrderItemEntity.setAmazonOrderId(orderItemModel.getAmazonOrderId());
                                    }
                                    if(orderItemModel.getOrderItemId()!=null){
                                        productOrderItemEntity.setOrderItemId(orderItemModel.getOrderItemId());
+                                       newOrderItemEntity.setOrderItemId(orderItemModel.getOrderItemId());
                                    }
                                    if(orderItemModel.getProductId()!=null){
                                        productOrderItemEntity.setProductId(orderItemModel.getProductId());
+                                       newOrderItemEntity.setProductId(orderItemModel.getProductId());
                                    }
                                    if(orderItemModel.getProductTitle()!=null){
                                        productOrderItemEntity.setProductTitle(orderItemModel.getProductTitle());
+                                       newOrderItemEntity.setProductTitle(orderItemModel.getProductTitle());
                                    }
                                    String productIdStr = "0";
                                    if(orderItemModel.getProductSku()!=null){
                                        productOrderItemEntity.setProductSku(orderItemModel.getProductSku());
+                                       newOrderItemEntity.setProductSku(orderItemModel.getProductSku());
                                        String[] skuArray = orderItemModel.getProductSku().split("-");
                                        if(skuArray != null && skuArray.length > 2){
                                            productIdStr = skuArray[2];
                                            ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().eq("product_id", productIdStr));
                                            if (productsEntity != null) {
                                                productOrderItemEntity.setProductId(productsEntity.getProductId());
+                                               newOrderItemEntity.setProductId(productsEntity.getProductId());
                                            }else{
                                                productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku", orderItemModel.getProductSku()));
                                                if (productsEntity != null) {
                                                    productOrderItemEntity.setProductId(productsEntity.getProductId());
+                                                   newOrderItemEntity.setProductId(productsEntity.getProductId());
                                                }
                                            }
                                        }
                                    }
                                    if(orderItemModel.getProductAsin()!=null){
                                        productOrderItemEntity.setProductAsin(orderItemModel.getProductAsin());
+                                       newOrderItemEntity.setProductAsin(orderItemModel.getProductAsin());
                                    }
                                    if(orderItemModel.getProductPrice()!=null){
                                        productOrderItemEntity.setProductPrice(orderItemModel.getProductPrice());
+                                       newOrderItemEntity.setProductPrice(orderItemModel.getProductPrice());
                                    }
                                    if (StringUtils.isNotBlank(orderItemModel.getProductImageUrl())) {
                                        productOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
+                                       newOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                        orderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
+                                       neworderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                    }
                                    productOrderItemEntity.setOrderItemNumber(orderItemModel.getOrderItemNumber());
                                    productOrderItemEntity.setUpdatetime(orderItemModel.getUpdatetime());
+                                   newOrderItemEntity.setOrderItemNumber(orderItemModel.getOrderItemNumber());
+                                   newOrderItemEntity.setUpdatetime(orderItemModel.getUpdatetime());
                                    productOrderItemService.insert(productOrderItemEntity);
+                                   newOrderItemService.insert(newOrderItemEntity);
                                }
                            }
                        }
 //                        orderEntity.setOrderItemId(orderModel.getOrderItemId());
                         if (orderModel.getBuyDate() != null) {
                             orderEntity.setBuyDate(orderModel.getBuyDate());
+                            neworderEntity.setBuyDate(orderModel.getBuyDate());
                         } else {
                             orderEntity.setBuyDate(new Date());
+                            neworderEntity.setBuyDate(orderModel.getBuyDate());
                         }
 
                         if ("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)) {
                             //未付款
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_PENDING);
+                            neworderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_PENDING);
                             orderEntity.setOrderState("待付款");
+                            neworderEntity.setOrderState("待付款");
                         } else if ("Unshipped".equals(modelStatus) || "PartiallyShipped".equals(modelStatus)) {
                             //已付款
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_UNSHIPPED);
+                            neworderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_UNSHIPPED);
                             orderEntity.setOrderState("已付款");
-                        }else if("Shipped".equals(modelStatus)){
+                            neworderEntity.setOrderState("已付款");
+                        }/*else if("Shipped".equals(modelStatus)){
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_SHIPPED);
+                            neworderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_SHIPPED);
                             orderEntity.setOrderState("虚发货");
-                        }
+                            neworderEntity.setOrderState("虚发货");
+                        }*/
                         orderEntity.setCountryCode(orderModel.getCountry());
+                        neworderEntity.setCountryCode(orderModel.getCountry());
                         orderEntity.setShopId(orderModel.getShopId());
+                        neworderEntity.setShopId(orderModel.getShopId());
                         orderEntity.setShopName(orderModel.getShopName());
+                        neworderEntity.setShopName(orderModel.getShopName());
 //                        orderEntity.setProductTitle(orderModel.getTitlename());
 //                        orderEntity.setProductSku(orderModel.getProductSku());
 //                        orderEntity.setProductAsin(orderModel.getProductAsin());
 
                         orderEntity.setOrderNumber(orderModel.getOrderNumber());
+                        neworderEntity.setOrderNumber(orderModel.getOrderNumber());
                         String rateCode = orderModel.getCurrencyCode();
                         orderEntity.setRateCode(rateCode);
+                        neworderEntity.setRateCode(rateCode);
                         orderEntity.setUserId(orderModel.getUserId());
+                        neworderEntity.setUserId(orderModel.getUserId());
                         orderEntity.setDeptId(orderModel.getDeptId());
+                        neworderEntity.setDeptId(orderModel.getDeptId());
                         orderEntity.setUpdateTime(new Date());
+                        neworderEntity.setUpdateTime(new Date());
                         //设置汇率
                         BigDecimal rate = new BigDecimal(0.00);
                         if (StringUtils.isNotBlank(rateCode)) {
                             rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code", rateCode)).getRate();
                         }
                         orderEntity.setMomentRate(rate);
+                        neworderEntity.setMomentRate(rate);
                         //获取订单金额（外币）
                         BigDecimal orderMoney = orderModel.getOrderMoney();
                         System.out.println("店铺id：：：：：" + orderModel.getShopId());
@@ -854,41 +898,57 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         System.out.println("金额为:::::::::" + orderMoney);
                         if (orderMoney.compareTo(new BigDecimal("0.00")) != 0) {
                             orderEntity.setOrderMoney(orderMoney);
+                            neworderEntity.setOrderMoney(orderMoney);
                             orderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
+                            neworderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
                             //获取Amazon佣金（外币）
                             BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15).setScale(2, BigDecimal.ROUND_HALF_UP));
                             orderEntity.setAmazonCommission(amazonCommission);
                             orderEntity.setAmazonCommissionCny(amazonCommission.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
+                            neworderEntity.setAmazonCommission(amazonCommission);
+                            neworderEntity.setAmazonCommissionCny(amazonCommission.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
                             //到账金额
                             BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
                             orderEntity.setAccountMoney(accountMoney);
                             orderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
+                            neworderEntity.setAccountMoney(accountMoney);
+                            neworderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
                         }
                         this.insert(orderEntity);
+                        newOrderService.insert(neworderEntity);
                         //新增收货人信息
                         ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
+
                         if (productShipAddressEntity != null) {//判断返回值是否有收件人信息
                             ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
                                     new EntityWrapper<ProductShipAddressEntity>().eq("order_id", orderEntity.getOrderId())
                             );
+
                             if (shipAddress == null) {
-                                productShipAddressEntity.setOrderId(orderEntity.getOrderId());
+                                productShipAddressEntity=new ProductShipAddressEntity();
+                                if(orderEntity.getOrderId()==neworderEntity.getOrderId()){
+                                    productShipAddressEntity.setOrderId(neworderEntity.getOrderId());
+                                    productShipAddressEntity.setAmazonOrderId(neworderEntity.getAmazonOrderId());
+                                }
                                 productShipAddressService.insert(productShipAddressEntity);
                             }
                         }
                     }
                 } else {
-                    if (!"Canceled".equals(orderModel.getOrderStatus()) && ("Pending".equals(orderEntity.getOrderStatus())|| "Unshipped".equals(orderEntity.getOrderStatus()))) {
+                    if ((!"Canceled".equals(orderModel.getOrderStatus()) && (!"Shipped".equals(orderModel.getOrderStatus())))) {
                         List<OrderItemModel> orderItemModels = orderModel.getOrderItemModels();
                         if (orderItemModels != null && orderItemModels.size() > 0) {
                             for (OrderItemModel orderItemModel : orderItemModels) {
 
                                 //判断该商品是否存在
                                 ProductOrderItemEntity productOrderItemEntity = productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id", orderItemModel.getOrderItemId()));
+                                NewOrderItemEntity newOrderItemEntity=newOrderItemService.selectOne(new EntityWrapper<NewOrderItemEntity>().eq("order_item_id", orderItemModel.getOrderItemId()));
                                 //存在更新
                                 if (StringUtils.isNotBlank(orderItemModel.getProductImageUrl())) {
                                     productOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
+                                    newOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                     orderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
+                                    neworderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                 }
                                 String productIdStr = "0";
                                 if(orderItemModel.getProductSku()!=null){
@@ -898,23 +958,34 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                         ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().eq("product_id", productIdStr));
                                         if(productsEntity != null){
                                             productOrderItemEntity.setProductId(productsEntity.getProductId());
+                                            newOrderItemEntity.setProductId(productsEntity.getProductId());
                                         }else{
                                             productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku", orderItemModel.getProductSku()));
                                             if (productsEntity != null) {
                                                 productOrderItemEntity.setProductId(productsEntity.getProductId());
+                                                newOrderItemEntity.setProductId(productsEntity.getProductId());
+
                                             }
                                         }
                                     }
                                 }
                                 //更新订单商品
-//                            orderEntity.setProductTitle(orderModel.getTitlename());
-//                            orderEntity.setCountryCode(orderModel.getCountry());
+                                orderEntity.setProductTitle(orderItemModel.getProductTitle());
+                                orderEntity.setCountryCode(orderModel.getCountry());
+                                neworderEntity.setProductTitle(orderItemModel.getProductTitle());
+                                neworderEntity.setCountryCode(orderModel.getCountry());
                                 productOrderItemEntity.setProductTitle(orderItemModel.getProductTitle());
                                 productOrderItemEntity.setProductSku(orderItemModel.getProductSku());
                                 productOrderItemEntity.setProductAsin(orderItemModel.getProductAsin());
                                 productOrderItemEntity.setProductPrice(orderItemModel.getProductPrice());
                                 productOrderItemEntity.setUpdatetime(new Date());
+                                newOrderItemEntity.setProductTitle(orderItemModel.getProductTitle());
+                                newOrderItemEntity.setProductSku(orderItemModel.getProductSku());
+                                newOrderItemEntity.setProductAsin(orderItemModel.getProductAsin());
+                                newOrderItemEntity.setProductPrice(orderItemModel.getProductPrice());
+                                newOrderItemEntity.setUpdatetime(new Date());
                                 productOrderItemService.updateById(productOrderItemEntity);
+                                newOrderItemService.updateById(newOrderItemEntity);
                             }
 
                         }
@@ -926,53 +997,78 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code", rateCode)).getRate();
                             orderEntity.setRateCode(rateCode);
                             orderEntity.setMomentRate(rate);
+                            neworderEntity.setRateCode(rateCode);
+                            neworderEntity.setMomentRate(rate);
                         }
                         BigDecimal orderMoney = orderModel.getOrderMoney();
                         if (orderMoney.compareTo(new BigDecimal("0.00")) != 0) {
                             orderEntity.setOrderMoney(orderMoney);
                             orderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
+                            neworderEntity.setOrderMoney(orderMoney);
+                            neworderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
                             //获取Amazon佣金（外币）
                             BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15).setScale(2, BigDecimal.ROUND_HALF_UP));
                             orderEntity.setAmazonCommission(amazonCommission);
                             orderEntity.setAmazonCommissionCny(amazonCommission.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
+                            neworderEntity.setAmazonCommission(amazonCommission);
+                            neworderEntity.setAmazonCommissionCny(amazonCommission.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
                             //到账金额
                             BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
                             orderEntity.setAccountMoney(accountMoney);
                             orderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
+                            neworderEntity.setAccountMoney(accountMoney);
+                            neworderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
                         }
                         //获取状态判断是否为取消
-                        if (ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED.equals(modelStatus)) {
+                        if (ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_CANCELED.equals(modelStatus)) {
                             orderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.ORDER_STATE_CANCELED);
                             orderEntity.setOrderState("取消");
+                            neworderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_CANCELED);
+                            neworderEntity.setOrderState("取消");
                         } else {
-                            String orderStatus = orderEntity.getOrderStatus();
+                            String orderStatus = neworderEntity.getOrderStatus();
                             //获取当前订单状态判断是否为待付款、已付款、虚发货
                             List amazonStateList = Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE);
-                            if (amazonStateList.contains(orderStatus)) {
+                            List newamazonStateList = Arrays.asList(ConstantDictionary.OrderStateCode.NEW_AMAZON_ORDER_STATE);
+
+                            if ( newamazonStateList.contains(orderStatus)) {
                                 //获取返回状态判断是否为待付款、已付款、虚发货
-                                if (amazonStateList.contains(modelStatus)) {
+                                if (newamazonStateList.contains(modelStatus)) {
                                     //判断两个状态不想等时更改状态
                                     if (!modelStatus.equals(orderStatus)) {
                                         orderEntity.setOrderStatus(modelStatus);
+                                        neworderEntity.setOrderStatus(modelStatus);
                                         String orderState = dataDictionaryService.selectOne(
                                                 new EntityWrapper<DataDictionaryEntity>()
                                                         .eq("data_type", "AMAZON_ORDER_STATE")
                                                         .eq("data_number", modelStatus)
                                         ).getDataContent();
+                                        String neworderState = dataDictionaryService.selectOne(
+                                                new EntityWrapper<DataDictionaryEntity>()
+                                                        .eq("data_type", "NEW_AMAZON_ORDER_STATE")
+                                                        .eq("data_number", modelStatus)
+                                        ).getDataContent();
 
                                         orderEntity.setOrderState(orderState);
+                                        neworderEntity.setOrderState(neworderState);
                                         this.updateById(orderEntity);
+                                        newOrderService.updateById(neworderEntity);
+                                        orderService.updateById(orderEntity);
+
                                         //新增/修改收货人信息
                                         ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
-                                        if (productShipAddressEntity != null) {//判断返回值是否有收件人信息
+                                        if (productShipAddressEntity != null) {
+                                            //判断返回值是否有收件人信息
                                             ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
-                                                    new EntityWrapper<ProductShipAddressEntity>().eq("order_id", orderEntity.getOrderId())
+                                                    new EntityWrapper<ProductShipAddressEntity>().eq("order_id", neworderEntity.getOrderId())
                                             );
                                             if (shipAddress == null) {
-                                                productShipAddressEntity.setOrderId(orderEntity.getOrderId());
+                                                productShipAddressEntity.setOrderId(neworderEntity.getOrderId());
+                                                productShipAddressEntity.setAmazonOrderId(neworderEntity.getAmazonOrderId());
                                                 productShipAddressService.insert(productShipAddressEntity);
                                             } else {
                                                 productShipAddressEntity.setOrderId(shipAddress.getOrderId());
+                                                productShipAddressEntity.setAmazonOrderId(shipAddress.getAmazonOrderId());
                                                 productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
                                                 productShipAddressService.updateById(productShipAddressEntity);
                                             }
@@ -1264,6 +1360,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             deptService.updateById(dept);
             //生成运费记录
             ConsumeEntity consumeEntity1 = new ConsumeEntity();
+            consumeEntity1.setAmazonOrderId(order.getAmazonOrderId());
             consumeEntity1.setDeptId(order.getDeptId());
             consumeEntity1.setDeptName(deptService.selectById(order.getDeptId()).getName());
             consumeEntity1.setUserId(order.getUserId());
@@ -1278,6 +1375,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             consumeService.insert(consumeEntity1);
             //生成服务费记录
             ConsumeEntity consumeEntity2 = new ConsumeEntity();
+            consumeEntity2.setAmazonOrderId(order.getAmazonOrderId());
             consumeEntity2.setDeptId(order.getDeptId());
             consumeEntity2.setDeptName(deptService.selectById(order.getDeptId()).getName());
             consumeEntity2.setUserId(order.getUserId());
