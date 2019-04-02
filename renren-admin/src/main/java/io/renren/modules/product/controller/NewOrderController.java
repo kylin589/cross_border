@@ -134,8 +134,6 @@ public class NewOrderController extends AbstractController {
     @Autowired
     private AmazonMarketplaceService amazonMarketplaceService;
     @Autowired
-    private DomesticLogisticsService domesticLogisticsService;
-    @Autowired
     private AmazonGrantShopService amazonGrantShopService;
     @Autowired
     private SubmitLogisticsService submitLogisticsService;
@@ -350,10 +348,10 @@ public class NewOrderController extends AbstractController {
             orderDTO.setShipAddress(shipAddress);
         }
 
-        List<DomesticLogisticsEntity> domesticLogisticsList = domesticLogisticsService.selectList(
-                new EntityWrapper<DomesticLogisticsEntity>().eq("order_id",orderId)
-        );
-        orderDTO.setDomesticLogisticsList(domesticLogisticsList);
+//        List<NewOrderDomesticLogisticsEntity> domesticLogisticsList = newOrderDomesticLogisticsService.selectList(
+//                new EntityWrapper<NewOrderDomesticLogisticsEntity>().eq("order_id",orderId)
+//        );
+//        orderDTO.setDomesticLogisticsList(domesticLogisticsList);
         //国际物流
         NewOrderAbroadLogisticsEntity newabroadLogistics = newOrderAbroadLogisticsService.selectOne(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id",orderId));
         if(newabroadLogistics == null){
@@ -370,7 +368,7 @@ public class NewOrderController extends AbstractController {
             AmazonMarketplaceEntity amazonMarketplaceEntity = amazonMarketplaceService.selectOne(new EntityWrapper<AmazonMarketplaceEntity>().eq("country_code",neworderEntity.getCountryCode()));
             String amazonProductUrl = amazonMarketplaceEntity.getAmazonSite() + "/gp/product/" + newproductOrderItemEntity.getProductAsin();
             newproductOrderItemEntity.setProductImageUrl(amazonProductUrl);
-            DomesticLogisticsEntity domesticLogistics = domesticLogisticsService.selectOne(new EntityWrapper<DomesticLogisticsEntity>().eq("item_id",newproductOrderItemEntity.getItemId()));
+            NewOrderDomesticLogisticsEntity domesticLogistics = newOrderDomesticLogisticsService.selectOne(new EntityWrapper<NewOrderDomesticLogisticsEntity>().eq("item_id",newproductOrderItemEntity.getItemId()));
             newproductOrderItemEntity.setDomesticLogistics(domesticLogistics);
         }
         //判断订单异常状态——不属于退货
@@ -470,7 +468,7 @@ public class NewOrderController extends AbstractController {
     /**
      * 删除国内物流
      */
-    @RequestMapping("/deleteLogistic")
+    /*@RequestMapping("/deleteLogistic")
     public R deleteLogistic(@RequestParam Long domesticLogisticsId){
         DomesticLogisticsEntity logisticsEntity = domesticLogisticsService.selectById(domesticLogisticsId);
         NewOrderEntity neworderEntity = newOrderService.selectById(logisticsEntity.getOrderId());
@@ -502,7 +500,7 @@ public class NewOrderController extends AbstractController {
         remark.setType("log");
         remark.setUpdateTime(new Date());
         return R.ok();
-    }
+    }*/
 
     /**
      * 删除国外物流

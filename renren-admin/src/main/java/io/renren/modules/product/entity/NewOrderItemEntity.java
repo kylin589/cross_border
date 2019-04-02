@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
+import io.renren.modules.logistics.entity.NewOrderDomesticLogisticsEntity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -67,14 +68,14 @@ public class NewOrderItemEntity implements Serializable {
             private Date updatetime;
 
        @TableField(exist = false)
-        private DomesticLogisticsEntity DomesticLogistics;
+        private NewOrderDomesticLogisticsEntity domesticLogistics;
 
-    public DomesticLogisticsEntity getDomesticLogistics() {
-        return DomesticLogistics;
+    public NewOrderDomesticLogisticsEntity getDomesticLogistics() {
+        return domesticLogistics;
     }
 
-    public void setDomesticLogistics(DomesticLogisticsEntity domesticLogistics) {
-        DomesticLogistics = domesticLogistics;
+    public void setDomesticLogistics(NewOrderDomesticLogisticsEntity domesticLogistics) {
+        domesticLogistics = domesticLogistics;
     }
 
     /**

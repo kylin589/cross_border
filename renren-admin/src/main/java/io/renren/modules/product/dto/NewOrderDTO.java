@@ -3,6 +3,7 @@ package io.renren.modules.product.dto;
 import io.renren.modules.logistics.entity.AbroadLogisticsEntity;
 import io.renren.modules.logistics.entity.DomesticLogisticsEntity;
 import io.renren.modules.logistics.entity.NewOrderAbroadLogisticsEntity;
+import io.renren.modules.logistics.entity.NewOrderDomesticLogisticsEntity;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.entity.RemarkEntity;
 import io.renren.modules.product.entity.NewOrderItemEntity;
@@ -90,7 +91,7 @@ public class NewOrderDTO {
     /**
      * 国内物流
      */
-    private List<DomesticLogisticsEntity> domesticLogisticsList;
+    private List<NewOrderDomesticLogisticsEntity> domesticLogisticsList;
     /**
      * 国际物流
      */
@@ -268,11 +269,11 @@ public class NewOrderDTO {
         this.shipAddress = shipAddress;
     }
 
-    public List<DomesticLogisticsEntity> getDomesticLogisticsList() {
+    public List<NewOrderDomesticLogisticsEntity> getDomesticLogisticsList() {
         return domesticLogisticsList;
     }
 
-    public void setDomesticLogisticsList(List<DomesticLogisticsEntity> domesticLogisticsList) {
+    public void setDomesticLogisticsList(List<NewOrderDomesticLogisticsEntity> domesticLogisticsList) {
         this.domesticLogisticsList = domesticLogisticsList;
     }
 
