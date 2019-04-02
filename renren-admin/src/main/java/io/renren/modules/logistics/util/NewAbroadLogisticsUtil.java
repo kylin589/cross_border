@@ -238,7 +238,7 @@ public class NewAbroadLogisticsUtil {
      * @param
      * @param orderID
      */
-    public static void printOrder(String orderID){
+    public static Map<String, String> printOrder(String orderID){
         Map<String, String> map = new HashMap<>();
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
@@ -285,7 +285,7 @@ public class NewAbroadLogisticsUtil {
                  map.put("code", "false");
                  map.put("msg", "网络故障，请重试。");
         }
-
+        return map;
     }
     /**
      * 订单详情

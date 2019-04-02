@@ -11,7 +11,32 @@ public class OrderVM {
     public Long orderId;
     public Long[] orderIds;
     public String amazonOrderId;
-    public String[] amazonOrderIds;//支持批量
+    //支持批量
+    public String[] amazonOrderIds;
+    //包裹类型 0-（云途小包）1-（三泰大包）
+    public int packageType;
+    //物流运输专线id
+    public Long channelId;
+    public String orderState;
+    //包裹中文名
+    public String chineseName;
+    //包裹英文名
+    public String englishName;
+    public int length;//长
+    public int width;//宽
+    public int height;//高
+    public BigDecimal weight;//
+    public String abnormalStatus;
+    public String abnormalState;
+
+
+    public Long getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(Long channelId) {
+        this.channelId = channelId;
+    }
 
     public String[] getAmazonOrderIds() {
         return amazonOrderIds;
@@ -20,28 +45,6 @@ public class OrderVM {
     public void setAmazonOrderIds(String[] amazonOrderIds) {
         this.amazonOrderIds = amazonOrderIds;
     }
-
-    public int packageType;//包裹类型 0-（云途小包）1-（三泰大包）
-    public String channelName;//物流运输专线名称
-
-    public String getChannelCode() {
-        return channelCode;
-    }
-
-    public void setChannelCode(String channelCode) {
-        this.channelCode = channelCode;
-    }
-
-    public String channelCode;//物流运输专线代码
-    public String orderState;
-    public String chineseName; //包裹中文名
-    public String englishName; //包裹英文名
-    public int length;//长
-    public int width;//宽
-    public int height;//高
-    public BigDecimal weight;//
-    public String abnormalStatus;
-    public String abnormalState;
 
     public int getPackageType() {
         return packageType;
@@ -97,14 +100,6 @@ public class OrderVM {
 
     public void setWeight(BigDecimal weight) {
         this.weight = weight;
-    }
-
-    public String getChannelName() {
-        return channelName;
-    }
-
-    public void setChannelName(String channelName) {
-        this.channelName = channelName;
     }
 
     public String getAmazonOrderId() {

@@ -76,7 +76,7 @@ public class ProductShipAddressEntity implements Serializable {
 	/**
 	 * 街道3
 	 */
-	private String shipAddressLine3;
+	private String shipAddressLine3 = "";
 
 	private String shipAddressDetail;
 

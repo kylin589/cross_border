@@ -1,5 +1,6 @@
 package io.renren.modules.logistics.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
@@ -27,8 +28,12 @@ public class NewOrderAbroadLogisticsEntity implements Serializable {
          * 订单id
          */
             private Long orderId;
-            /**
-         * 国际物流单号
+        /**
+         * 订单国际物流编号
+         */
+            private String orderNumber;
+        /**
+        * 国际物流单号
          */
             private String abroadWaybill;
             /**
@@ -120,6 +125,10 @@ public class NewOrderAbroadLogisticsEntity implements Serializable {
          * 线路代码
          */
             private String channelCode;
+        /**
+         * 打印地址
+         */
+            private String printUrl;
             /**
          * 创建时间
          */
@@ -130,8 +139,18 @@ public class NewOrderAbroadLogisticsEntity implements Serializable {
             private Date updateTime;
 
             private int isDeleted;//是否销毁 0-未销毁；1-已销毁
-    
-            /**
+        @TableField(exist = false)
+        private String channeDisplayName;
+
+        public String getChanneDisplayName() {
+            return channeDisplayName;
+        }
+
+        public void setChanneDisplayName(String channeDisplayName) {
+            this.channeDisplayName = channeDisplayName;
+        }
+
+        /**
          * 设置：国外物流
          */
         public void setAbroadLogisticsId(Long abroadLogisticsId) {
@@ -486,4 +505,20 @@ public class NewOrderAbroadLogisticsEntity implements Serializable {
         public Date getUpdateTime() {
             return updateTime;
         }
+
+    public String getPrintUrl() {
+        return printUrl;
     }
+
+    public void setPrintUrl(String printUrl) {
+        this.printUrl = printUrl;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+}

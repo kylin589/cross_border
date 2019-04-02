@@ -125,7 +125,7 @@ public interface NewOrderService extends IService<NewOrderEntity> {
     /**
      * 打印快递单号
      */
-    void printOrder(String orderNumber);
+    Map<String,String> printOrder(String orderNumber);
 
 
     /**

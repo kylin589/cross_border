@@ -747,7 +747,6 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
                 secretKey=auSecretKey;
             }
         }
-
         /**
          * 根据List数组，生成XML数据
          */
@@ -778,23 +777,21 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
                 newabroadLogisticsEntity.setIsSynchronization(0);//表示同步失败
                 newOrderAbroadLogisticsService.updateById(newabroadLogisticsEntity);
             }
-
-
     }
 
     @Override
     public Map<String,String> DeleteOrder(String type,String wayBillNumber) {
-        String  jsonStr="{\"Type\":"+"\""+type+"\",\"OrderNumber\":"+wayBillNumber+"\"}";
+        String  jsonStr="{\"Type\":"+"\""+type+"\",\"OrderNumber\":"+"\""+wayBillNumber+"\"}";
+        System.out.println("jsonStr:" + jsonStr);
         return NewAbroadLogisticsUtil.delOrder(jsonStr);
 
     }
 
     @Override
-    public void printOrder(String orderNumber) {
+    public Map<String, String> printOrder(String orderNumber) {
         StringJoiner sj=new StringJoiner("","[\\\"","\\\"]");
         sj.add(orderNumber);
-        NewAbroadLogisticsUtil.printOrder(sj.toString());
-
+        return NewAbroadLogisticsUtil.printOrder(sj.toString());
     }
 
     @Override

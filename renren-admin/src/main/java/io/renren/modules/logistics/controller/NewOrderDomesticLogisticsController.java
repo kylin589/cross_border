@@ -68,7 +68,12 @@ public class NewOrderDomesticLogisticsController extends AbstractController{
             }
         }
         newOrderDomesticLogisticsService.insert(newOrderDomesticLogistics);
-        orderEntity.setPurchasePrice(orderEntity.getPurchasePrice().add(newOrderDomesticLogistics.getPrice()));
+        if(orderEntity.getPurchasePrice() != null){
+            orderEntity.setPurchasePrice(orderEntity.getPurchasePrice().add(newOrderDomesticLogistics.getPrice()));
+        }else{
+            orderEntity.setPurchasePrice(newOrderDomesticLogistics.getPrice());
+        }
+
         newOrderService.updateById(orderEntity);
         RemarkEntity remark = new RemarkEntity();
         remark.setOrderId(newOrderDomesticLogistics.getOrderId());
