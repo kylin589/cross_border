@@ -823,11 +823,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                    }
                                    if (StringUtils.isNotBlank(orderItemModel.getProductImageUrl())) {
                                        productOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
+                                       newOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                        orderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                        neworderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
-                                   }else {
-                                       orderEntity.setProductImageUrl(orderModel.getProductImageUrl());
-                                       neworderEntity.setProductImageUrl(orderModel.getProductImageUrl());
                                    }
                                    productOrderItemEntity.setOrderItemNumber(orderItemModel.getOrderItemNumber());
                                    productOrderItemEntity.setUpdatetime(orderItemModel.getUpdatetime());
@@ -951,9 +949,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                     newOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                     orderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
                                     neworderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
-                                }else {
-                                    orderEntity.setProductImageUrl(orderModel.getProductImageUrl());
-                                    neworderEntity.setProductImageUrl(orderModel.getProductImageUrl());
                                 }
                                 String productIdStr = "0";
                                 if(orderItemModel.getProductSku()!=null){
