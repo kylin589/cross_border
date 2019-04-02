@@ -26,6 +26,11 @@ public class ProductShipAddressEntity implements Serializable {
 	 */
 	private Long orderId;
 	/**
+	 * 亚马逊ID
+	 */
+	private String amazonOrderId;
+
+	/**
 	 * 收件人
 	 */
 	private String shipName;
@@ -49,6 +54,9 @@ public class ProductShipAddressEntity implements Serializable {
 	 * 城市
 	 */
 	private String shipCity;
+
+
+
 	/**
 	 * 区县
 	 */
@@ -99,6 +107,13 @@ public class ProductShipAddressEntity implements Serializable {
 		this.shipAddressDetail = shipAddressDetail;
 	}
 
+	public String getAmazonOrderId() {
+		return amazonOrderId;
+	}
+
+	public void setAmazonOrderId(String amazonOrderId) {
+		this.amazonOrderId = amazonOrderId;
+	}
 	/**
 	 * 获取：订单id
 	 */
