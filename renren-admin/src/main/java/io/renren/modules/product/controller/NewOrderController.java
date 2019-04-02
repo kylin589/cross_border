@@ -367,7 +367,7 @@ public class NewOrderController extends AbstractController {
             //设置amazon产品链接 amazonProductUrl
             AmazonMarketplaceEntity amazonMarketplaceEntity = amazonMarketplaceService.selectOne(new EntityWrapper<AmazonMarketplaceEntity>().eq("country_code",neworderEntity.getCountryCode()));
             String amazonProductUrl = amazonMarketplaceEntity.getAmazonSite() + "/gp/product/" + newproductOrderItemEntity.getProductAsin();
-            newproductOrderItemEntity.setProductImageUrl(amazonProductUrl);
+            newproductOrderItemEntity.setAmazonProductUrl(amazonProductUrl);
             NewOrderDomesticLogisticsEntity domesticLogistics = newOrderDomesticLogisticsService.selectOne(new EntityWrapper<NewOrderDomesticLogisticsEntity>().eq("item_id",newproductOrderItemEntity.getItemId()));
             newproductOrderItemEntity.setDomesticLogistics(domesticLogistics);
         }

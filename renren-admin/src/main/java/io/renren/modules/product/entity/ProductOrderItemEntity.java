@@ -65,13 +65,13 @@ public class ProductOrderItemEntity implements Serializable {
 	private Date updatetime;
 
 	/**
-	 * 产品链接
+	 * 国内物流信息
 	 */
 	@TableField(exist = false)
-	private DomesticLogisticsEntity DomesticLogistics;
+	private DomesticLogisticsEntity domesticLogistics;
 
 	/**
-	 * 国内物流信息
+	 * 产品链接
 	 */
 	@TableField(exist = false)
 	private String amazonProductUrl;
@@ -204,10 +204,10 @@ public class ProductOrderItemEntity implements Serializable {
 	}
 
 	public DomesticLogisticsEntity getDomesticLogistics() {
-		return DomesticLogistics;
+		return domesticLogistics;
 	}
 
 	public void setDomesticLogistics(DomesticLogisticsEntity domesticLogistics) {
-		DomesticLogistics = domesticLogistics;
+		this.domesticLogistics = domesticLogistics;
 	}
 }
