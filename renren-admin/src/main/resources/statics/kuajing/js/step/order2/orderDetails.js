@@ -95,7 +95,7 @@ var vm = new Vue({
     el:'#step',
     data:{
         wuliuType:0,
-        wuliuLuxian:'中美专线(特惠)',
+        value8:null,
         wuliuDetails:{
             chineseName:'',
             englishName:'',
@@ -122,14 +122,12 @@ var vm = new Vue({
         price:[],
         guojilogistics:[
             {
-                value:'中美专线(特惠)',
-                name:'中美专线(特惠)[USZXR]'
-            },{
-                value:'USZMTK',
-                name:'中美专线(标快)[USZMTK]'
-            },{
-                value:'EUDDP',
-                name:'云途中欧专线挂号[EUDDP]'
+                channelCode:'2222',
+                channelName:'222222'
+            },
+            {
+                channelCode:'333',
+                channelName:'33333'
             }
         ],
         intLog:{
@@ -773,7 +771,7 @@ var vm = new Vue({
                 data: JSON.stringify({
                     amazonOrderId:vm.orderDetails.amazonOrderId,
                     packageType:vm.wuliuType,
-                    channelName:'中欧专线DDP挂号',
+                    channelName:vm.value8,
                     // channelName:vm.wuliuLuxian,
                     chineseName:vm.wuliuDetails.chineseName,
                     englishName:vm.wuliuDetails.englishName,
@@ -807,8 +805,11 @@ var vm = new Vue({
             $.ajax({
                 url: '../../amazon/neworder/getShippingMethodCode',
                 type: 'get',
-                data: vm.wuliuType,
-                contentType: "application/json",
+                data: {
+                    type:vm.wuliuType
+                },
+                dataType: 'json',
+                // contentType: "application/json",
                 success: function (r) {
                     console.log('线路下拉');
                     console.log(r);
@@ -816,7 +817,9 @@ var vm = new Vue({
                         // layer.msg('操作成功');
                         // layer.close(index);
                         // vm.getOrderInfo();
-                        vm.guojilogistics
+                        vm.guojilogistics = r.channelilist;
+                        vm.wuliuLuxian = vm.guojilogistics[0].channelName;
+                        console.log(vm.guojilogistics);
                     } else {
                         layer.alert(r.msg);
                         // layer.close(index);
@@ -858,16 +861,16 @@ var vm = new Vue({
             });
         },
         // 物流作废
-        deleWuliu:function () {
+        deleWuliu:function (id) {
             $.ajax({
                 url: '../../amazon/neworder/deleteLogisticAbroad',
                 type: 'post',
                 data: JSON.stringify({
-                    amazonOrderId:vm.orderDetails.amazonOrderId,
+                    abroadLogisticsId:id,
                 }),
                 contentType: "application/json",
                 success: function (r) {
-                    console.log('线路下拉');
+                    console.log('作废');
                     console.log(r);
                     if (r.code === '0') {
                         // layer.msg('操作成功');
@@ -884,6 +887,9 @@ var vm = new Vue({
                     // layer.close(index);
                 }
             });
+        },
+        changea:function () {
+            console.log(vm.wuliuLuxian);
         }
     },
     created:function () {
