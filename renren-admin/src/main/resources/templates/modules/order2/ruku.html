@@ -20,6 +20,15 @@
             border-radius: 3px;
             cursor: pointer;
         }
+        .state span{
+            display: inline-block;
+            padding: 2px;
+            border-radius: 3px;
+            color: #fff;
+            width: 70px;
+            font-size: 13px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -28,7 +37,7 @@
     <!--搜索区域-->
     <div class="search1" style="text-align: center">
 
-        <input type="text" style="width: 360px;height: 45px;" placeholder="请输入物流单号" v-model="orderId">
+        <input type="text" style="width: 50%;height: 45px;" placeholder="请输入物流单号" v-model="orderId" @keyup.enter="keyClickRK">
 
 
         <button class="sousuo" style="background: #00a3e8;color: #fff" @click="getOrderlist('')"><i class="el-icon-search"></i> 查询</button>
@@ -37,9 +46,9 @@
 
 
     <!--操作区域-->
-    <div class="operation">
+    <div class="operation" style="color: #666">
 
-        统计统计
+        共{{allOrderCount}}条数据
     </div>
 
 
@@ -132,7 +141,7 @@
             <td v-if="(item.orderState == '国际已发货') || (item.orderState == '完成')">{{item.profitRate}}</td>
 
 
-            <td>
+            <td class="state">
                 <span v-if="(item.orderState == '虚发货')" class="org">
                     {{ item.orderState }}
                 </span>
@@ -170,7 +179,6 @@
             </td>
             <!--<td>{{item.accountMoneyCny}}</td>-->
             <td style="width: 100px;color: #999;">{{ item.buyDate }}</td>
-            <td style="width: 100px;color: #999;">{{ item.buyDate }}</td>
             <td>
                 <span style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="shuaxin(item.orderId)">入库</span>
             </td>
@@ -205,7 +213,7 @@
 
 <div class="bigImgDiv"></div>
 
-<script src="${request.contextPath}/statics/kuajing/js/step/order2/myOrder.js"></script>
+<script src="${request.contextPath}/statics/kuajing/js/step/order2/allOrder.js"></script>
 <script src="${request.contextPath}/statics/kuajing/js/step/product/sousuoArea.js"></script>
 <!--<script src="${request.contextPath}/statics/kuajing/js/step/product/tuozhaiduoxuan.js"></script>-->
 </body>

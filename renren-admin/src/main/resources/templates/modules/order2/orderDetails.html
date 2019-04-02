@@ -21,14 +21,14 @@
 <div class="box" id="step" v-cloak>
 
     <form>
-        <p>
-            <span class="layui-breadcrumb1" style="visibility: visible;">
-              <a :href="'myOrder.html?page='+page">订单列表 / </a>
-              <a><cite>订单详情</cite></a>
-            </span>
+        <!--<p>-->
+            <!--<span class="layui-breadcrumb1" style="visibility: visible;">-->
+              <!--<a :href="'myOrder.html?page='+page">订单列表 / </a>-->
+              <!--<a><cite>订单详情</cite></a>-->
+            <!--</span>-->
 
-            <input type="button" class="return" @click="returnFunc" value="返回" />
-        </p>
+            <!--<input type="button" class="return" @click="returnFunc" value="返回" />-->
+        <!--</p>-->
 
         <div class="form_item one">
             <div class="item">
@@ -139,10 +139,7 @@
                         <span><label for="">物流公司：</label><span>{{ orderDetails.abroadLogistics.destTransportCompany }}</span></span>
                         <span><label for="">物流渠道：</label><span>{{ orderDetails.abroadLogistics.destChannel }}</span></span>
 
-                        <span><label for="">国内查询跟踪号：</label><span>{{ orderDetails.abroadLogistics.domesticTrackWaybill }}</span></span>
-                        <span><label for="">服务查询网址：</label><span>{{ orderDetails.abroadLogistics.serviceQueryUrl }}</span></span>
-                        <span><label for="">联系电话：</label><span>{{ orderDetails.abroadLogistics.mobile }}</span></span>
-                        <span><label for="">目的地查询网址：</label><span>{{ orderDetails.abroadLogistics.destQueryUrl }}</span></span>
+
 
                         <div class="fr">
                             <span v-if="orderDetails.abroadLogistics.state">物流状态：{{orderDetails.abroadLogistics.state}}</span>
@@ -324,12 +321,12 @@
                         </span><br>
                         <span style="width: auto"><label for="">物流：</label>
 
-                            <select name="" :value="wuliuType">
+                            <select name="" v-model="wuliuType">
                                 <option value="0">云途小包</option>
                                 <option value="1">三态大包</option>
 
                             </select>
-                            <select name="" :value="wuliuLuxian">
+                            <select name="" v-model="wuliuLuxian">
                                 <option value="0">--选择--</option>
                                 <option v-for="item in guojilogistics" :value="item.name">{{ item.name }}</option>
                             </select>
@@ -375,29 +372,29 @@
                         <h4>运单信息</h4>
                     </div>
                     <div class="pro_inf">
-                        <span><label for="">运单状态：</label><span style="color: #00a3e8"> {{ orderDetails.state }} </span></span><br>
-                        <span><label for="">中文：</label><input type="text" placeholder="中文"></span>
-                        <span><label for="">英文：</label><input type="text" placeholder="英文"></span><br>
-                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）"></span>
+                        <span><label for="">运单状态：</label><span style="color: #00a3e8"> {{ getWlDetails.state }} </span></span><br>
+                        <span><label for="">中文：</label><input type="text" placeholder="中文" v-model="getWlDetails.chineseName"></span>
+                        <span><label for="">英文：</label><input type="text" placeholder="英文" v-model="getWlDetails.englishName"></span><br>
+                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="getWlDetails.weight"></span>
                         <span style="width: 370px"><label for="">体积（cm）：</label>
-                            <input class="size_input" type="text" placeholder="长（CM）"> *
-                            <input class="size_input" type="text" placeholder="宽（CM）"> *
-                            <input class="size_input" type="text" placeholder="高（CM）">
+                            <input class="size_input" type="text" placeholder="长（CM）" v-model="getWlDetails.length"> *
+                            <input class="size_input" type="text" placeholder="宽（CM）" v-model="getWlDetails.width"> *
+                            <input class="size_input" type="text" placeholder="高（CM）" v-model="getWlDetails.height">
                         </span><br>
                         <span style="width: auto"><label for="">物流：</label>
-                            <select name="" :value="orderDetails.logisticsValue">
-                                <option value="0">--选择--</option>
-                                <option value="1">大包</option>
-                                <option value="2">小包</option>
+                            <select name="" :value="wuliuType">
+                                <option value="0">云途小包</option>
+                                <option value="1">三态大包</option>
+
                             </select>
-                            <select name="">
+                            <select name="" v-model="getWlDetails.">
                                 <option value="0">--选择--</option>
                                 <option v-for="item in guojilogistics" :value="item.value">{{ item.name }}</option>
                             </select>
                         </span>
                         <input type="button" value="生成运单号"><br>
-                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="wuliuDetails.addyundanhao" disabled></span>
-                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="wuliuDetails.addzhuizonghao" disabled></span>
+                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="getWlDetails.addyundanhao" disabled></span>
+                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="getWlDetails.addzhuizonghao" disabled></span>
                         <br>
                         <span><label for="">备注信息：</label><textarea placeholder="备注"></textarea></span>
                     </div>

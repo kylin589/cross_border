@@ -723,7 +723,15 @@ var vm = new Vue({
                     layer.close(index);
                 }
             });
-        }
+        },
+        // 入库回车
+        keyClickRK:function () {
+
+        },
+        // 出库回车
+        keyClickCK:function () {
+
+        },
     },
     created:function () {
         var url = decodeURI(window.location.href);

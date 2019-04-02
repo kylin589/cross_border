@@ -95,17 +95,18 @@ var vm = new Vue({
     el:'#step',
     data:{
         wuliuType:0,
-        wuliuLuxian:0,
+        wuliuLuxian:'中美专线(特惠)',
         wuliuDetails:{
             chineseName:'',
             englishName:'',
-            weight:'',
-            length:'',
-            width:'',
-            height:'',
+            weight:null,
+            length:1,
+            width:1,
+            height:1,
             addyundanhao:'',
             addzhuizonghao:'',
         },
+        getWlDetails:{},
         orderid:null,
         page:null,
         orderDetails:{
@@ -121,13 +122,13 @@ var vm = new Vue({
         price:[],
         guojilogistics:[
             {
-                value:1,
+                value:'中美专线(特惠)',
                 name:'中美专线(特惠)[USZXR]'
             },{
-                value:2,
+                value:'USZMTK',
                 name:'中美专线(标快)[USZMTK]'
             },{
-                value:3,
+                value:'EUDDP',
                 name:'云途中欧专线挂号[EUDDP]'
             }
         ],
@@ -739,15 +740,8 @@ var vm = new Vue({
                 skin: 'openClass',
                 area: ['900px', '420px'],
                 shadeClose: true,
-                btn: ['添加','取消'],
-                btn1: function (index1) {
+                btn: [],
 
-
-                },
-                btn2: function (index1) {
-
-
-                }
             });
         },
         // 国际物流明细
@@ -773,27 +767,114 @@ var vm = new Vue({
         // 生成运单号
         createdNum:function () {
             $.ajax({
-                url: 'http://api.yunexpress.com/LMS.API/api/WayBill/BatchAdd',
+                url: '../../amazon/neworder/createAbroadWaybill',
                 type: 'post',
                 data: JSON.stringify({
-                    amazonOrderId:vm.orderid,
+                    amazonOrderId:vm.orderDetails.amazonOrderId,
                     packageType:vm.wuliuType,
-                    channelName:vm.wuliuLuxian,
+                    channelName:'中欧专线DDP挂号',
+                    // channelName:vm.wuliuLuxian,
                     chineseName:vm.wuliuDetails.chineseName,
                     englishName:vm.wuliuDetails.englishName,
-                    length:vm.wuliuDetails.length,
-                    width:vm.wuliuDetails.width,
-                    height:vm.wuliuDetails.height,
-                    weight:vm.wuliuDetails.weight,
+                    length:parseInt(vm.wuliuDetails.length),
+                    width:parseInt(vm.wuliuDetails.width),
+                    height:parseInt(vm.wuliuDetails.height),
+                    weight:parseInt(vm.wuliuDetails.weight),
                 }),
                 contentType: "application/json",
                 success: function (r) {
                     console.log('生成单号');
                     console.log(r);
-                    if (r.code === 0) {
+                    if (r.code === '0') {
                         // layer.msg('操作成功');
                         // layer.close(index);
                         // vm.getOrderInfo();
+                    } else {
+                        layer.alert(r.msg);
+                        // layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    // layer.close(index);
+                }
+            });
+        },
+        // 获取物流线路的下拉
+        getWuliuXianl:function () {
+
+            $.ajax({
+                url: '../../amazon/neworder/getShippingMethodCode',
+                type: 'post',
+                data: JSON.stringify({
+                    amazonOrderId:vm.orderDetails.amazonOrderId,
+                }),
+                contentType: "application/json",
+                success: function (r) {
+                    console.log('线路下拉');
+                    console.log(r);
+                    if (r.code === '0') {
+                        // layer.msg('操作成功');
+                        // layer.close(index);
+                        // vm.getOrderInfo();
+                        vm.guojilogistics
+                    } else {
+                        layer.alert(r.msg);
+                        // layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    // layer.close(index);
+                }
+            });
+        },
+        // 物流明细
+        getWuliuDetails:function(){
+
+            $.ajax({
+                url: '../../amazon/neworder/getShippingFeeDetail',
+                type: 'post',
+                data: JSON.stringify({
+                    amazonOrderId:vm.orderDetails.amazonOrderId,
+                }),
+                contentType: "application/json",
+                success: function (r) {
+                    console.log('线路下拉');
+                    console.log(r);
+                    if (r.code === '0') {
+                        // layer.msg('操作成功');
+                        // layer.close(index);
+                        // vm.getOrderInfo();
+                        vm.getWlDetails
+                    } else {
+                        layer.alert(r.msg);
+                        // layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    // layer.close(index);
+                }
+            });
+        },
+        // 物流作废
+        deleWuliu:function () {
+            $.ajax({
+                url: '../../amazon/neworder/deleteLogisticAbroad',
+                type: 'post',
+                data: JSON.stringify({
+                    amazonOrderId:vm.orderDetails.amazonOrderId,
+                }),
+                contentType: "application/json",
+                success: function (r) {
+                    console.log('线路下拉');
+                    console.log(r);
+                    if (r.code === '0') {
+                        // layer.msg('操作成功');
+                        // layer.close(index);
+                        // vm.getOrderInfo();
+                        // vm.getWlDetails
                     } else {
                         layer.alert(r.msg);
                         // layer.close(index);
