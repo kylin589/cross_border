@@ -7,6 +7,7 @@
     <resultMap type="io.renren.modules.order.entity.ProductShipAddressEntity" id="productShipAddressMap">
         <result property="shipAddressId" column="ship_address_id"/>
         <result property="orderId" column="order_id"/>
+        <result property="amazonOrderId" column="amazon_order_id"/>
         <result property="shipName" column="ship_name"/>
         <result property="shipCountry" column="ship_country"/>
         <result property="shipTel" column="ship_tel"/>
