@@ -17,6 +17,12 @@ public class OrderVM {
     public int packageType;
     //物流运输专线id
     public Long channelId;
+    //关系表id
+    public Long relationShipId;
+    //货品itemId;
+    public Long itemId;
+    //海关编码id
+    public Long itemCodeId;
     public String orderState;
     //包裹中文名
     public String chineseName;
@@ -148,5 +154,29 @@ public class OrderVM {
 
     public void setAbnormalState(String abnormalState) {
         this.abnormalState = abnormalState;
+    }
+
+    public Long getItemCodeId() {
+        return itemCodeId;
+    }
+
+    public void setItemCodeId(Long itemCodeId) {
+        this.itemCodeId = itemCodeId;
+    }
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
+
+    public Long getRelationShipId() {
+        return relationShipId;
+    }
+
+    public void setRelationShipId(Long relationShipId) {
+        this.relationShipId = relationShipId;
     }
 }
