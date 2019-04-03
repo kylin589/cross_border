@@ -117,7 +117,7 @@ public class RemarkController extends AbstractController{
                 orderEntity.setGeneralRemark(getUser().getUsername() + "：" + remark.getRemark());
             }
         }
-
+        newOrderService.updateById(orderEntity);
         //添加日志
         RemarkEntity log = new RemarkEntity();
         log.setOrderId(orderEntity.getOrderId());
