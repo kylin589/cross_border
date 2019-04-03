@@ -803,7 +803,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     public Map<String, String> printOrder(String orderNumber) {
         StringJoiner sj=new StringJoiner("","[\\\"","\\\"]");
         sj.add(orderNumber);
-        return NewAbroadLogisticsUtil.printOrder(sj.toString());
+        return NewAbroadLogisticsUtil.printOrder(sj.toString().replace("\\",""));
     }
 
     @Override
@@ -829,12 +829,27 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", customerOrderNo));
         ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", customerOrderNo));
         //推送--订单基本信息
-        AddOrderRequest _addOrdersRequest = new AddOrderRequest();
         AddOrderRequestInfoArray addOrderRequestInfo = new AddOrderRequestInfoArray();
-
         java.util.List<GoodsDetailsArray> _goodsDetailsArray = addOrderRequestInfo
                 .getGoodsDetails();
-        GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
+
+
+
+        //推送--订单详情
+        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
+        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
+            GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
+            _goodsDetails.setDetailDescription("ghgdjhgj");//详细物品描述（length:1-140）ghgdjhgj
+            _goodsDetails.setDetailDescriptionCN("商品中文sss名");//详细物品中文描述（必须包含中文字符，length:1-140）商品中文sss名
+            _goodsDetails.setDetailCustomLabel(productOrderItemEntity.getProductSku());//详细物品客户自定义标签（length:1-20，不必须）SKU NAME
+            _goodsDetails.setDetailQuantity(productOrderItemEntity.getOrderItemNumber().toString());//货品总数量"2"
+            _goodsDetails.setDetailWorth(productOrderItemEntity.getProductPrice().toString());//货品中每个货物的价格（单位美元USD）"2"
+            _goodsDetails.setHsCode("15633");//商品编码（length:1-20）"15633"
+            _goodsDetails.setEnMaterial("dsdasd");//物品英文材质（length:0-50）"dsdasd"
+            _goodsDetails.setCnMaterial("daaaf");//物品中文材质（0-50）"daaaf"
+            _goodsDetailsArray.add(_goodsDetails);
+        }
+//        String goodsDeclarWorth=productOrderItemEntity.getOrderItemNumber();
         addOrderRequestInfo.setCustomerOrderNo(customerOrderNo);// 订单编号
         addOrderRequestInfo.setShipperAddressType(shipperAddressType);//发货地址类型：1，默认；2，用户传送的地址信息
         addOrderRequestInfo.setShippingMethod(shippingMethod);//货运方式(TPRQM)
@@ -856,46 +871,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         addOrderRequestInfo.setTaxesNumber("125698");//税号，6-12位数字125698
         addOrderRequestInfo.setIsRemoteConfirm("0");//是否同意收偏远费0不同意，1同意
 
-
-//        OrderRequestData omsOrder = new OrderRequestData();
-//        omsOrder.setOrderNumber("");
-//        omsOrder.setShippingMethodCode("");//测试用的
-//        omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
-//        omsOrder.setWeight(null);
-        //推送--订单详情
-//        List<ApplicationInfos> omsOrderDetails = new ArrayList<>();
-//        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
-//        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
-//            ApplicationInfos omsOrderDetail=new ApplicationInfos();
-//            omsOrderDetail.setApplicationName(productOrderItemEntity.getProductTitle());
-//            omsOrderDetail.setQty(1);
-//            BigDecimal UnitPrice=new BigDecimal(1);//测试用
-//            omsOrderDetail.setUnitPrice(UnitPrice);
-//            BigDecimal unitweight=new BigDecimal(1);//测试用
-//            omsOrderDetail.setUnitWeight(unitweight);
-//            NewOrderEntity newOrderEntity=this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id",productOrderItemEntity.getAmazonOrderId()));
-//            omsOrderDetail.setProductUrl(productOrderItemEntity.getProductImageUrl()==null ? newOrderEntity.getProductImageUrl():productOrderItemEntity.getProductImageUrl());
-//            omsOrderDetail.setSku(productOrderItemEntity.getProductSku());
-//            omsOrderDetails.add(omsOrderDetail);
-//        }
-
-        //推送—收货人信息
-//        ShippingInfo shippingInfo=new ShippingInfo();
-//        shippingInfo.setCountryCode(shipAddressEntity.getShipCountry());
-//        shippingInfo.setShippingFirstName(shipAddressEntity.getShipName());
-//        shippingInfo.setShippingAddress(shipAddressEntity.getShipAddressDetail());
-//        shippingInfo.setShippingCity(shipAddressEntity.getShipCity());
-//        shippingInfo.setShippingState(shipAddressEntity.getShipRegion());
-//        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel()==null? NewAbroadLogisticsUtil.getTel():shipAddressEntity.getShipTel());
-//        shippingInfo.setShippingZip(shipAddressEntity.getShipZip());
-//        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel());
-//        ApplicationInfos[] applicationInfos = new ApplicationInfos[omsOrderDetails.size()];
-//        omsOrder.setShippingInfo(shippingInfo);
-//        omsOrder.setApplicationInfos(omsOrderDetails.toArray(applicationInfos));
-//        SenderInfo senderInfo = new SenderInfo();//默认空值，不是必填参数
-//        omsOrder.setSenderInfo(senderInfo);
-
-       return NewAbroadLogisticsSFCUtil.pushOrder(customerOrderNo,shipperAddressType,shippingMethod);
+       return NewAbroadLogisticsSFCUtil.pushOrder(addOrderRequestInfo);
     }
 
     @Override
