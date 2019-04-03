@@ -1,6 +1,4 @@
 package io.renren.modules.product.service.impl;
-
-
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import io.renren.common.utils.PageUtils;
@@ -10,7 +8,6 @@ import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.util.ConstantDictionary;
-import io.renren.modules.amazon.util.FileUtil;
 import io.renren.modules.logistics.DTO.ApplicationInfos;
 import io.renren.modules.logistics.DTO.OrderRequestData;
 import io.renren.modules.logistics.DTO.SenderInfo;
@@ -20,25 +17,23 @@ import io.renren.modules.logistics.service.DomesticLogisticsService;
 import io.renren.modules.logistics.service.LogisticsChannelService;
 import io.renren.modules.logistics.service.NewOrderAbroadLogisticsService;
 import io.renren.modules.logistics.service.SubmitLogisticsService;
-
+import io.renren.modules.logistics.util.NewAbroadLogisticsSFCUtil;
 import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
-import io.renren.modules.logistics.util.XmlUtils;
-
+import io.renren.modules.logistics.util.shiprate.AddOrderRequest;
+import io.renren.modules.logistics.util.shiprate.AddOrderRequestInfoArray;
+import io.renren.modules.logistics.util.shiprate.GoodsDetailsArray;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.service.NewProductShipAddressService;
 import io.renren.modules.order.service.ProductShipAddressService;
 import io.renren.modules.product.dao.NewOrderDao;
 import io.renren.modules.product.entity.*;
-
 import io.renren.modules.product.service.*;
-
 import io.renren.modules.sys.entity.ConsumeEntity;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.ConsumeService;
 import io.renren.modules.sys.service.SysDeptService;
 import io.renren.modules.sys.service.SysUserService;
-
 import net.sf.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -46,20 +41,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
-
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-
-
-
 @Service("newOrderService")
 public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity> implements NewOrderService {
     protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -406,7 +391,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         //推送--订单基本信息
         OrderRequestData omsOrder = new OrderRequestData();
         omsOrder.setOrderNumber(amazonOrderId);
-        omsOrder.setShippingMethodCode(channelName);//测试用的
+        omsOrder.setShippingMethodCode(channelCode);//测试用的
         omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
         omsOrder.setWeight(weight);
         //推送--订单详情
@@ -720,7 +705,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         return platformStatisticsDto;
     }*/
 
-    @Override
+  /*  @Override
     public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl, Long orderId) {
         List<Shipping> list = sendDataMoedl.getList();
         List<String> serviceURL = sendDataMoedl.getServiceURL();
@@ -747,9 +732,9 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
                 secretKey=auSecretKey;
             }
         }
-        /**
+        *//**
          * 根据List数组，生成XML数据
-         */
+         *//*
         String resultXml = XmlUtils.getXmlFromList(list);
         //打印生成xml数据
         FileWriter outdata = null;
@@ -777,7 +762,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
                 newabroadLogisticsEntity.setIsSynchronization(0);//表示同步失败
                 newOrderAbroadLogisticsService.updateById(newabroadLogisticsEntity);
             }
-    }
+    }*/
 
     @Override
     public Map<String,String> DeleteOrder(String type,String wayBillNumber) {
@@ -812,65 +797,71 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         return result;
     }
 
-    /**
-     * 真实发货信息 ——封装物流信息
-     * 后置：上传数据到亚马逊
-     * @param
-     * @param
-     */
-    private SendDataMoedl synchronizationZhenModel(NewOrderEntity neworderEntity, NewOrderAbroadLogisticsEntity newabroadLogisticsEntity){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String amazonOrderId = neworderEntity.getAmazonOrderId();
-        String trackWaybill = newabroadLogisticsEntity.getTrackWaybill();
-        //获取系统当前日期北京时间
-        Date date = new Date();
-        //北京时间减去8小时
-        date= io.renren.common.utils.DateUtils.addDateHours(date,-8);
-        //再把当前日期变成格林时间带T的.
-        String shipDate=simpleDateFormat.format(date);
-        Shipping u1 = new Shipping();
-        u1.setMessageType("OrderFulfillment");
-        Header header=new Header();
-        header.setDocumentVersion("1.01");
-        header.setMerchantIdentifier("MYID");//<MerchantIdentifier>此选项可以随便填写，，
-        u1.setHeader(header);
-        List<io.renren.modules.logistics.entity.Message> messages=new ArrayList<>();
-        int count=1;
-        List<NewOrderItemEntity> productOrderItemEntities=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
-        for (NewOrderItemEntity productOrderItemEntity:productOrderItemEntities) {
-            io.renren.modules.logistics.entity.Message message=new Message();//如果要确认多个订单可以增加多个<message>
-            message.setMessageID(String.valueOf(count++));
-            OrderFulfillment orderful=new OrderFulfillment();
-            orderful.setAmazonOrderID(amazonOrderId);
-            orderful.setFulfillmentDate(shipDate);
-            FulfillmentData fd=new FulfillmentData();
-            fd.setCarrierName("Yun Express");
-            fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
-            fd.setShipperTrackingNumber(trackWaybill);
-            Item item=new Item();
-            String orderItemId= productOrderItemEntity.getOrderItemId();
-            item.setAmazonOrderItemCode(orderItemId);
-            item.setQuantity(String.valueOf(productOrderItemEntity.getOrderItemNumber()));
-            orderful.setFulfillmentData(fd);
-            orderful.setItem(item);
-            message.setOrderFulfillment(orderful);
-            messages.add(message);
-        }
-        AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(neworderEntity.getShopId());
-        List<String> serviceURL = new ArrayList<>();
-        List<String> marketplaceIds = new ArrayList<>();
-        serviceURL.add(shopEntity.getMwsPoint());
-        marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
-        u1.setMessages(messages);
-        List<Shipping> list = new ArrayList<Shipping>();
-        list.add(u1);
-        AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(shopEntity.getGrantId());
-        String sellerId = amazonGrantEntity.getMerchantId();
-        String mwsAuthToken = amazonGrantEntity.getGrantToken();
-        SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
-        return sendDataMoedl;
+    @Override
+    public Map<String, String> pushOrder(String customerOrderNo,int shipperAddressType, String shippingMethod) {
+        NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", customerOrderNo));
+        ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", customerOrderNo));
+        //推送--订单基本信息
+        AddOrderRequest _addOrdersRequest = new AddOrderRequest();
+        AddOrderRequestInfoArray addOrderRequestInfo = new AddOrderRequestInfoArray();
+
+        java.util.List<GoodsDetailsArray> _goodsDetailsArray = addOrderRequestInfo
+                .getGoodsDetails();
+        GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
+
+
+
+//        OrderRequestData omsOrder = new OrderRequestData();
+//        omsOrder.setOrderNumber("");
+//        omsOrder.setShippingMethodCode("");//测试用的
+//        omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
+//        omsOrder.setWeight(null);
+        //推送--订单详情
+//        List<ApplicationInfos> omsOrderDetails = new ArrayList<>();
+//        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
+//        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
+//            ApplicationInfos omsOrderDetail=new ApplicationInfos();
+//            omsOrderDetail.setApplicationName(productOrderItemEntity.getProductTitle());
+//            omsOrderDetail.setQty(1);
+//            BigDecimal UnitPrice=new BigDecimal(1);//测试用
+//            omsOrderDetail.setUnitPrice(UnitPrice);
+//            BigDecimal unitweight=new BigDecimal(1);//测试用
+//            omsOrderDetail.setUnitWeight(unitweight);
+//            NewOrderEntity newOrderEntity=this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id",productOrderItemEntity.getAmazonOrderId()));
+//            omsOrderDetail.setProductUrl(productOrderItemEntity.getProductImageUrl()==null ? newOrderEntity.getProductImageUrl():productOrderItemEntity.getProductImageUrl());
+//            omsOrderDetail.setSku(productOrderItemEntity.getProductSku());
+//            omsOrderDetails.add(omsOrderDetail);
+//        }
+
+        //推送—收货人信息
+//        ShippingInfo shippingInfo=new ShippingInfo();
+//        shippingInfo.setCountryCode(shipAddressEntity.getShipCountry());
+//        shippingInfo.setShippingFirstName(shipAddressEntity.getShipName());
+//        shippingInfo.setShippingAddress(shipAddressEntity.getShipAddressDetail());
+//        shippingInfo.setShippingCity(shipAddressEntity.getShipCity());
+//        shippingInfo.setShippingState(shipAddressEntity.getShipRegion());
+//        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel()==null? NewAbroadLogisticsUtil.getTel():shipAddressEntity.getShipTel());
+//        shippingInfo.setShippingZip(shipAddressEntity.getShipZip());
+//        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel());
+//        ApplicationInfos[] applicationInfos = new ApplicationInfos[omsOrderDetails.size()];
+//        omsOrder.setShippingInfo(shippingInfo);
+//        omsOrder.setApplicationInfos(omsOrderDetails.toArray(applicationInfos));
+//        SenderInfo senderInfo = new SenderInfo();//默认空值，不是必填参数
+//        omsOrder.setSenderInfo(senderInfo);
+
+       return NewAbroadLogisticsSFCUtil.pushOrder(customerOrderNo,shipperAddressType,shippingMethod);
     }
 
+    @Override
+    public void updateOrder(String orderCode, String orderStatus) {
+        NewAbroadLogisticsSFCUtil.updateOrder(orderCode,orderStatus);
+    }
+
+    @Override
+    public String print(String orderID, int printType, String print_type, int printSize, int printSort) {
+
+        return NewAbroadLogisticsSFCUtil.print(orderID,printType,print_type,printSize,printSort);
+    }
 
 
 }
