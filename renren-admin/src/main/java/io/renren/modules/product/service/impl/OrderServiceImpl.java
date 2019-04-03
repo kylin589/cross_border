@@ -925,6 +925,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         }
                     }
                 } else {
+                    if(neworderEntity == null){
+                        neworderEntity = new NewOrderEntity();
+                    }
                     if ((!"Canceled".equals(orderModel.getOrderStatus()) && (!"Shipped".equals(orderModel.getOrderStatus())))) {
                         List<OrderItemModel> orderItemModels = orderModel.getOrderItemModels();
                         if (orderItemModels != null && orderItemModels.size() > 0) {
@@ -933,6 +936,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                 //判断该商品是否存在
                                 ProductOrderItemEntity productOrderItemEntity = productOrderItemService.selectOne(new EntityWrapper<ProductOrderItemEntity>().eq("order_item_id", orderItemModel.getOrderItemId()));
                                 NewOrderItemEntity newOrderItemEntity=newOrderItemService.selectOne(new EntityWrapper<NewOrderItemEntity>().eq("order_item_id", orderItemModel.getOrderItemId()));
+                                if(newOrderItemEntity == null){
+                                    newOrderItemEntity = new NewOrderItemEntity();
+                                }
                                 //存在更新
                                 if (StringUtils.isNotBlank(orderItemModel.getProductImageUrl())) {
                                     productOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
@@ -975,7 +981,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                 newOrderItemEntity.setProductPrice(orderItemModel.getProductPrice());
                                 newOrderItemEntity.setUpdatetime(new Date());
                                 productOrderItemService.updateById(productOrderItemEntity);
-                                newOrderItemService.updateById(newOrderItemEntity);
+                                newOrderItemService.insertOrUpdate(newOrderItemEntity);
                             }
 
                         }
@@ -1016,11 +1022,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                             neworderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_CANCELED);
                             neworderEntity.setOrderState("取消");
                         } else {
-                            String orderStatus = neworderEntity.getOrderStatus();
+                            String orderStatus = orderEntity.getOrderStatus();
                             //获取当前订单状态判断是否为待付款、已付款、虚发货
-                            List amazonStateList = Arrays.asList(ConstantDictionary.OrderStateCode.AMAZON_ORDER_STATE);
                             List newamazonStateList = Arrays.asList(ConstantDictionary.OrderStateCode.NEW_AMAZON_ORDER_STATE);
-
                             if ( newamazonStateList.contains(orderStatus)) {
                                 //获取返回状态判断是否为待付款、已付款、虚发货
                                 if (newamazonStateList.contains(modelStatus)) {
@@ -1042,8 +1046,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                         orderEntity.setOrderState(orderState);
                                         neworderEntity.setOrderState(neworderState);
                                         this.updateById(orderEntity);
-                                        newOrderService.updateById(neworderEntity);
-                                        orderService.updateById(orderEntity);
+                                        newOrderService.insertOrUpdate(neworderEntity);
 
                                         //新增/修改收货人信息
                                         ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();

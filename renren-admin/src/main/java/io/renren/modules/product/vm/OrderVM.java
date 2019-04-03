@@ -1,6 +1,9 @@
 package io.renren.modules.product.vm;
 
+import io.renren.modules.logistics.entity.NewOrderItemRelationshipEntity;
+
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @Auther: wdh
@@ -8,6 +11,7 @@ import java.math.BigDecimal;
  * @Description:
  */
 public class OrderVM {
+    public List<NewOrderItemRelationshipEntity> orderItemRelationList;
     public Long orderId;
     public Long[] orderIds;
     public String amazonOrderId;
@@ -29,6 +33,14 @@ public class OrderVM {
     public String abnormalStatus;
     public String abnormalState;
 
+
+    public List<NewOrderItemRelationshipEntity> getItemRelationList() {
+        return orderItemRelationList;
+    }
+
+    public void setItemRelationList(List<NewOrderItemRelationshipEntity> orderItemRelationList) {
+        this.orderItemRelationList = orderItemRelationList;
+    }
 
     public Long getChannelId() {
         return channelId;
