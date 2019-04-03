@@ -731,7 +731,7 @@ var vm = new Vue({
                 data: JSON.stringify({
                     amazonOrderId:vm.orderDetails.amazonOrderId,
                     packageType:parseInt(vm.wuliuType),
-                    channelName:vm.value8,
+                    channelId:vm.value8,
                     // channelName:vm.wuliuLuxian,
                     chineseName:vm.wuliuDetails.chineseName,
                     englishName:vm.wuliuDetails.englishName,
@@ -839,17 +839,17 @@ var vm = new Vue({
                 url: '../../amazon/neworder/deleteLogisticAbroad',
                 type: 'get',
                 data: {
-                    abroad_logistics_id:id,
+                    abroadLogisticsId:id,
                 },
                 dataType: 'json',
                 // contentType: "application/json",
                 success: function (r) {
                     console.log('作废');
                     console.log(r);
-                    if (r.code === '0') {
+                    if (r.code == '0') {
                         layer.msg('操作成功');
                         layer.close(index);
-                        // vm.getOrderInfo();
+                        vm.getOrderInfo();
                         // vm.getWlDetails
                     } else {
                         layer.alert(r.msg);
@@ -862,7 +862,38 @@ var vm = new Vue({
                 }
             });
         },
-
+        // 打印
+        dayin:function (i,id) {
+            var url = vm.orderDetails.abroadLogisticsList[i].printUrl;
+            if(!url){
+                $.ajax({
+                    url: '../../amazon/neworder/printLogisticAbroad',
+                    type: 'get',
+                    data: {
+                        abroadLogisticsId:id,
+                    },
+                    dataType: 'json',
+                    // contentType: "application/json",
+                    success: function (r) {
+                        console.log('打印');
+                        console.log(r);
+                        if (r.code == '0') {
+                            layer.msg('操作成功');
+                            // layer.close(index);
+                            // vm.getOrderInfo();
+                            // vm.getWlDetails
+                        } else {
+                            layer.alert(r.msg);
+                            // layer.close(index);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("网络故障");
+                        // layer.close(index);
+                    }
+                });
+            }
+        }
     },
     created:function () {
         var url = decodeURI(window.location.href);
