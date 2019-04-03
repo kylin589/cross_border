@@ -316,7 +316,6 @@ public final class NewAbroadLogisticsSFCUtil {
 			Map<String,String> map=new HashMap<>();
 			HeaderRequest _headerRequest = new HeaderRequest();
 			AddOrderRequestInfoArray updateOrderInfo=new AddOrderRequestInfoArray();
-            orderCode="WW3053904020002";
 			Holder<String> _getFeeByOrderCode_ask = new
 					Holder<String>();
 			Holder<javax.xml.datatype.XMLGregorianCalendar> _getFeeByOrderCode_sysTime =
@@ -342,7 +341,7 @@ public final class NewAbroadLogisticsSFCUtil {
 			updateOrderInfo.setRecipientEmail("test@google.com");
 			updateOrderInfo.setRecipientPhone("3242342342423");
 			updateOrderInfo.setRecipientZipCode("NE1 1YB");*/
-			updateOrderInfo.setOrderStatus("sumbmitted");
+			updateOrderInfo.setOrderStatus(orderStatus);
 			/*updateOrderInfo.setRecipientAddress("sdfsdf sdafsf");
 			updateOrderInfo.setRecipientCountry("UK");
 			updateOrderInfo.setRecipientCity("CF");
@@ -389,15 +388,15 @@ public final class NewAbroadLogisticsSFCUtil {
 
 	/**
 	 * 打印订单物流接口
-	 * @param orderID
+	 * @param orderId
 	 * @param printType
-	 * @param print_type
+	 * @param printFileType
 	 * @param printSize
 	 * @param printSort
 	 * @return
 	 */
-	public static String print(String orderID,int printType,String print_type,int printSize,int printSort){
-		String url="http://www.sendfromchina.com/api/label?orderCodeList="+orderID+"&printType="+printType+"&print_type="+print_type+"&printSize="+printSize+"&printSort="+printSort;
+	public static String print(String orderId,int printType,String printFileType,int printSize,int printSort){
+		String url="http://www.sendfromchina.com/api/label?orderCodeList="+orderId+"&printType="+printType+"&print_type="+printFileType+"&printSize="+printSize+"&printSort="+printSort;
 
 		return url;
 	}
