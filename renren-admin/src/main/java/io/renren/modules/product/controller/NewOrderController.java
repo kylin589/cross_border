@@ -555,13 +555,13 @@ public class NewOrderController extends AbstractController {
             Map<String, String> result = newOrderService.printOrder(wayBillNumber);
             String url = result.get("url");
             newOrderAbroadLogisticsEntity.setPrintUrl(url);
-            return R.ok().put("url",url);
+            newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
         }else if(newOrderAbroadLogisticsEntity.getPackageType()==1){
             //三态
             String wayBillNumber = newOrderAbroadLogisticsEntity.getAbroadWaybill();
             String url = newOrderService.print(wayBillNumber,1,"pdf",1,1);
             newOrderAbroadLogisticsEntity.setPrintUrl(url);
-            return R.ok().put("url",url);
+            newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
         }
         return R.ok();
     }
@@ -739,7 +739,7 @@ public class NewOrderController extends AbstractController {
             // TODO: 2019/3/31 三态推送
             Long channelId = orderVM.getChannelId();
             LogisticsChannelEntity channe = logisticsChannelService.selectById(channelId);
-            Map<String, String> result = newOrderService.pushOrder(orderNumber, 1, channe.getChannelCode());
+            Map<String, String> result = newOrderService.pushOrder(orderNumber, amazonOrderId,1, channe.getChannelCode());
             if ("false".equals(result.get("code"))) {
                 return R.error("订单推送失败,错误原因：" + result.get("msg"));
             } else {
