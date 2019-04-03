@@ -20,10 +20,7 @@ import io.renren.modules.amazon.util.FileUtil;
 import io.renren.modules.logistics.DTO.*;
 import io.renren.modules.logistics.entity.*;
 import io.renren.modules.logistics.entity.Message;
-import io.renren.modules.logistics.service.AbroadLogisticsService;
-import io.renren.modules.logistics.service.DomesticLogisticsService;
-import io.renren.modules.logistics.service.LogisticsChannelService;
-import io.renren.modules.logistics.service.SubmitLogisticsService;
+import io.renren.modules.logistics.service.*;
 import io.renren.modules.logistics.util.AbroadLogisticsUtil;
 import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
 import io.renren.modules.logistics.util.XmlUtils;
@@ -125,6 +122,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private LogisticsChannelService logisticsChannelService;
     @Autowired
     private AbroadLogisticsService abroadLogisticsService;
+    @Autowired
+    private NewOrderAbroadLogisticsService newOrderAbroadLogisticsService;
     @Autowired
     private AmazonRateService amazonRateService;
     @Autowired
@@ -1810,15 +1809,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         outfile.close();
         //进行数据上传(步骤一)
         String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
-        AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
-        //判读亚马逊后台订单的状态
+        NewOrderAbroadLogisticsEntity newAbroadLogisticsEntity = newOrderAbroadLogisticsService.selectOne(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id",orderId));
+        //判空
         if(StringUtils.isNotBlank(feedSubmissionId)){
-            abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
-            abroadLogisticsService.updateById(abroadLogisticsEntity);
+            newAbroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
+            newOrderAbroadLogisticsService.insertOrUpdate(newAbroadLogisticsEntity);
+            System.out.println(newAbroadLogisticsEntity.getIsSynchronization());
         }else{
             logger.error("同步失败,请重新上传订单...");
-            abroadLogisticsEntity.setIsSynchronization(0);//表示同步失败
-            abroadLogisticsService.updateById(abroadLogisticsEntity);
+            newAbroadLogisticsEntity.setIsSynchronization(0);//表示同步失败
+            newOrderAbroadLogisticsService.insertOrUpdate(newAbroadLogisticsEntity);
+            System.out.println(newAbroadLogisticsEntity.getIsSynchronization());
         }
 
     }
