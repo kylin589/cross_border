@@ -16,10 +16,7 @@ import io.renren.modules.logistics.DTO.OrderRequestData;
 import io.renren.modules.logistics.DTO.SenderInfo;
 import io.renren.modules.logistics.DTO.ShippingInfo;
 import io.renren.modules.logistics.entity.*;
-import io.renren.modules.logistics.service.DomesticLogisticsService;
-import io.renren.modules.logistics.service.LogisticsChannelService;
-import io.renren.modules.logistics.service.NewOrderAbroadLogisticsService;
-import io.renren.modules.logistics.service.SubmitLogisticsService;
+import io.renren.modules.logistics.service.*;
 import io.renren.modules.logistics.util.NewAbroadLogisticsSFCUtil;
 import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
 import io.renren.modules.logistics.util.shiprate.AddOrderRequest;
@@ -129,6 +126,8 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     private ConsumeService consumeService;
     @Autowired
     private NewOrderAbroadLogisticsService newOrderAbroadLogisticsService;
+    @Autowired
+    private NewOrderItemRelationshipService newOrderItemRelationshipService;
     @Value(("${file.path}"))
     private String fileStoragePath;
     @Override
@@ -434,7 +433,12 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         shippingInfo.setShippingAddress(shipAddressEntity.getShipAddressDetail());
         shippingInfo.setShippingCity(shipAddressEntity.getShipCity());
         shippingInfo.setShippingState(shipAddressEntity.getShipRegion());
-        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel()==null? NewAbroadLogisticsUtil.getTel():shipAddressEntity.getShipTel());
+        Map<String,String> map =new HashMap<>();
+        String message="电话号码必填，不能为空";
+        map.put("msg",message);
+        map.put("code","false");
+        if(shipAddressEntity.getShipTel()!=null){
+        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel());
         shippingInfo.setShippingZip(shipAddressEntity.getShipZip());
         shippingInfo.setShippingPhone(shipAddressEntity.getShipTel());
         ApplicationInfos[] applicationInfos = new ApplicationInfos[omsOrderDetails.size()];
@@ -444,7 +448,11 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         omsOrder.setSenderInfo(senderInfo);
         JSONArray omsOrderJson = JSONArray.fromObject(omsOrder);
         Map<String,String> result = NewAbroadLogisticsUtil.pushOrder(omsOrderJson.toString());
-        return result;
+           return result;
+        }else{
+            return map;
+        }
+
     }
 
     @Override
@@ -824,9 +832,17 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         return result;
     }
 
+    /**
+     * 三态推送接口
+     * @param customerOrderNo
+     * @param amazonOrderId
+     * @param shipperAddressType
+     * @param shippingMethod
+     * @return
+     */
     @Override
-    public Map<String, String> pushOrder(String customerOrderNo,String amazonOrderId,int shipperAddressType, String shippingMethod) {
-        NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", customerOrderNo));
+    public Map<String, String> pushOrder(String customerOrderNo,String amazonOrderId,int shipperAddressType, String shippingMethod,String itemCode,String chineseName,String englishName,List<NewOrderItemRelationshipEntity> list) {
+        NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", amazonOrderId));
         ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", amazonOrderId));
         //推送--订单基本信息
         AddOrderRequestInfoArray addOrderRequestInfo = new AddOrderRequestInfoArray();
@@ -845,30 +861,68 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         addOrderRequestInfo.setRecipientEmail("test@google.com");//收件人电子邮件
         addOrderRequestInfo.setOrderStatus("sumbmitted");//订单状态：提交订单，confirmed；订单预提交状态，preprocess；提交且交寄订单，sumbmitted；删除订单，delete,默认交寄状态
         addOrderRequestInfo.setRecipientAddress(shipAddressEntity.getShipAddressDetail());//收件人详细地址（length:5-70）sdfsdf sdafsf
-        addOrderRequestInfo.setGoodsQuantity("2");//订单包裹中的货品数量2
-        addOrderRequestInfo.setGoodsDeclareWorth("4");//包裹中的物品申报总价值4
+        //每个国家的汇率
+        BigDecimal countryRate=neworderEntity.getMomentRate();
+        BigDecimal usdRate=new BigDecimal(6.71);
         addOrderRequestInfo.setGoodsDescription("sdfsda dsf ");//包裹内物品描述（length:1-100）sdfsda dsf
-        addOrderRequestInfo.setShippingWorth((float) 2.0);//销售运费（适用DEAM1,DERAM1）（不必须）(float) 2.0
-        addOrderRequestInfo.setPieceNumber("3");//每票的件数，只有这些方式HKDHL,HKDHL1,CNUPS,SZUPS,HKUPS,SGDHL,EUTLP,CNFEDEX,HKFEDEX,CNSFEDEX,HKSFEDEX,EUEXP3必填
-        addOrderRequestInfo.setEvaluate("5");//投保价值，投保价值必须大于等于申报总价值且小于申报总价值的150%(5)
-        addOrderRequestInfo.setTaxesNumber("125698");//税号，6-12位数字125698
+//        addOrderRequestInfo.setShippingWorth((float) 2.0);//销售运费（适用DEAM1,DERAM1）（不必须）(float) 2.0
+        addOrderRequestInfo.setPieceNumber("1");//每票的件数，只有这些方式HKDHL,HKDHL1,CNUPS,SZUPS,HKUPS,SGDHL,EUTLP,CNFEDEX,HKFEDEX,CNSFEDEX,HKSFEDEX,EUEXP3必填
+//        addOrderRequestInfo.setTaxesNumber("125698");//税号，6-12位数字125698
         addOrderRequestInfo.setIsRemoteConfirm("0");//是否同意收偏远费0不同意，1同意
-
         //推送--订单详情
-        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
+        BigDecimal totalPrice=new BigDecimal(0.00);
+        BigDecimal totolNum=new BigDecimal(0);
+       /* List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
         for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
             GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
             _goodsDetails.setDetailDescription("ghgdjhgj");//详细物品描述（length:1-140）ghgdjhgj
             _goodsDetails.setDetailDescriptionCN("商品中文sss名");//详细物品中文描述（必须包含中文字符，length:1-140）商品中文sss名
             _goodsDetails.setDetailCustomLabel(productOrderItemEntity.getProductSku());//详细物品客户自定义标签（length:1-20，不必须）SKU NAME
-            _goodsDetails.setDetailQuantity("2");//货品总数量"2"
-            _goodsDetails.setDetailWorth("2");//货品中每个货物的价格（单位美元USD）"2"
-            _goodsDetails.setHsCode("15633569");//商品编码（length:1-20）"15633"////hs code1只能输入8或10位数字
+            _goodsDetails.setDetailQuantity(productOrderItemEntity.getOrderItemNumber().toString());//货品总数量"2"
+            BigDecimal orderNum=new BigDecimal(productOrderItemEntity.getOrderItemNumber());
+            _goodsDetails.setDetailWorth((productOrderItemEntity.getProductPrice().multiply(countryRate).divide(usdRate).setScale(2,BigDecimal.ROUND_HALF_UP)).toString());//货品中每个货物的价格（单位美元USD）"2"
+            _goodsDetails.setHsCode(itemCode);//商品编码,海关编码（length:1-20）"15633569"////hs code1只能输入8或10位数字
             _goodsDetails.setEnMaterial("dsdasd");//物品英文材质（length:0-50）"dsdasd"
             _goodsDetails.setCnMaterial("daaaf");//物品中文材质（0-50）"daaaf"
             _goodsDetailsArray.add(_goodsDetails);
+            totalPrice=(productOrderItemEntity.getProductPrice().multiply(orderNum).multiply(countryRate)).divide(usdRate);
+            totalPrice=totalPrice.add(totalPrice);
+            totolNum+=productOrderItemEntity.getOrderItemNumber();
+        }*/
+//        List<NewOrderItemRelationshipEntity> newOrderItemRelationshipEntities=newOrderItemRelationshipService.selectList(new EntityWrapper<NewOrderItemRelationshipEntity>().eq("relationship_id",relationShipId));
+        for(NewOrderItemRelationshipEntity newOrderItemRelationshipEntity:list){
+            GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
+            newOrderItemRelationshipEntity.setItemCnMaterial(chineseName);
+            newOrderItemRelationshipEntity.setItemEnMaterial(englishName);
+            _goodsDetails.setDetailDescription(englishName);//详细物品描述（length:1-140）ghgdjhgj
+            _goodsDetails.setDetailDescriptionCN(chineseName);//详细物品中文描述（必须包含中文字符，length:1-140）商品中文sss名
+            _goodsDetails.setDetailCustomLabel(newOrderItemRelationshipEntity.getProductSku());//详细物品客户自定义标签（length:1-20，不必须）SKU NAME
+            _goodsDetails.setDetailQuantity(newOrderItemRelationshipEntity.getOrderItemNumber().toString());//货品总数量"2"
+            BigDecimal orderNum=new BigDecimal(newOrderItemRelationshipEntity.getOrderItemNumber());
+            System.out.println("货品明细中的数量:"+orderNum);
+            _goodsDetails.setDetailWorth((newOrderItemRelationshipEntity.getProductPrice().multiply(countryRate).divide(usdRate,2,BigDecimal.ROUND_HALF_UP)).toString());//货品中每个货物的价格（单位美元USD）"2"
+            System.out.println("货品明细中的价格"+(newOrderItemRelationshipEntity.getProductPrice().multiply(countryRate).divide(usdRate,2,BigDecimal.ROUND_HALF_UP)).toString()+"USD");
+            _goodsDetails.setHsCode(itemCode);//商品编码,海关编码（length:1-20）"15633569"////hs code1只能输入8或10位数字
+            _goodsDetails.setEnMaterial(englishName);//物品英文材质（length:0-50）"dsdasd"
+            _goodsDetails.setCnMaterial(chineseName);//物品中文材质（0-50）"daaaf"
+            _goodsDetailsArray.add(_goodsDetails);
+            totalPrice=(newOrderItemRelationshipEntity.getProductPrice().multiply(orderNum).multiply(countryRate)).divide(usdRate,2,BigDecimal.ROUND_HALF_UP);
+//            totalPrice=totalPrice.add(totalPrice);
+            totolNum=orderNum;
+            newOrderItemRelationshipEntity.setUsdPrice(totalPrice);
+            newOrderItemRelationshipEntity.setItemQuantity(orderNum.toString());
+            newOrderItemRelationshipEntity.setOrderItemNumber(totolNum.intValue());
+            newOrderItemRelationshipEntity.setItemCode(itemCode);
+            newOrderItemRelationshipService.insert(newOrderItemRelationshipEntity);
+//            totolNum=totolNum.add(totolNum);
         }
+
         addOrderRequestInfo.setGoodsDetails(_goodsDetailsArray);
+        addOrderRequestInfo.setGoodsDeclareWorth(totalPrice.toString());
+        System.out.println("申报总价值："+totalPrice.toString());
+        addOrderRequestInfo.setEvaluate(totalPrice.toString());//投保价值，投保价值必须大于等于申报总价值且小于申报总价值的150%(5)
+        addOrderRequestInfo.setGoodsQuantity(totolNum.toString());//总数
+        System.out.println("数量"+totolNum.toString());
        return NewAbroadLogisticsSFCUtil.pushOrder(addOrderRequestInfo);
     }
 
