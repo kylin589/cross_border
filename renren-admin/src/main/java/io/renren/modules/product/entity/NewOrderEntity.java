@@ -181,6 +181,10 @@ public class NewOrderEntity implements Serializable {
     @TableField(exist = false)
     private String deptName;
 
+    private String generalRemark;
+
+    private String abroadRemark;
+
     public String getUserName() {
         return userName;
     }
@@ -670,4 +674,20 @@ public class NewOrderEntity implements Serializable {
         public Integer getIsOld() {
             return isOld;
         }
+
+    public String getGeneralRemark() {
+        return generalRemark;
     }
+
+    public void setGeneralRemark(String generalRemark) {
+        this.generalRemark = generalRemark;
+    }
+
+    public String getAbroadRemark() {
+        return abroadRemark;
+    }
+
+    public void setAbroadRemark(String abroadRemark) {
+        this.abroadRemark = abroadRemark;
+    }
+}

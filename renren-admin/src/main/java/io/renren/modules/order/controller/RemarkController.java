@@ -6,7 +6,9 @@ import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.logistics.util.AbroadLogisticsUtil;
 import io.renren.modules.order.entity.RemarkEntity;
 import io.renren.modules.order.service.RemarkService;
+import io.renren.modules.product.entity.NewOrderEntity;
 import io.renren.modules.product.entity.OrderEntity;
+import io.renren.modules.product.service.NewOrderService;
 import io.renren.modules.product.service.OrderService;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -35,6 +37,8 @@ public class RemarkController extends AbstractController{
     @Autowired
     @Lazy
     private OrderService orderService;
+    @Autowired
+    private NewOrderService newOrderService;
 
     /**
      * 添加 添加国内物流操作记录
@@ -88,7 +92,42 @@ public class RemarkController extends AbstractController{
 
         return R.ok().put("remark", remark);
     }
+    /**
+     * 保存
+     */
+    @RequestMapping("/saveNew")
+//    @RequiresPermissions("order:remark:save")
+    public R saveNew(@RequestBody RemarkEntity remark){
+        NewOrderEntity orderEntity = newOrderService.selectById(remark.getOrderId());
+        remark.setType("remark");
+        remark.setUserId(getUserId());
+        remark.setUserName(getUser().getDisplayName());
+        remark.setUpdateTime(new Date());
+        remarkService.insert(remark);
+        if("国际物流异常".equals(remark.getRemarkType())){
+            if(orderEntity.getAbroadRemark() != null){
+                orderEntity.setAbroadRemark(orderEntity.getAbroadRemark() + "\n" + getUser().getUsername() + "：" + remark.getRemark());
+            }else{
+                orderEntity.setAbroadRemark(getUser().getUsername() + "：" + remark.getRemark());
+            }
+        }else{
+            if(orderEntity.getGeneralRemark() != null){
+                orderEntity.setGeneralRemark(orderEntity.getGeneralRemark() + "\n" + getUser().getUsername() + "：" + remark.getRemark());
+            }else{
+                orderEntity.setGeneralRemark(getUser().getUsername() + "：" + remark.getRemark());
+            }
+        }
 
+        //添加日志
+        RemarkEntity log = new RemarkEntity();
+        log.setOrderId(orderEntity.getOrderId());
+        log.setUserName(getUser().getDisplayName());
+        log.setUserId(getUserId());
+        log.setRemark("添加订单备注信息");
+        log.setType("log");
+        log.setUpdateTime(new Date());
+        return R.ok();
+    }
     /**
      * 保存
      */
