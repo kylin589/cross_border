@@ -3,6 +3,7 @@ package io.renren.modules.product.service;
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.logistics.entity.NewOrderAbroadLogisticsEntity;
+import io.renren.modules.logistics.entity.NewOrderItemRelationshipEntity;
 import io.renren.modules.logistics.entity.SendDataMoedl;
 import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
 import io.renren.modules.product.entity.NewOrderEntity;
@@ -155,8 +156,8 @@ public interface NewOrderService extends IService<NewOrderEntity> {
     /**
      * 三态推送订单
      */
-     Map<String,String> pushOrder(String  customerOrderNo,String amazonOrderId,int shipperAddressType,String shippingMethod);
 
+    Map<String,String> pushOrder(String  customerOrderNo, String amazonOrderId, int shipperAddressType, String shippingMethod,String itemCode,String chineseName,String englishName, List<NewOrderItemRelationshipEntity> relationshipEntityList);
 
     /**
      * 三态订单状态修改（包含作废）
