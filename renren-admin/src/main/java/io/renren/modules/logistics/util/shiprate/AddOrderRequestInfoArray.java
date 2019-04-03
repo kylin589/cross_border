@@ -687,6 +687,10 @@ public class AddOrderRequestInfoArray {
 		return this.goodsDetails;
 	}
 
+	public void setGoodsDetails(List<GoodsDetailsArray> goodsDetails) {
+		this.goodsDetails = goodsDetails;
+	}
+
 	/**
 	 * 获取opDivision属性的值。
 	 * 
