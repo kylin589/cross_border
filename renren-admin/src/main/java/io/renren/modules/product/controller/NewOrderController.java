@@ -223,16 +223,19 @@ public class NewOrderController extends AbstractController {
         if(abroad.getIsDeleted() == 1){
             return R.error("出库失败，运单已销毁");
         }else{
-            abroad.setState("已出库");
+            abroad.setState("已发货");
             newOrderAbroadLogisticsService.updateById(abroad);
-            orderEntity.setOrderStatus("IntlShipped");
-            orderEntity.setOrderState("仓库已出库");
-            newOrderService.updateById(orderEntity);
+            if(!"Finish".equals(orderEntity.getOrderStatus())){
+                orderEntity.setOrderStatus("IntlShipped");
+                orderEntity.setOrderState("仓库已出库");
+                newOrderService.updateById(orderEntity);
+                newOrderService.serviceFee(orderEntity);
+            }
         }
         return R.ok();
     }
     /**
-     * 列表出库
+     * 表单出库
      * @param
      * @return
      */
@@ -241,14 +244,17 @@ public class NewOrderController extends AbstractController {
         if(abroad.getIsDeleted() == 1){
             return R.error("此运单已销毁");
         }else{
+            abroad.setState("已发货");
+            newOrderAbroadLogisticsService.updateById(abroad);
             Long orderId = abroad.getOrderId();
             if(orderId != null){
-                abroad.setState("已出库");
-                newOrderAbroadLogisticsService.updateById(abroad);
                 NewOrderEntity orderEntity = newOrderService.selectById(orderId);
-                orderEntity.setOrderStatus("IntlShipped");
-                orderEntity.setOrderState("仓库已出库");
-                newOrderService.updateById(orderEntity);
+                if(!"Finish".equals(orderEntity.getOrderStatus())){
+                    orderEntity.setOrderStatus("IntlShipped");
+                    orderEntity.setOrderState("仓库已出库");
+                    newOrderService.updateById(orderEntity);
+                    newOrderService.serviceFee(orderEntity);
+                }
             }else{
                 return R.error();
             }
@@ -507,8 +513,8 @@ public class NewOrderController extends AbstractController {
      * 删除国外物流
      */
     @RequestMapping("/deleteLogisticAbroad")
-    public R deleteLogisticAbroad(@RequestParam Long abroad_logistics_id){
-        NewOrderAbroadLogisticsEntity newOrderAbroadLogisticsEntity = newOrderAbroadLogisticsService.selectById(abroad_logistics_id);
+    public R deleteLogisticAbroad(@RequestParam Long abroadLogisticsId){
+        NewOrderAbroadLogisticsEntity newOrderAbroadLogisticsEntity = newOrderAbroadLogisticsService.selectById(abroadLogisticsId);
         //云途
         if(newOrderAbroadLogisticsEntity.getPackageType()==0) {
             if (newOrderAbroadLogisticsEntity != null) {
@@ -519,19 +525,32 @@ public class NewOrderController extends AbstractController {
                     return R.error("订单删除失败,错误原因：" + result.get("msg"));
                 }
                 newOrderAbroadLogisticsEntity.setIsDeleted(1);
+                newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
             }
-            return R.ok();
-        }else{
-            return R.ok();//三态
+            return R.ok().put("isDeleted",1);
+        }else if(newOrderAbroadLogisticsEntity.getPackageType()==1){
+            //三态
+            if (newOrderAbroadLogisticsEntity != null) {
+                String orderStatus="delete";
+                String wayBillNumber = newOrderAbroadLogisticsEntity.getAbroadWaybill();
+                Map<String,String> result=newOrderService.DeleteOrder(wayBillNumber,orderStatus);
+                if("false".equals(result.get("code"))){
+                    return R.error("订单删除失败,错误原因：" + result.get("msg"));
+                }
+                newOrderAbroadLogisticsEntity.setIsDeleted(1);
+                newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
+            }
+            return R.ok().put("isDeleted",1);
         }
+        return R.ok();
     }
 
     /**
      * 打印物流单号
      */
     @RequestMapping("/printLogisticAbroad")
-    public R printLogisticAbroad(@RequestParam Long abroad_logistics_id){
-        NewOrderAbroadLogisticsEntity newOrderAbroadLogisticsEntity = newOrderAbroadLogisticsService.selectById(abroad_logistics_id);
+    public R printLogisticAbroad(@RequestParam Long abroadLogisticsId){
+        NewOrderAbroadLogisticsEntity newOrderAbroadLogisticsEntity = newOrderAbroadLogisticsService.selectById(abroadLogisticsId);
         //云途
         if(newOrderAbroadLogisticsEntity.getPackageType()==0) {
             String wayBillNumber = newOrderAbroadLogisticsEntity.getAbroadWaybill();
@@ -539,17 +558,22 @@ public class NewOrderController extends AbstractController {
             String url = result.get("url");
             newOrderAbroadLogisticsEntity.setPrintUrl(url);
             return R.ok().put("url",url);
-        }else{
-            return R.ok();//三态
+        }else if(newOrderAbroadLogisticsEntity.getPackageType()==1){
+            //三态
+            String wayBillNumber = newOrderAbroadLogisticsEntity.getAbroadWaybill();
+            String url = newOrderService.print(wayBillNumber,1,"pdf",1,1);
+            newOrderAbroadLogisticsEntity.setPrintUrl(url);
+            return R.ok().put("url",url);
         }
+        return R.ok();
     }
 
     /**
      * 获取运费详情
      */
     @RequestMapping("/getShippingFeeDetail")
-    public R getShippingFeeDetail(@RequestParam Long abroad_logistics_id){
-        NewOrderAbroadLogisticsEntity newOrderAbroadLogisticsEntity = newOrderAbroadLogisticsService.selectById(abroad_logistics_id);
+    public R getShippingFeeDetail(@RequestParam Long abroadLogisticsId){
+        NewOrderAbroadLogisticsEntity newOrderAbroadLogisticsEntity = newOrderAbroadLogisticsService.selectById(abroadLogisticsId);
         //云途
         if(newOrderAbroadLogisticsEntity.getPackageType()==0) {
             if (newOrderAbroadLogisticsEntity != null) {
@@ -658,7 +682,7 @@ public class NewOrderController extends AbstractController {
         if(orderVM.getPackageType() == 0){
             Long channelId = orderVM.getChannelId();
             LogisticsChannelEntity channe = logisticsChannelService.selectById(channelId);
-            Map<String,String> result = newOrderService.pushOrder(orderNumber,orderVM.getPackageType(),channe.getChannelCode(),channe.getChannelName(),orderVM.getEnglishName(),orderVM.getLength(),orderVM.getWidth(),orderVM.getHeight(),orderVM.getWeight());
+            Map<String,String> result = newOrderService.pushOrder(orderNumber,amazonOrderId,orderVM.getPackageType(),channe.getChannelCode(),channe.getChannelName(),orderVM.getEnglishName(),orderVM.getLength(),orderVM.getWidth(),orderVM.getHeight(),orderVM.getWeight());
             if("false".equals(result.get("code")) || "0".equals(result.get("Status"))){
                 return R.error("订单推送失败,错误原因：" + result.get("msg"));
             }else{
@@ -708,17 +732,73 @@ public class NewOrderController extends AbstractController {
 
                 newOrderService.updateById(neworder);
                 //准备订单国际物流上传信息模型
-                SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder,newabroadLogistics,"Yun Express");
+                SendDataMoedl sendDataMoedl =synchronizationZhenModel(neworder,newabroadLogistics,"Yun Express");
                 // 将运单号同步到亚马逊平台
-                newOrderService.amazonUpdateLogistics(sendDataMoedl,neworder.getOrderId());
+                orderService.newamazonUpdateLogistics(sendDataMoedl,neworder.getOrderId());
                 return R.ok().put("newabroadLogistics",newabroadLogistics);
             }
-        }else{
+        }else if(orderVM.getPackageType() == 1) {
             // TODO: 2019/3/31 三态推送
-            return R.ok();
+            Long channelId = orderVM.getChannelId();
+            LogisticsChannelEntity channe = logisticsChannelService.selectById(channelId);
+            Map<String, String> result = newOrderService.pushOrder(orderNumber, 1, channe.getChannelCode());
+            if ("false".equals(result.get("code"))) {
+                return R.error("订单推送失败,错误原因：" + result.get("msg"));
+            } else {
+                NewOrderAbroadLogisticsEntity newabroadLogistics = newOrderAbroadLogisticsService.selectOne(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id", orderId));
+                //生成国际物流单号
+                String abroadWaybill = result.get("orderCode");
+                //获取国际追踪号
+                String track_waybill = result.get("trackingNumber");
+                NewOrderEntity neworder = newOrderService.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", amazonOrderId));
+                //设置状态为虚发货
+                neworder.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_SHIPPED);
+                neworder.setOrderState("虚发货");
+                //进行逻辑判断（走虚发货步骤时判断，新物流则查询旧订单中是否有，有则删除所有关联信息；旧物流则查询新订单中是否有该订单，有则删除所有关联信息。）
+                OrderEntity orderEntity = orderService.selectOne(new EntityWrapper<OrderEntity>().eq("amazon_order_id", amazonOrderId));
+                if (neworder != null && orderEntity != null) {
+                    List<ProductOrderItemEntity> productOrderItemEntities = productOrderItemService.selectList(new EntityWrapper<ProductOrderItemEntity>().eq("amazon_order_id", orderEntity.getAmazonOrderId()));
+                    if (productOrderItemEntities.size() > 0) {
+                        for (ProductOrderItemEntity productOrderItemEntity : productOrderItemEntities) {
+                            productOrderItemService.deleteById(productOrderItemEntity.getItemId());
+                        }
+                    }
+                    orderService.deleteById(orderEntity.getOrderId());
+                }
+                //设置国际物流单号
+                neworder.setAbroadWaybill(abroadWaybill);
+                //生成国际物流对象
+                newabroadLogistics = new NewOrderAbroadLogisticsEntity();
+                newabroadLogistics.setOrderId(neworder.getOrderId());
+                newabroadLogistics.setOrderNumber(orderNumber);
+                newabroadLogistics.setLength(orderVM.getLength());
+                newabroadLogistics.setWidth(orderVM.getWidth());
+                newabroadLogistics.setHeight(orderVM.getHeight());
+                newabroadLogistics.setWeight(orderVM.getWeight());
+                newabroadLogistics.setChineseName(orderVM.getChineseName());
+                newabroadLogistics.setEnglishName(orderVM.getEnglishName());
+                newabroadLogistics.setPackageType(orderVM.getPackageType());
+                newabroadLogistics.setChannelName(channe.getChannelName());
+                newabroadLogistics.setChannelCode(channe.getChannelCode());
+                newabroadLogistics.setAbroadWaybill(abroadWaybill);
+                newabroadLogistics.setTrackWaybill(track_waybill);
+                newabroadLogistics.setIsSynchronization(2);//表示正在同步中
+                newabroadLogistics.setCreateTime(new Date());
+                newabroadLogistics.setUpdateTime(new Date());
+                newabroadLogistics.setShipTime(new Date());
+                newabroadLogistics.setState("未发货");
+                newOrderAbroadLogisticsService.insert(newabroadLogistics);
+
+                newOrderService.updateById(neworder);
+                //准备订单国际物流上传信息模型
+                SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder, newabroadLogistics, "SFC");
+                // 将运单号同步到亚马逊平台
+                orderService.newamazonUpdateLogistics(sendDataMoedl, neworder.getOrderId());
+                return R.ok().put("newabroadLogistics", newabroadLogistics);
+            }
         }
 
-
+           return R.ok();
 
     }
 

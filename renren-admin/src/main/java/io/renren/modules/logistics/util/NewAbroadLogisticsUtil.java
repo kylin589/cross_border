@@ -1,17 +1,12 @@
 package io.renren.modules.logistics.util;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.renren.modules.logistics.DTO.OrderWayBill;
-import io.renren.modules.logistics.entity.LogisticsChannelEntity;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import okhttp3.*;
 import org.apache.commons.lang.StringUtils;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

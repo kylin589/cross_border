@@ -2,7 +2,9 @@ package io.renren.modules.product.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
+import io.renren.modules.logistics.entity.NewOrderAbroadLogisticsEntity;
 import io.renren.modules.logistics.entity.SendDataMoedl;
+import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
 import io.renren.modules.product.entity.NewOrderEntity;
 import io.renren.modules.product.entity.OrderEntity;
 import io.renren.modules.product.vm.OrderModel;
@@ -67,10 +69,20 @@ public interface NewOrderService extends IService<NewOrderEntity> {
     void internationalShipments(NewOrderEntity neworderEntity);
 
     /**
-     * 扣款，并生成运费记录和服务费记录
+     * 生成服务费记录
      * @param
      */
-    void deduction(NewOrderEntity neworderEntity);
+    void deductionFW(NewOrderEntity neworderEntity);
+    /**
+     * 生成服务费记录
+     * @param
+     */
+    void deductionYF(NewOrderAbroadLogisticsEntity newOrderAbroadLogisticsEntity);
+
+    /**
+     * 计算服务费
+     */
+    void serviceFee(NewOrderEntity newOrderEntity);
 
     /**
      * 查询总部员工统计
@@ -99,7 +111,9 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      * @param sendDataMoedl
      * @param orderId
      */
+/*
     void amazonUpdateLogistics(SendDataMoedl sendDataMoedl, Long orderId);
+*/
 
     /**
      * amazon状态更新
@@ -115,7 +129,7 @@ public interface NewOrderService extends IService<NewOrderEntity> {
     /**
      * 推送订单
      */
-    Map<String,String> pushOrder(String  amazonOrderId, int packageType, String channelCode, String channelName, String englishName, int length, int width, int height, BigDecimal weight);
+    Map<String,String> pushOrder(String orderNumber,String  amazonOrderId, int packageType, String channelCode, String channelName, String englishName, int length, int width, int height, BigDecimal weight);
 
     /**
      * 删除订单
@@ -138,8 +152,18 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      */
     List<String>  getShippingMethodCode(int type);
 
+    /**
+     * 三态推送订单
+     */
+     Map<String,String> pushOrder(String  customerOrderNo,int shipperAddressType,String shippingMethod);
 
 
+    /**
+     * 三态订单状态修改（包含作废）
+     */
+    void updateOrder(String orderCode,String orderStatus);
+
+    String print(String orderID,int printType,String print_type,int printSize,int printSort);
 
 }
 

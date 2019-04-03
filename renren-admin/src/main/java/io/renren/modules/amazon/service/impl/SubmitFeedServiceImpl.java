@@ -739,7 +739,7 @@ public class SubmitFeedServiceImpl implements SubmitFeedService {
                     System.out.println("Request ID: " + exception.getRequestId());
                     System.out.print("XML: " + exception.getXML());
                     System.out.println("ResponseHeaderMetadata: " + exception.getResponseHeaderMetadata());
-                    if(exception.getStatusCode() == 443 ||  "InvalidAccessKeyId".equals(exception.getErrorCode()) || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode()) || exception.getMessage().indexOf("Invalid seller id") != -1 || exception.getStatusCode() == -1){
+                    if("InvalidAccessKeyId".equals(exception.getErrorCode()) || "AccessDenied".equals(exception.getErrorCode()) || "InvalidParameterValue".equals(exception.getErrorCode())){
                         return null;
                     }
                 } else {

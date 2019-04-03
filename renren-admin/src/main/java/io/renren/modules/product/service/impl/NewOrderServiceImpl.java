@@ -20,11 +20,11 @@ import io.renren.modules.logistics.service.DomesticLogisticsService;
 import io.renren.modules.logistics.service.LogisticsChannelService;
 import io.renren.modules.logistics.service.NewOrderAbroadLogisticsService;
 import io.renren.modules.logistics.service.SubmitLogisticsService;
-//import io.renren.modules.logistics.util.NewAbroadLogisticsSFCUtil;
+import io.renren.modules.logistics.util.NewAbroadLogisticsSFCUtil;
 import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
-//import io.renren.modules.logistics.util.shiprate.AddOrderRequest;
-//import io.renren.modules.logistics.util.shiprate.AddOrderRequestInfoArray;
-//import io.renren.modules.logistics.util.shiprate.GoodsDetailsArray;
+import io.renren.modules.logistics.util.shiprate.AddOrderRequest;
+import io.renren.modules.logistics.util.shiprate.AddOrderRequestInfoArray;
+import io.renren.modules.logistics.util.shiprate.GoodsDetailsArray;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.service.NewProductShipAddressService;
 import io.renren.modules.order.service.ProductShipAddressService;
@@ -826,89 +826,86 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
 
     @Override
     public Map<String, String> pushOrder(String customerOrderNo,int shipperAddressType, String shippingMethod) {
-        return null;
-//        NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", customerOrderNo));
-//        ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", customerOrderNo));
-//        //推送--订单基本信息
-//        AddOrderRequest _addOrdersRequest = new AddOrderRequest();
-//        AddOrderRequestInfoArray addOrderRequestInfo = new AddOrderRequestInfoArray();
-//
-//        java.util.List<GoodsDetailsArray> _goodsDetailsArray = addOrderRequestInfo
-//                .getGoodsDetails();
-//        GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
-//        addOrderRequestInfo.setCustomerOrderNo(customerOrderNo);// 订单编号
-//        addOrderRequestInfo.setShipperAddressType(shipperAddressType);//发货地址类型：1，默认；2，用户传送的地址信息
-//        addOrderRequestInfo.setShippingMethod(shippingMethod);//货运方式(TPRQM)
-//        addOrderRequestInfo.setShipperName("创淘跨境");//发件人姓名zhangsan
-//        addOrderRequestInfo.setRecipientName(shipAddressEntity.getShipName());//收件人姓名test
-//        addOrderRequestInfo.setRecipientCountry(shipAddressEntity.getShipCountry());//收件人国家Canada
-//        addOrderRequestInfo.setRecipientCity(shipAddressEntity.getShipCity());//收件人城市GR
-//        addOrderRequestInfo.setRecipientState(shipAddressEntity.getShipRegion());//收件人州或省份OP
-//        addOrderRequestInfo.setRecipientPhone(shipAddressEntity.getShipTel());//收件人电话（length:1-16）3242342342423
-//        addOrderRequestInfo.setRecipientZipCode(shipAddressEntity.getShipZip());//收件人邮编（length:1-10）A0N 2L0
-//        addOrderRequestInfo.setOrderStatus("sumbmitted");//订单状态：提交订单，confirmed；订单预提交状态，preprocess；提交且交寄订单，sumbmitted；删除订单，delete,默认交寄状态
-//        addOrderRequestInfo.setRecipientAddress(shipAddressEntity.getShipAddressDetail());//收件人详细地址（length:5-70）sdfsdf sdafsf
-//        addOrderRequestInfo.setGoodsQuantity(neworderEntity.getOrderNumber().toString());//订单包裹中的货品数量2
-//        addOrderRequestInfo.setGoodsDeclareWorth("4");//包裹中的物品申报总价值4
-//        addOrderRequestInfo.setGoodsDescription("sdfsda dsf ");//包裹内物品描述（length:1-100）sdfsda dsf
-//        addOrderRequestInfo.setShippingWorth((float) 2.0);//销售运费（适用DEAM1,DERAM1）（不必须）(float) 2.0
-//        addOrderRequestInfo.setPieceNumber("3");//每票的件数，只有这些方式HKDHL,HKDHL1,CNUPS,SZUPS,HKUPS,SGDHL,EUTLP,CNFEDEX,HKFEDEX,CNSFEDEX,HKSFEDEX,EUEXP3必填
-//        addOrderRequestInfo.setEvaluate("5");//投保价值，投保价值必须大于等于申报总价值且小于申报总价值的150%(5)
-//        addOrderRequestInfo.setTaxesNumber("125698");//税号，6-12位数字125698
-//        addOrderRequestInfo.setIsRemoteConfirm("0");//是否同意收偏远费0不同意，1同意
-//
-//
-////        OrderRequestData omsOrder = new OrderRequestData();
-////        omsOrder.setOrderNumber("");
-////        omsOrder.setShippingMethodCode("");//测试用的
-////        omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
-////        omsOrder.setWeight(null);
-//        //推送--订单详情
-////        List<ApplicationInfos> omsOrderDetails = new ArrayList<>();
-////        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
-////        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
-////            ApplicationInfos omsOrderDetail=new ApplicationInfos();
-////            omsOrderDetail.setApplicationName(productOrderItemEntity.getProductTitle());
-////            omsOrderDetail.setQty(1);
-////            BigDecimal UnitPrice=new BigDecimal(1);//测试用
-////            omsOrderDetail.setUnitPrice(UnitPrice);
-////            BigDecimal unitweight=new BigDecimal(1);//测试用
-////            omsOrderDetail.setUnitWeight(unitweight);
-////            NewOrderEntity newOrderEntity=this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id",productOrderItemEntity.getAmazonOrderId()));
-////            omsOrderDetail.setProductUrl(productOrderItemEntity.getProductImageUrl()==null ? newOrderEntity.getProductImageUrl():productOrderItemEntity.getProductImageUrl());
-////            omsOrderDetail.setSku(productOrderItemEntity.getProductSku());
-////            omsOrderDetails.add(omsOrderDetail);
-////        }
-//
-//        //推送—收货人信息
-////        ShippingInfo shippingInfo=new ShippingInfo();
-////        shippingInfo.setCountryCode(shipAddressEntity.getShipCountry());
-////        shippingInfo.setShippingFirstName(shipAddressEntity.getShipName());
-////        shippingInfo.setShippingAddress(shipAddressEntity.getShipAddressDetail());
-////        shippingInfo.setShippingCity(shipAddressEntity.getShipCity());
-////        shippingInfo.setShippingState(shipAddressEntity.getShipRegion());
-////        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel()==null? NewAbroadLogisticsUtil.getTel():shipAddressEntity.getShipTel());
-////        shippingInfo.setShippingZip(shipAddressEntity.getShipZip());
-////        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel());
-////        ApplicationInfos[] applicationInfos = new ApplicationInfos[omsOrderDetails.size()];
-////        omsOrder.setShippingInfo(shippingInfo);
-////        omsOrder.setApplicationInfos(omsOrderDetails.toArray(applicationInfos));
-////        SenderInfo senderInfo = new SenderInfo();//默认空值，不是必填参数
-////        omsOrder.setSenderInfo(senderInfo);
-//
-//       return NewAbroadLogisticsSFCUtil.pushOrder(customerOrderNo,shipperAddressType,shippingMethod);
+        NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", customerOrderNo));
+        ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", customerOrderNo));
+        //推送--订单基本信息
+        AddOrderRequest _addOrdersRequest = new AddOrderRequest();
+        AddOrderRequestInfoArray addOrderRequestInfo = new AddOrderRequestInfoArray();
+
+        java.util.List<GoodsDetailsArray> _goodsDetailsArray = addOrderRequestInfo
+                .getGoodsDetails();
+        GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
+        addOrderRequestInfo.setCustomerOrderNo(customerOrderNo);// 订单编号
+        addOrderRequestInfo.setShipperAddressType(shipperAddressType);//发货地址类型：1，默认；2，用户传送的地址信息
+        addOrderRequestInfo.setShippingMethod(shippingMethod);//货运方式(TPRQM)
+        addOrderRequestInfo.setShipperName("创淘跨境");//发件人姓名zhangsan
+        addOrderRequestInfo.setRecipientName(shipAddressEntity.getShipName());//收件人姓名test
+        addOrderRequestInfo.setRecipientCountry(shipAddressEntity.getShipCountry());//收件人国家Canada
+        addOrderRequestInfo.setRecipientCity(shipAddressEntity.getShipCity());//收件人城市GR
+        addOrderRequestInfo.setRecipientState(shipAddressEntity.getShipRegion());//收件人州或省份OP
+        addOrderRequestInfo.setRecipientPhone(shipAddressEntity.getShipTel());//收件人电话（length:1-16）3242342342423
+        addOrderRequestInfo.setRecipientZipCode(shipAddressEntity.getShipZip());//收件人邮编（length:1-10）A0N 2L0
+        addOrderRequestInfo.setOrderStatus("sumbmitted");//订单状态：提交订单，confirmed；订单预提交状态，preprocess；提交且交寄订单，sumbmitted；删除订单，delete,默认交寄状态
+        addOrderRequestInfo.setRecipientAddress(shipAddressEntity.getShipAddressDetail());//收件人详细地址（length:5-70）sdfsdf sdafsf
+        addOrderRequestInfo.setGoodsQuantity(neworderEntity.getOrderNumber().toString());//订单包裹中的货品数量2
+        addOrderRequestInfo.setGoodsDeclareWorth("4");//包裹中的物品申报总价值4
+        addOrderRequestInfo.setGoodsDescription("sdfsda dsf ");//包裹内物品描述（length:1-100）sdfsda dsf
+        addOrderRequestInfo.setShippingWorth((float) 2.0);//销售运费（适用DEAM1,DERAM1）（不必须）(float) 2.0
+        addOrderRequestInfo.setPieceNumber("3");//每票的件数，只有这些方式HKDHL,HKDHL1,CNUPS,SZUPS,HKUPS,SGDHL,EUTLP,CNFEDEX,HKFEDEX,CNSFEDEX,HKSFEDEX,EUEXP3必填
+        addOrderRequestInfo.setEvaluate("5");//投保价值，投保价值必须大于等于申报总价值且小于申报总价值的150%(5)
+        addOrderRequestInfo.setTaxesNumber("125698");//税号，6-12位数字125698
+        addOrderRequestInfo.setIsRemoteConfirm("0");//是否同意收偏远费0不同意，1同意
+
+
+//        OrderRequestData omsOrder = new OrderRequestData();
+//        omsOrder.setOrderNumber("");
+//        omsOrder.setShippingMethodCode("");//测试用的
+//        omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
+//        omsOrder.setWeight(null);
+        //推送--订单详情
+//        List<ApplicationInfos> omsOrderDetails = new ArrayList<>();
+//        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
+//        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
+//            ApplicationInfos omsOrderDetail=new ApplicationInfos();
+//            omsOrderDetail.setApplicationName(productOrderItemEntity.getProductTitle());
+//            omsOrderDetail.setQty(1);
+//            BigDecimal UnitPrice=new BigDecimal(1);//测试用
+//            omsOrderDetail.setUnitPrice(UnitPrice);
+//            BigDecimal unitweight=new BigDecimal(1);//测试用
+//            omsOrderDetail.setUnitWeight(unitweight);
+//            NewOrderEntity newOrderEntity=this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id",productOrderItemEntity.getAmazonOrderId()));
+//            omsOrderDetail.setProductUrl(productOrderItemEntity.getProductImageUrl()==null ? newOrderEntity.getProductImageUrl():productOrderItemEntity.getProductImageUrl());
+//            omsOrderDetail.setSku(productOrderItemEntity.getProductSku());
+//            omsOrderDetails.add(omsOrderDetail);
+//        }
+
+        //推送—收货人信息
+//        ShippingInfo shippingInfo=new ShippingInfo();
+//        shippingInfo.setCountryCode(shipAddressEntity.getShipCountry());
+//        shippingInfo.setShippingFirstName(shipAddressEntity.getShipName());
+//        shippingInfo.setShippingAddress(shipAddressEntity.getShipAddressDetail());
+//        shippingInfo.setShippingCity(shipAddressEntity.getShipCity());
+//        shippingInfo.setShippingState(shipAddressEntity.getShipRegion());
+//        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel()==null? NewAbroadLogisticsUtil.getTel():shipAddressEntity.getShipTel());
+//        shippingInfo.setShippingZip(shipAddressEntity.getShipZip());
+//        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel());
+//        ApplicationInfos[] applicationInfos = new ApplicationInfos[omsOrderDetails.size()];
+//        omsOrder.setShippingInfo(shippingInfo);
+//        omsOrder.setApplicationInfos(omsOrderDetails.toArray(applicationInfos));
+//        SenderInfo senderInfo = new SenderInfo();//默认空值，不是必填参数
+//        omsOrder.setSenderInfo(senderInfo);
+
+       return NewAbroadLogisticsSFCUtil.pushOrder(customerOrderNo,shipperAddressType,shippingMethod);
     }
 
     @Override
     public void updateOrder(String orderCode, String orderStatus) {
-//        NewAbroadLogisticsSFCUtil.updateOrder(orderCode,orderStatus);
-        return;
+        NewAbroadLogisticsSFCUtil.updateOrder(orderCode,orderStatus);
     }
 
     @Override
     public String print(String orderID, int printType, String print_type, int printSize, int printSort) {
-        return null;
-//        return NewAbroadLogisticsSFCUtil.print(orderID,printType,print_type,printSize,printSort);
+        return NewAbroadLogisticsSFCUtil.print(orderID,printType,print_type,printSize,printSort);
     }
 
 

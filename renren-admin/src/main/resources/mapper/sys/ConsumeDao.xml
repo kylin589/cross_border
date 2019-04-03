@@ -19,5 +19,9 @@
         <result property="createTime" column="create_time"/>
     </resultMap>
 
-
+    <!-- 统计扣费 -->
+    <select id="consumTotal"  resultType="java.math.BigDecimal">
+        select sum(money) AS consum from company_consume
+        where dept_id = #{deptId}
+    </select>
 </mapper>

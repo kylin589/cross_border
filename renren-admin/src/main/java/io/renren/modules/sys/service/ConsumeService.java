@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.sys.entity.ConsumeEntity;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -17,5 +18,6 @@ public interface ConsumeService extends IService<ConsumeEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
+    BigDecimal consumTotal(Long deptId);
 }
 

@@ -26,6 +26,9 @@ import io.renren.modules.product.entity.OrderEntity;
 import io.renren.modules.product.entity.ProductOrderItemEntity;
 import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.service.ProductOrderItemService;
+import io.renren.modules.sys.entity.SysDeptEntity;
+import io.renren.modules.sys.service.ConsumeService;
+import io.renren.modules.sys.service.RechargeService;
 import io.renren.modules.sys.service.SysDeptService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,13 +106,18 @@ public class OrderLogisticsTimer {
     @Autowired
     private ProductOrderItemService productOrderItemService;
 
+    @Autowired
+    private ConsumeService consumeService;
+
+    @Autowired
+    private RechargeService rechargeService;
+
     @Value(("${file.path}"))
     private String fileStoragePath;
 
     /**
      * 更新订单物流信息
      */
-    @Async("taskExecutor")
     public void getOrderLogistics(){
         Date startDate = DateUtils.getTheDateNow1MonthsShort();
         List<OrderEntity> orderEntityList = orderService.selectList(
@@ -122,13 +130,30 @@ public class OrderLogisticsTimer {
         if(orderEntityList != null && orderEntityList.size() >0){
 //            new RefreshOrderThread(5548L).start();
             for(OrderEntity orderEntity : orderEntityList){
+                try {
+                    Thread.sleep(10*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 refreshOrder(orderEntity.getOrderId());
-
             }
         }
 
     }
+    /**
+     * 计算公司余额
+     */
+    public void calculateBalance(){
+        List<SysDeptEntity> deptEntityList = deptService.selectList(null);
+        for(SysDeptEntity dept : deptEntityList){
+            BigDecimal chongzhi = consumeService.consumTotal(dept.getDeptId());
+            BigDecimal koukuan = rechargeService.rechargeTotle(dept.getDeptId());
+            dept.setBalance(chongzhi.subtract(koukuan));
+        }
+        deptService.updateBatchById(deptEntityList);
+    }
 
+    @Async("taskExecutor")
     public void refreshOrder(Long orderId){
         //订单对象
         OrderEntity orderEntity = orderService.selectById(orderId);

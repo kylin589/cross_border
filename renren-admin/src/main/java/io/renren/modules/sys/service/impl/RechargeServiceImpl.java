@@ -1,6 +1,8 @@
 package io.renren.modules.sys.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.util.Map;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -24,6 +26,11 @@ public class RechargeServiceImpl extends ServiceImpl<RechargeDao, RechargeEntity
                 new EntityWrapper<RechargeEntity>().eq("dept_id",deptId)
         );
         return new PageUtils(page);
+    }
+
+    @Override
+    public BigDecimal rechargeTotle(Long deptId) {
+        return baseMapper.rechargeTotle(deptId);
     }
 
 }

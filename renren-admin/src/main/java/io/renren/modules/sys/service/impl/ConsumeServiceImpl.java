@@ -2,6 +2,8 @@ package io.renren.modules.sys.service.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.util.Map;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -34,5 +36,10 @@ public class ConsumeServiceImpl extends ServiceImpl<ConsumeDao, ConsumeEntity> i
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public BigDecimal consumTotal(Long deptId) {
+        return baseMapper.consumTotal(deptId);
     }
 }
