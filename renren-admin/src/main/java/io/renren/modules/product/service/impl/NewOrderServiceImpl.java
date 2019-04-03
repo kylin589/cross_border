@@ -878,8 +878,8 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     }
 
     @Override
-    public String print(String orderID, int printType, String print_type, int printSize, int printSort) {
-        return NewAbroadLogisticsSFCUtil.print(orderID,printType,print_type,printSize,printSort);
+    public String print(String orderId, int printType, String printFileType, int printSize, int printSort) {
+        return NewAbroadLogisticsSFCUtil.print(orderId,printType,printFileType,printSize,printSort);
     }
 
 
