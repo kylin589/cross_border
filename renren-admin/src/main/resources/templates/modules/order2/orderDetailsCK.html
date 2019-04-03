@@ -378,12 +378,12 @@
                         </span>
                         <span v-if="wuliuType == 1" style="width: auto"><label for="">海关编码：</label>
 
-                            <el-select v-model="itemCodeId" filterable placeholder="请选择" @focus="getHGBM" @change="changeHG(index)">
+                            <el-select v-model="itemCodeId" filterable placeholder="请选择" @focus="getHGBM" @change="changeHG">
                                 <el-option
                                         v-for="(item,index) in itemCodelist"
-                                        :key="item.channelId"
-                                        :label="item.channelName"
-                                        :value="item.channelId">
+                                        :key="item.itemCodeId"
+                                        :label="item.name"
+                                        :value="item.itemCodeId">
                                 </el-option>
                             </el-select>
 

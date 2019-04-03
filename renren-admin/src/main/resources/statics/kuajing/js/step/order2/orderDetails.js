@@ -923,7 +923,7 @@ var vm = new Vue({
         // 获取淮关编码
         getHGBM:function () {
             $.ajax({
-                url: '../../amazon/neworder/itemCodeService',
+                url: '../../amazon/neworder/getItemCode',
                 type: 'get',
                 data: {},
                 dataType: 'json',
@@ -938,6 +938,7 @@ var vm = new Vue({
                                 itemCodeId:t.itemCodeId,
                                 name:t.itemCode + t.itemCnMaterial,
                                 itemCnMaterial:t.itemCnMaterial,
+                                itemEnMaterial:t.itemEnMaterial,
 
                             })
                         })
@@ -957,7 +958,14 @@ var vm = new Vue({
             });
         },
         // 海关编码修改
-        changeHG:function (i) {
+        changeHG:function (value) {
+            console.log(value);
+            vm.itemCodelist.forEach(function (t,i) {
+                if(t.itemCodeId == value){
+                    vm.wuliuDetails.chineseName = vm.itemCodelist[i].itemCnMaterial;
+                    vm.wuliuDetails.englishName = vm.itemCodelist[i].itemEnMaterial;
+                }
+            })
 
         }
     },
