@@ -46,6 +46,7 @@ import net.sf.json.JSONArray;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -105,11 +106,11 @@ public class NewOrderController extends AbstractController {
     @Value(("${mws-config.app-version}"))
     private String appVersion;
     @Autowired
-    @Lazy
     private NewOrderService newOrderService;
     @Autowired
     private NewOrderItemService newOrderItemService;
     @Autowired
+    @Lazy
     private OrderService orderService;
     @Autowired
     private ProductOrderItemService productOrderItemService;
@@ -141,6 +142,8 @@ public class NewOrderController extends AbstractController {
     private AmazonRateService amazonRateService;
     @Autowired
     private LogisticsChannelService logisticsChannelService;
+    @Autowired
+    private NewOrderItemRelationshipService newOrderItemRelationshipService;
     @Autowired
     private ItemCodeService itemCodeService;
     @Value(("${file.path}"))
@@ -368,6 +371,8 @@ public class NewOrderController extends AbstractController {
                 }else if(newabroadLogistics.getPackageType() == 1){
                     newabroadLogistics.setChanneDisplayName("[三态]" + newabroadLogistics.getChannelName() + "[" + newabroadLogistics.getChannelCode() + "]");
                 }
+                List<NewOrderItemRelationshipEntity> orderItemRelationList = newOrderItemRelationshipService.selectList(new EntityWrapper<NewOrderItemRelationshipEntity>().eq("abroad_logistics_id",newabroadLogistics.getAbroadLogisticsId()));
+                newabroadLogistics.setOrderItemRelationList(orderItemRelationList);
             }
         }
         orderDTO.setAbroadLogisticsList(newabroadLogisticsList);
@@ -684,6 +689,8 @@ public class NewOrderController extends AbstractController {
         return R.ok().put("itemCodelist",itemCodelist);
     }
 
+
+
     /**
      * 生成国际运单号
      * orderVM: orderId,
@@ -692,9 +699,38 @@ public class NewOrderController extends AbstractController {
     public R createAbroadWaybill(@RequestBody OrderVM orderVM){
         //获取可用余额
         SysDeptEntity dept = deptService.selectById(getDeptId());
-        if(dept.getAvailableBalance().compareTo(new BigDecimal(50.00)) != 1){
+        if(dept.getBalance().compareTo(new BigDecimal(500.00)) != 1){
             return R.error("余额不足，请联系公司管理员及时充值后再次尝试");
         }
+        List<NewOrderItemRelationshipEntity> orderItemRelationList = orderVM.getItemRelationList();
+       /* NewOrderEntity neworderEntity = newOrderService.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", orderVM.getAmazonOrderId()));
+        //每个国家的汇率
+        BigDecimal countryRate=neworderEntity.getMomentRate();
+        BigDecimal usdRate=new BigDecimal(6.7114);
+        BigDecimal totalPrice=new BigDecimal(0.0000);
+        Integer totolNum=0;
+        for(NewOrderItemRelationshipEntity itemRelationship : orderItemRelationList){
+            if(orderVM.getPackageType()==1){
+            itemRelationship.setItemChineseName(orderVM.getChineseName());
+            itemRelationship.setItemCnMaterial(orderVM.getChineseName());
+            itemRelationship.setItemEnglishName(orderVM.getEnglishName());
+            itemRelationship.setItemEnMaterial(orderVM.getEnglishName());
+            itemRelationship.setItemWeight(orderVM.getWeight());
+            ItemCodeEntity itemCodeEntity=itemCodeService.selectOne(new EntityWrapper<ItemCodeEntity>().eq("item_code_id",orderVM.getItemCodeId()));
+            itemRelationship.setItemCode(itemCodeEntity.getItemCode());
+            //计算美元单价，赋给usdPrice
+            BigDecimal usdPrice=new BigDecimal(0.0000);
+            usdPrice=itemRelationship.getProductPrice().multiply(new BigDecimal(itemRelationship.getOrderItemNumber()).multiply(countryRate).divide(usdRate));//货品单价
+                itemRelationship.setUsdPrice(usdPrice);
+                totalPrice=usdPrice.add(usdPrice);
+                totolNum+=itemRelationship.getOrderItemNumber();//货品数量
+                itemRelationship.setItemQuantity(totolNum.toString());//运输数量
+            }
+
+        }
+*/
+        //保存
+
         Long orderId = orderVM.getOrderId();
         String amazonOrderId=orderVM.getAmazonOrderId();
         int count = newOrderAbroadLogisticsService.selectCount(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id",orderId));
@@ -746,11 +782,10 @@ public class NewOrderController extends AbstractController {
                 newabroadLogistics.setTrackWaybill(track_waybill);
                 newabroadLogistics.setIsSynchronization(2);//表示正在同步中
                 newabroadLogistics.setCreateTime(new Date());
-                newabroadLogistics.setUpdateTime(new Date());
-                newabroadLogistics.setShipTime(new Date());
+//                newabroadLogistics.setUpdateTime(new Date());
+//                newabroadLogistics.setShipTime(new Date());
                 newabroadLogistics.setState("未发货");
                 newOrderAbroadLogisticsService.insert(newabroadLogistics);
-
                 newOrderService.updateById(neworder);
                 //准备订单国际物流上传信息模型
                 SendDataMoedl sendDataMoedl =synchronizationZhenModel(neworder,newabroadLogistics,"Yun Express");
@@ -761,8 +796,11 @@ public class NewOrderController extends AbstractController {
         }else if(orderVM.getPackageType() == 1) {
             // TODO: 2019/3/31 三态推送
             Long channelId = orderVM.getChannelId();
+            String chineseName=orderVM.getChineseName();
+            String englishName=orderVM.getEnglishName();
             LogisticsChannelEntity channe = logisticsChannelService.selectById(channelId);
-            Map<String, String> result = newOrderService.pushOrder(orderNumber, amazonOrderId,1, channe.getChannelCode());
+            ItemCodeEntity itemCodeEntity=itemCodeService.selectOne(new EntityWrapper<ItemCodeEntity>().eq("item_cn_material",chineseName).eq("item_en_material",englishName));
+            Map<String, String> result = newOrderService.pushOrder(orderNumber, amazonOrderId,1, channe.getChannelCode(),itemCodeEntity.getItemCode(),chineseName,englishName,orderItemRelationList);
             if ("false".equals(result.get("code"))) {
                 return R.error("订单推送失败,错误原因：" + result.get("msg"));
             } else {
@@ -809,7 +847,6 @@ public class NewOrderController extends AbstractController {
                 newabroadLogistics.setShipTime(new Date());
                 newabroadLogistics.setState("未发货");
                 newOrderAbroadLogisticsService.insert(newabroadLogistics);
-
                 newOrderService.updateById(neworder);
                 //准备订单国际物流上传信息模型
                 SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder, newabroadLogistics, "SFC");
@@ -818,7 +855,6 @@ public class NewOrderController extends AbstractController {
                 return R.ok().put("newabroadLogistics", newabroadLogistics);
             }
         }
-
            return R.ok();
 
     }
@@ -837,7 +873,7 @@ public class NewOrderController extends AbstractController {
             SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder, abroadLogistics, "Yun Express");
             // 将运单号同步到亚马逊平台
             orderService.newamazonUpdateLogistics(sendDataMoedl, neworder.getOrderId());
-        }else if(abroadLogistics.getPackageType() == 0){
+        }else if(abroadLogistics.getPackageType() == 1){
             //准备订单国际物流上传信息模型
             SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder, abroadLogistics, "SFC");
             // 将运单号同步到亚马逊平台
@@ -903,4 +939,5 @@ public class NewOrderController extends AbstractController {
         SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
         return sendDataMoedl;
     }
+
 }
