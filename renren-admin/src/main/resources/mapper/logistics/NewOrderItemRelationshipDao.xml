@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.logistics.dao.NewOrderItemRelationshipDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.logistics.entity.NewOrderItemRelationshipEntity" id="newOrderItemRelationshipMap">
+                    <result property="relationshipId" column="relationship_id"/>
+                    <result property="abroadLogisticsId" column="abroad_logistics_id"/>
+                    <result property="itemId" column="item_id"/>
+                    <result property="productId" column="product_id"/>
+                    <result property="orderItemNumber" column="order_item_number"/>
+                    <result property="itemQuantity" column="item_quantity"/>
+                    <result property="productPrice" column="product_price"/>
+                    <result property="itemWeight" column="item_weight"/>
+                    <result property="itemCode" column="item_code"/>
+                    <result property="itemChineseName" column="item_chinese_name"/>
+                    <result property="itemEnglishName" column="item_english_name"/>
+                    <result property="itemCnMaterial" column="item_cn_material"/>
+                    <result property="itemEnMaterial" column="item_en_material"/>
+                    <result property="productTitle" column="product_title"/>
+                    <result property="productAsin" column="product_asin"/>
+                    <result property="procuctImageUrl" column="procuct_image_url"/>
+                    <result property="productSku" column="product_sku"/>
+                    <result property="createTime" column="create_time"/>
+            </resultMap>
+
+
+</mapper>
