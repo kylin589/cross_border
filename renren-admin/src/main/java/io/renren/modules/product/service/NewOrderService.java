@@ -163,7 +163,7 @@ public interface NewOrderService extends IService<NewOrderEntity> {
      */
     Map<String,String> updateOrder(String orderCode,String orderStatus);
 
-    String print(String orderID,int printType,String print_type,int printSize,int printSort);
+    String print(String orderId,int printType,String printFileType,int printSize,int printSort);
 
 }
 
