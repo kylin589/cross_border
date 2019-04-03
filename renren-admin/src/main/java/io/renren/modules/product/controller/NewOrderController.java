@@ -141,6 +141,8 @@ public class NewOrderController extends AbstractController {
     private AmazonRateService amazonRateService;
     @Autowired
     private LogisticsChannelService logisticsChannelService;
+    @Autowired
+    private ItemCodeService itemCodeService;
     @Value(("${file.path}"))
     private String fileStoragePath;
 
@@ -669,7 +671,15 @@ public class NewOrderController extends AbstractController {
         return R.ok().put("channelilist",channelilist);
     }
 
-
+    /**
+     * 获取物流专线代码接口
+     */
+    @RequestMapping("/getItemCode")
+    public R getItemCode(){
+        //先调用获取物流专线代码的方法
+        List<ItemCodeEntity> itemCodelist = itemCodeService.selectList(null);
+        return R.ok().put("itemCodelist",itemCodelist);
+    }
 
     /**
      * 生成国际运单号
