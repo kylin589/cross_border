@@ -880,7 +880,7 @@ var vm = new Vue({
                         if (r.code == '0') {
                             layer.msg('操作成功');
                             // layer.close(index);
-                            // vm.getOrderInfo();
+                            vm.getOrderInfo();
                             // vm.getWlDetails
                         } else {
                             layer.alert(r.msg);
@@ -892,6 +892,8 @@ var vm = new Vue({
                         // layer.close(index);
                     }
                 });
+            }else {
+                window.open(url);
             }
         }
     },
