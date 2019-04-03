@@ -248,7 +248,13 @@
                         <div class="layui-tab-content action">
                             <ul class="operationLog">
                                 <li v-if="orderDetails.remarkList.length==0" style="color: #666">暂无备注</li>
-                                <li v-if="orderDetails.remarkList.length!=0" v-for="item in orderDetails.remarkList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark }}</span></li>
+                                <li v-if="orderDetails.remarkList.length!=0" v-for="item in orderDetails.remarkList" style="display: flex;">
+                                    <span>{{ item.remarkType }}</span>
+                                    <span>{{ item.userName }}:</span>
+                                    <span style="flex: 1">{{ item.remark }}</span>
+                                    <span>{{ item.updateTime }}</span>
+                                </li>
+
                             </ul>
                             <textarea placeholder="留言备注" style="margin-bottom: 10px" v-model="remark"></textarea>
                             <br>
@@ -301,15 +307,31 @@
 
             <!--要加滚动条的具体内容-->
             <div class="form_item one" style="box-shadow: 0 0 0 transparent">
-                <div class="item" v-for="orderProductItem in orderDetails.orderProductList">
+                <div class="item" v-for="orderProductItem in orderProductList">
                     <div>
                         <img :src="orderProductItem.productImageUrl" alt="">
                         <!--<img :src="orderDetails.imgUrl" alt="">-->
                     </div>
                     <div>
-                        <p class="addDecP" style="font-weight: bold;font-size: 16px;margin-bottom: 30px">{{ orderProductItem.productTitle }}</p>
-                        <span><label for="">SKU：</label><span>{{ orderProductItem.productSku }}</span></span><br>
-                        <span><label for="">数量：</label><span>{{ orderProductItem.orderItemNumber }}</span></span><br>
+                        <p class="addDecP" style="font-weight: bold;font-size: 16px;">{{ orderProductItem.productTitle }}</p>
+                        <span><label for="">SKU：</label><span>{{ orderProductItem.productSku }}</span></span>
+                        <span><label for="">数量：</label><span>{{ orderProductItem.orderItemNumber }}</span></span>
+                        <br>
+                        <span><label for="">运输数量：</label>
+                            <!--<span>{{ orderProductItem.orderItemNumber }}</span>-->
+                            <!--<select name="" v-model="orderProductItem.number">-->
+                                <!--<option value="0">0</option>-->
+                                <!--<option value="1">1</option>-->
+                            <!--</select>-->
+                            <el-select v-model="orderProductItem.number" filterable placeholder="请选择">
+                                <el-option
+                                        v-for="item in orderProductItem.numberList"
+                                        :key="item"
+                                        :label="item"
+                                        :value="item">
+                                </el-option>
+                            </el-select>
+                        </span><br>
 
                     </div>
                 </div>
@@ -354,6 +376,18 @@
                             </el-select>
 
                         </span>
+                        <span v-if="wuliuType == 1" style="width: auto"><label for="">海关编码：</label>
+
+                            <el-select v-model="itemCodeId" filterable placeholder="请选择" @focus="getHGBM" @change="changeHG(index)">
+                                <el-option
+                                        v-for="(item,index) in itemCodelist"
+                                        :key="item.channelId"
+                                        :label="item.channelName"
+                                        :value="item.channelId">
+                                </el-option>
+                            </el-select>
+
+                        </span>
                         <input type="button" value="生成运单号" @click="createdNum"><br>
                         <span><label for="">运单号：</label><input type="text" placeholder="运单号" v-model="wuliuDetails.addyundanhao" disabled></span>
                         <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" v-model="wuliuDetails.addzhuizonghao" disabled></span>
@@ -379,8 +413,9 @@
                     </div>
                     <div>
                         <p class="addDecP" style="font-weight: bold;font-size: 16px;">{{ orderProductItem.productTitle }}</p>
-                        <span><label for="">SKU：</label><span>{{ orderProductItem.productSku }}</span></span><br>
-                        <span><label for="">数量：</label><span>{{ orderProductItem.orderItemNumber }}</span></span><br>
+                        <span><label for="">SKU：</label><span>{{ orderProductItem.productSku }}</span></span>
+                        <span><label for="">数量：</label><span>{{ orderProductItem.orderItemNumber }}</span><br>
+                        <span><label for="">运输数量：</label><span>{{ orderProductItem.number }}</span></span><br>
 
                     </div>
                 </div>
@@ -407,6 +442,15 @@
                                 <!--<option v-for="item in guojilogistics" :value="item.channel">{{ item.channelName }}</option>-->
                             <!--</select>-->
                         </span>
+                        <span v-if="getWlDetails.packageType == 1" style="width: auto"><label for="">海关编码：</label>
+
+                            <span>{{getWlDetails.channelName}}</span>
+
+                            <!--<select name="" v-model="getWlDetails.channelName" disabled>-->
+                            <!--<option v-for="item in guojilogistics" :value="item.channel">{{ item.channelName }}</option>-->
+                            <!--</select>-->
+                        </span>
+
                         <!--<input type="button" value="生成运单号">--><br>
                         <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="getWlDetails.abroadWaybill" disabled></span>
                         <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="getWlDetails.trackWaybill" disabled></span>

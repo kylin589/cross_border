@@ -173,7 +173,18 @@
                 </span></td>
             <td class="imgtd" v-if="item.productImageUrl"><img :src="item.productImageUrl" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
             <td class="imgtd" v-if="!item.productImageUrl"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
-            <td><a :lay-href="'modules/order2/orderDetailsCK.html?orderid='+item.orderId+'page='+proCurr" layadmin-event="message" :lay-text="item.orderId" style="cursor: pointer">{{ item.amazonOrderId }}</a> <br/>
+            <td>
+                <!--<span v-if="JSON.stringify(item.abroadRemark) != 'null'">警</span>-->
+                <el-tooltip v-if="JSON.stringify(item.abroadRemark) != 'null'" :content="item.generalRemark" placement="right-end" effect="light">
+                    <img src="${request.contextPath}/statics/kuajing/img/jinggao.png" alt="">
+                </el-tooltip>
+                <a :lay-href="'modules/order2/orderDetailsCK.html?orderid='+item.orderId+'page='+proCurr" layadmin-event="message" :lay-text="item.orderId" style="cursor: pointer">{{ item.amazonOrderId }}</a>
+                <!--<span :title="" style="cursor: pointer">备</span>-->
+                <el-tooltip v-if="JSON.stringify(item.generalRemark) != 'null'" :content="item.generalRemark" placement="right-end" effect="light">
+                    <img src="${request.contextPath}/statics/kuajing/img/beizhu.png" alt="">
+                </el-tooltip>
+                <br/>
+
                 <span class="brSpan">
                     <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
                     {{ item.shopName }}

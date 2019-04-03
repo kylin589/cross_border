@@ -280,22 +280,18 @@ form div.details table tr.two th , form div.details table tr.two td{
 .operationLog li{
     margin-bottom: 6px;
 }
-.operationLog li span:nth-child(1){
+.operationLog li span:nth-child(4){
     display: inline-block;
     width: 170px;
     color: #00a3e8;
     font-size: 14px;
 
 }
-.operationLog li span:nth-child(2){
-    display: inline-block;
+.operationLog li span{
     width: 100px;
     color: #666;
 }
-.operationLog li span:nth-child(3){
-    /*width: 100px;*/
-    color: #666;
-}
+
 
 /*搜索分类*/
 .sousuoAreaInput{

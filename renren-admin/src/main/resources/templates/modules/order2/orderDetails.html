@@ -246,7 +246,12 @@
                         <div class="layui-tab-content action">
                             <ul class="operationLog">
                                 <li v-if="orderDetails.remarkList.length==0" style="color: #666">暂无备注</li>
-                                <li v-if="orderDetails.remarkList.length!=0" v-for="item in orderDetails.remarkList"><span>{{ item.updateTime }}</span><span>{{ item.userName }}</span><span>{{ item.remark }}</span></li>
+                                <li v-if="orderDetails.remarkList.length!=0" v-for="item in orderDetails.remarkList" style="display: flex;">
+                                    <span>{{ item.remarkType }}</span>
+                                    <span>{{ item.userName }}:</span>
+                                    <span style="flex: 1">{{ item.remark }}</span>
+                                    <span>{{ item.updateTime }}</span>
+                                </li>
                             </ul>
                             <textarea placeholder="留言备注" style="margin-bottom: 10px" v-model="remark"></textarea>
                             <br>
