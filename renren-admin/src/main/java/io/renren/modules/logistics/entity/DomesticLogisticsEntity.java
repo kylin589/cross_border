@@ -47,9 +47,7 @@ public class DomesticLogisticsEntity implements Serializable {
 	 * 发货日期
 	 */
 	private Date issuanceDate;
-	/**
-	 * 创建时间
-	 */
+
 	private Date createTime;
 
 	/**

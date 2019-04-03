@@ -554,16 +554,24 @@ public class NewOrderController extends AbstractController {
             String wayBillNumber = newOrderAbroadLogisticsEntity.getAbroadWaybill();
             Map<String, String> result = newOrderService.printOrder(wayBillNumber);
             String url = result.get("url");
-            newOrderAbroadLogisticsEntity.setPrintUrl(url);
-            newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
-            return  R.ok(url);
+            if(url != null){
+                newOrderAbroadLogisticsEntity.setPrintUrl(url);
+                newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
+                return R.ok().put("url",url);
+            }else{
+                return R.error("该单号已作废，无法获取打印地址");
+            }
         }else if(newOrderAbroadLogisticsEntity.getPackageType()==1){
             //三态
             String wayBillNumber = newOrderAbroadLogisticsEntity.getAbroadWaybill();
             String url = newOrderService.print(wayBillNumber,1,"pdf",1,1);
-            newOrderAbroadLogisticsEntity.setPrintUrl(url);
-            newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
-            return  R.ok(url);
+            if(url != null){
+                newOrderAbroadLogisticsEntity.setPrintUrl(url);
+                newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
+                return R.ok().put("url",url);
+            }else{
+                return R.error("该单号已作废，无法获取打印地址");
+            }
         }
         return R.error("获取地址失败，请重试！");
     }

@@ -232,7 +232,110 @@ public final class NewAbroadLogisticsSFCUtil {
 
 	}
 
+    public static Map<String,String> pushOrder2(){
+        URL wsdlURL = ShipRate_Service.WSDL_LOCATION;
+        ShipRate_Service ss = new ShipRate_Service(wsdlURL, SERVICE_NAME);
+        ShipRate port = ss.getShipRateSOAP();
+        Map<String,String> map=new HashMap<>();
+        {
+            System.out.println("Invoking addOrder...");
+            HeaderRequest _headerRequest = new HeaderRequest();
+            AddOrderRequestInfoArray _addOrdersRequestInfo = new AddOrderRequestInfoArray();
+            AddOrderRequest _addOrdersRequest = new AddOrderRequest();
+            java.util.List<GoodsDetailsArray> _goodsDetailsArray = _addOrdersRequestInfo
+                    .getGoodsDetails();
+            GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
+            _headerRequest.setAppKey("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQClOIqNB2SmB1tI8u7CHd0eM/HqbqQTXn8qvvMOrji7LewY96QS3PYgRoP3c8DQ7C0izUIAsif5VY0IPWmMlDc1hO1jiARWwWVHESjUpKxJFUgIlwFMF5TWkiTNNUjbBSqDXNFgc7IP8yNMyAqRxdiixkesFUDlAzig1NM1cYhCQwIDAQAB");
+            _headerRequest.setToken("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDjThuB+YKTDP/EYxx8ZBHOUB7fk3iSTBhvdbPMOUaHur0fpKYoyA2G7gER/yAi/VyUer7/cFinLC+zHRRK8C1jHCtB7HW3BEn3Phpk1xwNWU0G9g8rMxB1+vBFk9ya/f0dehjY05DR27xKr6XelLqrxo+66w9RcQjVO7QxY8TtrQIDAQAB");
+            _headerRequest.setUserId("W3053");
+            _addOrdersRequest.setHeaderRequest(_headerRequest);
 
+            _addOrdersRequestInfo.setCustomerOrderNo("123070");// 订单编号
+            _addOrdersRequestInfo.setShipperAddressType(1);
+            _addOrdersRequestInfo.setShippingMethod("EUEXP3");
+            _addOrdersRequestInfo.setShipperName("zhangsan");
+            _addOrdersRequestInfo.setRecipientName("test");
+            _addOrdersRequestInfo.setRecipientCountry("US");
+            _addOrdersRequestInfo.setRecipientCity("NY");
+            _addOrdersRequestInfo.setRecipientState("OP");
+            _addOrdersRequestInfo.setRecipientEmail("test@google.com");
+            _addOrdersRequestInfo.setRecipientPhone("3242342342423");
+            _addOrdersRequestInfo.setRecipientZipCode("43544");
+            _addOrdersRequestInfo.setOrderStatus("sumbmitted");
+            _addOrdersRequestInfo.setRecipientAddress("sdfsdf sdafsf");
+            _addOrdersRequestInfo.setRecipientCountry("UK");
+            _addOrdersRequestInfo.setRecipientCity("CF");
+            _addOrdersRequestInfo.setGoodsQuantity("2");
+            _addOrdersRequestInfo.setGoodsDeclareWorth("4");
+            _addOrdersRequestInfo.setGoodsDescription("sdfsda中 dsf ");
+            _addOrdersRequestInfo.setShippingWorth((float) 2.0);
+            _addOrdersRequestInfo.setPieceNumber("3");
+            _addOrdersRequestInfo.setEvaluate("2.0");
+//            _addOrdersRequestInfo.setTaxesNumber("");
+            _addOrdersRequestInfo.setIsRemoteConfirm("0");
+            // 拼商品信息
+            int sellnum = 1;// 某一订单在db_sell里的数量
+
+            for (int i = 0; i < sellnum; i++) {
+                _goodsDetails.setDetailDescription("ghgdjhgj");
+                _goodsDetails.setDetailDescriptionCN("商品中文名s");
+                _goodsDetails.setDetailCustomLabel("SKU NAME");
+                _goodsDetails.setDetailQuantity("2");
+                _goodsDetails.setDetailWorth("2");
+                _goodsDetails.setPriceTag("12");
+                _goodsDetails.setDetailDescriptionCN("hhdshhh中");
+                _goodsDetails.setHsCode("12345678");
+                _goodsDetails.setEnMaterial("dsdasd");
+                _goodsDetails.setCnMaterial("daaaf");
+                _goodsDetailsArray.add(_goodsDetails);
+
+            }
+            try {
+                _addOrdersRequest.setAddOrderRequestInfo(_addOrdersRequestInfo);
+                AddOrderResponse _addOrder__return = port
+                        .addOrder(_addOrdersRequest);
+                System.out.println("addOrder->result="
+                        + _addOrder__return.getOrderActionStatus());
+                System.out.println("addOrder->getCustomerOrderNo="
+                        + _addOrder__return.getCustomerOrderNo());
+                System.out.println("addOrder->getNote="
+                        + _addOrder__return.getNote());
+                System.out.println("addOrder->getTrackingNumber="
+                        + _addOrder__return.getTrackingNumber());
+                System.out.println("addOrder->getOrderCode="
+                        + _addOrder__return.getOrderCode());
+                System.out.println("addOrder->getOperatingTime="
+                        + _addOrder__return.getOperatingTime());
+                System.out.println("addOrder->getAe_code="
+                        + _addOrder__return.getAe_code());
+                System.out.println("addOrder->getTrackingNumberUsps="
+                        + _addOrder__return.getTrackingNumberUsps());
+                if("N".equals(_addOrder__return.getOrderActionStatus())){
+                    map.put("code","false");
+                    map.put("msg",_addOrder__return.getNote());
+                }else if("Y".equals(_addOrder__return.getOrderActionStatus())){
+                    //三态物流运单号
+                    map.put("orderCode",_addOrder__return.getOrderCode());
+                    //三态物流追踪号
+                    map.put("trackingNumber",_addOrder__return.getTrackingNumberUsps());
+                }
+            } catch (Exception e) {
+                map.put("code","false");
+                map.put("msg","系统繁忙，网络异常,请稍后尝试");
+            }
+            System.out.println("推送成功");
+            // port.getOrders(_getOrders_headerRequest,
+            // _getOrders_getOrdersRequestInfo, _getOrders_orderInfo,
+            // _getOrders_ask, _getOrders_message, _getOrders_systime,
+            // _getOrders_haveNext, _getOrders_currentPage,
+            // _getOrders_pageSize);
+
+        }
+        return map;
+
+
+
+    }
 
 	/**
 	 * 推送订单
@@ -405,7 +508,7 @@ public final class NewAbroadLogisticsSFCUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-//		pushOrder();
+		pushOrder2();
 //		String url=print("WW3053904010001",1,"pdf",1,1);
 //		System.out.println(url);
 //		searchOrder(args);
