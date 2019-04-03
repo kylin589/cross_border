@@ -681,7 +681,8 @@ var vm = new Vue({
                 url: '../../product/order/createAbroadWaybill',
                 type: 'post',
                 data: JSON.stringify({
-                    orderId:this.orderid
+                    orderId:this.orderid,
+                    amazonOrderId:vm.orderDetails.amazonOrderId,
                 }),
                 contentType: "application/json",
                 success: function (r) {
