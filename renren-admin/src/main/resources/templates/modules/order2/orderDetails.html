@@ -144,17 +144,19 @@
                         <span><label for="" style="width: 106px">国际物流单号：</label><span>{{ item.abroadWaybill }}</span></span>
                         <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ item.trackWaybill }}</span></span>
                         <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
-                        <span><label for="" style="width: 80px">国际运费：</label><span>{{ item.interFreight }}</span></span>
-                        <span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>
-                        <span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>
+                        <span><label for="" style="width: 80px">国际运费：</label><span>{{ item.interFreight }}</span></span><br>
+                        <!--<span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>-->
+                        <!--<span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>-->
+                        <span><label for="">线路：</label><span>{{ item.channeDisplayName }}</span></span>
+                        <span><label for="">发货时间：</label><span>{{ item.shipTime }}</span></span>
 
                         <div class="fr">
-                            <span v-if="item.state">物流状态：{{item.state}}</span>
-                            <span v-if="!item.state" style="margin-right: 10px">物流状态：暂无状态</span>
+                            <span style="width: 110px;text-align: center;display: inline-block" v-if="item.state">物流状态：{{item.state}}</span>
+                            <span v-if="!item.state" style="margin-right: 10px">物流状态：无状态</span>
 
                             <!--<span>{{ orderDetails.abroadLogistics.state }}</span>-->
-                            <span>{{ item.shipTime }}</span>
-                            <p>
+                            <span style="width: 140px;text-align: center;display: inline-block">{{ item.createTime }}</span>
+                            <p style="width: 60px;text-align: center">
                                 <!--<a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>-->
                                 <template v-if="item.isSynchronization == 0">
                                     <a v-if="orderDetails.orderState == '虚发货' || orderDetails.orderState == '仓库已入库' || orderDetails.orderState == '国际已发货'" href="javascript:;" @click="tongbu">同步</a>
@@ -168,7 +170,7 @@
                             <p style="display: block;">
                                 <span v-if="item.isDeleted == 0" @click="deleWuliu(item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer">作废</span>
                                 <span v-if="item.isDeleted == 1" v-if="deleWuliu(item.isDeleted == 1" style="color: #00a3e8;cursor: pointer">已作废</span>
-                                <span style="color: #00a3e8;cursor: pointer;margin: 0 10px">打印</span>
+                                <span @click="dayin(index,item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer;margin: 0 10px">打印</span>
                                 <span @click="detailsguojiWul(index)" style="color: #00a3e8;cursor: pointer">明细</span>
                             </p>
                         </div>

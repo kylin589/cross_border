@@ -147,16 +147,17 @@
                         <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ item.trackWaybill }}</span></span>
                         <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
                         <span><label for="" style="width: 80px">国际运费：</label><span>{{ item.interFreight }}</span></span><br>
-                        <span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>
-                        <span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>
-                        <span><label for="">线路：</label><span>{{ item.destChannel }}</span></span>
+                        <!--<span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>-->
+                        <!--<span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>-->
+                        <span><label for="">线路：</label><span>{{ item.channeDisplayName }}</span></span>
+                        <span><label for="">发货时间：</label><span>{{ item.shipTime }}</span></span>
 
                         <div class="fr">
                             <span style="width: 110px;text-align: center;display: inline-block" v-if="item.state">物流状态：{{item.state}}</span>
                             <span v-if="!item.state" style="margin-right: 10px">物流状态：无状态</span>
 
                             <!--<span>{{ orderDetails.abroadLogistics.state }}</span>-->
-                            <span style="width: 140px;text-align: center;display: inline-block">{{ item.shipTime }}</span>
+                            <span style="width: 140px;text-align: center;display: inline-block">{{ item.createTime }}</span>
                             <p style="width: 60px;text-align: center">
                                 <!--<a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>-->
                                 <template v-if="item.isSynchronization == 0">
@@ -323,7 +324,7 @@
                                 <!--<option value="0">0</option>-->
                                 <!--<option value="1">1</option>-->
                             <!--</select>-->
-                            <el-select v-model="orderProductItem.number" filterable placeholder="请选择">
+                            <el-select v-model="orderProductItem.itemQuantity" filterable placeholder="请选择">
                                 <el-option
                                         v-for="item in orderProductItem.numberList"
                                         :key="item"
@@ -406,7 +407,7 @@
 
             <!--要加滚动条的具体内容-->
             <div class="form_item one" style="box-shadow: 0 0 0 transparent;margin: 0">
-                <div class="item" v-for="orderProductItem in orderDetails.orderProductList">
+                <div class="item" v-for="orderProductItem in getWlDetails.orderProductList">
                     <div>
                         <img :src="orderProductItem.productImageUrl" alt="">
                         <!--<img :src="orderDetails.imgUrl" alt="">-->
@@ -444,7 +445,7 @@
                         </span>
                         <span v-if="getWlDetails.packageType == 1" style="width: auto"><label for="">海关编码：</label>
 
-                            <span>{{getWlDetails.channelName}}</span>
+                            <span>{{getWlDetails.itemCode}} {{getWlDetails.itemCnMaterial}}</span>
 
                             <!--<select name="" v-model="getWlDetails.channelName" disabled>-->
                             <!--<option v-for="item in guojilogistics" :value="item.channel">{{ item.channelName }}</option>-->
