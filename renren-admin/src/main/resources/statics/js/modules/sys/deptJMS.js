@@ -235,19 +235,20 @@ Dept.initColumn = function () {
         {field: 'selectItem', radio: true},
         {title: '编号', field: 'deptId', visible: false, align: 'center', valign: 'middle', width: '80px'},
         {title: '公司名称', field: 'name', align: 'center', valign: 'middle', sortable: true, width: '180px'},
-        {title: '上级公司', field: 'parentName', align: 'center', valign: 'middle', sortable: true, width: '100px'},
-        {title: 'SKU', field: 'companySku', align: 'center', valign: 'middle', sortable: true, width: '100px'},
-        {title: '联系人', field: 'companyPerson', align: 'center', valign: 'middle', sortable: true, width: '100px'},
-        {title: '联系方式', field: 'companyTel', align: 'center', valign: 'middle', sortable: true, width: '100px'},
-        {title: '余额', field: 'balance', align: 'center', valign: 'middle', sortable: true, width: '100px'},
-        // {title: '新余额', field: 'parentName', align: 'center', valign: 'middle', sortable: true, width: '100px'},
-        {title: '最近更新', field: 'updateTime', align: 'center', valign: 'middle', sortable: true, width: '100px'},
-        {title: '创建时间', field: 'createTime', align: 'center', valign: 'middle', sortable: true, width: '100px'},
-        {title: '操作', field: 'deptId', align: 'center', valign: 'middle', sortable: true, width: '100px',formatter: function(value, options, row){
+        {title: '上级公司', field: 'parentName', align: 'center', valign: 'middle', sortable: true, width: '40px'},
+        {title: 'SKU', field: 'companySku', align: 'center', valign: 'middle', sortable: true, width: '90px'},
+        {title: '联系人', field: 'companyPerson', align: 'center', valign: 'middle', sortable: true, width: '50px'},
+        {title: '联系方式', field: 'companyTel', align: 'center', valign: 'middle', sortable: true, width: '70px'},
+        {title: '余额', field: 'balance', align: 'center', valign: 'middle', sortable: true, width: '70px'},
+        {title: '操作', field: 'deptId', align: 'center', valign: 'middle', sortable: true, width: '80px',formatter: function(value, options, row){
             console.log(value)
             return '<span class="label label-success" onclick="aa('+value.deptId+')" style="cursor:pointer;">查看</span>'
 
-        }}
+        }},
+        // {title: '新余额', field: 'parentName', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        {title: '最近更新', field: 'updateTime', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+        {title: '创建时间', field: 'createTime', align: 'center', valign: 'middle', sortable: true, width: '100px'},
+
         ]
     return columns;
 };

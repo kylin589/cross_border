@@ -170,7 +170,7 @@
                             <p style="display: block;">
                                 <span v-if="item.isDeleted == 0" @click="deleWuliu(item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer">作废</span>
                                 <span v-if="item.isDeleted == 1" v-if="deleWuliu(item.isDeleted == 1" style="color: #00a3e8;cursor: pointer">已作废</span>
-                                <span style="color: #00a3e8;cursor: pointer;margin: 0 10px">打印</span>
+                                <span @click="dayin(index,item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer;margin: 0 10px">打印</span>
                                 <span @click="detailsguojiWul(index)" style="color: #00a3e8;cursor: pointer">明细</span>
                             </p>
                         </div>
@@ -346,9 +346,9 @@
                             <el-select v-model="value8" filterable placeholder="请选择" @focus="getWuliuXianl">
                                 <el-option
                                         v-for="item in guojilogistics"
-                                        :key="item.channelCode"
+                                        :key="item.channelId"
                                         :label="item.channelName"
-                                        :value="item.channelCode">
+                                        :value="item.channelId">
                                 </el-option>
                             </el-select>
 
@@ -377,7 +377,7 @@
                         <!--<img :src="orderDetails.imgUrl" alt="">-->
                     </div>
                     <div>
-                        <p class="addDecP" style="font-weight: bold;font-size: 16px;margin-bottom: 30px">{{ orderProductItem.productTitle }}</p>
+                        <p class="addDecP" style="font-weight: bold;font-size: 16px;">{{ orderProductItem.productTitle }}</p>
                         <span><label for="">SKU：</label><span>{{ orderProductItem.productSku }}</span></span><br>
                         <span><label for="">数量：</label><span>{{ orderProductItem.orderItemNumber }}</span></span><br>
 
@@ -398,21 +398,18 @@
                             <input class="size_input" type="text" placeholder="高（CM）" v-model="getWlDetails.height" disabled>
                         </span><br>
                         <span style="width: auto"><label for="">物流：</label>
-                            <select name="" v-model="getWlDetails.packageType" disabled>
-                                <option value="0">云途小包</option>
-                                <option value="1">三态大包</option>
+                            <span v-if="getWlDetails.packageType == 0">云途小包</span>
+                            <span v-if="getWlDetails.packageType == 1">三态大包</span>
+                            <span>{{getWlDetails.channelName}}</span>
 
-                            </select>
-                            <select name="" v-model="getWlDetails.channelName" disabled>
-                                <option value="0">--选择--</option>
-                                <option v-for="item in guojilogistics" :value="item.value">{{ item.name }}</option>
-                            </select>
+                            <!--<select name="" v-model="getWlDetails.channelName" disabled>-->
+                                <!--<option v-for="item in guojilogistics" :value="item.channel">{{ item.channelName }}</option>-->
+                            <!--</select>-->
                         </span>
-                        <!--<input type="button" value="生成运单号"><br>-->
+                        <!--<input type="button" value="生成运单号">--><br>
                         <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="getWlDetails.abroadWaybill" disabled></span>
                         <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="getWlDetails.trackWaybill" disabled></span>
-                        <br>
-                        <span><label for="">备注信息：</label><textarea placeholder="备注"></textarea></span>
+
                     </div>
                 </div>
 

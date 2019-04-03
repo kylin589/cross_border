@@ -509,7 +509,7 @@
                             <th>已选图片</th>
                         </tr>
                         <tr v-for="(item,index) in recommendAll" :data-index="item.id">
-                            <td>{{ index+1 }}</td>
+                            <td>{{ index }}</td>
                             <td>{{ item.name }}</td>
                             <td><input type="text" v-model="item.sku"></td>
                             <td><input type="text" v-model="item.addPrice"></td>

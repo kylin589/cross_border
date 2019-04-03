@@ -350,6 +350,7 @@
 
                     </tr>
                     <tr>
+                        <th>最终售价</th>
                         <td><input type="text" style="width: 90%" v-model="proDetails.americanFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
                         <td><input type="text" style="width: 90%" v-model="proDetails.canadaFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
                         <td><input type="text" style="width: 90%" v-model="proDetails.mexicoFC.finalPrice" @change="lirFunc1" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></td>
@@ -495,7 +496,7 @@
                         <span>{{ item.name }}</span>
                         <a href="javascript:;" v-for="list in item.type">{{ list }}</a>
                     </p>
-                    <p v-if="recommendAll.length != 0" style="color: #ea9a9a;font-size: 13px;text-align: right">注：在调整变体图片时正确的操作是先删除不需要的图片，再进行移动。</p>
+                    <!--<p v-if="recommendAll.length != 0" style="color: #ea9a9a;font-size: 13px;text-align: right">注：在调整变体图片时正确的操作是先删除不需要的图片，再进行移动。</p>-->
                     <table class="tableV" v-if="recommendAll.length != 0">
                         <tr>
                             <th>序号</th>
@@ -509,7 +510,7 @@
                             <th>已选图片</th>
                         </tr>
                         <tr v-for="(item,index) in recommendAll" :data-index="item.id">
-                            <td>{{ index+1 }}</td>
+                            <td>{{ index }}</td>
                             <td>{{ item.name }}</td>
                             <td><input type="text" v-model="item.sku"></td>
                             <td><input type="text" v-model="item.addPrice"></td>
@@ -551,7 +552,7 @@
 
         <!--变体列表选择图片-->
         <div id="selImg" class="tankuang" style="display: none;position: relative;">
-            <h3>产品回收站</h3>
+            <h3>产品相册</h3>
             <div class="some-content-related-div" style="width: 100%;margin: 0 auto;">
                 <div class="inner-content-div2">
                     <!--要加滚动条的具体内容-->

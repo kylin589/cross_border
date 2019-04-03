@@ -304,7 +304,7 @@
                         <!--<img :src="orderDetails.imgUrl" alt="">-->
                     </div>
                     <div>
-                        <p class="addDecP" style="font-weight: bold;font-size: 16px;margin-bottom: 30px">{{ orderProductItem.productTitle }}</p>
+                        <p class="addDecP" style="font-weight: bold;font-size: 16px;">{{ orderProductItem.productTitle }}</p>
                         <span><label for="">SKU：</label><span>{{ orderProductItem.productSku }}</span></span><br>
                         <span><label for="">数量：</label><span>{{ orderProductItem.orderItemNumber }}</span></span><br>
 
@@ -345,9 +345,9 @@
                             <el-select v-model="value8" filterable placeholder="请选择" @focus="getWuliuXianl">
                                 <el-option
                                         v-for="item in guojilogistics"
-                                        :key="item.channelCode"
+                                        :key="item.channelId"
                                         :label="item.channelName"
-                                        :value="item.channelCode">
+                                        :value="item.channelId">
                                 </el-option>
                             </el-select>
 
