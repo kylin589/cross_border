@@ -20,10 +20,11 @@ import io.renren.modules.logistics.service.DomesticLogisticsService;
 import io.renren.modules.logistics.service.LogisticsChannelService;
 import io.renren.modules.logistics.service.NewOrderAbroadLogisticsService;
 import io.renren.modules.logistics.service.SubmitLogisticsService;
-
+import io.renren.modules.logistics.util.NewAbroadLogisticsSFCUtil;
 import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
-import io.renren.modules.logistics.util.XmlUtils;
-
+import io.renren.modules.logistics.util.shiprate.AddOrderRequest;
+import io.renren.modules.logistics.util.shiprate.AddOrderRequestInfoArray;
+import io.renren.modules.logistics.util.shiprate.GoodsDetailsArray;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.service.NewProductShipAddressService;
 import io.renren.modules.order.service.ProductShipAddressService;
@@ -400,14 +401,14 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         return false;
     }
     @Override
-    public Map<String,String> pushOrder(String amazonOrderId, int packageType, String channelCode, String channelName, String englishName, int length, int width, int height, BigDecimal weight){
+    public Map<String,String> pushOrder(String orderNumber,String amazonOrderId, int packageType, String channelCode, String channelName, String englishName, int length, int width, int height, BigDecimal weight){
         NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", amazonOrderId));
         ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", amazonOrderId));
         //推送--订单基本信息
         OrderRequestData omsOrder = new OrderRequestData();
-        omsOrder.setOrderNumber(amazonOrderId);
-        omsOrder.setShippingMethodCode(channelName);//测试用的
-        omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
+        omsOrder.setOrderNumber(orderNumber);//推送订单号
+        omsOrder.setShippingMethodCode(channelCode);//测试用的
+        omsOrder.setPackageNumber(neworderEntity.getOrderNumber());//订单表中的订单数量
         omsOrder.setWeight(weight);
         //推送--订单详情
         List<ApplicationInfos> omsOrderDetails = new ArrayList<>();
@@ -495,8 +496,6 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
                         //利润率
                         BigDecimal profitRate = orderProfit.divide(neworderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
                         neworderEntity.setProfitRate(profitRate);
-                        //扣款
-                        deduction(neworderEntity);
                     }
                     orderList.add(neworderEntity);
                 }
@@ -516,43 +515,56 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     }
 
     @Override
-    public void deduction(NewOrderEntity neworderEntity) {
-        //扣款
-        SysDeptEntity dept = deptService.selectById(neworderEntity.getDeptId());
-        //原来余额
-        BigDecimal oldBalance = dept.getBalance();
-        BigDecimal nowBalance = oldBalance.subtract(neworderEntity.getInterFreight()).subtract(neworderEntity.getPlatformCommissions());
-        dept.setBalance(nowBalance);
-        deptService.updateById(dept);
-        //生成运费记录
-        ConsumeEntity consumeEntity1 = new ConsumeEntity();
-        consumeEntity1.setAmazonOrderId(neworderEntity.getAmazonOrderId());
-        consumeEntity1.setDeptId(neworderEntity.getDeptId());
-        consumeEntity1.setDeptName(deptService.selectById(neworderEntity.getDeptId()).getName());
-        consumeEntity1.setUserId(neworderEntity.getUserId());
-        consumeEntity1.setUserName(userService.selectById(neworderEntity.getUserId()).getDisplayName());
-        consumeEntity1.setType("物流费");
-        consumeEntity1.setOrderId(neworderEntity.getOrderId());
-        consumeEntity1.setMoney(neworderEntity.getInterFreight());
-        consumeEntity1.setBeforeBalance(oldBalance);
-        consumeEntity1.setAfterBalance(oldBalance.subtract(neworderEntity.getInterFreight()));
-        consumeEntity1.setAbroadWaybill(neworderEntity.getAbroadWaybill());
-        consumeEntity1.setCreateTime(new Date());
-        consumeService.insert(consumeEntity1);
-        //生成服务费记录
-        ConsumeEntity consumeEntity2 = new ConsumeEntity();
-        consumeEntity2.setAmazonOrderId(neworderEntity.getAmazonOrderId());
-        consumeEntity2.setDeptId(neworderEntity.getDeptId());
-        consumeEntity2.setDeptName(deptService.selectById(neworderEntity.getDeptId()).getName());
-        consumeEntity2.setUserId(neworderEntity.getUserId());
-        consumeEntity2.setUserName(userService.selectById(neworderEntity.getUserId()).getDisplayName());
-        consumeEntity2.setType("服务费");
-        consumeEntity2.setOrderId(neworderEntity.getOrderId());
-        consumeEntity2.setMoney(neworderEntity.getPlatformCommissions());
-        consumeEntity2.setBeforeBalance(oldBalance.subtract(neworderEntity.getInterFreight()));
-        consumeEntity2.setAfterBalance(nowBalance);
-        consumeEntity2.setCreateTime(new Date());
-        consumeService.insert(consumeEntity2);
+    public void deductionFW(NewOrderEntity neworderEntity) {
+        List<ConsumeEntity> consumeList = consumeService.selectList(new EntityWrapper<ConsumeEntity>().eq("order_id",neworderEntity.getOrderId()).eq("type","服务费"));
+        if(consumeList == null || consumeList.size() == 0){
+            //生成服务费记录
+            ConsumeEntity consumeEntity2 = new ConsumeEntity();
+            consumeEntity2.setAmazonOrderId(neworderEntity.getAmazonOrderId());
+            consumeEntity2.setDeptId(neworderEntity.getDeptId());
+            consumeEntity2.setDeptName(deptService.selectById(neworderEntity.getDeptId()).getName());
+            consumeEntity2.setUserId(neworderEntity.getUserId());
+            consumeEntity2.setUserName(userService.selectById(neworderEntity.getUserId()).getDisplayName());
+            consumeEntity2.setType("服务费");
+            consumeEntity2.setOrderId(neworderEntity.getOrderId());
+            consumeEntity2.setMoney(neworderEntity.getPlatformCommissions());
+            consumeEntity2.setCreateTime(new Date());
+            consumeService.insert(consumeEntity2);
+        }
+    }
+
+    @Override
+    public void deductionYF(NewOrderAbroadLogisticsEntity newOrderAbroadLogisticsEntity) {
+        List<ConsumeEntity> consumeList = consumeService.selectList(new EntityWrapper<ConsumeEntity>().eq("order_id",newOrderAbroadLogisticsEntity.getOrderId()).eq("type","物流费").eq("abroad_waybill",newOrderAbroadLogisticsEntity.getAbroadWaybill()));
+        if(consumeList == null || consumeList.size() == 0){
+            NewOrderEntity neworderEntity = newOrderService.selectById(newOrderAbroadLogisticsEntity.getOrderId());
+            //生成运费记录
+            ConsumeEntity consumeEntity1 = new ConsumeEntity();
+            consumeEntity1.setAmazonOrderId(neworderEntity.getAmazonOrderId());
+            consumeEntity1.setDeptId(neworderEntity.getDeptId());
+            consumeEntity1.setDeptName(deptService.selectById(neworderEntity.getDeptId()).getName());
+            consumeEntity1.setUserId(neworderEntity.getUserId());
+            consumeEntity1.setUserName(userService.selectById(neworderEntity.getUserId()).getDisplayName());
+            consumeEntity1.setType("物流费");
+            consumeEntity1.setOrderId(neworderEntity.getOrderId());
+            consumeEntity1.setMoney(neworderEntity.getInterFreight());
+            consumeEntity1.setAbroadWaybill(neworderEntity.getAbroadWaybill());
+            consumeEntity1.setCreateTime(new Date());
+            consumeService.insert(consumeEntity1);
+        }
+    }
+    @Override
+    public void serviceFee(NewOrderEntity newOrderEntity) {
+        if(newOrderEntity.getPlatformCommissions() == null || newOrderEntity.getPlatformCommissions().compareTo(new BigDecimal(0)) == 0){
+            //到账金额(人民币)
+            BigDecimal accountMoney = newOrderEntity.getAccountMoneyCny();
+            //平台佣金
+            BigDecimal companyPoint = deptService.selectById(newOrderEntity.getDeptId()).getCompanyPoints();
+            BigDecimal platformCommissions = accountMoney.multiply(companyPoint).setScale(2,BigDecimal.ROUND_HALF_UP);
+            newOrderEntity.setPlatformCommissions(platformCommissions);
+            newOrderService.updateById(newOrderEntity);
+            deductionFW(newOrderEntity);
+        }
     }
 
     /*@Override
@@ -720,7 +732,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         return platformStatisticsDto;
     }*/
 
-    @Override
+  /*  @Override
     public void amazonUpdateLogistics(SendDataMoedl sendDataMoedl, Long orderId) {
         List<Shipping> list = sendDataMoedl.getList();
         List<String> serviceURL = sendDataMoedl.getServiceURL();
@@ -747,9 +759,9 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
                 secretKey=auSecretKey;
             }
         }
-        /**
+        *//**
          * 根据List数组，生成XML数据
-         */
+         *//*
         String resultXml = XmlUtils.getXmlFromList(list);
         //打印生成xml数据
         FileWriter outdata = null;
@@ -777,7 +789,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
                 newabroadLogisticsEntity.setIsSynchronization(0);//表示同步失败
                 newOrderAbroadLogisticsService.updateById(newabroadLogisticsEntity);
             }
-    }
+    }*/
 
     @Override
     public Map<String,String> DeleteOrder(String type,String wayBillNumber) {
@@ -812,65 +824,89 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         return result;
     }
 
-    /**
-     * 真实发货信息 ——封装物流信息
-     * 后置：上传数据到亚马逊
-     * @param
-     * @param
-     */
-    private SendDataMoedl synchronizationZhenModel(NewOrderEntity neworderEntity, NewOrderAbroadLogisticsEntity newabroadLogisticsEntity){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String amazonOrderId = neworderEntity.getAmazonOrderId();
-        String trackWaybill = newabroadLogisticsEntity.getTrackWaybill();
-        //获取系统当前日期北京时间
-        Date date = new Date();
-        //北京时间减去8小时
-        date= io.renren.common.utils.DateUtils.addDateHours(date,-8);
-        //再把当前日期变成格林时间带T的.
-        String shipDate=simpleDateFormat.format(date);
-        Shipping u1 = new Shipping();
-        u1.setMessageType("OrderFulfillment");
-        Header header=new Header();
-        header.setDocumentVersion("1.01");
-        header.setMerchantIdentifier("MYID");//<MerchantIdentifier>此选项可以随便填写，，
-        u1.setHeader(header);
-        List<io.renren.modules.logistics.entity.Message> messages=new ArrayList<>();
-        int count=1;
-        List<NewOrderItemEntity> productOrderItemEntities=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
-        for (NewOrderItemEntity productOrderItemEntity:productOrderItemEntities) {
-            io.renren.modules.logistics.entity.Message message=new Message();//如果要确认多个订单可以增加多个<message>
-            message.setMessageID(String.valueOf(count++));
-            OrderFulfillment orderful=new OrderFulfillment();
-            orderful.setAmazonOrderID(amazonOrderId);
-            orderful.setFulfillmentDate(shipDate);
-            FulfillmentData fd=new FulfillmentData();
-            fd.setCarrierName("Yun Express");
-            fd.setShippingMethod("Standard");//<ShippingMethod>根据自己的需求可以有可以没有
-            fd.setShipperTrackingNumber(trackWaybill);
-            Item item=new Item();
-            String orderItemId= productOrderItemEntity.getOrderItemId();
-            item.setAmazonOrderItemCode(orderItemId);
-            item.setQuantity(String.valueOf(productOrderItemEntity.getOrderItemNumber()));
-            orderful.setFulfillmentData(fd);
-            orderful.setItem(item);
-            message.setOrderFulfillment(orderful);
-            messages.add(message);
-        }
-        AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(neworderEntity.getShopId());
-        List<String> serviceURL = new ArrayList<>();
-        List<String> marketplaceIds = new ArrayList<>();
-        serviceURL.add(shopEntity.getMwsPoint());
-        marketplaceIds.add(shopEntity.getMarketplaceId());//获取MarketplaceId值
-        u1.setMessages(messages);
-        List<Shipping> list = new ArrayList<Shipping>();
-        list.add(u1);
-        AmazonGrantEntity amazonGrantEntity = amazonGrantService.selectById(shopEntity.getGrantId());
-        String sellerId = amazonGrantEntity.getMerchantId();
-        String mwsAuthToken = amazonGrantEntity.getGrantToken();
-        SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
-        return sendDataMoedl;
+    @Override
+    public Map<String, String> pushOrder(String customerOrderNo,int shipperAddressType, String shippingMethod) {
+        NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", customerOrderNo));
+        ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", customerOrderNo));
+        //推送--订单基本信息
+        AddOrderRequest _addOrdersRequest = new AddOrderRequest();
+        AddOrderRequestInfoArray addOrderRequestInfo = new AddOrderRequestInfoArray();
+
+        java.util.List<GoodsDetailsArray> _goodsDetailsArray = addOrderRequestInfo
+                .getGoodsDetails();
+        GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
+        addOrderRequestInfo.setCustomerOrderNo(customerOrderNo);// 订单编号
+        addOrderRequestInfo.setShipperAddressType(shipperAddressType);//发货地址类型：1，默认；2，用户传送的地址信息
+        addOrderRequestInfo.setShippingMethod(shippingMethod);//货运方式(TPRQM)
+        addOrderRequestInfo.setShipperName("创淘跨境");//发件人姓名zhangsan
+        addOrderRequestInfo.setRecipientName(shipAddressEntity.getShipName());//收件人姓名test
+        addOrderRequestInfo.setRecipientCountry(shipAddressEntity.getShipCountry());//收件人国家Canada
+        addOrderRequestInfo.setRecipientCity(shipAddressEntity.getShipCity());//收件人城市GR
+        addOrderRequestInfo.setRecipientState(shipAddressEntity.getShipRegion());//收件人州或省份OP
+        addOrderRequestInfo.setRecipientPhone(shipAddressEntity.getShipTel());//收件人电话（length:1-16）3242342342423
+        addOrderRequestInfo.setRecipientZipCode(shipAddressEntity.getShipZip());//收件人邮编（length:1-10）A0N 2L0
+        addOrderRequestInfo.setOrderStatus("sumbmitted");//订单状态：提交订单，confirmed；订单预提交状态，preprocess；提交且交寄订单，sumbmitted；删除订单，delete,默认交寄状态
+        addOrderRequestInfo.setRecipientAddress(shipAddressEntity.getShipAddressDetail());//收件人详细地址（length:5-70）sdfsdf sdafsf
+        addOrderRequestInfo.setGoodsQuantity(neworderEntity.getOrderNumber().toString());//订单包裹中的货品数量2
+        addOrderRequestInfo.setGoodsDeclareWorth("4");//包裹中的物品申报总价值4
+        addOrderRequestInfo.setGoodsDescription("sdfsda dsf ");//包裹内物品描述（length:1-100）sdfsda dsf
+        addOrderRequestInfo.setShippingWorth((float) 2.0);//销售运费（适用DEAM1,DERAM1）（不必须）(float) 2.0
+        addOrderRequestInfo.setPieceNumber("3");//每票的件数，只有这些方式HKDHL,HKDHL1,CNUPS,SZUPS,HKUPS,SGDHL,EUTLP,CNFEDEX,HKFEDEX,CNSFEDEX,HKSFEDEX,EUEXP3必填
+        addOrderRequestInfo.setEvaluate("5");//投保价值，投保价值必须大于等于申报总价值且小于申报总价值的150%(5)
+        addOrderRequestInfo.setTaxesNumber("125698");//税号，6-12位数字125698
+        addOrderRequestInfo.setIsRemoteConfirm("0");//是否同意收偏远费0不同意，1同意
+
+
+//        OrderRequestData omsOrder = new OrderRequestData();
+//        omsOrder.setOrderNumber("");
+//        omsOrder.setShippingMethodCode("");//测试用的
+//        omsOrder.setPackageNumber(neworderEntity.getOrderNumber());
+//        omsOrder.setWeight(null);
+        //推送--订单详情
+//        List<ApplicationInfos> omsOrderDetails = new ArrayList<>();
+//        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
+//        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
+//            ApplicationInfos omsOrderDetail=new ApplicationInfos();
+//            omsOrderDetail.setApplicationName(productOrderItemEntity.getProductTitle());
+//            omsOrderDetail.setQty(1);
+//            BigDecimal UnitPrice=new BigDecimal(1);//测试用
+//            omsOrderDetail.setUnitPrice(UnitPrice);
+//            BigDecimal unitweight=new BigDecimal(1);//测试用
+//            omsOrderDetail.setUnitWeight(unitweight);
+//            NewOrderEntity newOrderEntity=this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id",productOrderItemEntity.getAmazonOrderId()));
+//            omsOrderDetail.setProductUrl(productOrderItemEntity.getProductImageUrl()==null ? newOrderEntity.getProductImageUrl():productOrderItemEntity.getProductImageUrl());
+//            omsOrderDetail.setSku(productOrderItemEntity.getProductSku());
+//            omsOrderDetails.add(omsOrderDetail);
+//        }
+
+        //推送—收货人信息
+//        ShippingInfo shippingInfo=new ShippingInfo();
+//        shippingInfo.setCountryCode(shipAddressEntity.getShipCountry());
+//        shippingInfo.setShippingFirstName(shipAddressEntity.getShipName());
+//        shippingInfo.setShippingAddress(shipAddressEntity.getShipAddressDetail());
+//        shippingInfo.setShippingCity(shipAddressEntity.getShipCity());
+//        shippingInfo.setShippingState(shipAddressEntity.getShipRegion());
+//        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel()==null? NewAbroadLogisticsUtil.getTel():shipAddressEntity.getShipTel());
+//        shippingInfo.setShippingZip(shipAddressEntity.getShipZip());
+//        shippingInfo.setShippingPhone(shipAddressEntity.getShipTel());
+//        ApplicationInfos[] applicationInfos = new ApplicationInfos[omsOrderDetails.size()];
+//        omsOrder.setShippingInfo(shippingInfo);
+//        omsOrder.setApplicationInfos(omsOrderDetails.toArray(applicationInfos));
+//        SenderInfo senderInfo = new SenderInfo();//默认空值，不是必填参数
+//        omsOrder.setSenderInfo(senderInfo);
+
+       return NewAbroadLogisticsSFCUtil.pushOrder(customerOrderNo,shipperAddressType,shippingMethod);
     }
 
+    @Override
+    public void updateOrder(String orderCode, String orderStatus) {
+        NewAbroadLogisticsSFCUtil.updateOrder(orderCode,orderStatus);
+    }
+
+    @Override
+    public String print(String orderID, int printType, String print_type, int printSize, int printSort) {
+        return NewAbroadLogisticsSFCUtil.print(orderID,printType,print_type,printSize,printSort);
+    }
 
 
 }

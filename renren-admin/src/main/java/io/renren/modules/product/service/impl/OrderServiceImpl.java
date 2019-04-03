@@ -1338,13 +1338,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public void deduction(OrderEntity order){
         List<ConsumeEntity> consumeList = consumeService.selectList(new EntityWrapper<ConsumeEntity>().eq("order_id",order.getOrderId()));
         if(consumeList == null || consumeList.size() == 0){
-            //扣款
+            /*//扣款
             SysDeptEntity dept = deptService.selectById(order.getDeptId());
             //原来余额
-            BigDecimal oldBalance = dept.getBalance();
-            BigDecimal nowBalance = oldBalance.subtract(order.getInterFreight()).subtract(order.getPlatformCommissions());
-            dept.setBalance(nowBalance);
-            deptService.updateById(dept);
+            dept.setBalance(dept.getBalance().subtract(order.getInterFreight()).subtract(order.getPlatformCommissions()));
+            deptService.updateById(dept);*/
             //生成运费记录
             ConsumeEntity consumeEntity1 = new ConsumeEntity();
             consumeEntity1.setAmazonOrderId(order.getAmazonOrderId());
@@ -1355,8 +1353,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             consumeEntity1.setType("物流费");
             consumeEntity1.setOrderId(order.getOrderId());
             consumeEntity1.setMoney(order.getInterFreight());
-            consumeEntity1.setBeforeBalance(oldBalance);
-            consumeEntity1.setAfterBalance(oldBalance.subtract(order.getInterFreight()));
             consumeEntity1.setAbroadWaybill(order.getAbroadWaybill());
             consumeEntity1.setCreateTime(new Date());
             consumeService.insert(consumeEntity1);
@@ -1370,8 +1366,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             consumeEntity2.setType("服务费");
             consumeEntity2.setOrderId(order.getOrderId());
             consumeEntity2.setMoney(order.getPlatformCommissions());
-            consumeEntity2.setBeforeBalance(oldBalance.subtract(order.getInterFreight()));
-            consumeEntity2.setAfterBalance(nowBalance);
             consumeEntity2.setCreateTime(new Date());
             consumeService.insert(consumeEntity2);
         }
@@ -1758,6 +1752,76 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             }
 
     }
+
+
+    /**
+     * 对接新物流上传国际物流信息到amazon
+     * @param sendDataMoedl
+     */
+    @Override
+    @Async("taskExecutor")
+    public void newamazonUpdateLogistics(SendDataMoedl sendDataMoedl, Long orderId){
+        List<Shipping> list = sendDataMoedl.getList();
+        List<String> serviceURL = sendDataMoedl.getServiceURL();
+        List<String> marketplaceIds = sendDataMoedl.getMarketplaceIds();
+        String sellerId = sendDataMoedl.getSellerId();
+        String mwsAuthToken = sendDataMoedl.getMwsAuthToken();
+        //获得授权表里的region字段的值，判断其逻辑
+        AmazonGrantEntity amazonGrantEntity=amazonGrantService.selectOne(new EntityWrapper<AmazonGrantEntity>().eq("merchant_id",sellerId).eq("grant_token",mwsAuthToken));
+        String accessKey=null;
+        String secretKey=null;
+        if(amazonGrantEntity!=null){
+            int region= amazonGrantEntity.getRegion();
+            if(region==0){//北美
+                accessKey=naAccessKey;
+                secretKey=naSecretKey;
+            }else if(region==1){//欧洲
+                accessKey=euAccessKey;
+                secretKey=euSecretKey;
+            }else if(region==2){//日本
+                accessKey=jpAccessKey;
+                secretKey=jpSecretKey;
+            }else if(region==3){//澳大利亚
+                accessKey=auAccessKey;
+                secretKey=auSecretKey;
+            }
+        }
+
+        /**
+         * 根据List数组，生成XML数据
+         */
+        String resultXml = XmlUtils.getXmlFromList(list);
+        //打印生成xml数据
+        FileWriter outdata = null;
+//        FileUtil.generateFilePath(fileStoragePath,"shipping",orderId);
+        String filePath = FileUtil.generateFilePath(fileStoragePath,"shipping", orderId);
+        String feedType="_POST_ORDER_FULFILLMENT_DATA_";
+        try {
+            outdata = new FileWriter(filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        PrintWriter outfile=new PrintWriter(outdata);
+        outfile.println(resultXml);// 输出String
+        outfile.flush();// 输出缓冲区的数据
+        outfile.close();
+        //进行数据上传(步骤一)
+        String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
+        AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
+        //判读亚马逊后台订单的状态
+        if(StringUtils.isNotBlank(feedSubmissionId)){
+            abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
+            abroadLogisticsService.updateById(abroadLogisticsEntity);
+        }else{
+            logger.error("同步失败,请重新上传订单...");
+            abroadLogisticsEntity.setIsSynchronization(0);//表示同步失败
+            abroadLogisticsService.updateById(abroadLogisticsEntity);
+        }
+
+    }
+
+
+
 
     @Override
     @Async("taskExecutor")

@@ -54,12 +54,12 @@ public class RechargeController extends AbstractController {
             SysDeptEntity dept = deptService.selectById(recharge.getDeptId());
             //设置余额
             dept.setBalance(dept.getBalance().add(recharge.getMoney()));
-            //设置可用余额
-            BigDecimal availableBalance = dept.getAvailableBalance().add(recharge.getMoney());
-            dept.setAvailableBalance(availableBalance);
+//            //设置可用余额
+//            BigDecimal availableBalance = dept.getAvailableBalance().add(recharge.getMoney());
+//            dept.setAvailableBalance(availableBalance);
             //设置预计还可生成单数 充值金额除以50 加 之前预计数
-            int estimatedOrder = recharge.getMoney().divide(new BigDecimal(50),0,BigDecimal.ROUND_HALF_DOWN).intValue();
-            dept.setEstimatedOrder(dept.getEstimatedOrder() + estimatedOrder);
+//            int estimatedOrder = recharge.getMoney().divide(new BigDecimal(50),0,BigDecimal.ROUND_HALF_DOWN).intValue();
+//            dept.setEstimatedOrder(dept.getEstimatedOrder() + estimatedOrder);
             deptService.updateById(dept);
             rechargeService.insert(recharge);
             return R.ok();

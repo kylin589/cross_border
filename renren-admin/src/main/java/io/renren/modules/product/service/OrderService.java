@@ -112,6 +112,14 @@ public interface OrderService extends IService<OrderEntity> {
      */
     void amazonUpdateLogistics(SendDataMoedl sendDataMoedl,Long orderId);
 
+
+    /**
+     * 对接新物流同步物流订单号的方法
+     * @param sendDataMoedl
+     * @param orderId
+     */
+    void newamazonUpdateLogistics(SendDataMoedl sendDataMoedl,Long orderId);
+
     /**
      * amazon状态更新
      */

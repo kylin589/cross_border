@@ -16,4 +16,9 @@
     </resultMap>
 
 
+    <!-- 统计扣费 -->
+    <select id="rechargeTotle"  resultType="java.math.BigDecimal">
+        select sum(money) AS consum from company_recharge
+        where dept_id = #{deptId}
+    </select>
 </mapper>
