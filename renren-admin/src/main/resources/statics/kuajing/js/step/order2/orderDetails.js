@@ -140,8 +140,10 @@ var vm = new Vue({
         isLookWuliu:true,
         quxiaoJijian:null,
         islogistics:false,
-        logisticsNum:''
-
+        logisticsNum:'',
+        orderProductList:[],
+        itemCodelist:[],
+        itemCodeId:null,
     },
     methods:{
         addorder:function () {
@@ -208,6 +210,26 @@ var vm = new Vue({
                         // }
                         // vm.quxiaoJijian = r.orderDTO.shipAddress;
                         // console.log(vm.quxiaoJijian);
+                        for (var i = 0;i<vm.orderDetails.orderProductList.length;i++){
+                            var numberList = [];
+                            for (var j = 0;j<=vm.orderDetails.orderProductList[i].orderItemNumber;j++){
+                                numberList.push(j);
+                            }
+                            vm.orderProductList.push({
+                                productImageUrl:vm.orderDetails.orderProductList[i].productImageUrl,
+                                productTitle:vm.orderDetails.orderProductList[i].productTitle,
+                                productSku:vm.orderDetails.orderProductList[i].productSku,
+                                itemQuantity:vm.orderDetails.orderProductList[i].orderItemNumber,
+                                productPrice:vm.orderDetails.orderProductList[i].productPrice,
+                                numberList:numberList,
+                                itemId:vm.orderDetails.orderProductList[i].itemId,
+                                orderItemNumber:vm.orderDetails.orderProductList[i].orderItemNumber,
+                                itemCodeId:null,
+
+                            })
+                            console.log(numberList);
+                        }
+
                     } else {
                         layer.alert(r.msg);
                     }
@@ -581,7 +603,7 @@ var vm = new Vue({
                     layer.alert('请输入备注类型');
                 }else {
                     $.ajax({
-                        url: '../../order/remark/save',
+                        url: '../../order/remark/saveNew',
                         type: 'post',
                         data: JSON.stringify({
                             orderId:this.orderid,
@@ -693,7 +715,7 @@ var vm = new Vue({
                 title: false,
                 content: $('#addorder'), //这里content是一个普通的String
                 skin: 'openClass',
-                area: ['900px', '420px'],
+                area: ['75%', '80%'],
                 shadeClose: true,
                 btn: [],
 
@@ -707,7 +729,7 @@ var vm = new Vue({
                 title: false,
                 content: $('#detailsorder'), //这里content是一个普通的String
                 skin: 'openClass',
-                area: ['900px', '420px'],
+                area: ['75%', '80%'],
                 shadeClose: true,
                 btn: ['添加','取消'],
                 btn1: function (index1) {
@@ -725,10 +747,12 @@ var vm = new Vue({
             var index = layer.load();
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
+            console.log(vm.orderProductList);
             $.ajax({
                 url: '../../amazon/neworder/createAbroadWaybill',
                 type: 'post',
                 data: JSON.stringify({
+                    orderItemRelationList:vm.orderProductList,
                     amazonOrderId:vm.orderDetails.amazonOrderId,
                     packageType:parseInt(vm.wuliuType),
                     channelId:vm.value8,
@@ -880,7 +904,7 @@ var vm = new Vue({
                         if (r.code == '0') {
                             layer.msg('操作成功');
                             // layer.close(index);
-                            // vm.getOrderInfo();
+                            vm.getOrderInfo();
                             // vm.getWlDetails
                         } else {
                             layer.alert(r.msg);
@@ -892,7 +916,57 @@ var vm = new Vue({
                         // layer.close(index);
                     }
                 });
+            }else {
+                window.open(url);
             }
+        },
+        // 获取淮关编码
+        getHGBM:function () {
+            $.ajax({
+                url: '../../amazon/neworder/getItemCode',
+                type: 'get',
+                data: {},
+                dataType: 'json',
+                // contentType: "application/json",
+                success: function (r) {
+                    console.log('海关编码');
+                    console.log(r);
+                    if (r.code == '0') {
+                        // vm.itemCodelist = r.itemCodelist;
+                        r.itemCodelist.forEach(function (t) {
+                            vm.itemCodelist.push({
+                                itemCodeId:t.itemCodeId,
+                                name:t.itemCode + t.itemCnMaterial,
+                                itemCnMaterial:t.itemCnMaterial,
+                                itemEnMaterial:t.itemEnMaterial,
+
+                            })
+                        })
+                        // layer.msg('操作成功');
+                        // layer.close(index);
+                        // vm.getOrderInfo();
+                        // vm.getWlDetails
+                    } else {
+                        layer.alert(r.msg);
+                        // layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    // layer.close(index);
+                }
+            });
+        },
+        // 海关编码修改
+        changeHG:function (value) {
+            console.log(value);
+            vm.itemCodelist.forEach(function (t,i) {
+                if(t.itemCodeId == value){
+                    vm.wuliuDetails.chineseName = vm.itemCodelist[i].itemCnMaterial;
+                    vm.wuliuDetails.englishName = vm.itemCodelist[i].itemEnMaterial;
+                }
+            })
+
         }
     },
     created:function () {
