@@ -879,17 +879,17 @@ var vm = new Vue({
                         console.log(r);
                         if (r.code == '0') {
                             layer.msg('操作成功');
-                            layer.close(index);
+                            // layer.close(index);
                             // vm.getOrderInfo();
                             // vm.getWlDetails
                         } else {
                             layer.alert(r.msg);
-                            layer.close(index);
+                            // layer.close(index);
                         }
                     },
                     error: function () {
                         layer.msg("网络故障");
-                        layer.close(index);
+                        // layer.close(index);
                     }
                 });
             }
