@@ -825,31 +825,13 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
     }
 
     @Override
-    public Map<String, String> pushOrder(String customerOrderNo,int shipperAddressType, String shippingMethod) {
+    public Map<String, String> pushOrder(String customerOrderNo,String amazonOrderId,int shipperAddressType, String shippingMethod) {
         NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", customerOrderNo));
-        ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", customerOrderNo));
+        ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", amazonOrderId));
         //推送--订单基本信息
         AddOrderRequestInfoArray addOrderRequestInfo = new AddOrderRequestInfoArray();
         java.util.List<GoodsDetailsArray> _goodsDetailsArray = addOrderRequestInfo
                 .getGoodsDetails();
-
-
-
-        //推送--订单详情
-        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
-        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
-            GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
-            _goodsDetails.setDetailDescription("ghgdjhgj");//详细物品描述（length:1-140）ghgdjhgj
-            _goodsDetails.setDetailDescriptionCN("商品中文sss名");//详细物品中文描述（必须包含中文字符，length:1-140）商品中文sss名
-            _goodsDetails.setDetailCustomLabel(productOrderItemEntity.getProductSku());//详细物品客户自定义标签（length:1-20，不必须）SKU NAME
-            _goodsDetails.setDetailQuantity(productOrderItemEntity.getOrderItemNumber().toString());//货品总数量"2"
-            _goodsDetails.setDetailWorth(productOrderItemEntity.getProductPrice().toString());//货品中每个货物的价格（单位美元USD）"2"
-            _goodsDetails.setHsCode("15633");//商品编码（length:1-20）"15633"
-            _goodsDetails.setEnMaterial("dsdasd");//物品英文材质（length:0-50）"dsdasd"
-            _goodsDetails.setCnMaterial("daaaf");//物品中文材质（0-50）"daaaf"
-            _goodsDetailsArray.add(_goodsDetails);
-        }
-//        String goodsDeclarWorth=productOrderItemEntity.getOrderItemNumber();
         addOrderRequestInfo.setCustomerOrderNo(customerOrderNo);// 订单编号
         addOrderRequestInfo.setShipperAddressType(shipperAddressType);//发货地址类型：1，默认；2，用户传送的地址信息
         addOrderRequestInfo.setShippingMethod(shippingMethod);//货运方式(TPRQM)
@@ -862,7 +844,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         addOrderRequestInfo.setRecipientZipCode(shipAddressEntity.getShipZip());//收件人邮编（length:1-10）A0N 2L0
         addOrderRequestInfo.setOrderStatus("sumbmitted");//订单状态：提交订单，confirmed；订单预提交状态，preprocess；提交且交寄订单，sumbmitted；删除订单，delete,默认交寄状态
         addOrderRequestInfo.setRecipientAddress(shipAddressEntity.getShipAddressDetail());//收件人详细地址（length:5-70）sdfsdf sdafsf
-        addOrderRequestInfo.setGoodsQuantity(neworderEntity.getOrderNumber().toString());//订单包裹中的货品数量2
+        addOrderRequestInfo.setGoodsQuantity("2");//订单包裹中的货品数量2
         addOrderRequestInfo.setGoodsDeclareWorth("4");//包裹中的物品申报总价值4
         addOrderRequestInfo.setGoodsDescription("sdfsda dsf ");//包裹内物品描述（length:1-100）sdfsda dsf
         addOrderRequestInfo.setShippingWorth((float) 2.0);//销售运费（适用DEAM1,DERAM1）（不必须）(float) 2.0
@@ -870,6 +852,21 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         addOrderRequestInfo.setEvaluate("5");//投保价值，投保价值必须大于等于申报总价值且小于申报总价值的150%(5)
         addOrderRequestInfo.setTaxesNumber("125698");//税号，6-12位数字125698
         addOrderRequestInfo.setIsRemoteConfirm("0");//是否同意收偏远费0不同意，1同意
+
+        //推送--订单详情
+        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
+        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
+            GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
+            _goodsDetails.setDetailDescription("ghgdjhgj");//详细物品描述（length:1-140）ghgdjhgj
+            _goodsDetails.setDetailDescriptionCN("商品中文sss名");//详细物品中文描述（必须包含中文字符，length:1-140）商品中文sss名
+            _goodsDetails.setDetailCustomLabel(productOrderItemEntity.getProductSku());//详细物品客户自定义标签（length:1-20，不必须）SKU NAME
+            _goodsDetails.setDetailQuantity("2");//货品总数量"2"
+            _goodsDetails.setDetailWorth("2");//货品中每个货物的价格（单位美元USD）"2"
+            _goodsDetails.setHsCode("15633");//商品编码（length:1-20）"15633"
+            _goodsDetails.setEnMaterial("dsdasd");//物品英文材质（length:0-50）"dsdasd"
+            _goodsDetails.setCnMaterial("daaaf");//物品中文材质（0-50）"daaaf"
+            _goodsDetailsArray.add(_goodsDetails);
+        }
 
        return NewAbroadLogisticsSFCUtil.pushOrder(addOrderRequestInfo);
     }
