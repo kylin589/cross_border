@@ -155,7 +155,7 @@ public interface NewOrderService extends IService<NewOrderEntity> {
     /**
      * 三态推送订单
      */
-     Map<String,String> pushOrder(String  customerOrderNo,int shipperAddressType,String shippingMethod);
+     Map<String,String> pushOrder(String  customerOrderNo,String amazonOrderId,int shipperAddressType,String shippingMethod);
 
 
     /**
