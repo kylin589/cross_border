@@ -527,7 +527,6 @@ public class NewOrderController extends AbstractController {
                 newOrderAbroadLogisticsEntity.setIsDeleted(1);
                 newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
             }
-            return R.ok().put("isDeleted",1);
         }else if(newOrderAbroadLogisticsEntity.getPackageType()==1){
             //三态
             if (newOrderAbroadLogisticsEntity != null) {
@@ -540,7 +539,6 @@ public class NewOrderController extends AbstractController {
                 newOrderAbroadLogisticsEntity.setIsDeleted(1);
                 newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
             }
-            return R.ok().put("isDeleted",1);
         }
         return R.ok();
     }
