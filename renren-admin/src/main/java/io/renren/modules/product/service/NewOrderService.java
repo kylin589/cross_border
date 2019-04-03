@@ -161,7 +161,7 @@ public interface NewOrderService extends IService<NewOrderEntity> {
     /**
      * 三态订单状态修改（包含作废）
      */
-    void updateOrder(String orderCode,String orderStatus);
+    Map<String,String> updateOrder(String orderCode,String orderStatus);
 
     String print(String orderID,int printType,String print_type,int printSize,int printSort);
 

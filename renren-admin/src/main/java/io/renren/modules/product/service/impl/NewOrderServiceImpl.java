@@ -842,6 +842,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         addOrderRequestInfo.setRecipientState(shipAddressEntity.getShipRegion());//收件人州或省份OP
         addOrderRequestInfo.setRecipientPhone(shipAddressEntity.getShipTel());//收件人电话（length:1-16）3242342342423
         addOrderRequestInfo.setRecipientZipCode(shipAddressEntity.getShipZip());//收件人邮编（length:1-10）A0N 2L0
+        addOrderRequestInfo.setRecipientEmail("test@google.com");//收件人电子邮件
         addOrderRequestInfo.setOrderStatus("sumbmitted");//订单状态：提交订单，confirmed；订单预提交状态，preprocess；提交且交寄订单，sumbmitted；删除订单，delete,默认交寄状态
         addOrderRequestInfo.setRecipientAddress(shipAddressEntity.getShipAddressDetail());//收件人详细地址（length:5-70）sdfsdf sdafsf
         addOrderRequestInfo.setGoodsQuantity("2");//订单包裹中的货品数量2
@@ -854,7 +855,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         addOrderRequestInfo.setIsRemoteConfirm("0");//是否同意收偏远费0不同意，1同意
 
         //推送--订单详情
-        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
+        List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
         for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
             GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
             _goodsDetails.setDetailDescription("ghgdjhgj");//详细物品描述（length:1-140）ghgdjhgj
@@ -862,18 +863,18 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
             _goodsDetails.setDetailCustomLabel(productOrderItemEntity.getProductSku());//详细物品客户自定义标签（length:1-20，不必须）SKU NAME
             _goodsDetails.setDetailQuantity("2");//货品总数量"2"
             _goodsDetails.setDetailWorth("2");//货品中每个货物的价格（单位美元USD）"2"
-            _goodsDetails.setHsCode("15633");//商品编码（length:1-20）"15633"
+            _goodsDetails.setHsCode("15633569");//商品编码（length:1-20）"15633"////hs code1只能输入8或10位数字
             _goodsDetails.setEnMaterial("dsdasd");//物品英文材质（length:0-50）"dsdasd"
             _goodsDetails.setCnMaterial("daaaf");//物品中文材质（0-50）"daaaf"
             _goodsDetailsArray.add(_goodsDetails);
         }
-
+        addOrderRequestInfo.setGoodsDetails(_goodsDetailsArray);
        return NewAbroadLogisticsSFCUtil.pushOrder(addOrderRequestInfo);
     }
 
     @Override
-    public void updateOrder(String orderCode, String orderStatus) {
-        NewAbroadLogisticsSFCUtil.updateOrder(orderCode,orderStatus);
+    public Map<String,String> updateOrder(String orderCode, String orderStatus) {
+       return  NewAbroadLogisticsSFCUtil.updateOrder(orderCode,orderStatus);
     }
 
     @Override

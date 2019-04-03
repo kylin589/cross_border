@@ -532,7 +532,7 @@ public class NewOrderController extends AbstractController {
             if (newOrderAbroadLogisticsEntity != null) {
                 String orderStatus="delete";
                 String wayBillNumber = newOrderAbroadLogisticsEntity.getAbroadWaybill();
-                Map<String,String> result=newOrderService.DeleteOrder(wayBillNumber,orderStatus);
+                Map<String,String> result=newOrderService.updateOrder(wayBillNumber,orderStatus);
                 if("false".equals(result.get("code"))){
                     return R.error("订单删除失败,错误原因：" + result.get("msg"));
                 }
