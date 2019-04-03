@@ -239,7 +239,7 @@ public final class NewAbroadLogisticsSFCUtil {
 	 * @param
 	 * @return
 	 */
-	public static Map<String,String> pushOrder(String customerOrderNo,int shipperAddressType, String shippingMethod){
+	public static Map<String,String> pushOrder(AddOrderRequestInfoArray addOrderRequestInfo){
 		// TODO Auto-generated method stub
 		URL wsdlURL = ShipRate_Service.WSDL_LOCATION;
 		ShipRate_Service ss = new ShipRate_Service(wsdlURL, SERVICE_NAME);
@@ -248,52 +248,11 @@ public final class NewAbroadLogisticsSFCUtil {
 			System.out.println("Invoking addOrder...");
 			Map<String,String> map=new HashMap<>();
 			HeaderRequest _headerRequest = new HeaderRequest();
-			AddOrderRequestInfoArray addOrderRequestInfo = new AddOrderRequestInfoArray();
 			AddOrderRequest _addOrdersRequest = new AddOrderRequest();
-			java.util.List<GoodsDetailsArray> _goodsDetailsArray = addOrderRequestInfo
-					.getGoodsDetails();
-			GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
 			_headerRequest.setAppKey(appKey);
 			_headerRequest.setToken(token);
 			_headerRequest.setUserId(userId);
 			_addOrdersRequest.setHeaderRequest(_headerRequest);
-			addOrderRequestInfo.setCustomerOrderNo(customerOrderNo);// 订单编号
-			addOrderRequestInfo.setShipperAddressType(shipperAddressType);//发货地址类型：1，默认；2，用户传送的地址信息
-			addOrderRequestInfo.setShippingMethod(shippingMethod);//货运方式(TPRQM)
-			addOrderRequestInfo.setShipperName("zhangsan");//发件人姓名
-			addOrderRequestInfo.setRecipientName("test");//收件人姓名
-			addOrderRequestInfo.setRecipientCountry("Canada");//收件人国家
-			addOrderRequestInfo.setRecipientCity("GR");//收件人城市
-			addOrderRequestInfo.setRecipientState("OP");//收件人州或省份
-			addOrderRequestInfo.setRecipientEmail("test@google.com");//收件人邮箱（不必须）
-			addOrderRequestInfo.setRecipientPhone("3242342342423");//收件人电话（length:1-16）
-			addOrderRequestInfo.setRecipientZipCode("A0N 2L0");//收件人邮编（length:1-10）
-			addOrderRequestInfo.setOrderStatus("sumbmitted");//订单状态：提交订单，confirmed；订单预提交状态，preprocess；提交且交寄订单，sumbmitted；删除订单，delete,默认交寄状态
-			addOrderRequestInfo.setRecipientAddress("sdfsdf sdafsf");//收件人详细地址（length:5-70）
-			addOrderRequestInfo.setGoodsQuantity("2");//订单包裹中的货品数量
-			addOrderRequestInfo.setGoodsDeclareWorth("4");//包裹中的物品申报总价值
-			addOrderRequestInfo.setGoodsDescription("sdfsda dsf ");//包裹内物品描述（length:1-100）
-			addOrderRequestInfo.setShippingWorth((float) 2.0);//销售运费（适用DEAM1,DERAM1）（不必须）
-			addOrderRequestInfo.setPieceNumber("3");//每票的件数，只有这些方式HKDHL,HKDHL1,CNUPS,SZUPS,HKUPS,SGDHL,EUTLP,CNFEDEX,HKFEDEX,CNSFEDEX,HKSFEDEX,EUEXP3必填
-			addOrderRequestInfo.setEvaluate("5");//投保价值，投保价值必须大于等于申报总价值且小于申报总价值的150%
-			addOrderRequestInfo.setTaxesNumber("125698");//税号，6-12位数字
-			addOrderRequestInfo.setIsRemoteConfirm("0");//是否同意收偏远费0不同意，1同意
-			// 拼商品信息
-			int sellnum = 1;// 某一订单在db_sell里的数量
-			for (int i = 0; i < sellnum; i++) {
-				_goodsDetails.setDetailDescription("ghgdjhgj");//详细物品描述（length:1-140）
-				_goodsDetails.setDetailDescriptionCN("商品中文sss名");//详细物品中文描述（必须包含中文字符，length:1-140）
-				_goodsDetails.setDetailCustomLabel("SKU NAME");//详细物品客户自定义标签（length:1-20，不必须）
-				_goodsDetails.setDetailQuantity("2");//货品总数量
-				_goodsDetails.setDetailWorth("2");//货品中每个货物的价格（单位美元USD）
-				_goodsDetails.setPriceTag("12");//吊牌价（不必须）
-				_goodsDetails.setHsCode("15633");//商品编码（length:1-20）
-				_goodsDetails.setEnMaterial("dsdasd");//物品英文材质（length:0-50）
-				_goodsDetails.setCnMaterial("daaaf");//物品中文材质（0-50）
-				_goodsDetailsArray.add(_goodsDetails);
-
-			}
-
 			try {
 				_addOrdersRequest.setAddOrderRequestInfo(addOrderRequestInfo);
 				AddOrderResponse _addOrder__return = port
@@ -447,7 +406,7 @@ public final class NewAbroadLogisticsSFCUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		pushOrder("45678-9",1,"EUEXP3");
+//		pushOrder();
 //		String url=print("WW3053904010001",1,"pdf",1,1);
 //		System.out.println(url);
 //		searchOrder(args);
