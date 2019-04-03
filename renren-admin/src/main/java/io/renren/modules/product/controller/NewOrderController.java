@@ -226,6 +226,7 @@ public class NewOrderController extends AbstractController {
             return R.error("出库失败，运单已销毁");
         }else{
             abroad.setState("已发货");
+            abroad.setShipTime(new Date());
             newOrderAbroadLogisticsService.updateById(abroad);
             if(!"Finish".equals(orderEntity.getOrderStatus())){
                 orderEntity.setOrderStatus("IntlShipped");
@@ -247,6 +248,7 @@ public class NewOrderController extends AbstractController {
             return R.error("此运单已销毁");
         }else{
             abroad.setState("已发货");
+            abroad.setShipTime(new Date());
             newOrderAbroadLogisticsService.updateById(abroad);
             Long orderId = abroad.getOrderId();
             if(orderId != null){
@@ -261,6 +263,7 @@ public class NewOrderController extends AbstractController {
                 return R.error();
             }
         }
+
         return R.ok();
     }
     /**
@@ -819,7 +822,29 @@ public class NewOrderController extends AbstractController {
            return R.ok();
 
     }
-
+    /**
+     * 同步国际运单号
+     * orderVM: orderId,
+     */
+    @RequestMapping("/synchronization")
+    public R synchronization(@RequestParam Long orderId,@RequestParam Long abroadLogisticsId){
+        NewOrderEntity neworder = newOrderService.selectById(orderId);
+        NewOrderAbroadLogisticsEntity abroadLogistics = newOrderAbroadLogisticsService.selectById(abroadLogisticsId);
+        abroadLogistics.setIsSynchronization(2);
+        newOrderAbroadLogisticsService.updateById(abroadLogistics);
+        if(abroadLogistics.getPackageType() == 0){
+            //准备订单国际物流上传信息模型
+            SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder, abroadLogistics, "Yun Express");
+            // 将运单号同步到亚马逊平台
+            orderService.newamazonUpdateLogistics(sendDataMoedl, neworder.getOrderId());
+        }else if(abroadLogistics.getPackageType() == 0){
+            //准备订单国际物流上传信息模型
+            SendDataMoedl sendDataMoedl = synchronizationZhenModel(neworder, abroadLogistics, "SFC");
+            // 将运单号同步到亚马逊平台
+            orderService.newamazonUpdateLogistics(sendDataMoedl, neworder.getOrderId());
+        }
+        return R.ok("正在同步，请稍后查看");
+    }
     /**
      * 真实发货信息 ——封装物流信息
      * 后置：上传数据到亚马逊
