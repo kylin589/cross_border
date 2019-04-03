@@ -51,10 +51,10 @@ public class NewAbroadLogisticsUtil {
     //线上获取运费明细
     public final static String xs_yt_getShippingFeeDetail=xs_yt_url+"WayBill/GetShippingFeeDetail?wayBillNumber=";
 
-    /**
+   /* *//**
      * 随机生成电话号码的方法
      * @return
-     */
+     *//*
     public static String getTel(){
         for (int i = 0; i < 9; i++) {//9代表循环九次，产生九个随机号码
             String number = "139";//定义电话号码以139开头
@@ -65,7 +65,7 @@ public class NewAbroadLogisticsUtil {
             return number;
         }
         return null;
-    }
+    }*/
 
     /**
      * 生成token的方法(Base86编码)
