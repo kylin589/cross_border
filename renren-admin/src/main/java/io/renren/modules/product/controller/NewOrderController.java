@@ -556,15 +556,14 @@ public class NewOrderController extends AbstractController {
             String url = result.get("url");
             newOrderAbroadLogisticsEntity.setPrintUrl(url);
             newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
-            return  R.ok().put("url",url);
+            return  R.ok(url);
         }else if(newOrderAbroadLogisticsEntity.getPackageType()==1){
             //三态
             String wayBillNumber = newOrderAbroadLogisticsEntity.getAbroadWaybill();
             String url = newOrderService.print(wayBillNumber,1,"pdf",1,1);
             newOrderAbroadLogisticsEntity.setPrintUrl(url);
             newOrderAbroadLogisticsService.insertOrUpdate(newOrderAbroadLogisticsEntity);
-            return  R.ok().put("url",url);
-
+            return  R.ok(url);
         }
         return R.error("获取地址失败，请重试！");
     }
