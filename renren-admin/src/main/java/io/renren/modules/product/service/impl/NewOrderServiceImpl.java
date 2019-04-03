@@ -801,7 +801,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
 
     @Override
     public Map<String, String> printOrder(String orderNumber) {
-        StringJoiner sj=new StringJoiner("","[\\\"","\\\"]");
+        StringJoiner sj=new StringJoiner("\\\",\"","[\\\"","\\\"]");
         sj.add(orderNumber);
         return NewAbroadLogisticsUtil.printOrder(sj.toString().replace("\\",""));
     }
