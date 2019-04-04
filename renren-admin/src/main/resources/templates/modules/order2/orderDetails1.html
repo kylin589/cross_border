@@ -115,26 +115,31 @@
                 <div>
                     <h4>国际物流</h4>
                 </div>
-                <div class="pro_inf chengben" v-for="item in orderDetails.abroadLogistics">
+                <div class="pro_inf chengben" v-for="item in orderDetails.abroadLogisticsList">
                     <!--<p style="margin-bottom: 10px"><input class="addguojiyundan" type="button" value="添加" @click="addorder"></p>-->
                     <div>
                         <span><label for="" style="width: 106px">国际物流单号：</label><span>{{ item.abroadWaybill }}</span></span>
                         <span><label for="" style="width: 96px">国际跟踪号：</label><span>{{ item.trackWaybill }}</span></span>
                         <!--<span><label for="">物流状态：</label><span>{{ orderDetails.abroadLogistics.state }}</span></span>-->
-                        <span><label for="" style="width: 80px">国际运费：</label><span>{{ item.interFreight }}</span></span>
-                        <span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>
-                        <span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>
+                        <span><label for="" style="width: 80px">国际运费：</label><span>{{ item.interFreight }}</span></span><br>
+                        <!--<span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>-->
+                        <!--<span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>-->
                         <span><label for="">线路：</label><span>{{ item.channeDisplayName }}</span></span>
-
-                        <span><label for="">国内查询跟踪号：</label><span>{{ item.domesticTrackWaybill }}</span></span>
-                        <span><label for="">服务查询网址：</label><span>{{ item.serviceQueryUrl }}</span></span>
-                        <span><label for="">联系电话：</label><span>{{ item.mobile }}</span></span>
-                        <span><label for="">目的地查询网址：</label><span>{{ item.destQueryUrl }}</span></span>
+                        <span><label for="">重量：</label><span>{{ item.actualWeight }}</span></span>
+                        <span><label for="">发货时间：</label><span>{{ item.shipTime }}</span></span>
                         <div class="fr">
                             <span v-if="item.state">物流状态：{{item.state}}</span>
-                            <span v-if="!item.state" style="margin-right: 10px">物流状态：暂无状态</span>
+                            <span v-if="!item.state" style="margin-right: 10px">物流状态：无状态</span>
                             <!--<span>{{ orderDetails.abroadLogistics.state }}</span>-->
                             <span>{{ item.shipTime }}</span>
+                            <p style="display: block;text-align: right">
+
+                                <span v-if="item.isDeleted == 1" v-if="deleWuliu(item.isDeleted == 1" style="color: #00a3e8;cursor: pointer">已作废</span>
+                                <span @click="dayin(index,item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer;margin: 0 10px">打印</span>
+                                <span @click="detailsguojiWul(index)" style="color: #00a3e8;cursor: pointer">明细</span>
+
+
+                            </p>
                         </div>
                     </div>
 
@@ -276,7 +281,66 @@
         </div>
 
 
+        <!--国际运单明细-->
+        <div class="addorder" id="detailsorder" style="display: none">
+            <h3>国际运单</h3>
 
+            <!--要加滚动条的具体内容-->
+            <div class="form_item one" style="box-shadow: 0 0 0 transparent;margin: 0">
+                <div class="item" v-for="orderProductItem in getWlDetails.orderProductList">
+                    <div>
+                        <img :src="orderProductItem.productImageUrl" alt="">
+                        <!--<img :src="orderDetails.imgUrl" alt="">-->
+                    </div>
+                    <div>
+                        <p class="addDecP" style="font-weight: bold;font-size: 16px;">{{ orderProductItem.productTitle }}</p>
+                        <span><label for="">SKU：</label><span>{{ orderProductItem.productSku }}</span></span>
+                        <span><label for="">数量：</label><span>{{ orderProductItem.orderItemNumber }}</span><br>
+                        <span><label for="">运输数量：</label><span>{{ orderProductItem.itemQuantity }}</span></span><br>
+
+                    </div>
+                </div>
+                <div class="item">
+                    <div>
+                        <h4>运单信息</h4>
+                    </div>
+                    <div class="pro_inf">
+                        <span><label for="">运单状态：</label><span style="color: #00a3e8"> {{ getWlDetails.state }} </span></span><br>
+                        <span><label for="">中文：</label><input type="text" placeholder="中文" v-model="getWlDetails.chineseName" disabled></span>
+                        <span><label for="">英文：</label><input type="text" placeholder="英文" v-model="getWlDetails.englishName" disabled></span><br>
+                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="getWlDetails.actualWeight" disabled></span>
+                        <span style="width: 370px"><label for="">体积（cm）：</label>
+                            <input class="size_input" type="text" placeholder="长（CM）" v-model="getWlDetails.length" disabled> *
+                            <input class="size_input" type="text" placeholder="宽（CM）" v-model="getWlDetails.width" disabled> *
+                            <input class="size_input" type="text" placeholder="高（CM）" v-model="getWlDetails.height" disabled>
+                        </span><br>
+                        <span style="width: auto"><label for="">物流：</label>
+                            <span v-if="getWlDetails.packageType == 0">云途小包</span>
+                            <span v-if="getWlDetails.packageType == 1">三态大包</span>
+                            <span>{{getWlDetails.channelName}}</span>
+
+                            <!--<select name="" v-model="getWlDetails.channelName" disabled>-->
+                            <!--<option v-for="item in guojilogistics" :value="item.channel">{{ item.channelName }}</option>-->
+                            <!--</select>-->
+                        </span>
+                        <span v-if="getWlDetails.packageType == 1" style="width: auto"><label for="">海关编码：</label>
+
+                            <span>{{getWlDetails.itemCode}} {{getWlDetails.itemCnMaterial}}</span>
+
+                            <!--<select name="" v-model="getWlDetails.channelName" disabled>-->
+                            <!--<option v-for="item in guojilogistics" :value="item.channel">{{ item.channelName }}</option>-->
+                            <!--</select>-->
+                        </span>
+
+                        <!--<input type="button" value="生成运单号">--><br>
+                        <span><label for="">运单号：</label><input type="text" placeholder="运单号" :value="getWlDetails.abroadWaybill" disabled></span>
+                        <span><label for="">追踪号：</label><input type="text" placeholder="追踪号" :value="getWlDetails.trackWaybill" disabled></span>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
         <!--添加国内物流-->
         <div id="addWul" style="display: none">

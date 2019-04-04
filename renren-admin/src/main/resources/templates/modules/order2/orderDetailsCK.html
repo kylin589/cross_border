@@ -95,7 +95,7 @@
                             <input class="edit" type="button" value="编辑" @click="edit(orderProductItem.domesticLogistics,$event)">
                             <input class="noedit" type="button" value="取消" @click="noedit(orderProductItem.domesticLogistics.waybill,$event)">
                             <input class="edit" type="button" value="同步" @click="synchronize(orderProductItem.domesticLogistics)">
-                            <input v-if="orderProductItem.state == '未签收'" class="edit" type="button" value="入库" @click="ruku(orderProductItem.domesticLogisticsId)">
+                            <input v-if="orderProductItem.domesticLogistics.state == '未签收'" class="edit" type="button" value="入库" @click="ruku(orderProductItem.domesticLogistics.domesticLogisticsId)">
                         </div>
                     </div>
                 </div>
@@ -151,6 +151,7 @@
                         <!--<span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>-->
                         <!--<span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>-->
                         <span><label for="">线路：</label><span>{{ item.channeDisplayName }}</span></span>
+                        <span><label for="">重量：</label><span>{{ item.actualWeight }}</span></span>
                         <span><label for="">发货时间：</label><span>{{ item.shipTime }}</span></span>
 
                         <div class="fr">
@@ -171,11 +172,15 @@
                                 <!--<a href="javascript:;" class="detailsOrderA">明细</a>-->
                             </p>
                             <p style="display: block;text-align: right">
+                                <template v-if="orderDetails.orderState == '仓库已入库' || orderDetails.orderState == '仓库已出库' || orderDetails.orderState == '国际已发货'">
+                                    <span v-if="item.state == '未发货' && item.isDeleted == 0" @click="chuku(item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer">出库</span>
+                                </template>
                                 <span v-if="item.isDeleted == 0" @click="deleWuliu(item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer">作废</span>
                                 <span v-if="item.isDeleted == 1" v-if="deleWuliu(item.isDeleted == 1" style="color: #00a3e8;cursor: pointer">已作废</span>
                                 <span @click="dayin(index,item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer;margin: 0 10px">打印</span>
                                 <span @click="detailsguojiWul(index)" style="color: #00a3e8;cursor: pointer">明细</span>
-                                <span v-if="item.state == '未发货' && item.isDeleted == 0" @click="chuku(item.abroadLogisticsId)" style="color: #00a3e8;cursor: pointer">出库</span>
+
+
                             </p>
                         </div>
                     </div>
@@ -201,8 +206,9 @@
                             <th>Amazon佣金</th>
                             <th>到账金额</th>
                             <th>采购价</th>
-                            <th>国际运费</th>
                             <th>平台佣金</th>
+                            <th>国际运费</th>
+
                             <th>利润</th>
                             <th>利润率</th>
                             <th>退货费用</th>
@@ -225,8 +231,9 @@
                             <td>{{ orderDetails.amazonCommission }}</td>
                             <td>{{ orderDetails.accountMoney }}</td>
                             <td>{{ orderDetails.purchasePrice }}</td>
-                            <td>{{ orderDetails.interFreight }}</td>
                             <td>{{ orderDetails.platformCommissions }}</td>
+                            <td>{{ orderDetails.interFreight }}</td>
+
                             <td>{{ orderDetails.orderProfit }}</td>
                             <td>{{ orderDetails.profitRate }}</td>
                             <td>{{ orderDetails.returnCost }}</td>
@@ -430,7 +437,7 @@
                         <span><label for="">运单状态：</label><span style="color: #00a3e8"> {{ getWlDetails.state }} </span></span><br>
                         <span><label for="">中文：</label><input type="text" placeholder="中文" v-model="getWlDetails.chineseName" disabled></span>
                         <span><label for="">英文：</label><input type="text" placeholder="英文" v-model="getWlDetails.englishName" disabled></span><br>
-                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="getWlDetails.weight" disabled></span>
+                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="getWlDetails.actualWeight" disabled></span>
                         <span style="width: 370px"><label for="">体积（cm）：</label>
                             <input class="size_input" type="text" placeholder="长（CM）" v-model="getWlDetails.length" disabled> *
                             <input class="size_input" type="text" placeholder="宽（CM）" v-model="getWlDetails.width" disabled> *
