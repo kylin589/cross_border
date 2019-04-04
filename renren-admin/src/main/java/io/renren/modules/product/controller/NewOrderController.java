@@ -27,6 +27,7 @@ import io.renren.modules.amazon.util.ConstantDictionary;
 import io.renren.modules.amazon.util.FileUtil;
 import io.renren.modules.logistics.entity.*;
 import io.renren.modules.logistics.service.*;
+import io.renren.modules.logistics.util.NewAbroadLogisticsSFCUtil;
 import io.renren.modules.logistics.util.XmlUtils;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.entity.RemarkEntity;
@@ -614,6 +615,23 @@ public class NewOrderController extends AbstractController {
             }
             return R.ok();
         }else{
+            String wayBillNumber = newOrderAbroadLogisticsEntity.getAbroadWaybill();
+            Map<String,String> result= NewAbroadLogisticsSFCUtil.getFeeByOrderCode(wayBillNumber);
+            if(!"false".equals(result.get("code"))){//获取成功的
+                //追踪号
+                String truckNumber=result.get("TrackingNumber");
+                //运费
+                String Freight=result.get("Freight");
+                //总费用
+                String totalFee=result.get("TotalFee");
+                BigDecimal bigDecimal=new BigDecimal(totalFee);
+                BigDecimal bigDecimal2=new BigDecimal(1.1);
+                newOrderAbroadLogisticsEntity.setTrackWaybill(truckNumber);
+                newOrderAbroadLogisticsEntity.setInterFreight(bigDecimal.multiply(bigDecimal2));
+            }
+
+
+
             return R.ok();//三态
         }
     }
@@ -705,34 +723,6 @@ public class NewOrderController extends AbstractController {
             return R.error("余额不足，请联系公司管理员及时充值后再次尝试");
         }
         List<NewOrderItemRelationshipEntity> orderItemRelationList = orderVM.getItemRelationList();
-       /* NewOrderEntity neworderEntity = newOrderService.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", orderVM.getAmazonOrderId()));
-        //每个国家的汇率
-        BigDecimal countryRate=neworderEntity.getMomentRate();
-        BigDecimal usdRate=new BigDecimal(6.7114);
-        BigDecimal totalPrice=new BigDecimal(0.0000);
-        Integer totolNum=0;
-        for(NewOrderItemRelationshipEntity itemRelationship : orderItemRelationList){
-            if(orderVM.getPackageType()==1){
-            itemRelationship.setItemChineseName(orderVM.getChineseName());
-            itemRelationship.setItemCnMaterial(orderVM.getChineseName());
-            itemRelationship.setItemEnglishName(orderVM.getEnglishName());
-            itemRelationship.setItemEnMaterial(orderVM.getEnglishName());
-            itemRelationship.setItemWeight(orderVM.getWeight());
-            ItemCodeEntity itemCodeEntity=itemCodeService.selectOne(new EntityWrapper<ItemCodeEntity>().eq("item_code_id",orderVM.getItemCodeId()));
-            itemRelationship.setItemCode(itemCodeEntity.getItemCode());
-            //计算美元单价，赋给usdPrice
-            BigDecimal usdPrice=new BigDecimal(0.0000);
-            usdPrice=itemRelationship.getProductPrice().multiply(new BigDecimal(itemRelationship.getOrderItemNumber()).multiply(countryRate).divide(usdRate));//货品单价
-                itemRelationship.setUsdPrice(usdPrice);
-                totalPrice=usdPrice.add(usdPrice);
-                totolNum+=itemRelationship.getOrderItemNumber();//货品数量
-                itemRelationship.setItemQuantity(totolNum.toString());//运输数量
-            }
-
-        }
-*/
-        //保存
-
         Long orderId = orderVM.getOrderId();
         String amazonOrderId=orderVM.getAmazonOrderId();
         int count = newOrderAbroadLogisticsService.selectCount(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id",orderId));

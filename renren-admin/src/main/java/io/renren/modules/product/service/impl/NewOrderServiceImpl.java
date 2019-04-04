@@ -421,6 +421,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         omsOrder.setOrderNumber(orderNumber);//推送订单号
         omsOrder.setShippingMethodCode(channelCode);//测试用的
         omsOrder.setPackageNumber(neworderEntity.getOrderNumber());//订单表中的订单数量
+        weight=weight.setScale(0,BigDecimal.ROUND_UP);
         omsOrder.setWeight(weight);
         //推送--订单详情
         List<ApplicationInfos> omsOrderDetails = new ArrayList<>();
@@ -438,7 +439,6 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
             omsOrderDetail.setSku(productOrderItemEntity.getProductSku());
             omsOrderDetails.add(omsOrderDetail);
         }
-
         //推送—收货人信息
         ShippingInfo shippingInfo=new ShippingInfo();
         shippingInfo.setCountryCode(shipAddressEntity.getShipCountry());

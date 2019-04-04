@@ -354,6 +354,10 @@ public class NewAbroadLogisticsUtil {
      * @param
      */
     public static Map<String, String> getShippingFeeDetail(String url, String token, String orderNumber){
+        if("".equals(url) && "".equals(token)){
+            url=xs_yt_getOrderInfo;
+            token=getXsToken(xs_clientId,xs_ApiSecret);
+        }
         Map<String, String> map = new HashMap<>();
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -538,7 +542,8 @@ public class NewAbroadLogisticsUtil {
 //        pushOrder();
 //          printOrder();
 //        getOrderInfo("","","303-7832993-5749169");
-
+        String str="{\"Type\":\"2\",\"OrderNumber\":\"028-0821424-0340366\"}";
+        delOrder(str);
     }
 
 }
