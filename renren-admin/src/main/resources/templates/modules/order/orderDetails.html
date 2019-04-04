@@ -150,7 +150,7 @@
                             <p>
                                 <a v-if="orderDetails.orderState == '已付款'" href="javascript:;" @click="getorderID">生成国际运单号</a>
                                 <template v-if="orderDetails.abroadLogistics.isSynchronization == 0">
-                                    <a v-if="orderDetails.orderState == '虚发货' || orderDetails.orderState == '国际已发货'" href="javascript:;" @click="tongbu">同步</a>
+                                    <a v-if="orderDetails.orderState == '虚发货' || orderDetails.orderState == '国际已发货'" href="javascript:;" @click="tongbu">重新同步</a>
                                 </template>
 
                                 <span v-if="orderDetails.abroadLogistics.isSynchronization == 1" href="javascript:;" >已同步</span>
