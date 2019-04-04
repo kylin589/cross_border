@@ -765,7 +765,7 @@ var vm = new Vue({
                     length:parseInt(vm.wuliuDetails.length),
                     width:parseInt(vm.wuliuDetails.width),
                     height:parseInt(vm.wuliuDetails.height),
-                    weight:parseInt(vm.wuliuDetails.weight),
+                    weight:vm.wuliuDetails.weight,
                 }),
                 contentType: "application/json",
                 success: function (r) {

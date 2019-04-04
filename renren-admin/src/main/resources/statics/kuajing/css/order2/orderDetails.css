@@ -94,6 +94,7 @@ form .item>div:nth-child(2)>div{
 form .item>div:nth-child(2)>div>span{
     display: inline-block;
     margin-bottom: 6px;
+    width: 290px;
 }
 form .item>div:nth-child(2) div.fr{
     position: absolute;
