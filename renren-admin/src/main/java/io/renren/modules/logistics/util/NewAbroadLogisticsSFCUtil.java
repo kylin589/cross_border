@@ -28,21 +28,9 @@ public final class NewAbroadLogisticsSFCUtil {
      * 获取运费明细
 	 * @return
      */
-	public static Map<String,String> getFeeByOrderCode(String[] args){
+	public static Map<String,String> getFeeByOrderCode(String orderCode){
 		// TODO Auto-generated method stub
 		URL wsdlURL = ShipRate_Service.WSDL_LOCATION;
-//		if (args.length > 0 && args[0] != null && !"".equals(args[0])) {
-//			File wsdlFile = new File(args[0]);
-//			try {
-//				if (wsdlFile.exists()) {
-//					wsdlURL = wsdlFile.toURI().toURL();
-//				} else {
-//					wsdlURL = new URL(args[0]);
-//				}
-//			} catch (MalformedURLException e) {
-//				e.printStackTrace();
-//			}
-//		}
 		ShipRate_Service ss = new ShipRate_Service(wsdlURL, SERVICE_NAME);
 		ShipRate port = ss.getShipRateSOAP();
 
@@ -55,7 +43,7 @@ public final class NewAbroadLogisticsSFCUtil {
 				_getFeeByOrderCode_headerRequest.setToken(token);
 				_getFeeByOrderCode_headerRequest.setUserId(userId);
 
-				String orderCode = "SFC5WW3053904020003";//AE订单编号
+//				String orderCode = "SFC5WW3053904020003";//AE订单编号
 				Holder<String> _getFeeByOrderCode_orderCode =
 				new Holder<>(
 						orderCode);
@@ -108,7 +96,7 @@ public final class NewAbroadLogisticsSFCUtil {
 
 
 
-				 port.getFeeByOrderCode(_getFeeByOrderCode_headerRequest,
+				/* port.getFeeByOrderCode(_getFeeByOrderCode_headerRequest,
 				 _getFeeByOrderCode_orderCode, _getFeeByOrderCode_ask,
 				 _getFeeByOrderCode_sysTime, _getFeeByOrderCode_msg,
 				 _getFeeByOrderCode_baseFee, _getFeeByOrderCode_regFee,
@@ -124,7 +112,7 @@ public final class NewAbroadLogisticsSFCUtil {
 				 _getFeeByOrderCode_originBaseFee,
 				 _getFeeByOrderCode_originAddons,
 				 _getFeeByOrderCode_stDealFee, _getFeeByOrderCode_stRegFee,
-				 _getFeeByOrderCode_feeWeight);
+				 _getFeeByOrderCode_feeWeight);*/
 
 
 
@@ -508,12 +496,12 @@ public final class NewAbroadLogisticsSFCUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		pushOrder2();
+//		pushOrder2();
 //		String url=print("WW3053904010001",1,"pdf",1,1);
 //		System.out.println(url);
 //		searchOrder(args);
-//		getFeeByOrderCode(args);
-//		updateOrder("","");
+		getFeeByOrderCode("SFC3WW3053904040003");
+//		updateOrder("WW3053904040003","confirmed");
 //		updateOrderStatus(args);
 	}
 }

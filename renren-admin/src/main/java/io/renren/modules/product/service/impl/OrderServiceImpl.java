@@ -1849,12 +1849,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
             //判读亚马逊后台订单的状态
             if(StringUtils.isNotBlank(feedSubmissionId)){
-                abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
-                abroadLogisticsService.updateById(abroadLogisticsEntity);
+                try {
+                    Thread.sleep(3 * 60 * 1000);
+                    abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
+                    abroadLogisticsService.updateById(abroadLogisticsEntity);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             }else{
-                logger.error("同步失败,请重新上传订单...");
-                abroadLogisticsEntity.setIsSynchronization(0);//表示同步失败
-                abroadLogisticsService.updateById(abroadLogisticsEntity);
+                try {
+                    Thread.sleep(2*60*1000);
+                    amazonUpdateLogistics(sendDataMoedl,orderId);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
     }
@@ -1916,14 +1925,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         NewOrderAbroadLogisticsEntity newAbroadLogisticsEntity = newOrderAbroadLogisticsService.selectOne(new EntityWrapper<NewOrderAbroadLogisticsEntity>().eq("order_id",orderId));
         //判空
         if(StringUtils.isNotBlank(feedSubmissionId)){
-            newAbroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
-            newOrderAbroadLogisticsService.insertOrUpdate(newAbroadLogisticsEntity);
-            System.out.println(newAbroadLogisticsEntity.getIsSynchronization());
+            try {
+                Thread.sleep(3 * 60 * 1000);
+                newAbroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
+                newOrderAbroadLogisticsService.insertOrUpdate(newAbroadLogisticsEntity);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }else{
-            logger.error("同步失败,请重新上传订单...");
-            newAbroadLogisticsEntity.setIsSynchronization(0);//表示同步失败
-            newOrderAbroadLogisticsService.insertOrUpdate(newAbroadLogisticsEntity);
-            System.out.println(newAbroadLogisticsEntity.getIsSynchronization());
+            try {
+                Thread.sleep(2 * 60 * 1000);
+                newamazonUpdateLogistics(sendDataMoedl, orderId);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -2297,10 +2312,4 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
         return sendDataMoedl;
     }
-
-
-
-
-
-
 }
