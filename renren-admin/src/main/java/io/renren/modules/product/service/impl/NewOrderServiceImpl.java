@@ -379,10 +379,23 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
                 .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
                 .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
                 .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus);
-        return new PageUtils(this.selectPage(
+        Page<NewOrderEntity> page = this.selectPage(
                 new Query<NewOrderEntity>(params).getPage(),
                 wrapper
-        ));
+        );
+        List<NewOrderEntity> orderEntityList = page.getRecords();
+        for(NewOrderEntity NewOrderEntity : orderEntityList){
+            SysUserEntity sysUserEntity = userService.selectById(NewOrderEntity.getUserId());
+            SysDeptEntity sysDeptEntity = deptService.selectById(NewOrderEntity.getDeptId());
+            if(sysDeptEntity != null){
+                NewOrderEntity.setDeptName(sysDeptEntity.getName());
+            }
+            if(sysUserEntity != null){
+                NewOrderEntity.setUserName(sysUserEntity.getDisplayName());
+            }
+        }
+        PageUtils pageUtils = new PageUtils(page);
+        return pageUtils;
     }
     @Override
     //修改状态
