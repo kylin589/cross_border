@@ -19,12 +19,21 @@
                 color: #fff;
                 border-radius: 3px;
             }
-
+            .search1{
+                display: flex;
+                align-items: center;
+            }
             .search1>div{
-                width: 250px;
+                flex: 1;
+                align-items: center;
+            }
+            .search1>div>div{
+                width: 40%;
+                margin-bottom: 10px;
             }
             .search1 input{
-                width: 240px;
+                /*width: 240px;*/
+                height: 40px;
             }
         </style>
         </head>
@@ -40,33 +49,41 @@
 
 
         <!--<input type="text" placeholder="订单id" v-model="orderId">-->
-        <el-input
-                placeholder="订单id"
-                v-model="orderId"
-                clearable>
-        </el-input>
-        <!--<input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">-->
-        <el-input
-                placeholder="亚马逊订单id"
-                v-model="amazonOrderId"
-                clearable>
-        </el-input>
-        <!--<input type="text" class="sousuoAreaInput" placeholder="国内物流单号" v-model="domesticWaybill">-->
-        <el-input
-                placeholder="国内物流单号"
-                v-model="domesticWaybill"
-                clearable>
-        </el-input>
-        <!--<input type="text" placeholder="国际物流单号" v-model="abroadWaybill">-->
-        <el-input
-                placeholder="国际物流单号"
-                v-model="abroadWaybill"
-                clearable>
-        </el-input>
+        <div>
+            <el-input
+                    placeholder="订单id"
+                    v-model="orderId"
+                    @keyup.enter.native="getOrderlist('')"
+                    clearable>
+            </el-input>
+            <!--<input type="text" placeholder="亚马逊订单id" v-model="amazonOrderId">-->
+            <el-input
+                    placeholder="亚马逊订单id"
+                    v-model="amazonOrderId"
+                    @keyup.enter.native="getOrderlist('')"
+                    clearable>
+            </el-input>
+
+            <!--<input type="text" class="sousuoAreaInput" placeholder="国内物流单号" v-model="domesticWaybill">-->
+            <el-input
+                    placeholder="国内物流单号"
+                    v-model="domesticWaybill"
+                    @keyup.enter.native="getOrderlist('')"
+                    clearable>
+            </el-input>
+            <!--<input type="text" placeholder="国际物流单号" v-model="abroadWaybill">-->
+            <el-input
+                    placeholder="国际物流单号"
+                    v-model="abroadWaybill"
+                    @keyup.enter.native="getOrderlist('')"
+                    clearable>
+            </el-input>
+        </div>
+
 
 
         <!--<button class="sousuo" @click="getOrderlist('')">搜索</button>-->
-        <button class="sousuo" style="background: #00a3e8;color: #fff" @click="getOrderlist('')"><i class="el-icon-search"></i> 查询</button>
+        <button class="sousuo" style="background: #00a3e8;color: #fff;height: 60px;font-size: 20px;" @click="getOrderlist('')"><i class="el-icon-search"></i> 查询</button>
 
     </div>
     <!--筛选区域-->

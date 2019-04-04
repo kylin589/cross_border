@@ -289,6 +289,7 @@ var vm = new Vue({
             console.log(this.shopName);
             console.log(this.endDate);
             this.orderStatus = orderStatus;
+            this.proCurr = 1;
             $.ajax({
                 url: '../../amazon/neworder/depotOrderList',
                 type: 'post',
