@@ -196,7 +196,8 @@ public class NewOrderController extends AbstractController {
      * @return
      */
     @RequestMapping("/formruku")
-    public R formruku(@RequestBody NewOrderDomesticLogisticsEntity domestic){
+    public R formruku(@RequestParam Long domesticLogisticsId){
+        NewOrderDomesticLogisticsEntity domestic = newOrderDomesticLogisticsService.selectById(domesticLogisticsId);
         Long orderId = domestic.getOrderId();
         String waybill = domestic.getWaybill();
         if(orderId != null && StringUtils.isNotBlank(waybill)){
@@ -246,7 +247,8 @@ public class NewOrderController extends AbstractController {
      * @return
      */
     @RequestMapping("/formchuku")
-    public R formchuku(@RequestBody NewOrderAbroadLogisticsEntity abroad){
+    public R formchuku(@RequestParam Long abroadLogisticsId){
+        NewOrderAbroadLogisticsEntity abroad = newOrderAbroadLogisticsService.selectById(abroadLogisticsId);
         if(abroad.getIsDeleted() == 1){
             return R.error("此运单已销毁");
         }else{
