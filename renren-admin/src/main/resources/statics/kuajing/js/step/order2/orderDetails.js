@@ -981,7 +981,7 @@ var vm = new Vue({
                 url: '../../amazon/neworder/formruku',
                 type: 'get',
                 data: {
-                    orderId:id
+                    domesticLogisticsId:id
                 },
                 dataType: 'json',
                 // contentType: "application/json",

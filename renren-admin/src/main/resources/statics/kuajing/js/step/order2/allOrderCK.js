@@ -759,7 +759,7 @@ var vm = new Vue({
             });
         },
         // 出库
-        chuku:function () {
+        chuku:function (id) {
             var index = layer.load();
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
@@ -767,7 +767,7 @@ var vm = new Vue({
                 url: '../../amazon/neworder/listchuku',
                 type: 'get',
                 data: {
-                    orderId:id
+                    abroadLogisticsId:id
                 },
                 dataType: 'json',
                 // contentType: "application/json",
@@ -791,60 +791,7 @@ var vm = new Vue({
                 }
             });
         },
-        // 入库回车
-        ruku:function (id) {
-            var index = layer.load();
-            var index = layer.load(1); //换了种风格
-            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-            $.ajax({
-                url: '../../amazon/neworder/listruku',
-                type: 'get',
-                data: {orderId:id},
-                dataType: 'json',
-                // contentType: "application/json",
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        layer.msg('入库成功');
-                        layer.close(index);
-                    } else {
-                        layer.alert(r.msg);
-                        layer.close(index);
-                    }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                    layer.close(index);
-                }
-            });
-        },
-        // 出库回车
-        chuku:function (id) {
-            var index = layer.load();
-            var index = layer.load(1); //换了种风格
-            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
-            $.ajax({
-                url: '../../product/order/manualUpdateOrder',
-                type: 'get',
-                data: {orderId:id},
-                dataType: 'json',
-                // contentType: "application/json",
-                success: function (r) {
-                    console.log(r);
-                    if (r.code === 0) {
-                        layer.msg('出库成功');
-                        layer.close(index);
-                    } else {
-                        layer.alert(r.msg);
-                        layer.close(index);
-                    }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                    layer.close(index);
-                }
-            });
-        },
+
     },
     created:function () {
         var url = decodeURI(window.location.href);
