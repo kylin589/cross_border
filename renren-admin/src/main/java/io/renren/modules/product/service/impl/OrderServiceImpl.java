@@ -925,7 +925,112 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     }
                 } else {
                     if(neworderEntity == null){
-                        neworderEntity = new NewOrderEntity();
+                        //新增订单
+                        if (!"Canceled".equals(modelStatus) && !"Shipped".equals(modelStatus)) {
+                            //设置基本属性
+                            neworderEntity=new NewOrderEntity();
+                            neworderEntity.setAmazonOrderId(amazonOrderId);
+                            //判断该订单的订单商品列表是否存在
+                            List<OrderItemModel> orderItemModels=orderModel.getOrderItemModels();
+                            if(orderItemModels!=null && orderItemModels.size()>0){
+                                for (OrderItemModel orderItemModel:orderItemModels) {
+                                    //判断该商品是否存在
+                                    NewOrderItemEntity newOrderItemEntity=newOrderItemService.selectOne(new EntityWrapper<NewOrderItemEntity>().eq("order_item_id",orderItemModel.getOrderItemId()));
+                                    //如果不存在
+                                    if(newOrderItemEntity==null){
+                                        newOrderItemEntity=new NewOrderItemEntity();
+                                        if(orderModel.getAmazonOrderId()!=null){
+                                            newOrderItemEntity.setAmazonOrderId(orderItemModel.getAmazonOrderId());
+                                        }
+                                        if(orderItemModel.getOrderItemId()!=null){
+                                            newOrderItemEntity.setOrderItemId(orderItemModel.getOrderItemId());
+                                        }
+                                        if(orderItemModel.getProductId()!=null){
+                                            newOrderItemEntity.setProductId(orderItemModel.getProductId());
+                                        }
+                                        if(orderItemModel.getProductTitle()!=null){
+                                            newOrderItemEntity.setProductTitle(orderItemModel.getProductTitle());
+                                        }
+                                        String productIdStr = "0";
+                                        if(orderItemModel.getProductSku()!=null){
+                                            newOrderItemEntity.setProductSku(orderItemModel.getProductSku());
+                                            String[] skuArray = orderItemModel.getProductSku().split("-");
+                                            if(skuArray != null && skuArray.length > 2){
+                                                productIdStr = skuArray[2];
+                                                ProductsEntity productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().eq("product_id", productIdStr));
+                                                if (productsEntity != null) {
+                                                    newOrderItemEntity.setProductId(productsEntity.getProductId());
+                                                }else{
+                                                    productsEntity = productsService.selectOne(new EntityWrapper<ProductsEntity>().like("product_sku", orderItemModel.getProductSku()));
+                                                    if (productsEntity != null) {
+                                                        newOrderItemEntity.setProductId(productsEntity.getProductId());
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if(orderItemModel.getProductAsin()!=null){
+                                            newOrderItemEntity.setProductAsin(orderItemModel.getProductAsin());
+                                        }
+                                        if(orderItemModel.getProductPrice()!=null){
+                                            newOrderItemEntity.setProductPrice(orderItemModel.getProductPrice());
+                                        }
+                                        if (StringUtils.isNotBlank(orderItemModel.getProductImageUrl())) {
+                                            newOrderItemEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
+                                            neworderEntity.setProductImageUrl(orderItemModel.getProductImageUrl());
+                                        }
+                                        newOrderItemEntity.setOrderItemNumber(orderItemModel.getOrderItemNumber());
+                                        newOrderItemEntity.setUpdatetime(orderItemModel.getUpdatetime());
+                                        newOrderItemService.insert(newOrderItemEntity);
+                                    }
+                                }
+                            }
+                            if (orderModel.getBuyDate() != null) {
+                                neworderEntity.setBuyDate(orderModel.getBuyDate());
+                            } else {
+                                neworderEntity.setBuyDate(orderModel.getBuyDate());
+                            }
+
+                            if ("PendingAvailability".equals(modelStatus) || "Pending".equals(modelStatus)) {
+                                //未付款
+                                neworderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_PENDING);
+                                neworderEntity.setOrderState("待付款");
+                            } else if ("Unshipped".equals(modelStatus) || "PartiallyShipped".equals(modelStatus)) {
+                                //已付款
+                                neworderEntity.setOrderStatus(ConstantDictionary.OrderStateCode.NEW_ORDER_STATE_UNSHIPPED);
+                                neworderEntity.setOrderState("已付款");
+                            }
+                            neworderEntity.setCountryCode(orderModel.getCountry());
+                            neworderEntity.setShopId(orderModel.getShopId());
+                            neworderEntity.setShopName(orderModel.getShopName());
+
+                            neworderEntity.setOrderNumber(orderModel.getOrderNumber());
+                            String rateCode = orderModel.getCurrencyCode();
+                            neworderEntity.setRateCode(rateCode);
+                            neworderEntity.setUserId(orderModel.getUserId());
+                            neworderEntity.setDeptId(orderModel.getDeptId());
+                            neworderEntity.setUpdateTime(new Date());
+                            //设置汇率
+                            BigDecimal rate = new BigDecimal(0.00);
+                            if (StringUtils.isNotBlank(rateCode)) {
+                                rate = amazonRateService.selectOne(new EntityWrapper<AmazonRateEntity>().eq("rate_code", rateCode)).getRate();
+                            }
+                            neworderEntity.setMomentRate(rate);
+                            //获取订单金额（外币）
+                            BigDecimal orderMoney = orderModel.getOrderMoney();
+                            if (orderMoney.compareTo(new BigDecimal("0.00")) != 0) {
+                                neworderEntity.setOrderMoney(orderMoney);
+                                neworderEntity.setOrderMoneyCny(orderMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
+                                //获取Amazon佣金（外币）
+                                BigDecimal amazonCommission = orderMoney.multiply(new BigDecimal(0.15).setScale(2, BigDecimal.ROUND_HALF_UP));
+                                neworderEntity.setAmazonCommission(amazonCommission);
+                                neworderEntity.setAmazonCommissionCny(amazonCommission.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
+                                //到账金额
+                                BigDecimal accountMoney = orderMoney.subtract(amazonCommission);
+                                neworderEntity.setAccountMoney(accountMoney);
+                                neworderEntity.setAccountMoneyCny(accountMoney.multiply(rate).setScale(2, BigDecimal.ROUND_HALF_UP));
+                            }
+                            newOrderService.insert(neworderEntity);
+                        }
                     }
                     if ((!"Canceled".equals(orderModel.getOrderStatus()) && (!"Shipped".equals(orderModel.getOrderStatus())))) {
                         List<OrderItemModel> orderItemModels = orderModel.getOrderItemModels();
@@ -1046,21 +1151,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                                         neworderEntity.setOrderState(neworderState);
                                         this.updateById(orderEntity);
                                         newOrderService.insertOrUpdate(neworderEntity);
-
-                                        //新增/修改收货人信息
-                                        ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
-                                        if (productShipAddressEntity != null) {
-                                            //判断返回值是否有收件人信息
-                                            ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
-                                                    new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", productShipAddressEntity.getAmazonOrderId())
-                                            );
-                                            if (shipAddress == null) {
-                                                productShipAddressEntity.setOrderId(neworderEntity.getOrderId());
-                                                productShipAddressService.insert(productShipAddressEntity);
-                                            } else {
-                                                productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
-                                                productShipAddressService.updateById(productShipAddressEntity);
-                                            }
+                                    }
+                                    //新增/修改收货人信息
+                                    ProductShipAddressEntity productShipAddressEntity = orderModel.getProductShipAddressEntity();
+                                    if (productShipAddressEntity != null) {
+                                        //判断返回值是否有收件人信息
+                                        ProductShipAddressEntity shipAddress = productShipAddressService.selectOne(
+                                                new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", productShipAddressEntity.getAmazonOrderId())
+                                        );
+                                        if (shipAddress == null) {
+                                            productShipAddressEntity.setOrderId(neworderEntity.getOrderId());
+                                            productShipAddressService.insert(productShipAddressEntity);
+                                        } else {
+                                            productShipAddressEntity.setShipAddressId(shipAddress.getShipAddressId());
+                                            productShipAddressService.updateById(productShipAddressEntity);
                                         }
                                     }
                                 }
