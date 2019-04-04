@@ -95,7 +95,7 @@
                             <input class="edit" type="button" value="编辑" @click="edit(orderProductItem.domesticLogistics,$event)">
                             <input class="noedit" type="button" value="取消" @click="noedit(orderProductItem.domesticLogistics.waybill,$event)">
                             <input class="edit" type="button" value="同步" @click="synchronize(orderProductItem.domesticLogistics)">
-                            <input v-if="orderProductItem.state == '未签收'" class="edit" type="button" value="入库" @click="ruku(orderProductItem.domesticLogisticsId)">
+                            <input v-if="orderProductItem.domesticLogistics.state == '未签收'" class="edit" type="button" value="入库" @click="ruku(orderProductItem.domesticLogistics.domesticLogisticsId)">
                         </div>
                     </div>
                 </div>
@@ -206,8 +206,9 @@
                             <th>Amazon佣金</th>
                             <th>到账金额</th>
                             <th>采购价</th>
-                            <th>国际运费</th>
                             <th>平台佣金</th>
+                            <th>国际运费</th>
+
                             <th>利润</th>
                             <th>利润率</th>
                             <th>退货费用</th>
@@ -230,8 +231,9 @@
                             <td>{{ orderDetails.amazonCommission }}</td>
                             <td>{{ orderDetails.accountMoney }}</td>
                             <td>{{ orderDetails.purchasePrice }}</td>
-                            <td>{{ orderDetails.interFreight }}</td>
                             <td>{{ orderDetails.platformCommissions }}</td>
+                            <td>{{ orderDetails.interFreight }}</td>
+
                             <td>{{ orderDetails.orderProfit }}</td>
                             <td>{{ orderDetails.profitRate }}</td>
                             <td>{{ orderDetails.returnCost }}</td>

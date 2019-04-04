@@ -1033,6 +1033,10 @@ var vm = new Vue({
         },
         // 入库
         ruku:function (id) {
+            console.log(id);
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../amazon/neworder/formruku',
                 type: 'get',
@@ -1042,32 +1046,35 @@ var vm = new Vue({
                 dataType: 'json',
                 // contentType: "application/json",
                 success: function (r) {
-                    console.log('海关编码');
+                    console.log('入库');
                     console.log(r);
                     if (r.code == '0') {
 
-                        // layer.msg('操作成功');
-                        // layer.close(index);
-                        // vm.getOrderInfo();
+                        layer.msg('操作成功');
+                        layer.close(index);
+                        vm.getOrderInfo();
                         // vm.getWlDetails
                     } else {
                         layer.alert(r.msg);
-                        // layer.close(index);
+                        layer.close(index);
                     }
                 },
                 error: function () {
                     layer.msg("网络故障");
-                    // layer.close(index);
+                    layer.close(index);
                 }
             });
         },
         // 出库
         chuku:function (id) {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '../../amazon/neworder/formchuku',
                 type: 'get',
                 data: {
-                    orderId:id
+                    abroadLogisticsId:id
                 },
                 dataType: 'json',
                 // contentType: "application/json",
@@ -1076,18 +1083,18 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code == '0') {
 
-                        // layer.msg('操作成功');
-                        // layer.close(index);
-                        // vm.getOrderInfo();
+                        layer.msg('操作成功');
+                        layer.close(index);
+                        vm.getOrderInfo();
                         // vm.getWlDetails
                     } else {
                         layer.alert(r.msg);
-                        // layer.close(index);
+                        layer.close(index);
                     }
                 },
                 error: function () {
                     layer.msg("网络故障");
-                    // layer.close(index);
+                    layer.close(index);
                 }
             });
         }

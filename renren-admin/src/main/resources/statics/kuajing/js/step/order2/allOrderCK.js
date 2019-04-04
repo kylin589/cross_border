@@ -499,6 +499,7 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         vm.allOrderCount1 = r.allOrderCount;
+                        vm.orderStateListyc = [];
                         for (var i=0;i<r.orderStateList.length;i++){
                             if(r.orderStateList[i].dataContent == "待付款"){
                                 r.orderStateList[i].color = 'org1';
@@ -745,6 +746,9 @@ var vm = new Vue({
 
                         layer.msg('操作成功');
                         layer.close(index);
+                        vm.getOrderlist('Warehousing');
+                        // this.laypage();
+                        vm.getOrderStatenum();
                         // vm.getOrderInfo();
                         // vm.getWlDetails
                     } else {
@@ -767,7 +771,7 @@ var vm = new Vue({
                 url: '../../amazon/neworder/listchuku',
                 type: 'get',
                 data: {
-                    abroadLogisticsId:id
+                    orderId:id
                 },
                 dataType: 'json',
                 // contentType: "application/json",
@@ -778,6 +782,9 @@ var vm = new Vue({
 
                         layer.msg('操作成功');
                         layer.close(index);
+                        vm.getOrderlist('InShipped');
+                        // this.laypage();
+                        vm.getOrderStatenum();
                         // vm.getOrderInfo();
                         // vm.getWlDetails
                     } else {
@@ -805,7 +812,7 @@ var vm = new Vue({
         this.getOrderlist('InShipped');
         // this.laypage();
         this.getOrderStatenum();
-        this.getYichangList();
+        // this.getYichangList();
         // this.allShopList();
         // this.getCouList();
 
