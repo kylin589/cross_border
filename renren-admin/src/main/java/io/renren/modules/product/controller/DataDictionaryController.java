@@ -308,11 +308,11 @@ public class DataDictionaryController extends AbstractController {
         //定义一个变量 全部的总和
         int allOrderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq(getDeptId()!=1L,"dept_id",getDeptId()));
         for (DataDictionaryEntity orderState : orderStateList) {
-            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("order_status",orderState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()).eq("is_old",0));
+            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("order_status",orderState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()));
             orderState.setCount(orderCount);
         }
         for (DataDictionaryEntity abnormalState : abnormalStateList) {
-            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("abnormal_status",abnormalState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()).eq("is_old",0));
+            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("abnormal_status",abnormalState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()));
             abnormalState.setCount(orderCount);
         }
         orderStateList.addAll(abnormalStateList);

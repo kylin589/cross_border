@@ -622,18 +622,18 @@ public class NewOrderController extends AbstractController {
      */
     @RequestMapping("/updateState")
     public R updateState(@RequestBody OrderVM orderVM){
-        if("仓库已入库".equals(orderVM.getOrderState())){
-            //获取可用余额
-            SysDeptEntity dept = deptService.selectById(getDeptId());
-            if(dept.getAvailableBalance().compareTo(new BigDecimal(500.00)) != 1){
-                return R.error("余额不足，请联系公司管理员及时充值后再次尝试");
-            }
-            //推送订单
-//            Map<String,String> result = newOrderService.pushOrder(orderVM.amazonOrderId,orderVM.packageType,orderVM.channelName);
-//            if("false".equals(result.get("code"))){
-//                return R.error("订单推送失败,错误原因：" + result.get("msg"));
+//        if("仓库已入库".equals(orderVM.getOrderState())){
+//            //获取可用余额
+//            SysDeptEntity dept = deptService.selectById(getDeptId());
+//            if(dept.getBalance().compareTo(new BigDecimal(500.00)) != 1){
+//                return R.error("余额不足，请联系公司管理员及时充值后再次尝试");
 //            }
-        }
+//            //推送订单
+////            Map<String,String> result = newOrderService.pushOrder(orderVM.amazonOrderId,orderVM.packageType,orderVM.channelName);
+////            if("false".equals(result.get("code"))){
+////                return R.error("订单推送失败,错误原因：" + result.get("msg"));
+////            }
+//        }
         boolean flag = newOrderService.updateState(orderVM.getOrderId(),orderVM.getOrderState());
         if(flag){
             //添加操作日志
