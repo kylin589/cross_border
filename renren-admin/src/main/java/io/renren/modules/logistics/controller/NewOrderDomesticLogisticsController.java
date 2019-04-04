@@ -53,6 +53,7 @@ public class NewOrderDomesticLogisticsController extends AbstractController{
 //    @RequiresPermissions("amazon:neworderdomesticlogistics:save")
     public R addLogistics(@RequestBody NewOrderDomesticLogisticsEntity newOrderDomesticLogistics){
         newOrderDomesticLogistics.setCreateTime(new Date());
+        newOrderDomesticLogistics.setState("未签收");
         NewOrderEntity orderEntity = newOrderService.selectById(newOrderDomesticLogistics.getOrderId());
         if(StringUtils.isNotBlank(newOrderDomesticLogistics.getWaybill())){
             orderEntity.setDomesticWaybill(newOrderDomesticLogistics.getWaybill());

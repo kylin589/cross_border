@@ -146,8 +146,14 @@ public class OrderLogisticsTimer {
     public void calculateBalance(){
         List<SysDeptEntity> deptEntityList = deptService.selectList(null);
         for(SysDeptEntity dept : deptEntityList){
-            BigDecimal chongzhi = consumeService.consumTotal(dept.getDeptId());
-            BigDecimal koukuan = rechargeService.rechargeTotle(dept.getDeptId());
+            BigDecimal chongzhi = rechargeService.rechargeTotle(dept.getDeptId());
+            if(chongzhi == null){
+                chongzhi = new BigDecimal("0.00");
+            }
+            BigDecimal koukuan = consumeService.consumTotal(dept.getDeptId());
+            if(koukuan == null){
+                koukuan = new BigDecimal("0.00");
+            }
             dept.setBalance(chongzhi.subtract(koukuan));
         }
         deptService.updateBatchById(deptEntityList);
