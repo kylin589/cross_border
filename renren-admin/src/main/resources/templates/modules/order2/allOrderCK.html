@@ -22,18 +22,21 @@
             .search1{
                 display: flex;
                 align-items: center;
+
             }
             .search1>div{
                 flex: 1;
                 align-items: center;
+                padding-top: 10px;
             }
             .search1>div>div{
-                width: 40%;
+                width: 49%;
                 margin-bottom: 10px;
             }
             .search1 input{
                 /*width: 240px;*/
-                height: 40px;
+                height: 50px;
+                font-size: 18px;
             }
         </style>
         </head>
@@ -64,6 +67,13 @@
                     clearable>
             </el-input>
 
+            <el-input
+                    placeholder="国际物流单号"
+                    v-model="abroadWaybill"
+                    @keyup.enter.native="getOrderlist('')"
+                    clearable>
+            </el-input>
+
             <!--<input type="text" class="sousuoAreaInput" placeholder="国内物流单号" v-model="domesticWaybill">-->
             <el-input
                     placeholder="国内物流单号"
@@ -72,18 +82,13 @@
                     clearable>
             </el-input>
             <!--<input type="text" placeholder="国际物流单号" v-model="abroadWaybill">-->
-            <el-input
-                    placeholder="国际物流单号"
-                    v-model="abroadWaybill"
-                    @keyup.enter.native="getOrderlist('')"
-                    clearable>
-            </el-input>
+
         </div>
 
 
 
         <!--<button class="sousuo" @click="getOrderlist('')">搜索</button>-->
-        <button class="sousuo" style="background: #00a3e8;color: #fff;height: 60px;font-size: 20px;" @click="getOrderlist('')"><i class="el-icon-search"></i> 查询</button>
+        <button class="sousuo" style="background: #00a3e8;color: #fff;height:110px;font-size: 20px;" @click="getOrderlist('')"><i class="el-icon-search"></i> 查询</button>
 
     </div>
     <!--筛选区域-->
