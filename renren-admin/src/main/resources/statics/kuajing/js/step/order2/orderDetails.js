@@ -99,7 +99,7 @@ var vm = new Vue({
         wuliuDetails:{
             chineseName:'',
             englishName:'',
-            weight:null,
+            weight:'',
             length:1,
             width:1,
             height:1,
@@ -746,47 +746,102 @@ var vm = new Vue({
         },
         // 生成运单号
         createdNum:function () {
-            var index = layer.load();
-            var index = layer.load(1); //换了种风格
-            var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
+
             // console.log(vm.orderProductList);
-            $.ajax({
-                url: '../../amazon/neworder/createAbroadWaybill',
-                type: 'post',
-                data: JSON.stringify({
-                    orderId:this.orderid,
-                    orderItemRelationList:vm.orderProductList,
-                    amazonOrderId:vm.orderDetails.amazonOrderId,
-                    packageType:parseInt(vm.wuliuType),
-                    channelId:vm.value8,
-                    // channelName:vm.wuliuLuxian,
-                    chineseName:vm.wuliuDetails.chineseName,
-                    englishName:vm.wuliuDetails.englishName,
-                    length:parseInt(vm.wuliuDetails.length),
-                    width:parseInt(vm.wuliuDetails.width),
-                    height:parseInt(vm.wuliuDetails.height),
-                    weight:vm.wuliuDetails.weight,
-                }),
-                contentType: "application/json",
-                success: function (r) {
-                    console.log('生成单号');
-                    console.log(r);
-                    if (r.code == '0') {
-                        layer.msg('操作成功');
-                        layer.close(index);
-                        vm.getOrderInfo();
-                        vm.wuliuDetails.addyundanhao = r.newabroadLogistics.abroadWaybill;
-                        vm.wuliuDetails.addzhuizonghao = r.newabroadLogistics.trackWaybill;
-                    } else {
-                        layer.alert(r.msg);
-                        layer.close(index);
-                    }
-                },
-                error: function () {
-                    layer.msg("网络故障");
-                    layer.close(index);
+            if(JSON.stringify(vm.wuliuType) == 'null'){
+                layer.msg('物流方式为必填项')
+            }else if(vm.wuliuType == 0){
+                if(vm.wuliuDetails.chineseName == '' || vm.wuliuDetails.englishName == '' || JSON.stringify(vm.wuliuDetails.length) == 'null' || JSON.stringify(vm.wuliuDetails.width) == 'null' || vm.wuliuDetails.weight == '' || JSON.stringify(vm.value8) == 'null'){
+                    layer.msg('所有都为必填项')
+                }else {
+                    var index = layer.load();
+                    var index = layer.load(1); //换了种风格
+                    var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
+                    $.ajax({
+                        url: '../../amazon/neworder/createAbroadWaybill',
+                        type: 'post',
+                        data: JSON.stringify({
+                            orderId:this.orderid,
+                            orderItemRelationList:vm.orderProductList,
+                            amazonOrderId:vm.orderDetails.amazonOrderId,
+                            packageType:parseInt(vm.wuliuType),
+                            channelId:vm.value8,
+                            // channelName:vm.wuliuLuxian,
+                            chineseName:vm.wuliuDetails.chineseName,
+                            englishName:vm.wuliuDetails.englishName,
+                            length:parseInt(vm.wuliuDetails.length),
+                            width:parseInt(vm.wuliuDetails.width),
+                            height:parseInt(vm.wuliuDetails.height),
+                            weight:vm.wuliuDetails.weight,
+                        }),
+                        contentType: "application/json",
+                        success: function (r) {
+                            console.log('生成单号');
+                            console.log(r);
+                            if (r.code == '0') {
+                                layer.msg('操作成功');
+                                layer.close(index);
+                                vm.getOrderInfo();
+                                vm.wuliuDetails.addyundanhao = r.newabroadLogistics.abroadWaybill;
+                                vm.wuliuDetails.addzhuizonghao = r.newabroadLogistics.trackWaybill;
+                            } else {
+                                layer.alert(r.msg);
+                                layer.close(index);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
+                            layer.close(index);
+                        }
+                    });
                 }
-            });
+            }else if(vm.wuliuType == 1){
+                if(JSON.stringify(vm.value8) == 'null' || vm.wuliuDetails.chineseName == '' || vm.wuliuDetails.englishName == '' || JSON.stringify(vm.wuliuDetails.length) == 'null' || JSON.stringify(vm.wuliuDetails.width) == 'null' || vm.wuliuDetails.weight == '' || JSON.stringify(vm.itemCodeId)== 'null'){
+                    layer.msg('所有都为必填项')
+                }else {
+                    var index = layer.load();
+                    var index = layer.load(1); //换了种风格
+                    var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
+                    $.ajax({
+                        url: '../../amazon/neworder/createAbroadWaybill',
+                        type: 'post',
+                        data: JSON.stringify({
+                            orderId:this.orderid,
+                            orderItemRelationList:vm.orderProductList,
+                            amazonOrderId:vm.orderDetails.amazonOrderId,
+                            packageType:parseInt(vm.wuliuType),
+                            channelId:vm.value8,
+                            // channelName:vm.wuliuLuxian,
+                            chineseName:vm.wuliuDetails.chineseName,
+                            englishName:vm.wuliuDetails.englishName,
+                            length:parseInt(vm.wuliuDetails.length),
+                            width:parseInt(vm.wuliuDetails.width),
+                            height:parseInt(vm.wuliuDetails.height),
+                            weight:vm.wuliuDetails.weight,
+                        }),
+                        contentType: "application/json",
+                        success: function (r) {
+                            console.log('生成单号');
+                            console.log(r);
+                            if (r.code == '0') {
+                                layer.msg('操作成功');
+                                layer.close(index);
+                                vm.getOrderInfo();
+                                vm.wuliuDetails.addyundanhao = r.newabroadLogistics.abroadWaybill;
+                                vm.wuliuDetails.addzhuizonghao = r.newabroadLogistics.trackWaybill;
+                            } else {
+                                layer.alert(r.msg);
+                                layer.close(index);
+                            }
+                        },
+                        error: function () {
+                            layer.msg("网络故障");
+                            layer.close(index);
+                        }
+                    });
+                }
+            }
+
         },
         // 获取物流线路的下拉
         getWuliuXianl:function () {
