@@ -148,6 +148,7 @@
                         <!--<span><label for="">物流公司：</label><span>{{ item.destTransportCompany }}</span></span>-->
                         <!--<span><label for="">物流渠道：</label><span>{{ item.destChannel }}</span></span>-->
                         <span><label for="">线路：</label><span>{{ item.channeDisplayName }}</span></span>
+                        <span><label for="">重量：</label><span>{{ item.actualWeight }}</span></span>
                         <span><label for="">发货时间：</label><span>{{ item.shipTime }}</span></span>
 
                         <div class="fr">
@@ -426,7 +427,7 @@
                         <span><label for="">运单状态：</label><span style="color: #00a3e8"> {{ getWlDetails.state }} </span></span><br>
                         <span><label for="">中文：</label><input type="text" placeholder="中文" v-model="getWlDetails.chineseName" disabled></span>
                         <span><label for="">英文：</label><input type="text" placeholder="英文" v-model="getWlDetails.englishName" disabled></span><br>
-                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="getWlDetails.weight" disabled></span>
+                        <span><label for="">重量（kg）：</label><input type="text" placeholder="重量（kg）" v-model="getWlDetails.actualWeight" disabled></span>
                         <span style="width: 370px"><label for="">体积（cm）：</label>
                             <input class="size_input" type="text" placeholder="长（CM）" v-model="getWlDetails.length" disabled> *
                             <input class="size_input" type="text" placeholder="宽（CM）" v-model="getWlDetails.width" disabled> *
