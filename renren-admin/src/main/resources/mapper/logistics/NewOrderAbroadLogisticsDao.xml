@@ -14,6 +14,7 @@
                     <result property="state" column="state"/>
                     <result property="actualWeight" column="actual_weight"/>
                     <result property="interFreight" column="inter_freight"/>
+                    <result property="actualInterFreight" column="actual_inter_freight"/>
                     <result property="isSynchronization" column="is_synchronization"/>
                     <result property="destTransportCompany" column="dest_transport_company"/>
                     <result property="destChannel" column="dest_channel"/>
