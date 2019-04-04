@@ -8,10 +8,11 @@
                     <result property="relationshipId" column="relationship_id"/>
                     <result property="abroadLogisticsId" column="abroad_logistics_id"/>
                     <result property="itemId" column="item_id"/>
-                    <result property="productId" column="product_id"/>
+                    <result property="itemCodeId" column="item_code_id"/>
                     <result property="orderItemNumber" column="order_item_number"/>
                     <result property="itemQuantity" column="item_quantity"/>
                     <result property="productPrice" column="product_price"/>
+                    <result property="usdPrice" column="usd_price"/>
                     <result property="itemWeight" column="item_weight"/>
                     <result property="itemCode" column="item_code"/>
                     <result property="itemChineseName" column="item_chinese_name"/>
@@ -19,7 +20,6 @@
                     <result property="itemCnMaterial" column="item_cn_material"/>
                     <result property="itemEnMaterial" column="item_en_material"/>
                     <result property="productTitle" column="product_title"/>
-                    <result property="productAsin" column="product_asin"/>
                     <result property="procuctImageUrl" column="procuct_image_url"/>
                     <result property="productSku" column="product_sku"/>
                     <result property="createTime" column="create_time"/>

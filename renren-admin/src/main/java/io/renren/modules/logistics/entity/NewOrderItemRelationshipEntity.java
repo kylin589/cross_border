@@ -34,7 +34,7 @@ public class NewOrderItemRelationshipEntity implements Serializable {
             /**
          * 产品id
          */
-            private Long productId;
+            private Long itemCodeId;
             /**
          * 货品数量
          */
@@ -44,9 +44,14 @@ public class NewOrderItemRelationshipEntity implements Serializable {
          */
             private String itemQuantity;
             /**
-         * 关联货品的数量
+         * 关联货品单价
          */
             private BigDecimal productPrice;
+         /**
+         *  美元价格
+         */
+         private BigDecimal usdPrice;
+
             /**
          * 关联货品的重量
          */
@@ -75,10 +80,7 @@ public class NewOrderItemRelationshipEntity implements Serializable {
          * 关联货品的标题
          */
             private String productTitle;
-            /**
-         * 货品的asin码
-         */
-            private String productAsin;
+
             /**
          * 关联货品的图片地址
          */
@@ -131,20 +133,10 @@ public class NewOrderItemRelationshipEntity implements Serializable {
         public Long getItemId() {
             return itemId;
         }
-            /**
-         * 设置：产品id
-         */
-        public void setProductId(Long productId) {
-            this.productId = productId;
-        }
 
-        /**
-         * 获取：产品id
-         */
-        public Long getProductId() {
-            return productId;
-        }
-            /**
+
+
+    /**
          * 设置：货品数量
          */
         public void setOrderItemNumber(Integer orderItemNumber) {
@@ -274,19 +266,7 @@ public class NewOrderItemRelationshipEntity implements Serializable {
         public String getProductTitle() {
             return productTitle;
         }
-            /**
-         * 设置：货品的asin码
-         */
-        public void setProductAsin(String productAsin) {
-            this.productAsin = productAsin;
-        }
 
-        /**
-         * 获取：货品的asin码
-         */
-        public String getProductAsin() {
-            return productAsin;
-        }
             /**
          * 设置：关联货品的图片地址
          */
@@ -325,5 +305,22 @@ public class NewOrderItemRelationshipEntity implements Serializable {
          */
         public Date getCreateTime() {
             return createTime;
+        }
+
+
+    public BigDecimal getUsdPrice() {
+        return usdPrice;
+    }
+
+    public void setUsdPrice(BigDecimal usdPrice) {
+        this.usdPrice = usdPrice;
+    }
+
+    public Long getItemCodeId() {
+            return itemCodeId;
+        }
+
+        public void setItemCodeId(Long itemCodeId) {
+            this.itemCodeId = itemCodeId;
         }
     }

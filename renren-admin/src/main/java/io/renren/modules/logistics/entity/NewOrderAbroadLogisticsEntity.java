@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
         import java.math.BigDecimal;
     import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 国际物流
@@ -141,6 +142,9 @@ public class NewOrderAbroadLogisticsEntity implements Serializable {
             private int isDeleted;//是否销毁 0-未销毁；1-已销毁
         @TableField(exist = false)
         private String channeDisplayName;
+
+        @TableField(exist = false)
+        private List<NewOrderItemRelationshipEntity> orderItemRelationList;
 
         public String getChanneDisplayName() {
             return channeDisplayName;
@@ -520,5 +524,13 @@ public class NewOrderAbroadLogisticsEntity implements Serializable {
 
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    public List<NewOrderItemRelationshipEntity> getOrderItemRelationList() {
+        return orderItemRelationList;
+    }
+
+    public void setOrderItemRelationList(List<NewOrderItemRelationshipEntity> orderItemRelationList) {
+        this.orderItemRelationList = orderItemRelationList;
     }
 }
