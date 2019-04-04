@@ -177,13 +177,14 @@
                 <span v-if="JSON.stringify(item.abroadRemark) != 'null'" :title="item.abroadRemark" style="cursor: pointer">
                     <img src="${request.contextPath}/statics/kuajing/img/jinggao.png" alt="item.abroadRemark" style="width: 15px;height: 15px">
                 </span>
+                <span v-if="JSON.stringify(item.generalRemark) != 'null'" :title="item.generalRemark" style="cursor: pointer">
+                    <img src="${request.contextPath}/statics/kuajing/img/beizhu.png" alt="item.generalRemark" style="width: 15px;height: 15px">
+                </span>
                 <!--<el-tooltip v-if="JSON.stringify(item.abroadRemark) != 'null'" :content="item.generalRemark" placement="right-end" effect="light">-->
 
                 <!--</el-tooltip>-->
                 <a :lay-href="'modules/order2/orderDetailsCK.html?orderid='+item.orderId+'page='+proCurr" layadmin-event="message" :lay-text="item.orderId" style="cursor: pointer">{{ item.amazonOrderId }}</a>
-                <span v-if="JSON.stringify(item.generalRemark) != 'null'" :title="item.generalRemark" style="cursor: pointer">
-                    <img src="${request.contextPath}/statics/kuajing/img/beizhu.png" alt="item.generalRemark" style="width: 15px;height: 15px">
-                </span>
+
                 <!--<el-tooltip v-if="JSON.stringify(item.generalRemark) != 'null'" :content="item.generalRemark" placement="right-end" effect="light">-->
                     <!---->
                 <!--</el-tooltip>-->

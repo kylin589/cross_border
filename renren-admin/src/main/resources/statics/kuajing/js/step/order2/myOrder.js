@@ -354,7 +354,7 @@ var vm = new Vue({
         getOrderStatenum:function (event) {
             // $(event.target).
             $.ajax({
-                url: '../../product/datadictionary/allNewOrderStateList',
+                url: '../../product/datadictionary/myNewOrderStateList',
                 type: 'get',
                 data: {},
                 dataType: 'json',

@@ -724,6 +724,72 @@ var vm = new Vue({
                 }
             });
         },
+        // 入库
+        ruku:function (id) {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+            $.ajax({
+                url: '../../amazon/neworder/listruku',
+                type: 'get',
+                data: {
+                    orderId:id
+                },
+                dataType: 'json',
+                // contentType: "application/json",
+                success: function (r) {
+                    // console.log('海关编码');
+                    // console.log(r);
+                    if (r.code == '0') {
+
+                        layer.msg('操作成功');
+                        layer.close(index);
+                        // vm.getOrderInfo();
+                        // vm.getWlDetails
+                    } else {
+                        layer.alert(r.msg);
+                        layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    layer.close(index);
+                }
+            });
+        },
+        // 出库
+        chuku:function () {
+            var index = layer.load();
+            var index = layer.load(1); //换了种风格
+            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+            $.ajax({
+                url: '../../amazon/neworder/listchuku',
+                type: 'get',
+                data: {
+                    orderId:id
+                },
+                dataType: 'json',
+                // contentType: "application/json",
+                success: function (r) {
+                    // console.log('海关编码');
+                    // console.log(r);
+                    if (r.code == '0') {
+
+                        layer.msg('操作成功');
+                        layer.close(index);
+                        // vm.getOrderInfo();
+                        // vm.getWlDetails
+                    } else {
+                        layer.alert(r.msg);
+                        layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    layer.close(index);
+                }
+            });
+        },
         // 入库回车
         ruku:function (id) {
             var index = layer.load();

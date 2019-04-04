@@ -214,7 +214,16 @@
                 </span></td>
             <td class="imgtd" v-if="item.productImageUrl"><img :src="item.productImageUrl" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
             <td class="imgtd" v-if="!item.productImageUrl"><img src="../../statics/kuajing/img/img1.jpg" alt="" @mouseover="imgMouover" @mouseout="imgMouout"></td>
-            <td><a :lay-href="'modules/order2/orderDetailsCG.html?orderid='+item.orderId+'page='+proCurr" layadmin-event="message" :lay-text="item.orderId" style="cursor: pointer">{{ item.amazonOrderId }}</a> <br/>
+            <td>
+                <span v-if="JSON.stringify(item.abroadRemark) != 'null'" :title="item.abroadRemark" style="cursor: pointer">
+                    <img src="${request.contextPath}/statics/kuajing/img/jinggao.png" alt="item.abroadRemark" style="width: 15px;height: 15px">
+                </span>
+                <span v-if="JSON.stringify(item.generalRemark) != 'null'" :title="item.generalRemark" style="cursor: pointer">
+                    <img src="${request.contextPath}/statics/kuajing/img/beizhu.png" alt="item.generalRemark" style="width: 15px;height: 15px">
+                </span>
+                <a :lay-href="'modules/order2/orderDetailsCG.html?orderid='+item.orderId+'page='+proCurr" layadmin-event="message" :lay-text="item.orderId" style="cursor: pointer">{{ item.amazonOrderId }}</a>
+
+                <br/>
                 <span class="brSpan">
                     <img src="${request.contextPath}/statics/kuajing/img/yamaxun.jpg" alt="">
                     {{ item.shopName }}

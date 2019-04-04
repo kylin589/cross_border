@@ -210,6 +210,7 @@ var vm = new Vue({
                         // }
                         // vm.quxiaoJijian = r.orderDTO.shipAddress;
                         // console.log(vm.quxiaoJijian);
+                        vm.orderProductList = [];
                         for (var i = 0;i<vm.orderDetails.orderProductList.length;i++){
                             var numberList = [];
                             for (var j = 0;j<=vm.orderDetails.orderProductList[i].orderItemNumber;j++){
@@ -662,15 +663,16 @@ var vm = new Vue({
             });
         },
         // 同步国际运单
-        tongbu:function () {
+        tongbu:function (id) {
             var index = layer.load();
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
-                url: '../../product/order/synchronization',
+                url: '../../amazon/neworder/synchronization',
                 type: 'get',
                 data: {
-                    orderId:this.orderid
+                    orderId:this.orderid,
+                    abroadLogisticsId:id
                 },
                 dataType: 'json',
                 success: function (r) {
@@ -747,7 +749,7 @@ var vm = new Vue({
             var index = layer.load();
             var index = layer.load(1); //换了种风格
             var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
-            console.log(vm.orderProductList);
+            // console.log(vm.orderProductList);
             $.ajax({
                 url: '../../amazon/neworder/createAbroadWaybill',
                 type: 'post',
@@ -890,6 +892,9 @@ var vm = new Vue({
         dayin:function (i,id) {
             var url = vm.orderDetails.abroadLogisticsList[i].printUrl;
             if(!url){
+                var index = layer.load();
+                var index = layer.load(1); //换了种风格
+                var index = layer.load(2, {time: 10*100000}); //又换了种风格，并且设定最长等待10秒
                 $.ajax({
                     url: '../../amazon/neworder/printLogisticAbroad',
                     type: 'get',
@@ -902,18 +907,20 @@ var vm = new Vue({
                         console.log('打印');
                         console.log(r);
                         if (r.code == '0') {
-                            layer.msg('操作成功');
-                            // layer.close(index);
-                            vm.getOrderInfo();
+                            // layer.msg('操作成功');
+                            layer.close(index);
+                            // vm.getOrderInfo();
                             // vm.getWlDetails
+                            window.open(r.url);
+
                         } else {
                             layer.alert(r.msg);
-                            // layer.close(index);
+                            layer.close(index);
                         }
                     },
                     error: function () {
                         layer.msg("网络故障");
-                        // layer.close(index);
+                        layer.close(index);
                     }
                 });
             }else {
@@ -967,6 +974,66 @@ var vm = new Vue({
                 }
             })
 
+        },
+        // 入库
+        ruku:function (id) {
+            $.ajax({
+                url: '../../amazon/neworder/formruku',
+                type: 'get',
+                data: {
+                    orderId:id
+                },
+                dataType: 'json',
+                // contentType: "application/json",
+                success: function (r) {
+                    console.log('海关编码');
+                    console.log(r);
+                    if (r.code == '0') {
+
+                        // layer.msg('操作成功');
+                        // layer.close(index);
+                        // vm.getOrderInfo();
+                        // vm.getWlDetails
+                    } else {
+                        layer.alert(r.msg);
+                        // layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    // layer.close(index);
+                }
+            });
+        },
+        // 出库
+        chuku:function (id) {
+            $.ajax({
+                url: '../../amazon/neworder/formchuku',
+                type: 'get',
+                data: {
+                    orderId:id
+                },
+                dataType: 'json',
+                // contentType: "application/json",
+                success: function (r) {
+                    console.log('海关编码');
+                    console.log(r);
+                    if (r.code == '0') {
+
+                        // layer.msg('操作成功');
+                        // layer.close(index);
+                        // vm.getOrderInfo();
+                        // vm.getWlDetails
+                    } else {
+                        layer.alert(r.msg);
+                        // layer.close(index);
+                    }
+                },
+                error: function () {
+                    layer.msg("网络故障");
+                    // layer.close(index);
+                }
+            });
         }
     },
     created:function () {
