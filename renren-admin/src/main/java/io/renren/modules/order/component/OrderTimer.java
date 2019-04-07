@@ -382,9 +382,10 @@ public class OrderTimer {
                                     String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress1;
                                     addressEntity.setShipAddressLine1(shipaddress1);
                                     addressEntity.setShipAddressDetail(detail);
-                                } else if (shipaddress2 != null) {
+                                }
+                                if (shipaddress2 != null) {
                                     String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress2;
-                                    addressEntity.setShipAddressLine1(shipaddress2);
+                                    addressEntity.setShipAddressLine2(shipaddress2);
                                     addressEntity.setShipAddressDetail(detail);
                                 } else {
                                     String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict;
