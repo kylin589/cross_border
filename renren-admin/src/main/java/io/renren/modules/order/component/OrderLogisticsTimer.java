@@ -22,6 +22,7 @@ import io.renren.modules.logistics.service.AbroadLogisticsService;
 import io.renren.modules.logistics.service.NewOrderAbroadLogisticsService;
 import io.renren.modules.logistics.service.SubmitLogisticsService;
 import io.renren.modules.logistics.util.AbroadLogisticsUtil;
+import io.renren.modules.logistics.util.NewAbroadLogisticsSFCUtil;
 import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
 import io.renren.modules.logistics.util.XmlUtils;
 import io.renren.modules.product.entity.NewOrderEntity;
@@ -230,6 +231,53 @@ public class OrderLogisticsTimer {
     }
     @Async("taskExecutor")
     public void santai(NewOrderAbroadLogisticsEntity abroad){
+        Map<String,String> map= NewAbroadLogisticsSFCUtil.getFeeByOrderCode(abroad.getAbroadWaybill());
+        if(!"false".equals(map.get("code"))) {
+            //总费用
+            String totalFee= map.get("totalFee");
+            //国际运费
+            String interFee = map.get("baseFee");
+           /* //追踪号
+            String trackingNumber= map.get("TrackingNumber");*/
+            //实际重量
+/*
+            String chargeWeight=map.get("ChargeWeight");
+*/
+          /*  if(StringUtils.isNotBlank(trackingNumber)){
+                //NewOrderEntity newOrderEntity = newOrderService.selectById(abroad.getOrderId());
+                abroad.setTrackWaybill(trackingNumber);
+            }*/
+           /* if(StringUtils.isNotBlank(chargeWeight)){
+                BigDecimal weight = new BigDecimal(chargeWeight);
+                weight = weight.multiply(new BigDecimal("1.1").setScale(3,BigDecimal.ROUND_HALF_UP));
+                abroad.setActualWeight(weight.toString());
+            }*/
+            if(StringUtils.isNotBlank(totalFee)){
+                //国际运费
+                BigDecimal addFreight = new BigDecimal(interFee).multiply(new BigDecimal("0.1")).setScale(2,4);
+                BigDecimal interFreight = new BigDecimal(totalFee).add(addFreight);
+                abroad.setInterFreight(interFreight);
+                abroad.setActualInterFreight(new BigDecimal(totalFee));
+                NewOrderEntity newOrderEntity = newOrderService.selectById(abroad.getOrderId());
+                //计算国际运费、平台佣金、利润
+                BigDecimal oldFreight = newOrderEntity.getInterFreight();
+                if(oldFreight == null){
+                    oldFreight = new BigDecimal("0.00");
+                }
+                BigDecimal newFreight = oldFreight.add(interFreight);
+                newOrderEntity.setInterFreight(newFreight);
+                //利润 到账-国际运费-采购价-平台佣金
+                BigDecimal orderProfit = newOrderEntity.getAccountMoneyCny().subtract(newOrderEntity.getPurchasePrice()).subtract(interFreight).subtract(newOrderEntity.getPlatformCommissions()).setScale(2,BigDecimal.ROUND_HALF_UP);
+                newOrderEntity.setOrderProfit(orderProfit);
+                //利润率
+                BigDecimal profitRate = orderProfit.divide(newOrderEntity.getOrderMoneyCny(),2,BigDecimal.ROUND_HALF_UP);
+                newOrderEntity.setProfitRate(profitRate);
+                newOrderService.deductionYF(abroad);
+                newOrderService.updateById(newOrderEntity);
+            }
+            newOrderAbroadLogisticsService.updateById(abroad);
+        }
+
 
     }
 

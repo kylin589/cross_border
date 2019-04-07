@@ -8,6 +8,10 @@ package io.renren.modules.logistics.util.shiprate;
 
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -16,14 +20,13 @@ import java.util.logging.Logger;
  * Generated source version: 2.7.14
  * 
  */
-
 @WebService(
                       serviceName = "ShipRate",
                       portName = "ShipRateSOAP",
                       targetNamespace = "http://www.example.org/ShipRate/",
                       wsdlLocation = "http://www.sfcservice.com/ishipsvc/web-service?wsdl",
                       endpointInterface = "io.renren.modules.logistics.util.shiprate.ShipRate")
-                      
+
 public class ShipRateImpl implements ShipRate {
 
     private static final Logger LOG = Logger.getLogger(ShipRateImpl.class.getName());
@@ -45,61 +48,106 @@ public class ShipRateImpl implements ShipRate {
 
 
 
-    /* (non-Javadoc)
+
+
+
+
+    /* *//* *//**//* (non-Javadoc)
      * @see org.example.shiprate.ShipRate#getFeeByOrderCode(org.example.shiprate.HeaderRequest  headerRequest ,)java.lang.String  orderCode ,)java.lang.String  ask ,)java.lang.String  sysTime ,)java.lang.String  msg ,)java.lang.String  baseFee ,)java.lang.String  regFee ,)java.lang.String  dealFee ,)java.lang.String  insurance ,)java.lang.String  totalFee ,)java.lang.String  currencyCode ,)java.lang.String  chargebackTime ,)java.lang.String  chargebackWorkDay ,)java.lang.String  shipTypeCode ,)java.lang.String  subShipType ,)java.lang.String  waybillCode ,)java.lang.String  discount ,)java.util.List<org.example.shiprate.OtherFee>  otherFee ,)java.lang.String  originBaseFee ,)java.lang.String  originAddons ,)java.lang.String  stDealFee ,)java.lang.String  stRegFee ,)java.lang.String  feeWeight )*
      */
-    public void getFeeByOrderCode(HeaderRequest headerRequest, Holder<String> orderCode, Holder<String> ask, Holder<String> sysTime, Holder<String> msg, Holder<String> baseFee, Holder<String> regFee, Holder<String> dealFee, Holder<String> insurance, Holder<String> totalFee, Holder<String> currencyCode, Holder<String> chargebackTime, Holder<String> chargebackWorkDay, Holder<String> shipTypeCode, Holder<String> subShipType, Holder<String> waybillCode, Holder<String> discount, Holder<java.util.List<OtherFee>> otherFee, Holder<String> originBaseFee, Holder<String> originAddons, Holder<String> stDealFee, Holder<String> stRegFee, Holder<String> feeWeight) {
+    public Map<String, String> getFeeByOrderCode(HeaderRequest headerRequest, Holder<String> orderCode, Holder<String> ask, Holder<String> sysTime, Holder<String> msg, Holder<String> baseFee, Holder<String> regFee, Holder<String> dealFee, Holder<String> insurance, Holder<String> totalFee, Holder<String> currencyCode, Holder<String> chargebackTime, Holder<String> chargebackWorkDay, Holder<String> shipTypeCode, Holder<String> subShipType, Holder<String> waybillCode, Holder<String> discount, Holder<List<OtherFee>> otherFee, Holder<String> originBaseFee, Holder<String> originAddons, Holder<String> stDealFee, Holder<String> stRegFee, Holder<String> feeWeight) {
+        Map<String,String> map=new HashMap<>();
         LOG.info("Executing operation getFeeByOrderCode");
         System.out.println(headerRequest);
         System.out.println(orderCode.value);
         try {
             String askValue = "";
             ask.value = askValue;
+            map.put("ask",ask.toString());
+
             String sysTimeValue = "";
             sysTime.value = sysTimeValue;
+            map.put("sysTime",sysTime.toString());
+
             String msgValue = "";
             msg.value = msgValue;
             String baseFeeValue = "";
             baseFee.value = baseFeeValue;
+            map.put("baseFee",baseFee.toString());
+
             String regFeeValue = "";
             regFee.value = regFeeValue;
+            map.put("regFee",regFee.toString());
+
             String dealFeeValue = "";
             dealFee.value = dealFeeValue;
+            map.put("dealFee",dealFee.toString());
+
             String insuranceValue = "";
             insurance.value = insuranceValue;
+            map.put("insurance",insurance.toString());
+
             String totalFeeValue = "";
             totalFee.value = totalFeeValue;
             System.out.println("总运费:"+totalFee.value);
+            map.put("totalFee",totalFee.toString());
             String currencyCodeValue = "";
             currencyCode.value = currencyCodeValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String chargebackTimeValue = "";
             chargebackTime.value = chargebackTimeValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String chargebackWorkDayValue = "";
             chargebackWorkDay.value = chargebackWorkDayValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String shipTypeCodeValue = "";
             shipTypeCode.value = shipTypeCodeValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String subShipTypeValue = "";
             subShipType.value = subShipTypeValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String waybillCodeValue = "";
             waybillCode.value = waybillCodeValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String discountValue = "";
             discount.value = discountValue;
+            map.put("stDealFee",stDealFee.toString());
+
             java.util.List<OtherFee> otherFeeValue = null;
             otherFee.value = otherFeeValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String originBaseFeeValue = "";
             originBaseFee.value = originBaseFeeValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String originAddonsValue = "";
             originAddons.value = originAddonsValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String stDealFeeValue = "";
             stDealFee.value = stDealFeeValue;
+            map.put("stDealFee",stDealFee.toString());
+
             String stRegFeeValue = "";
             stRegFee.value = stRegFeeValue;
+            map.put("stRegFee",stRegFee.toString());
             String feeWeightValue = "";
             feeWeight.value = feeWeightValue;
+            map.put("feeWeight",feeWeight.toString());
         } catch (Exception ex) {
+            map.put("code","false");
+            map.put("msg","网络发生故障异常!");
             ex.printStackTrace();
             throw new RuntimeException(ex);
         }
+        return map;
     }
 
 

@@ -96,25 +96,37 @@ public final class NewAbroadLogisticsSFCUtil {
 
 
 
-				/* port.getFeeByOrderCode(_getFeeByOrderCode_headerRequest,
-				 _getFeeByOrderCode_orderCode, _getFeeByOrderCode_ask,
+				map=port.getFeeByOrderCode(_getFeeByOrderCode_headerRequest,
+						//三态提供的跟踪号
+				 _getFeeByOrderCode_orderCode,
+						//是否成功标识（成功：Success,失败：Error）
+						_getFeeByOrderCode_ask,
+                   //系统返回数据时间        //结果提示信息
 				 _getFeeByOrderCode_sysTime, _getFeeByOrderCode_msg,
+				 //基本费用                 //挂号费
 				 _getFeeByOrderCode_baseFee, _getFeeByOrderCode_regFee,
+				 //处理费                   //保险费
 				 _getFeeByOrderCode_dealFee, _getFeeByOrderCode_insurance,
+				 //总费用
 				 _getFeeByOrderCode_totalFee,
+				 //币种
 				 _getFeeByOrderCode_currencyCode,
+				 //扣费实际时间
 				 _getFeeByOrderCode_chargebackTime,
+				 //扣费工作日
 				 _getFeeByOrderCode_chargebackWorkDay,
 				 _getFeeByOrderCode_shipTypeCode,
 				 _getFeeByOrderCode_subShipType,
 				 _getFeeByOrderCode_waybillCode,
+					//	用户折扣              //其它费用
 				 _getFeeByOrderCode_discount, _getFeeByOrderCode_otherFee,
+				 //折扣前基本费
 				 _getFeeByOrderCode_originBaseFee,
+				 //折扣前燃油附加费
 				 _getFeeByOrderCode_originAddons,
+				 //折扣前处理费                 //折扣前挂号费
 				 _getFeeByOrderCode_stDealFee, _getFeeByOrderCode_stRegFee,
-				 _getFeeByOrderCode_feeWeight);*/
-
-
+				 _getFeeByOrderCode_feeWeight);
 
 			} catch (Exception e) {
 				map.put("code","false");
@@ -168,24 +180,12 @@ public final class NewAbroadLogisticsSFCUtil {
 
 	/**
 	 * 获取跟踪号
-	 * @param args
+	 * @param
 	 * @return
 	 */
-	public static Map<String,String> searchOrder(String[] args){
+	public static Map<String,String> searchOrder(){
 		// TODO Auto-generated method stub
 		URL wsdlURL = ShipRate_Service.WSDL_LOCATION;
-//		if (args.length > 0 && args[0] != null && !"".equals(args[0])) {
-//			File wsdlFile = new File(args[0]);
-//			try {
-//				if (wsdlFile.exists()) {
-//					wsdlURL = wsdlFile.toURI().toURL();
-//				} else {
-//					wsdlURL = new URL(args[0]);
-//				}
-//			} catch (MalformedURLException e) {
-//				e.printStackTrace();
-//			}
-//		}
 		ShipRate_Service ss = new ShipRate_Service(wsdlURL, SERVICE_NAME);
 		ShipRate port = ss.getShipRateSOAP();
 		{
@@ -208,7 +208,8 @@ public final class NewAbroadLogisticsSFCUtil {
 						.searchOrder(_searchOrdersRequest);
                  OrderInfoArray orderInfoArrays=_searchOrder__return.getOrderInfo();
 				System.out.println(orderInfoArrays.getOrderCode());
-				System.out.println(orderInfoArrays.getTrackNumber());
+				System.out.println(orderInfoArrays.getTrackNumber());//获取跟踪号
+				System.out.println(orderInfoArrays.getGoodsDetails().get(0).getDetailWeight());
 				System.out.println(orderInfoArrays.getOrderStatus()+orderInfoArrays.getOrderStatusCn());
 
 			} catch (Exception e) {
@@ -499,8 +500,8 @@ public final class NewAbroadLogisticsSFCUtil {
 //		pushOrder2();
 //		String url=print("WW3053904010001",1,"pdf",1,1);
 //		System.out.println(url);
-//		searchOrder(args);
-		getFeeByOrderCode("SFC3WW3053904040003");
+		searchOrder();
+//		getFeeByOrderCode("SFC3WW3053904040003");
 //		updateOrder("WW3053904040003","confirmed");
 //		updateOrderStatus(args);
 	}
