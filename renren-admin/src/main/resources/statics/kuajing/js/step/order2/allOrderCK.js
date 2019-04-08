@@ -809,7 +809,7 @@ var vm = new Vue({
         }
 
 
-        this.getOrderlist('InShipped');
+        this.getOrderlist('Purchased');
         // this.laypage();
         this.getOrderStatenum();
         // this.getYichangList();
