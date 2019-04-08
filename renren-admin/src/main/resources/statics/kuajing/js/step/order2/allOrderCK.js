@@ -491,7 +491,7 @@ var vm = new Vue({
         // 获取各状态订单数量
         getOrderStatenum:function () {
             $.ajax({
-                url: '../../product/datadictionary/allNewOrderStateList',
+                url: '../../product/datadictionary/allCKNewOrderStateList',
                 type: 'get',
                 data: {},
                 dataType: 'json',
