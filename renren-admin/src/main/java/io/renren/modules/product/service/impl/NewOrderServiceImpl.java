@@ -829,7 +829,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
 
     @Override
     public Map<String,String>  getShippingFeeDetail(String orderNumber) {
-       return NewAbroadLogisticsUtil.getShippingFeeDetail("","",orderNumber);
+       return NewAbroadLogisticsUtil.getShippingFeeDetail(orderNumber);
     }
 
    @Override

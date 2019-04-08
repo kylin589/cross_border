@@ -349,19 +349,14 @@ public class NewAbroadLogisticsUtil {
 
     /**
      * 获取运费明细
-     * @param url
-     * @param token
      * @param
      */
-    public static Map<String, String> getShippingFeeDetail(String url, String token, String orderNumber){
-        if("".equals(url) && "".equals(token)){
-            url=xs_yt_getOrderInfo;
-            token=getXsToken(xs_clientId,xs_ApiSecret);
-        }
+    public static Map<String, String> getShippingFeeDetail(String orderNumber){
+        String token=getXsToken(xs_clientId,xs_ApiSecret);
         Map<String, String> map = new HashMap<>();
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(url+orderNumber)
+                .url(xs_yt_getOrderInfo+orderNumber)
                 .get()
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Authorization", "Basic "+token)
