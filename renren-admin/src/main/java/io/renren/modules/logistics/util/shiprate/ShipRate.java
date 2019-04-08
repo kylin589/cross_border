@@ -37,7 +37,7 @@ public interface ShipRate {
     @RequestWrapper(localName = "getFeeByOrderCode", targetNamespace = "http://www.example.org/ShipRate/", className = "GetFeeByOrderCode")
     @WebMethod(action = "http://www.example.org/ShipRate/getFeeByOrderCode")
     @ResponseWrapper(localName = "getFeeByOrderCodeResponse", targetNamespace = "http://www.example.org/ShipRate/", className = "GetFeeByOrderCodeResponse")
-    public @XmlJavaTypeAdapter(XmlMapAdapter.class) Map<String, String> getFeeByOrderCode(
+    public GetFeeByOrderCodeResponse getFeeByOrderCode(
             @WebParam(name = "HeaderRequest", targetNamespace = "")
                     HeaderRequest headerRequest,
             @WebParam(mode = WebParam.Mode.INOUT, name = "orderCode", targetNamespace = "")

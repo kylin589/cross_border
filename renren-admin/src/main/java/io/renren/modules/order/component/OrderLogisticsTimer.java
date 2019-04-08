@@ -240,18 +240,18 @@ public class OrderLogisticsTimer {
            /* //追踪号
             String trackingNumber= map.get("TrackingNumber");*/
             //实际重量
-/*
-            String chargeWeight=map.get("ChargeWeight");
-*/
+
+            String chargeWeight=map.get("feeWeight");
+
           /*  if(StringUtils.isNotBlank(trackingNumber)){
                 //NewOrderEntity newOrderEntity = newOrderService.selectById(abroad.getOrderId());
                 abroad.setTrackWaybill(trackingNumber);
             }*/
-           /* if(StringUtils.isNotBlank(chargeWeight)){
+            if(StringUtils.isNotBlank(chargeWeight)){
                 BigDecimal weight = new BigDecimal(chargeWeight);
                 weight = weight.multiply(new BigDecimal("1.1").setScale(3,BigDecimal.ROUND_HALF_UP));
                 abroad.setActualWeight(weight.toString());
-            }*/
+            }
             if(StringUtils.isNotBlank(totalFee)){
                 //国际运费
                 BigDecimal addFreight = new BigDecimal(interFee).multiply(new BigDecimal("0.1")).setScale(2,4);
