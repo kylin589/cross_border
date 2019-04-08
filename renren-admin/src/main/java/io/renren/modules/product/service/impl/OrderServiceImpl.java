@@ -1851,15 +1851,54 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             if(StringUtils.isNotBlank(feedSubmissionId)){
                 try {
                     Thread.sleep(3 * 60 * 1000);
-                    abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
-                    abroadLogisticsService.updateById(abroadLogisticsEntity);
+                    //获取亚马逊后台订单状态
+                    String amazonOrderId=orderService.selectById(orderId).getAmazonOrderId();
+                    String orderStatus="";
+                    MarketplaceWebServiceOrdersConfig config=new MarketplaceWebServiceOrdersConfig();
+                    config.setServiceURL(serviceURL.get(0));
+                    MarketplaceWebServiceOrdersAsyncClient client=new MarketplaceWebServiceOrdersAsyncClient(accessKey,secretKey,"my_test","1.0",config,null);
+                    List<GetOrderRequest> requestList=new ArrayList<>();
+                    GetOrderRequest request=new GetOrderRequest();
+                    request.setSellerId(sellerId);
+                    request.setMWSAuthToken(mwsAuthToken);
+                    List<String> amazonOrderIds=new ArrayList<>();
+                    amazonOrderIds.add(amazonOrderId);
+                    request.setAmazonOrderId(amazonOrderIds);
+                    requestList.add(request);
+                    List<Object> responseList=invokeGetOrder(client,requestList);
+                    Boolean isSuccess=false;
+                    GetOrderResponse getOrderResponse=null;
+                    for(Object tempResponse:responseList){
+                        String className=tempResponse.getClass().getName();
+                        if((GetOrderResponse.class.getName()).equals(className) ==true){
+                            System.out.println("responseList类型是GetOrderResponse.");
+                            GetOrderResponse response=(GetOrderResponse) tempResponse;
+                            orderStatus=response.toXML();
+                            if(orderStatus.contains("<OrderStatus>")){
+                                orderStatus=orderStatus.substring(orderStatus.indexOf("<OrderStatus>"),orderStatus.indexOf("</OrderStatus>")).replace("<OrderStatus>","");
+                            }
+                            isSuccess=true;
+                        }else{
+                            System.out.println("responseList类型是MarketplaceWebServiceOrderException.");
+                            isSuccess=false;
+                            continue;
+                        }
+
+                    }
+                    if("Shipped".equals(orderStatus)){
+                        abroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
+                        abroadLogisticsService.insertOrUpdate(abroadLogisticsEntity);
+                    }else {
+                        Thread.sleep(3 * 60 * 1000);
+                        newamazonUpdateLogistics(sendDataMoedl, orderId);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
             }else{
                 try {
-                    Thread.sleep(2*60*1000);
+                    Thread.sleep(3*60*1000);
                     amazonUpdateLogistics(sendDataMoedl,orderId);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -1927,14 +1966,53 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         if(StringUtils.isNotBlank(feedSubmissionId)){
             try {
                 Thread.sleep(3 * 60 * 1000);
-                newAbroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
-                newOrderAbroadLogisticsService.insertOrUpdate(newAbroadLogisticsEntity);
+                //获取亚马逊后台订单状态
+                String amazonOrderId=orderService.selectById(orderId).getAmazonOrderId();
+                String orderStatus="";
+                MarketplaceWebServiceOrdersConfig config=new MarketplaceWebServiceOrdersConfig();
+                config.setServiceURL(serviceURL.get(0));
+                MarketplaceWebServiceOrdersAsyncClient client=new MarketplaceWebServiceOrdersAsyncClient(accessKey,secretKey,"my_test","1.0",config,null);
+                List<GetOrderRequest> requestList=new ArrayList<>();
+                GetOrderRequest request=new GetOrderRequest();
+                request.setSellerId(sellerId);
+                request.setMWSAuthToken(mwsAuthToken);
+                List<String> amazonOrderIds=new ArrayList<>();
+                amazonOrderIds.add(amazonOrderId);
+                request.setAmazonOrderId(amazonOrderIds);
+                requestList.add(request);
+                List<Object> responseList=invokeGetOrder(client,requestList);
+                Boolean isSuccess=false;
+                GetOrderResponse getOrderResponse=null;
+                for(Object tempResponse:responseList){
+                    String className=tempResponse.getClass().getName();
+                    if((GetOrderResponse.class.getName()).equals(className) ==true){
+                        System.out.println("responseList类型是GetOrderResponse.");
+                        GetOrderResponse response=(GetOrderResponse) tempResponse;
+                        orderStatus=response.toXML();
+                        if(orderStatus.contains("<OrderStatus>")){
+                            orderStatus=orderStatus.substring(orderStatus.indexOf("<OrderStatus>"),orderStatus.indexOf("</OrderStatus>")).replace("<OrderStatus>","");
+                        }
+                        isSuccess=true;
+                    }else{
+                        System.out.println("responseList类型是MarketplaceWebServiceOrderException.");
+                        isSuccess=false;
+                        continue;
+                    }
+
+                }
+                if("Shipped".equals(orderStatus)){
+                    newAbroadLogisticsEntity.setIsSynchronization(1);//表示同步成功
+                    newOrderAbroadLogisticsService.insertOrUpdate(newAbroadLogisticsEntity);
+                }else {
+                    Thread.sleep(3 * 60 * 1000);
+                    newamazonUpdateLogistics(sendDataMoedl, orderId);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }else{
             try {
-                Thread.sleep(2 * 60 * 1000);
+                Thread.sleep(3 * 60 * 1000);
                 newamazonUpdateLogistics(sendDataMoedl, orderId);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -2311,5 +2389,55 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         String mwsAuthToken = amazonGrantEntity.getGrantToken();
         SendDataMoedl sendDataMoedl = new SendDataMoedl(list,serviceURL,marketplaceIds,sellerId,mwsAuthToken);
         return sendDataMoedl;
+    }
+
+    /**
+     * 获取单个订单的方法
+     * @param client
+     * @param requestList
+     * @return
+     */
+    public static List<Object> invokeGetOrder(MarketplaceWebServiceOrdersAsync client,List<GetOrderRequest> requestList){
+        // Call the service async.
+        List<Future<GetOrderResponse>> futureList =
+                new ArrayList<Future<GetOrderResponse>>();
+        for (GetOrderRequest request : requestList) {
+            Future<GetOrderResponse> future =
+                    client.getOrderAsync(request);
+            futureList.add(future);
+        }
+        List<Object> responseList = new ArrayList<Object>();
+        for (Future<GetOrderResponse> future : futureList) {
+            Object xresponse;
+            try {
+                GetOrderResponse response = future.get();
+                ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
+                // We recommend logging every the request id and timestamp of every call.
+                System.out.println("Response:");
+                System.out.println("RequestId: " + rhmd.getRequestId());
+                System.out.println("Timestamp: " + rhmd.getTimestamp());
+                String responseXml = response.toXML();
+                System.out.println(responseXml);
+                xresponse = response;
+
+                xresponse = response;
+            } catch (ExecutionException ee) {
+                Throwable cause = ee.getCause();
+                if (cause instanceof MarketplaceWebServiceOrdersException) {
+                    // Exception properties are important for diagnostics.
+                    MarketplaceWebServiceOrdersException ex =
+                            (MarketplaceWebServiceOrdersException) cause;
+                    ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
+
+                    xresponse = ex;
+                } else {
+                    xresponse = cause;
+                }
+            } catch (Exception e) {
+                xresponse = e;
+            }
+            responseList.add(xresponse);
+        }
+        return responseList;
     }
 }
