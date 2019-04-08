@@ -319,6 +319,29 @@ public class DataDictionaryController extends AbstractController {
         return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
     }
     /**
+     * @methodname: myOrderStateList 仓库所有订单状态获取
+     * @return: io.renren.common.utils.R
+     * @auther: wdh
+     * @date: 2018/12/3 10:02
+     */
+    @RequestMapping("/allCKNewOrderStateList")
+    public R allCKNewOrderStateList() {
+        List<DataDictionaryEntity> orderStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "NEW_AMAZON_ORDER_STATE").ne("data_number","Pending").ne("data_number","Unshipped").ne("data_number","Shipped").orderBy(true, "data_sort", true));
+        List<DataDictionaryEntity> abnormalStateList = dataDictionaryService.selectList(new EntityWrapper<DataDictionaryEntity>().eq("data_type", "ORDER_ABNORMAL_STATE").orderBy(true, "data_sort", true));
+        //定义一个变量 全部的总和
+        int allOrderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().ne("order_status","Pending").ne("order_status","Unshipped").ne("order_status","Shipped"));
+        for (DataDictionaryEntity orderState : orderStateList) {
+            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("order_status",orderState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()));
+            orderState.setCount(orderCount);
+        }
+        for (DataDictionaryEntity abnormalState : abnormalStateList) {
+            int orderCount = newOrderService.selectCount(new EntityWrapper<NewOrderEntity>().eq("abnormal_status",abnormalState.getDataNumber()).eq(getDeptId()!=1L,"dept_id",getDeptId()));
+            abnormalState.setCount(orderCount);
+        }
+        orderStateList.addAll(abnormalStateList);
+        return R.ok().put("orderStateList", orderStateList).put("allOrderCount", allOrderCount);
+    }
+    /**
      * @methodname: myOrderStateList 所有订单状态获取（旧）
      * @return: io.renren.common.utils.R
      * @auther: wdh
