@@ -405,7 +405,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         return false;
     }
     @Override
-    public Map<String,String> pushOrder(String orderNumber,String amazonOrderId, int packageType, String channelCode, String channelName, String englishName, int length, int width, int height, BigDecimal weight){
+    public Map<String,String> pushOrder(String orderNumber,String amazonOrderId, int packageType, String channelCode, String channelName,String chineseName, String englishName, int length, int width, int height, BigDecimal weight){
         NewOrderEntity neworderEntity = this.selectOne(new EntityWrapper<NewOrderEntity>().eq("amazon_order_id", amazonOrderId));
         ProductShipAddressEntity shipAddressEntity = productShipAddressService.selectOne(new EntityWrapper<ProductShipAddressEntity>().eq("amazon_order_id", amazonOrderId));
         //推送--订单基本信息
@@ -421,6 +421,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
             ApplicationInfos omsOrderDetail=new ApplicationInfos();
             omsOrderDetail.setApplicationName(englishName);
+            omsOrderDetail.setPickingName(chineseName);
             omsOrderDetail.setQty(1);
             BigDecimal UnitPrice=new BigDecimal(1);//测试用
             omsOrderDetail.setUnitPrice(UnitPrice);
@@ -877,24 +878,6 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         //推送--订单详情
         BigDecimal totalPrice=new BigDecimal(0.00);
         BigDecimal totolNum=new BigDecimal(0);
-       /* List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",amazonOrderId));
-        for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
-            GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
-            _goodsDetails.setDetailDescription("ghgdjhgj");//详细物品描述（length:1-140）ghgdjhgj
-            _goodsDetails.setDetailDescriptionCN("商品中文sss名");//详细物品中文描述（必须包含中文字符，length:1-140）商品中文sss名
-            _goodsDetails.setDetailCustomLabel(productOrderItemEntity.getProductSku());//详细物品客户自定义标签（length:1-20，不必须）SKU NAME
-            _goodsDetails.setDetailQuantity(productOrderItemEntity.getOrderItemNumber().toString());//货品总数量"2"
-            BigDecimal orderNum=new BigDecimal(productOrderItemEntity.getOrderItemNumber());
-            _goodsDetails.setDetailWorth((productOrderItemEntity.getProductPrice().multiply(countryRate).divide(usdRate).setScale(2,BigDecimal.ROUND_HALF_UP)).toString());//货品中每个货物的价格（单位美元USD）"2"
-            _goodsDetails.setHsCode(itemCode);//商品编码,海关编码（length:1-20）"15633569"////hs code1只能输入8或10位数字
-            _goodsDetails.setEnMaterial("dsdasd");//物品英文材质（length:0-50）"dsdasd"
-            _goodsDetails.setCnMaterial("daaaf");//物品中文材质（0-50）"daaaf"
-            _goodsDetailsArray.add(_goodsDetails);
-            totalPrice=(productOrderItemEntity.getProductPrice().multiply(orderNum).multiply(countryRate)).divide(usdRate);
-            totalPrice=totalPrice.add(totalPrice);
-            totolNum+=productOrderItemEntity.getOrderItemNumber();
-        }*/
-//        List<NewOrderItemRelationshipEntity> newOrderItemRelationshipEntities=newOrderItemRelationshipService.selectList(new EntityWrapper<NewOrderItemRelationshipEntity>().eq("relationship_id",relationShipId));
         for(NewOrderItemRelationshipEntity newOrderItemRelationshipEntity:list){
             GoodsDetailsArray _goodsDetails = new GoodsDetailsArray();
             newOrderItemRelationshipEntity.setItemCnMaterial(chineseName);
@@ -912,14 +895,12 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
             _goodsDetails.setCnMaterial(chineseName);//物品中文材质（0-50）"daaaf"
             _goodsDetailsArray.add(_goodsDetails);
             totalPrice=(newOrderItemRelationshipEntity.getProductPrice().multiply(orderNum).multiply(countryRate)).divide(usdRate,2,BigDecimal.ROUND_HALF_UP);
-//            totalPrice=totalPrice.add(totalPrice);
             totolNum=orderNum;
             newOrderItemRelationshipEntity.setUsdPrice(totalPrice);
             newOrderItemRelationshipEntity.setItemQuantity(orderNum.toString());
             newOrderItemRelationshipEntity.setOrderItemNumber(totolNum.intValue());
             newOrderItemRelationshipEntity.setItemCode(itemCode);
             newOrderItemRelationshipService.insert(newOrderItemRelationshipEntity);
-//            totolNum=totolNum.add(totolNum);
         }
 
         addOrderRequestInfo.setGoodsDetails(_goodsDetailsArray);
