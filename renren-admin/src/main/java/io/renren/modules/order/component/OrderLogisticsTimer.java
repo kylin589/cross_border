@@ -46,11 +46,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.sql.Wrapper;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -160,9 +162,8 @@ public class OrderLogisticsTimer {
      */
     public void getNewOrderCost(){
         EntityWrapper<NewOrderAbroadLogisticsEntity> wrapper = new EntityWrapper<NewOrderAbroadLogisticsEntity>();
-        wrapper.eq("is_deleted",0)
-               .eq("state","已发货")
-               .isNull("inter_freight");
+        wrapper.eq("state","已发货")
+                .isNull("inter_freight");
         List<NewOrderAbroadLogisticsEntity> list = newOrderAbroadLogisticsService.selectList(wrapper);
         if(list != null && list.size() >0){
             for(NewOrderAbroadLogisticsEntity newOrderAbroadLogisticsEntity : list){
@@ -230,6 +231,7 @@ public class OrderLogisticsTimer {
 
 
     }
+
     @Async("taskExecutor")
     public void santai(NewOrderAbroadLogisticsEntity abroad){
         Map<String,String> map= NewAbroadLogisticsSFCUtil.getFeeByOrderCode(abroad.getAbroadWaybill());
@@ -576,7 +578,6 @@ public class OrderLogisticsTimer {
         outfile.close();
         //进行数据上传(步骤一)
         String feedSubmissionId = submitLogisticsService.submitFeed(serviceURL.get(0),sellerId,mwsAuthToken,feedType,filePath,accessKey,secretKey);
-
             //同步成功后把物流状态改为同步
             AbroadLogisticsEntity abroadLogisticsEntity = abroadLogisticsService.selectOne(new EntityWrapper<AbroadLogisticsEntity>().eq("order_id",orderId));
             //判读亚马逊后台订单的状态
