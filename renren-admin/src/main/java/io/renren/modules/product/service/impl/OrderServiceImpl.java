@@ -1455,7 +1455,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             consumeEntity1.setDeptId(order.getDeptId());
             consumeEntity1.setDeptName(deptService.selectById(order.getDeptId()).getName());
             consumeEntity1.setUserId(order.getUserId());
-            consumeEntity1.setUserName(userService.selectById(order.getUserId()).getDisplayName());
+            if(userService.selectById(order.getUserId()) != null){
+                consumeEntity1.setUserName(userService.selectById(order.getUserId()).getDisplayName());
+            }
             consumeEntity1.setType("物流费");
             consumeEntity1.setOrderId(order.getOrderId());
             consumeEntity1.setMoney(order.getInterFreight());
@@ -1468,7 +1470,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             consumeEntity2.setDeptId(order.getDeptId());
             consumeEntity2.setDeptName(deptService.selectById(order.getDeptId()).getName());
             consumeEntity2.setUserId(order.getUserId());
-            consumeEntity2.setUserName(userService.selectById(order.getUserId()).getDisplayName());
+            if(userService.selectById(order.getUserId()) != null){
+                consumeEntity2.setUserName(userService.selectById(order.getUserId()).getDisplayName());
+            }
             consumeEntity2.setType("服务费");
             consumeEntity2.setOrderId(order.getOrderId());
             consumeEntity2.setMoney(order.getPlatformCommissions());

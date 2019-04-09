@@ -378,7 +378,8 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
                 .like(StringUtils.isNotBlank(domesticWaybill), "domestic_waybill", domesticWaybill)
                 .like(StringUtils.isNotBlank(abroadWaybill), "abroad_waybill", abroadWaybill)
                 .eq(StringUtils.isNotBlank(orderStatus), "order_status", orderStatus)
-                .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus);
+                .eq(StringUtils.isNotBlank(abnormalStatus), "abnormal_status", abnormalStatus)
+                .orderBy("buy_date",false);
         Page<NewOrderEntity> page = this.selectPage(
                 new Query<NewOrderEntity>(params).getPage(),
                 wrapper

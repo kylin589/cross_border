@@ -134,16 +134,17 @@ public class OrderLogisticsTimer {
         Date startDate = DateUtils.getTheDateNow1MonthsShort();
         List<OrderEntity> orderEntityList = orderService.selectList(
                 new EntityWrapper<OrderEntity>()
-                        .ge("buy_date",startDate).andNew()
+                        .eq("inter_freight",0).andNew()
                         .eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_WAITINGRECEIPT)
                         .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_WAREHOUSING)
                         .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_INTLSHIPPED)
+                        .or().eq("order_status", ConstantDictionary.OrderStateCode.ORDER_STATE_FINISH)
         );
         if(orderEntityList != null && orderEntityList.size() >0){
 //            new RefreshOrderThread(5548L).start();
             for(OrderEntity orderEntity : orderEntityList){
                 try {
-                    Thread.sleep(3*1000);
+                    Thread.sleep(1*1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -456,8 +457,11 @@ public class OrderLogisticsTimer {
                 orderService.insertOrUpdate(orderEntity);
                 //同步转单号
                 if(StringUtils.isNotBlank(abroadLogisticsEntity.getTrackWaybill()) && abroadLogisticsEntity.getIsSynchronization() == 0){
-                    SendDataMoedl sendDataMoedl = synchronizationZhenModel(orderEntity,abroadLogisticsEntity);
-                    amazonUpdateLogistics(sendDataMoedl,orderId);
+//                    AmazonGrantShopEntity shopEntity = amazonGrantShopService.selectById(orderEntity.getShopId());
+//                    if(shopEntity != null){
+//                        SendDataMoedl sendDataMoedl = synchronizationZhenModel(orderEntity,abroadLogisticsEntity);
+//                        amazonUpdateLogistics(sendDataMoedl,orderId);
+//                    }
                 }
             }
         }
