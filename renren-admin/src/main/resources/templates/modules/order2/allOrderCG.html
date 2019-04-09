@@ -163,7 +163,7 @@
             <!--<th>退货费用</th>-->
             <th style="width: 100px">下单时间</th>
             <th style="width: 130px;">公司名</th>
-            <th>操作</th>
+            <!--<th>操作</th>-->
         </tr>
         <tr v-for = '(item,index) in prolist'>
             <td class="orderchenc">
@@ -312,9 +312,9 @@
                 <span style="font-size: 13px;color: #666">{{item.deptName}}</span><br>
                 <span style="font-size: 13px;color: #666">操作人:{{item.userName}}</span>
             </td>
-            <td>
-                <span style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="shuaxin(item.orderId)">手动刷新</span>
-            </td>
+            <!--<td>-->
+                <!--<span style="color: #00b6e5;font-size: 13px;cursor:pointer;" @click="shuaxin(item.orderId)">手动刷新</span>-->
+            <!--</td>-->
         </tr>
     </table>
 
