@@ -4,15 +4,7 @@ import com.baomidou.mybatisplus.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.logistics.entity.NewOrderAbroadLogisticsEntity;
 import io.renren.modules.logistics.entity.NewOrderItemRelationshipEntity;
-import io.renren.modules.logistics.entity.SendDataMoedl;
-import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
 import io.renren.modules.product.entity.NewOrderEntity;
-import io.renren.modules.product.entity.OrderEntity;
-import io.renren.modules.product.vm.OrderModel;
-import io.renren.modules.sys.dto.FranchiseeStatisticsDto;
-import io.renren.modules.sys.dto.PlatformStatisticsDto;
-import io.renren.modules.sys.dto.UserStatisticsDto;
-import io.renren.modules.sys.vm.StatisticsVM;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -130,7 +122,7 @@ public interface NewOrderService extends IService<NewOrderEntity> {
     /**
      * 推送订单
      */
-    Map<String,String> pushOrder(String orderNumber,String  amazonOrderId, int packageType, String channelCode, String channelName, String englishName, int length, int width, int height, BigDecimal weight);
+    Map<String,String> pushOrder(String orderNumber,String  amazonOrderId, int packageType, String channelCode, String channelName,String chineseName, String englishName, int length, int width, int height, BigDecimal weight);
 
     /**
      * 删除订单
