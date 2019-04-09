@@ -21,11 +21,8 @@ import io.renren.modules.amazon.entity.AmazonGrantEntity;
 import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
-import io.renren.modules.amazon.service.SubmitFeedService;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.product.entity.ProductOrderItemEntity;
-import io.renren.modules.product.entity.ProductsEntity;
-import io.renren.modules.product.entity.VariantsInfoEntity;
 import io.renren.modules.product.service.OrderService;
 import io.renren.modules.product.service.ProductOrderItemService;
 import io.renren.modules.product.service.ProductsService;
@@ -366,19 +363,61 @@ public class OldOrderTimer {
                                 } else {
                                     addressEntity.setShipName("");
                                 }
-                                if (shipaddress1 != null) {
-                                    String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress1;
-                                    addressEntity.setShipAddressLine1(shipaddress1);
-                                    addressEntity.setShipAddressDetail(detail);
+                                if (shipaddress1 != null && shipaddress2!=null) {
+                                    if(shipCountry==null){
+                                        String detail=shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress1+"-"+shipaddress2;
+                                        addressEntity.setShipAddressLine1(shipaddress1+"-"+shipaddress2);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }else if(shipregion==null){
+                                        String detail=shipCountry+"-"+""+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress1+"-"+shipaddress2;
+                                        addressEntity.setShipAddressLine1(shipaddress1+"-"+shipaddress2);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }else if(shipcity==null){
+                                        String detail=shipCountry+"-"+shipregion+"-"+""+"-"+shipdistrict+"-"+shipaddress1+"-"+shipaddress2;
+                                        addressEntity.setShipAddressLine1(shipaddress1+"-"+shipaddress2);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }else if(shipdistrict==null){
+                                        String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+""+"-"+shipaddress1+"-"+shipaddress2;
+                                        addressEntity.setShipAddressLine1(shipaddress1+"-"+shipaddress2);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }
                                 }
-                                if (shipaddress2 != null) {
-                                    String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress2;
-                                    addressEntity.setShipAddressLine2(shipaddress2);
-                                    addressEntity.setShipAddressDetail(detail);
-                                } else {
-                                    String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipdistrict;
-                                    addressEntity.setShipAddressLine1("");
-                                    addressEntity.setShipAddressDetail(detail);
+                                else  if (shipaddress1 != null && shipaddress2==null) {
+                                    if(shipCountry==null){
+                                        String detail=shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress1;
+                                        addressEntity.setShipAddressLine1(shipaddress1);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }else if(shipregion==null){
+                                        String detail=shipCountry+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress1;
+                                        addressEntity.setShipAddressLine1(shipaddress1);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }else if(shipcity==null){
+                                        String detail=shipCountry+"-"+shipregion+"-"+shipdistrict+"-"+shipaddress1;
+                                        addressEntity.setShipAddressLine1(shipaddress1);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }else if(shipdistrict==null){
+                                        String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+shipaddress1;
+                                        addressEntity.setShipAddressLine1(shipaddress1);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }
+                                } else if(shipaddress1 == null && shipaddress2!=null){
+                                    if(shipCountry==null){
+                                        String detail=shipregion+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress2;
+                                        addressEntity.setShipAddressLine1(shipaddress2);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }else if(shipregion==null){
+                                        String detail=shipCountry+"-"+shipcity+"-"+shipdistrict+"-"+shipaddress2;
+                                        addressEntity.setShipAddressLine1(shipaddress2);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }else if(shipcity==null){
+                                        String detail=shipCountry+"-"+shipregion+"-"+"-"+shipdistrict+"-"+shipaddress2;
+                                        addressEntity.setShipAddressLine1(shipaddress2);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }else if(shipdistrict==null){
+                                        String detail=shipCountry+"-"+shipregion+"-"+shipcity+"-"+"-"+shipaddress2;
+                                        addressEntity.setShipAddressLine1(shipaddress2);
+                                        addressEntity.setShipAddressDetail(detail);
+                                    }
                                 }
                                 if (shipcity != null) {
                                     addressEntity.setShipCity(shipcity);
