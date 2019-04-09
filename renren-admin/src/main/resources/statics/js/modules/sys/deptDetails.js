@@ -39,7 +39,7 @@ var vm = new Vue({
         chongzhiList:[],
         proCurr:1,
         // 每页数量限制
-        pageLimit:12,
+        pageLimit:10,
         totalCount:0,
 
     },
@@ -128,8 +128,8 @@ var vm = new Vue({
                 // dataType:'json',
                 data:{
                     deptId:vm.id,
-                    page:vm.page,
-                    limit:vm.limit
+                    page:vm.proCurr,
+                    limit:vm.pageLimit
                 },
                 contentType: "application/json",
                 success: function (r) {
@@ -159,8 +159,8 @@ var vm = new Vue({
                 // dataType:'json',
                 data:{
                     deptId:vm.id,
-                    page:vm.page,
-                    limit:vm.limit
+                    page:vm.proCurr,
+                    limit:vm.pageLimit
                 },
                 contentType: "application/json",
                 success: function (r) {
@@ -168,7 +168,8 @@ var vm = new Vue({
                     console.log(r);
                     if (r.code === 0) {
                         // layer.msg('修改成功');
-                        vm.chongzhiList = r.list;
+                        vm.chongzhiList = r.page.list;
+                        vm.totalCount = r.page.totalCount;
 
                     } else {
                         layer.alert(r.msg);
@@ -192,8 +193,8 @@ var vm = new Vue({
                     count: vm.totalCount, //数据总数，从服务端得到
                     prev: '<i class="layui-icon layui-icon-left"></i>',
                     next: '<i class="layui-icon layui-icon-right"></i>',
-                    limits: [12, 24, 30],
-                    limit: 12,
+                    limits: [10, 20, 30],
+                    limit: vm.pageLimit,
                     layout: ['prev', 'page', 'next', 'limit', 'skip'],
                     jump: function (obj, first) {
                         //obj包含了当前分页的所有参数，比如：
