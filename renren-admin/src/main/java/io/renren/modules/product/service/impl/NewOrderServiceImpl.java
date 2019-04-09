@@ -3,40 +3,39 @@ package io.renren.modules.product.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
-import io.renren.modules.amazon.entity.AmazonGrantEntity;
-import io.renren.modules.amazon.entity.AmazonGrantShopEntity;
 import io.renren.modules.amazon.service.AmazonGrantService;
 import io.renren.modules.amazon.service.AmazonGrantShopService;
 import io.renren.modules.amazon.util.ConstantDictionary;
-import io.renren.modules.amazon.util.FileUtil;
 import io.renren.modules.logistics.DTO.ApplicationInfos;
 import io.renren.modules.logistics.DTO.OrderRequestData;
 import io.renren.modules.logistics.DTO.SenderInfo;
 import io.renren.modules.logistics.DTO.ShippingInfo;
-import io.renren.modules.logistics.entity.*;
+import io.renren.modules.logistics.entity.LogisticsChannelEntity;
+import io.renren.modules.logistics.entity.NewOrderAbroadLogisticsEntity;
+import io.renren.modules.logistics.entity.NewOrderItemRelationshipEntity;
 import io.renren.modules.logistics.service.*;
 import io.renren.modules.logistics.util.NewAbroadLogisticsSFCUtil;
 import io.renren.modules.logistics.util.NewAbroadLogisticsUtil;
-import io.renren.modules.logistics.util.shiprate.AddOrderRequest;
 import io.renren.modules.logistics.util.shiprate.AddOrderRequestInfoArray;
 import io.renren.modules.logistics.util.shiprate.GoodsDetailsArray;
 import io.renren.modules.order.entity.ProductShipAddressEntity;
 import io.renren.modules.order.service.NewProductShipAddressService;
 import io.renren.modules.order.service.ProductShipAddressService;
 import io.renren.modules.product.dao.NewOrderDao;
-import io.renren.modules.product.entity.*;
-
+import io.renren.modules.product.entity.DataDictionaryEntity;
+import io.renren.modules.product.entity.NewOrderEntity;
+import io.renren.modules.product.entity.NewOrderItemEntity;
+import io.renren.modules.product.entity.OrderStatisticsEntity;
 import io.renren.modules.product.service.*;
-
 import io.renren.modules.sys.entity.ConsumeEntity;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.ConsumeService;
 import io.renren.modules.sys.service.SysDeptService;
 import io.renren.modules.sys.service.SysUserService;
-
 import net.sf.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -45,16 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
-
-import java.text.SimpleDateFormat;
 import java.util.*;
-
-
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 
 
 
@@ -429,7 +420,7 @@ public class NewOrderServiceImpl extends ServiceImpl<NewOrderDao, NewOrderEntity
         List<NewOrderItemEntity> productOrderItemEntitys=newOrderItemService.selectList(new EntityWrapper<NewOrderItemEntity>().eq("amazon_order_id",neworderEntity.getAmazonOrderId()));
         for(NewOrderItemEntity productOrderItemEntity:productOrderItemEntitys){
             ApplicationInfos omsOrderDetail=new ApplicationInfos();
-            omsOrderDetail.setApplicationName(productOrderItemEntity.getProductTitle());
+            omsOrderDetail.setApplicationName(englishName);
             omsOrderDetail.setQty(1);
             BigDecimal UnitPrice=new BigDecimal(1);//测试用
             omsOrderDetail.setUnitPrice(UnitPrice);
