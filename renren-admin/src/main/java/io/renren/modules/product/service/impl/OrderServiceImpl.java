@@ -1895,7 +1895,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }else{
                 try {
                     Thread.sleep(3*60*1000);
@@ -1967,7 +1966,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             try {
                 Thread.sleep(3 * 60 * 1000);
                 //获取亚马逊后台订单状态
-                String amazonOrderId=orderService.selectById(orderId).getAmazonOrderId();
+                String amazonOrderId=newOrderService.selectById(orderId).getAmazonOrderId();
                 String orderStatus="";
                 MarketplaceWebServiceOrdersConfig config=new MarketplaceWebServiceOrdersConfig();
                 config.setServiceURL(serviceURL.get(0));
